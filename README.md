@@ -29,7 +29,7 @@ npm run dev
 
 Let @DylanDevelops know if you have any questions
 
-                            ## Environment Variables
+## Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env.local file if you don't already have them. Please contact @DylanDevelops for how to get these.
 
