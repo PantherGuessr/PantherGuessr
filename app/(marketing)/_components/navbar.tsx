@@ -5,15 +5,16 @@ import React from "react";
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
-import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { useConvexAuth } from "convex/react";
 import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/clerk-react";
 import Spinner from "@/components/spinner";
-import Link from "next/link";
+import { Shield } from "lucide-react";
 
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
+    const { user } = useUser();
     const scrolled = useScrollTop();
 
     return (
@@ -42,17 +43,18 @@ export const Navbar = () => {
                 )}
                 {isAuthenticated && !isLoading && (
                     <>
-                        <Button variant="ghost" size="sm" asChild>
-                            <Link href="/gamemodes">
-                                Enter PantherGuessr
-                            </Link>
-                        </Button>
+                        {user?.publicMetadata?.role === "admin" ? (
+                            <div className="flex items-center justify- gap-x-1">
+                                <Shield fill="#FFD700" /> <p>{user?.username}</p>
+                            </div>
+                        ) : (
+                            <p>{user?.username}</p>
+                        )}
                         <UserButton
                             afterSignOutUrl="/"
                         />
                     </>
                 )}
-                <ModeToggle />
             </div>
         </div>
     );

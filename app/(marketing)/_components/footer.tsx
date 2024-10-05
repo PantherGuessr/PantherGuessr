@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 
 import { Logo } from "./logo"
+import { ModeToggle } from "@/components/mode-toggle"
 
 export const Footer = () => {
     return (
@@ -13,6 +14,7 @@ export const Footer = () => {
                 <Button variant="ghost" size="sm">
                     Terms & Conditions
                 </Button>
+                <ModeToggle />
             </div>
         </div>
     )
