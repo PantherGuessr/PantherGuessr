@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# PantherGuessr
 
-First, run the development server:
+PantherGuessr is the fun game where your directional skills are challenged.
+
+## Installation
+
+1. Install all node dependencies by running the following command in the project's root directory:
+
+```bash
+npm install
+```
+
+2. Start a development server of the backend by running the following command:
+
+```bash
+npx convex dev
+```
+
+Note: If this command does not work, you may be missing an .env.local file. You can read more about that by visiting [Environmental Variables](#environment-variables) section.
+
+3. While keeping the old terminal running, open a new terminal and run a development server of the website by running the following command:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open the website by visiting <http://localhost:3000> with your browser. When you make changes to a code file and save the file, the live preview will update on the url automatically.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Let @DylanDevelops know if you have any questions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+                            ## Environment Variables
 
-## Learn More
+To run this project, you will need to add the following environment variables to your .env.local file if you don't already have them. Please contact @DylanDevelops for how to get these.
 
-To learn more about Next.js, take a look at the following resources:
+1. `CONVEX_DEPLOYMENT`
+2. `NEXT_PUBLIC_CONVEX_URL`
+3. `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Contributions are always welcome!
 
-## Deploy on Vercel
+See `contributing.md` for ways to get started.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Please adhere to this project's `code of conduct`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Feedback
+
+If you have any feedback, bug reports, or anything else, please create an [issue](https://github.com/PantherGuessr/PantherGuessr/issues).
+
+## Authors
+
+- [@DylanDevelops](https://www.github.com/dylandevelops)
+- [@dtsivkovski](https://www.github.com/dtsivkovski)
+- [@ssparkpilot](https://www.github.com/ssparkpilot)
+
+## License
+
+[GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/)
