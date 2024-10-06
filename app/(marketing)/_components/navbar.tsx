@@ -19,11 +19,11 @@ export const Navbar = () => {
 
     return (
         <div className={cn(
-            "z-50 bg-background fixed top-0 flex items-center w-full p-6",
+            "z-50 bg-background fixed top-0 flex items-center p-6 w-full",
             scrolled && "border-b shadow-sm"
         )}>
             <Logo />
-            <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap-x-2">
+            <div className="ml-auto justify-end flex items-center gap-x-2">
                 {isLoading && (
                     <Spinner />
                 )}
@@ -42,14 +42,14 @@ export const Navbar = () => {
                     </>
                 )}
                 {isAuthenticated && !isLoading && (
-                    <>
-                        {user?.publicMetadata?.role === "admin" ? (
-                            <div className="flex items-center justify- gap-x-1">
-                                <Shield fill="#FFD700" /> <p>{user?.username}</p>
-                            </div>
-                        ) : (
-                            <p>{user?.username}</p>
-                        )}
+                    <>                        {user?.publicMetadata?.role === "admin" ? (
+                        <div className="flex items-center justify- gap-x-1">
+                            <Shield fill="#FFD700" /> <p className="hidden md:flex">{user?.username}</p>
+                        </div>
+                    ) : (
+                        <p className="hidden md:flex">{user?.username}</p>
+                    )}
+
                         <UserButton
                             afterSignOutUrl="/"
                         />

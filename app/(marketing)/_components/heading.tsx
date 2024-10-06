@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import Spinner from "@/components/spinner";
 import Link from "next/link";
 import { SignUpButton, useUser } from "@clerk/clerk-react";
+import { WelcomeMessage } from "@/components/text/welcomemessage";
 
 export const Heading = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
@@ -15,7 +16,7 @@ export const Heading = () => {
         <div className="max-w-3xl space-y-4">
             {isAuthenticated && !isLoading ? (
                 <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold">
-                    Can you find your way around Chapman? Welcome back <span className="underline">{user?.username}</span>.
+                    Welcome back, <span className="underline">{user?.username}</span>. {WelcomeMessage()}
                 </h1>
             ) : (
                 <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold">
