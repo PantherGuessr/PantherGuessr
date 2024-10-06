@@ -11,11 +11,15 @@ import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/clerk-react";
 import { Shield } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Toaster } from "@/components/ui/toaster"
+import { useToast } from "@/hooks/use-toast";
 
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
     const { user } = useUser();
     const scrolled = useScrollTop();
+
+    const { toast } = useToast();
 
     return (
         <div className={cn(
@@ -47,7 +51,14 @@ export const Navbar = () => {
                 {isAuthenticated && !isLoading && (
                     <>                        {user?.publicMetadata?.role === "admin" ? (
                         <div className="flex items-center justify- gap-x-1">
-                            <Shield fill="#FFD700" /> <p className="hidden md:flex">{user?.username}</p>
+                            <Toaster />
+                            <Shield fill="#FFD700" /> <p className="hidden md:flex" onClick={() => {
+                                navigator.clipboard.writeText(user?.username || "")
+                                toast({
+                                    description: "Username copied to clipboard!",
+                                })
+
+                            }}>{user?.username}</p>
                         </div>
                     ) : (
                         <p className="hidden md:flex">{user?.username}</p>
