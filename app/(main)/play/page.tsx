@@ -16,14 +16,18 @@ const PlayPage = () => {
                 </Link>
             </div>
             <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-                <div className="gamemode-card flex flex-col items-center">
-                    <User className="mb-2" />
-                    <h1>Play Singleplayer</h1>
-                </div>
-                <div className="gamemode-card flex flex-col items-center">
-                    <Users className="mb-2" />
-                    <h1>Play Multiplayer</h1>
-                </div>
+                <Link href="/game">
+                    <div className="gamemode-card flex flex-col items-center">
+                        <User className="mb-2" />
+                        <h1>Singleplayer</h1>
+                    </div>
+                </Link>
+                <Link href="#" onClick={(e) => { e.preventDefault(); alert('COMING SOON'); }}>
+                    <div className="gamemode-card flex flex-col items-center">
+                        <Users className="mb-2" />
+                        <h1>Multiplayer</h1>
+                    </div>
+                </Link>
             </div>
             <Footer />
         </div>

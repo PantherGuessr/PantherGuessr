@@ -1,4 +1,4 @@
-.gamemode-card{
+.gamemode-card {
     color: white;
     margin: 0 auto;
     padding: 2em;
@@ -7,15 +7,24 @@
     text-align: center;
     border-radius: 10px;
     position: relative;
-  }
+    transition: transform 0.1s ease-in-out; /* Added transition property */
+}
+
+.gamemode-card:hover {
+    transform: scale3d(1.05, 1.05, 0);
+}
+
+.gamemode-card:hover::after, .gamemode-card:hover::before {
+    transform: scale3d(1.05, 1.05, 0);
+}
   
-  @property --angle{
+@property --angle {
     syntax: "<angle>";
     initial-value: 0deg;
     inherits: false;
-  }
+}
   
-  .gamemode-card::after, .gamemode-card::before{
+.gamemode-card::after, .gamemode-card::before {
     content: '';
     position: absolute;
     height: calc(100% + 6px);
@@ -27,17 +36,18 @@
     z-index: -1;
     border-radius: 13px;
     animation: 3s spin linear infinite;
-  }
+}
 
-  .gamemode-card::before{
+.gamemode-card::before {
     filter: blur(1.5rem);
     opacity: 0.5;
-  }
-  @keyframes spin{
+}
+
+@keyframes spin {
     from{
-      --angle: 0deg;
+        --angle: 0deg;
     }
     to{
-      --angle: 360deg;
+        --angle: 360deg;
     }
-  }
+}
