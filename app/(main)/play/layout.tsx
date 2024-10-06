@@ -1,4 +1,5 @@
 import { Navbar } from "./_components/navbar";
+import "./play.css";
 
 const PlayPageLayout = ({
     children
