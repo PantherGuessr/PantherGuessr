@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { useConvexAuth } from "convex/react";
 import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/clerk-react";
-import Spinner from "@/components/spinner";
 import { Shield } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
@@ -25,7 +25,10 @@ export const Navbar = () => {
             <Logo />
             <div className="ml-auto justify-end flex items-center gap-x-2">
                 {isLoading && (
-                    <Spinner />
+                    <>
+                    <Skeleton className="h-6 w-[100px]" />
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    </>
                 )}
                 {!isLoading && !isAuthenticated && (
                     <>
