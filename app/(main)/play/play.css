@@ -11,11 +11,11 @@
 }
 
 .gamemode-card:hover {
-    transform: scale3d(1.05, 1.05, 0);
+    transform: scale(1.05)
 }
 
 .gamemode-card:hover::after, .gamemode-card:hover::before {
-    transform: scale3d(1.05, 1.05, 0);
+    transform: scale(1.05)
 }
   
 @property --angle {
@@ -24,7 +24,7 @@
     inherits: false;
 }
   
-.gamemode-card::after, .gamemode-card::before {
+.gamemode-card.glow::after, .gamemode-card.glow::before {
     content: '';
     position: absolute;
     height: calc(100% + 6px);
@@ -38,7 +38,7 @@
     animation: 3s spin linear infinite;
 }
 
-.gamemode-card::before {
+.gamemode-card.glow::before {
     filter: blur(1.5rem);
     opacity: 0.5;
 }

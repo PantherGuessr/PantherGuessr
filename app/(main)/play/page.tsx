@@ -2,7 +2,7 @@
 
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Users } from "lucide-react";
+import { ArrowLeft, Sparkles, User, Users } from "lucide-react";
 import Link from "next/link";
 
 const PlayPage = () => {
@@ -16,18 +16,24 @@ const PlayPage = () => {
                 </Link>
             </div>
             <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-                <Link href="/game">
-                    <div className="gamemode-card flex flex-col items-center">
-                        <User className="mb-2" />
-                        <h1>Singleplayer</h1>
-                    </div>
-                </Link>
-                <Link href="#" onClick={(e) => { e.preventDefault(); alert('COMING SOON'); }}>
-                    <div className="gamemode-card flex flex-col items-center">
-                        <Users className="mb-2" />
-                        <h1>Multiplayer</h1>
-                    </div>
-                </Link>
+            <Link href="#" onClick={(e) => { e.preventDefault(); alert('DAILY CHALLENGE COMING SOON'); }}>
+                <div className="gamemode-card glow flex flex-col items-center">
+                    <Sparkles className="mb-2" />
+                    <h1>Daily Challenge</h1>
+                </div>
+            </Link>
+            <Link href="/game">
+                <div className="gamemode-card flex flex-col items-center glow-effect">
+                    <User className="mb-2" />
+                    <h1>Singleplayer</h1>
+                </div>
+            </Link>
+            <Link href="#" onClick={(e) => { e.preventDefault(); alert('MULTIPLAYER COMING SOON'); }}>
+                <div className="gamemode-card flex flex-col items-center">
+                    <Users className="mb-2" />
+                    <h1>Multiplayer</h1>
+                </div>
+            </Link>
             </div>
             <Footer />
         </div>
