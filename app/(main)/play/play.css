@@ -40,10 +40,10 @@
 }
 
 @keyframes spin {
-    from{
+    from {
         --angle: 0deg;
     }
-    to{
+    to {
         --angle: 360deg;
     }
 }

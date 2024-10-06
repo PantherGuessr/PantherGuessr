@@ -11,6 +11,7 @@ import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/clerk-react";
 import { Shield } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
@@ -45,17 +46,17 @@ export const Navbar = () => {
                     </>
                 )}
                 {isAuthenticated && !isLoading && (
-                    <>                        {user?.publicMetadata?.role === "admin" ? (
-                        <div className="flex items-center justify- gap-x-1">
-                            <Shield fill="#FFD700" /> <p className="hidden md:flex">{user?.username}</p>
-                        </div>
-                    ) : (
-                        <p className="hidden md:flex">{user?.username}</p>
-                    )}
-
-                        <UserButton
-                            afterSignOutUrl="/"
-                        />
+                    <>                        
+                        {user?.publicMetadata?.role === "admin" ? (
+                            <div className="flex items-center justify gap-x-1">
+                                <Button variant="ghost" className="m-0 p-1.5"><Link href="/admin"><Shield fill="#FFD700" /></Link></Button> <p className="hidden md:flex">{user?.username}</p>
+                            </div>
+                        ) : (
+                            <p className="hidden md:flex">{user?.username}</p>
+                        )}
+                            <UserButton
+                                afterSignOutUrl="/"
+                            />
                     </>
                 )}
             </div>

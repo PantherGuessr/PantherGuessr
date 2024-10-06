@@ -2,7 +2,7 @@
 
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Sparkles, User, Users } from "lucide-react";
+import { ArrowLeft, CalendarClock, User, Users } from "lucide-react";
 import Link from "next/link";
 
 const PlayPage = () => {
@@ -18,7 +18,7 @@ const PlayPage = () => {
             <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
             <Link href="#" onClick={(e) => { e.preventDefault(); alert('DAILY CHALLENGE COMING SOON'); }}>
                 <div className="gamemode-card glow flex flex-col items-center">
-                    <Sparkles className="mb-2" />
+                    <CalendarClock className="mb-2" />
                     <h1>Daily Challenge</h1>
                 </div>
             </Link>
