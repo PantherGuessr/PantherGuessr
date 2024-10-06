@@ -1,4 +1,4 @@
-import { Footer } from "./_components/footer";
+import { Footer } from "@/components/footer";
 import { Heading } from "./_components/heading";
 
 const MarketingPage = () => {

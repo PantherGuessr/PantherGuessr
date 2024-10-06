@@ -2,6 +2,8 @@ import Image from "next/image";
 import { Poppins } from "next/font/google";
 
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 const font = Poppins({
     subsets: ["latin"],
@@ -26,7 +28,11 @@ export const Logo = () => {
                 className="hidden dark:block"
             />
             <p className={cn("font-semibold", font.className)}>
-                PantherGuessr
+                <Link href="/">
+                    <Button variant="ghost" className="font-semibold p-2">
+                        PantherGuessr
+                    </Button>
+                </Link>
             </p>
         </div>
     )
