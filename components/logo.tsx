@@ -30,7 +30,7 @@ export const Logo = () => {
                 className="hidden dark:block"
             />
             <p className={cn("font-semibold", font.className)}>
-                    <Button variant="ghost" className="font-semibold p-2">
+                    <Button variant="invisible" className="font-semibold p-2">
                         PantherGuessr
                     </Button>
             </p>
