@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useConvexAuth } from "convex/react";
 import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/clerk-react";
-import { Shield } from "lucide-react";
+import { Link, Shield } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast";
@@ -52,7 +52,7 @@ export const Navbar = () => {
                     <>                        {user?.publicMetadata?.role === "admin" ? (
                         <div className="flex items-center justify- gap-x-1">
                             <Toaster />
-                            <Shield fill="#FFD700" /> <p title="Copy" className="hidden md:flex cursor-pointer" onClick={() => {
+                            <Link href="/admin"><Shield fill="#FFD700" /></Link> <p title="Copy" className="hidden md:flex cursor-pointer" onClick={() => {
                                 navigator.clipboard.writeText(user?.username || "")
                                 toast({
                                     description: "Username copied to clipboard!",
