@@ -12,15 +12,16 @@ export const Heading = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
     const { user } = useUser();
 
+
     return (
         <div className="max-w-3xl space-y-4">
             {isLoading && (
-                <div className="grid">
-                <Skeleton className="justify-self-center m-1 h-16 w-[70vw]" />
-                <Skeleton className="justify-self-center m-1 h-16 w-[80vw]" />
-                <Skeleton className="justify-self-center m-1 h-16 w-[75vw]" />
-                <Skeleton className="justify-self-center mt-6 h-8 w-[40vw]" />
-                <Skeleton className="justify-self-center mt-2 h-8 w-[40vw]" />
+                <div className="flex flex-col justify-center items-center">
+                    <Skeleton className="justify-self-center m-1 h-16 w-[400px]" />
+                    <Skeleton className="justify-self-center m-1 h-16 w-[80vw]" />
+                    <Skeleton className="justify-self-center m-1 h-16 w-[75vw]" />
+                    <Skeleton className="justify-self-center mt-6 h-8 w-[40vw]" />
+                    <Skeleton className="justify-self-center mt-2 h-8 w-[40vw]" />
                 </div>
             )}
             {isAuthenticated && !isLoading && (
