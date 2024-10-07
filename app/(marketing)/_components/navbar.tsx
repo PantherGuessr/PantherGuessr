@@ -52,7 +52,7 @@ export const Navbar = () => {
                     <>                        {user?.publicMetadata?.role === "admin" ? (
                         <div className="flex items-center justify- gap-x-1">
                             <Toaster />
-                            <Shield fill="#FFD700" /> <p className="hidden md:flex" onClick={() => {
+                            <Shield fill="#FFD700" /> <p title="Copy" className="hidden md:flex cursor-pointer" onClick={() => {
                                 navigator.clipboard.writeText(user?.username || "")
                                 toast({
                                     description: "Username copied to clipboard!",
