@@ -4,7 +4,7 @@ import React from "react";
 
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
-import { Logo } from "../../../components/logo";
+import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
 import { useConvexAuth } from "convex/react";
 import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
@@ -23,7 +23,7 @@ export const Navbar = () => {
 
     return (
         <div className={cn(
-            "z-50 bg-background fixed top-0 flex items-center p-6 w-full",
+            "z-50 bg-transparent fixed top-0 flex items-center p-6 w-full",
             scrolled && "border-b shadow-sm"
         )}>
             <Logo />
