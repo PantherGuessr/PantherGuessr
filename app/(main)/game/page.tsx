@@ -3,7 +3,7 @@
 const GamePage = () => {
     return (
         <>
-            Hello
+            THIS IS THE MAP
         </>
     )
 }

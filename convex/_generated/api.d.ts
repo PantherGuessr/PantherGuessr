@@ -15,7 +15,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as levels from "../levels.js";
+import type * as game from "../game.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,7 +26,7 @@ import type * as levels from "../levels.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  levels: typeof levels;
+  game: typeof game;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
