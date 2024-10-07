@@ -19,7 +19,6 @@ export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
     const { user } = useUser();
     const scrolled = useScrollTop();
-
     const { toast } = useToast();
 
     return (

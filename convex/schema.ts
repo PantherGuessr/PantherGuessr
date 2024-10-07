@@ -6,6 +6,6 @@ export default defineSchema({
         title: v.string(),
         latitude: v.float64(),
         longitude: v.float64(),
-        imageId: v.string(),
+        imageId: v.id("_storage"),
     }),
 });

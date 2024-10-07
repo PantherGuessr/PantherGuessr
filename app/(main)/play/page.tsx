@@ -2,25 +2,38 @@
 
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
-import { Play } from "lucide-react";
+import { ArrowLeft, CalendarClock, User, Users } from "lucide-react";
 import Link from "next/link";
 
 const PlayPage = () => {
     return (
         <div className="min-h-full flex flex-col">
-            <div className="flex flex-col items-center justify-center justify-start text-center gap-y-8 flex-1 px-6 pb-10">
-            <Link href="/game">
-                <Button variant="default" className="flex items-center">
-                    Play Singleplayer <Play className="w-4 h-4 ml-2" />
-                </Button>
+            <div className="absolute mt-20 top-4 left-4">
+                <Link href="/">
+                    <Button variant="outline">
+                        <ArrowLeft className="h-4 w-4 mr-2" /> Go Back to Main Menu
+                    </Button>
+                </Link>
+            </div>
+            <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+            <Link href="#" onClick={(e) => { e.preventDefault(); alert('DAILY CHALLENGE COMING SOON'); }}>
+                <div className="gamemode-card glow flex flex-col items-center">
+                    <CalendarClock className="mb-2" />
+                    <h1>Daily Challenge</h1>
+                </div>
             </Link>
-            <Button
-                variant="secondary" 
-                className="flex items-center"
-                onClick={() => alert('COMING SOON')}
-            >
-                Play Multiplayer <Play className="w-4 h-4 ml-2" />
-            </Button>
+            <Link href="/game">
+                <div className="gamemode-card flex flex-col items-center glow-effect">
+                    <User className="mb-2" />
+                    <h1>Singleplayer</h1>
+                </div>
+            </Link>
+            <Link href="#" onClick={(e) => { e.preventDefault(); alert('MULTIPLAYER COMING SOON'); }}>
+                <div className="gamemode-card flex flex-col items-center">
+                    <Users className="mb-2" />
+                    <h1>Multiplayer</h1>
+                </div>
+            </Link>
             </div>
             <Footer />
         </div>
