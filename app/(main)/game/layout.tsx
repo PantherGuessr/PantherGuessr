@@ -1,5 +1,3 @@
-import InGameSidebar from "./_components/in-game-sidebar";
-
 const GamePageLayout = ({
     children
 } : {

@@ -1,7 +1,7 @@
 "use client";
 
 import InGameSidebar from "./_components/in-game-sidebar";
-import InteractableMap from "./_components/map";
+import InteractableMap from "./_components/interactable-map";
 
 const GamePage = () => {
     return (

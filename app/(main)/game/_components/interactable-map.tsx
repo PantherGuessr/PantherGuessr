@@ -6,8 +6,8 @@ const InteractableMap = () => {
     const position = [51.505, -0.09];
 
     return (
-        <div className='bg-black'>
-        MAP GOES HERE
+        <div className="bg-black h-full">
+            MAP GOES HERE
         </div>
     );
 }
