@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button";
 import { useConvexAuth } from "convex/react";
 import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/clerk-react";
-import { Link, Shield } from "lucide-react";
+import { Shield } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
