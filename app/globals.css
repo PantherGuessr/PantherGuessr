@@ -47,30 +47,30 @@ body {
     --radius: 0.5rem;
   }
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 0, 100.00%, 4%; /* Dark red */
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 0 100% 5%; /* Slightly lighter dark red */
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 0 100% 8%; /* Lighter dark red */
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
+    --primary: 0 100% 10%; /* Medium dark red */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 100% 12%; /* Lighter dark red */
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
+    --muted: 0 100% 12%; /* Same as secondary */
+    --muted-foreground: 0 5% 64.9%;
+    --accent: 0 100% 12%; /* Same as secondary and muted */
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62.8% 30.6%; /* A more vibrant red for destructive */
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 0 100% 12%; /* Same as secondary */
+    --input: 0 100% 12%; /* Same as secondary */
+    --ring: 0 100% 3%; /* Match background */
+    --chart-1: 0 76% 25%; /* Dark red shade */
+    --chart-2: 0 58% 20%; /* Slightly lighter dark red */
+    --chart-3: 0 37% 18%; /* Lightest dark red */
+    --chart-4: 0 50% 30%; /* Medium dark red */
+    --chart-5: 0 87% 67%; /* Bright red for charts */
   }
 }
 
