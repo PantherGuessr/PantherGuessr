@@ -1,10 +1,16 @@
 "use client";
 
+import InGameSidebar from "./_components/in-game-sidebar";
+import InteractableMap from "./_components/map";
+
 const GamePage = () => {
     return (
-        <>
-            THIS IS THE MAP
-        </>
+        <div className="h-full flex overflow-y-auto">
+            <InGameSidebar />
+            <div className="flex-1">
+                <InteractableMap />
+            </div>
+        </div>
     )
 }
  
