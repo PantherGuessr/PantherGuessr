@@ -6,6 +6,7 @@ import { Hash, Loader2, Medal, User } from "lucide-react";
 import Image from "next/image";
 import { ElementRef, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
+import { useGame } from "../_context/GameContext";
 
 const InGameSidebar = () => {
     const isMobile = useMediaQuery("(max-width: 768px");
@@ -46,6 +47,9 @@ const InGameSidebar = () => {
         document.removeEventListener("mouseup", handleMouseUp);
     }
 
+    // Retrieve Game Context
+    const { levels, round, score, currentLevel } = useGame();
+
     return (
         <>
             <aside ref={sidebarRef} className={cn(
@@ -65,11 +69,11 @@ const InGameSidebar = () => {
                     <div className="flex justify-center w-full">
                         <div className="text-xl flex flex-col items-center mx-4">
                             <Hash />
-                            <p>1/5</p>
+                            <p>{round}/{levels.length}</p>
                         </div>
                         <div className="text-xl flex flex-col items-center mx-4">
                             <Medal />
-                            <p>1287</p>
+                            <p>{score}</p>
                         </div>
                     </div>
                 </div>
