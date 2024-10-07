@@ -3,10 +3,8 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
 const InteractableMap = () => {
-    const position = [51.505, -0.09];
-
     return (
-        <div className="bg-black h-full">
+        <div className="h-full w-full bg-black overflow-y-hidden relative flex flex-1 flex-col">
             MAP GOES HERE
         </div>
     );
