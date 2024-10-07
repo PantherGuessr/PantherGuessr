@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Hash, Loader2, Medal } from "lucide-react";
+import { Hash, Loader2, Medal, User } from "lucide-react";
 import Image from "next/image";
 import { ElementRef, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
@@ -53,6 +53,12 @@ const InGameSidebar = () => {
                 isResetting && "transition-all ease-in-out duration-300"
             )}>
                 <div className="flex justify-center p-3">
+                    <div className="text-xl flex flex-col items-center mx-4 outline p-4 rounded">
+                        <User />
+                        <p>Singleplayer</p>
+                    </div>
+                </div>
+                <div className="flex justify-center p-3">
                     <Image src="/TESTING_IMAGE.jpg" layout="responsive" width="0" height="0" alt="test" />
                 </div>
                 <div className="mt-4 flex flex-col items-center">
@@ -63,7 +69,7 @@ const InGameSidebar = () => {
                         </div>
                         <div className="text-xl flex flex-col items-center mx-4">
                             <Medal />
-                            <p>0</p>
+                            <p>1287</p>
                         </div>
                     </div>
                 </div>
@@ -74,8 +80,7 @@ const InGameSidebar = () => {
                 />
                 <div className="mt-auto p-4 w-full">
                     <Button disabled={true} className="w-full">
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        SUBMIT
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
                     </Button>
                 </div>
             </aside>
