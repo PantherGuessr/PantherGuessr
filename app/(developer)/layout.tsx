@@ -1,7 +1,6 @@
 "use client";
 
 import { Navbar } from "@/components/navbar";
-import Spinner from "@/components/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RedirectToSignIn, useUser } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
