@@ -33,8 +33,8 @@ const InGameSidebar = () => {
 
         // Clamps so that the width of the sidebar
         // can't get too big or too small.
-        if(newWidth < 300) newWidth = 300;
-        if(newWidth > 500) newWidth = 500;
+        if(newWidth < 200) newWidth = 200;
+        if(newWidth > 600) newWidth = 600;
 
         if(sidebarRef.current) {
             sidebarRef.current.style.width = `${newWidth}px`;
