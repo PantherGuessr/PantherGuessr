@@ -1,9 +1,10 @@
 import { v } from "convex/values";
 
-import { mutation, query } from "./_generated/server";
+import { query } from "./_generated/server";
 
 // Gets the number of random Levels from the database
 export const getRandomLevels = query({
+    args: { cacheBuster: v.number() },
     handler: async (ctx) => {
         // TODO: Implement a way to choose number of levels based on backend settings
         const numOfLevels = 5;

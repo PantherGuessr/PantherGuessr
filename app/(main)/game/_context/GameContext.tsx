@@ -22,9 +22,10 @@ export const GameProvider = ({
     const [currentRound, setCurrentRound] = useState(0);
     const [score, setScore] = useState(0);
     const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
-    const [currentImageSrcUrl, setCurrentSrcUrl] = useState("")
+    const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
+    const [cacheBuster, setCacheBuster] = useState(Math.random());
 
-    const ids = useQuery(api.game.getRandomLevels);
+    const ids = useQuery(api.game.getRandomLevels, { cacheBuster });
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
     
     useEffect(() => {
