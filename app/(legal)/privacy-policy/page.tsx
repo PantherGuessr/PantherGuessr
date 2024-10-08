@@ -9,7 +9,7 @@ const PrivacyPolicyPage = () => {
     return (
         <div className="min-h-full flex flex-col">
             <div className="flex flex-col items-start justify-normal gap-y-8 flex-1 md:px-[10em] lg:px-[25em] pb-10">
-                <h1 className="text-6xl justify-self-center">Privacy Policy</h1>
+                <h1 className="text-4xl md:text-6xl justify-self-center">Privacy Policy</h1>
                 <Card className="hover:scale-105 hover:bg-[rgba(35,22,22,0.4)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.2)] w-full">
                     <CardHeader>
                         <CardTitle>What do we collect?</CardTitle>
