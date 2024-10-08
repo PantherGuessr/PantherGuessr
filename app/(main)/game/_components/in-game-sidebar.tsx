@@ -6,6 +6,7 @@ import { Hash, Loader2, Medal, User } from "lucide-react";
 import Image from "next/image";
 import { ElementRef, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
+import { useGame } from "../_context/GameContext";
 
 const InGameSidebar = () => {
     const isMobile = useMediaQuery("(max-width: 768px");
@@ -46,6 +47,9 @@ const InGameSidebar = () => {
         document.removeEventListener("mouseup", handleMouseUp);
     }
 
+    // Retrieve Game Context
+    const { levels, currentRound, score, currentImageSrcUrl } = useGame();
+
     return (
         <>
             <aside ref={sidebarRef} className={cn(
@@ -59,17 +63,17 @@ const InGameSidebar = () => {
                     </div>
                 </div>
                 <div className="flex justify-center p-3">
-                    <Image src="/TESTING_IMAGE.jpg" layout="responsive" width="0" height="0" alt="test" />
+                    <Image src={currentImageSrcUrl} layout="responsive" width="0" height="0" alt="test" />
                 </div>
                 <div className="mt-4 flex flex-col items-center">
                     <div className="flex justify-center w-full">
                         <div className="text-xl flex flex-col items-center mx-4">
                             <Hash />
-                            <p>1/5</p>
+                            <p>{currentRound}/{levels.length}</p>
                         </div>
                         <div className="text-xl flex flex-col items-center mx-4">
                             <Medal />
-                            <p>1287</p>
+                            <p>{score}</p>
                         </div>
                     </div>
                 </div>
@@ -79,8 +83,11 @@ const InGameSidebar = () => {
                     className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0"
                 />
                 <div className="mt-auto p-4 w-full">
-                    <Button disabled={true} className="w-full">
+                    {/* <Button disabled={true} className="w-full">
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
+                    </Button> */}
+                    <Button disabled={true} className="w-full">
+                        SUBMIT
                     </Button>
                 </div>
             </aside>
