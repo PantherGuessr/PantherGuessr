@@ -2,6 +2,7 @@
 
 import { Navbar } from "@/components/navbar";
 import Spinner from "@/components/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { RedirectToSignIn, useUser } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
 import { redirect } from "next/navigation";
@@ -19,7 +20,7 @@ const AdminLayout = ({
     if(isLoading) {
         return (
             <div className="h-full flex items-center justify-center">
-                <Spinner size="lg" />
+                <Skeleton className="w-[240px] h-[40px] translate-y-[40%]" />
             </div>
         )
     }
