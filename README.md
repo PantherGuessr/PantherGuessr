@@ -5,7 +5,17 @@ PantherGuessr is the fun game where your directional skills are challenged.
 
 ## Installation
 
-1. Install all node dependencies by running the following command in the project's root directory:
+1. Run the following to make sure you are on the correct versions:
+
+```bash
+node -v # Should be v22.5.1
+npm -v # Should be 10.8.3
+npx -v # Should be 10.8.3
+```
+
+Note: If any of the versions do not match, please install the versions listed above
+
+2. Install all node dependencies by running the following command in the project's root directory:
 
 ```bash
 npm install
