@@ -14,24 +14,31 @@ export const getRandomLevels = query({
             throw new Error("Not enough levels to complete request!");
         }
 
-        // Shuffles the levels array
-        for(let i = levels.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [levels[i], levels[j]] = [levels[j], levels[i]];
-        }
+        console.log(levels);
 
-        // Select the first numOfLevels levels
-        const selectedLevels = levels.slice(0, numOfLevels);
+        const selectedLevels = [];
+
+        for(let i = 0; i < numOfLevels; i++) {
+            const randomIndex = Math.floor(Math.random() * levels.length);
+            selectedLevels[i] = levels[randomIndex];
+            levels.splice(randomIndex, 1);
+        }
 
         // Extract and return the Ids of the selected levels
         const levelIds = selectedLevels.map(level => level._id);
+        console.log("[SERVER SIDE] Ids", levelIds);
         return levelIds;
     }
 });
 
 export const getImageSrc = query({
-    handler: async (ctx) => {
-        const level = await ctx.db.query("levels").first();
+    args: { id: v.id("levels") },
+    handler: async (ctx, args) => {
+        if(!args.id) {
+            throw new Error("Missing entryId parameter.");
+        }
+
+        const level = await ctx.db.get(args.id);
 
         if(!level) {
             throw new Error("No levels exist");
