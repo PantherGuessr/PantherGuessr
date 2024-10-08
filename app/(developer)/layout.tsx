@@ -14,7 +14,6 @@ const AdminLayout = ({
     const { isAuthenticated, isLoading } = useConvexAuth();
     const { user } = useUser();
 
-    // TODO: @Daniel do you want to add your skeleton thing here?
     // If they are loading
     if(isLoading) {
         return (
@@ -39,7 +38,7 @@ const AdminLayout = ({
     return ( 
         <div className="h-full">
             <Navbar />
-            <main className="h-full pt-40">
+            <main className="h-full pt-32">
                 {children}
             </main>
         </div> 

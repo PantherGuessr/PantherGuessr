@@ -39,7 +39,7 @@ const PrivacyPolicyPage = () => {
                         <CardTitle>How do we protect your information?</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p>We utilize the Clerk service for account authentication. Details regarding Clerk's protection of your data can be found <Link href="/">here</Link>. </p>
+                        <p>We utilize the Clerk service for account authentication. Details regarding Clerk&apos;s protection of your data can be found <Link href="/">here</Link>. </p>
                     </CardContent>
                 </Card>
                 <Card className="hover:scale-105 hover:bg-[rgba(35,22,22,0.4)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.2)] w-full">

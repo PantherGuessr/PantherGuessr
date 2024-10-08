@@ -57,7 +57,7 @@ body {
     --primary-foreground: 0 0% 98%;
     --secondary: 0 100% 12%; /* Lighter dark red */
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 100% 12%; /* Same as secondary */
+    --muted: 0 50% 8%; /* Same as secondary */
     --muted-foreground: 0 5% 64.9%;
     --accent: 0 100% 12%; /* Same as secondary and muted */
     --accent-foreground: 0 0% 98%;
