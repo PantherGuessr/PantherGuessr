@@ -2,15 +2,18 @@
 
 import InGameSidebar from "./_components/in-game-sidebar";
 import InteractableMap from "./_components/interactable-map";
+import { GameProvider } from "./_context/GameContext";
 
 const GamePage = () => {
     return (
-        <div className="h-full w-full flex overflow-y-auto">
-            <InGameSidebar />
-            <div className="flex grow">
-                <InteractableMap />
+        <GameProvider>
+            <div className="h-full w-full flex overflow-y-auto">
+                <InGameSidebar />
+                <div className="flex grow">
+                    <InteractableMap />
+                </div>
             </div>
-        </div>
+        </GameProvider>
     )
 }
  
