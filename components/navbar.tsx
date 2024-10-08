@@ -24,7 +24,7 @@ export const Navbar = () => {
     return (
         <div className={cn(
             "z-50 bg-transparent fixed top-0 flex items-center p-6 w-full",
-            scrolled && "border-b shadow-sm"
+            scrolled && "backdrop-blur-sm border-b-2 border-[#450b0b4c] shadow-md"
         )}>
             <Logo />
             <div className="ml-auto justify-end flex items-center gap-x-2">
