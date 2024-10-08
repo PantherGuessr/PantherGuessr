@@ -5,9 +5,9 @@ import InteractableMap from "./_components/interactable-map";
 
 const GamePage = () => {
     return (
-        <div className="h-full flex overflow-y-auto">
+        <div className="h-full w-full flex overflow-y-auto">
             <InGameSidebar />
-            <div className="flex-1">
+            <div className="flex grow">
                 <InteractableMap />
             </div>
         </div>

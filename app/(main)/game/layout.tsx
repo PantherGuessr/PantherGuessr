@@ -4,8 +4,8 @@ const GamePageLayout = ({
     children: React.ReactNode;
 }) => {
     return (
-        <div className="h-full flex overflow-y-auto">
-            <main>
+        <div className="h-full w-full flex overflow-y-auto">
+            <main className="w-full">
                 {children}
             </main>
         </div> 
