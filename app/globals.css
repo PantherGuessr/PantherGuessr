@@ -53,8 +53,8 @@ body {
     --card-foreground: 0 0% 98%;
     --popover: 0 100% 8%; /* Lighter dark red */
     --popover-foreground: 0 0% 98%;
-    --primary: 0 100% 10%; /* Medium dark red */
-    --primary-foreground: 0 0% 98%;
+    --primary: 0 20% 95%; /* Medium dark red */
+    --primary-foreground: 0 0% 0%;
     --secondary: 0 100% 12%; /* Lighter dark red */
     --secondary-foreground: 0 0% 98%;
     --muted: 0 50% 8%; /* Same as secondary */
