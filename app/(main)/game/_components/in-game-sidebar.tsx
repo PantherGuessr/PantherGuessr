@@ -11,10 +11,50 @@ import { useGame } from "../_context/GameContext";
 const InGameSidebar = () => {
     const isMobile = useMediaQuery("(max-width: 768px");
 
+    const magnifierRef = useRef<HTMLDivElement>(null);
     const isResizingRef = useRef(false);
     const sidebarRef = useRef<ElementRef<"aside">>(null);
     const navbar = useRef<ElementRef<"div">>(null);
     const [isResetting, setIsResetting] = useState(false);
+
+    const handleMouseEnter = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+        if (isResizingRef.current) return;
+
+        const magnifier = magnifierRef.current;
+        if (magnifier) {
+            magnifier.style.display = "block";
+            magnifier.style.backgroundImage = `url(${event.currentTarget.src})`;
+        }
+
+        event.currentTarget.classList.add("hide-cursor");
+    };
+
+    const handleMouseMoveMagnifier = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+        if (isResizingRef.current) return;
+    
+        const magnifier = magnifierRef.current;
+        if (magnifier) {
+            const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
+            const x = event.clientX - left;
+            const y = event.clientY - top;
+            const bgPosX = (x / width) * 100;
+            const bgPosY = (y / height) * 100;
+    
+            magnifier.style.left = `${event.clientX - magnifier.offsetWidth / 2}px`;
+            magnifier.style.top = `${event.clientY - magnifier.offsetHeight / 2}px`;
+    
+            magnifier.style.backgroundPosition = `${bgPosX}% ${bgPosY}%`;
+        }
+    };
+
+    const handleMouseLeave = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+        const magnifier = magnifierRef.current;
+        if (magnifier) {
+            magnifier.style.display = "none";
+        }
+
+        event.currentTarget.classList.remove("hide-cursor");
+    };
 
     const handleMouseDown = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -63,7 +103,16 @@ const InGameSidebar = () => {
                     </div>
                 </div>
                 <div className="flex justify-center p-3">
-                    <Image src={currentImageSrcUrl} layout="responsive" width="0" height="0" alt="test" />
+                    <Image
+                        src={currentImageSrcUrl}
+                        layout="responsive"
+                        width="0"
+                        height="0"
+                        alt=""
+                        onMouseEnter={handleMouseEnter}
+                        onMouseMove={handleMouseMoveMagnifier}
+                        onMouseLeave={handleMouseLeave}
+                    />
                 </div>
                 <div className="mt-4 flex flex-col items-center">
                     <div className="flex justify-center w-full">
@@ -91,8 +140,9 @@ const InGameSidebar = () => {
                     </Button>
                 </div>
             </aside>
+            <div ref={magnifierRef} className="magnifier"></div>
         </>
     );
 }
- 
+
 export default InGameSidebar;

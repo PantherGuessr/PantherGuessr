@@ -1,3 +1,5 @@
+import "./game.css";
+
 const GamePageLayout = ({
     children
 } : {
