@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Analytics from "./_components/analytics";
+import Levels from "./_components/levels";
 
 const AdminPage = () => {
     return (
@@ -13,8 +14,9 @@ const AdminPage = () => {
                 <Tabs defaultValue="analytics">
                     <TabsList>
                         <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                        <TabsTrigger value="rounds">Users</TabsTrigger>
-                        <TabsTrigger value="settings">Settings</TabsTrigger>
+                        <TabsTrigger value="levels">Levels</TabsTrigger>
+                        <TabsTrigger value="users">Users</TabsTrigger>
+                        <TabsTrigger value="settings">Site Settings</TabsTrigger>
                     </TabsList>
                     <TabsContent value="analytics">
                         <Card className="mt-8 mx-10 p-2">
@@ -26,7 +28,16 @@ const AdminPage = () => {
                             </CardContent>
                         </Card>
                     </TabsContent>
-
+                    <TabsContent value="levels">
+                        <Card className="mt-8 mx-10 p-2">
+                            <CardHeader className="text-4xl text-start">
+                                Levels
+                            </CardHeader>
+                            <CardContent>
+                                <Levels />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
                 </Tabs>
             </div>
             <Footer />
