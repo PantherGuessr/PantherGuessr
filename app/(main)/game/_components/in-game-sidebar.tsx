@@ -24,6 +24,8 @@ const InGameSidebar = () => {
         if (magnifier) {
             magnifier.style.display = "block";
             magnifier.style.backgroundImage = `url(${event.currentTarget.src})`;
+            magnifier.style.backgroundRepeat = "no-repeat";
+            magnifier.style.backgroundColor = getComputedStyle(document.querySelector("aside")!).getPropertyValue("background-color");
         }
 
         event.currentTarget.classList.add("hide-cursor");
@@ -37,13 +39,41 @@ const InGameSidebar = () => {
             const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
             const x = event.clientX - left;
             const y = event.clientY - top;
-            const bgPosX = (x / width) * 100;
-            const bgPosY = (y / height) * 100;
+            let bgPosX = (x / width) * 100;
+            let bgPosY = (y / height) * 100;
+
+            const half = magnifier.offsetWidth / 16;
+            const yhalf = half * 1.4;
     
             magnifier.style.left = `${event.clientX - magnifier.offsetWidth / 2}px`;
             magnifier.style.top = `${event.clientY - magnifier.offsetHeight / 2}px`;
+
+            // Calculate the distance from the center for x and y
+            const xDistanceFromCenter = Math.abs(x - width / 2);
+            const yDistanceFromCenter = Math.abs(y - height / 2);
+
+            // Calculate the scaling factor (you can adjust the factor as needed)
+            const xScalingFactor = xDistanceFromCenter / (width / 2);
+            const yScalingFactor = yDistanceFromCenter / (height / 2);
     
+            // if on the right side of the image, move the background position to the left
+            if (x > width / 2) {
+                bgPosX = bgPosX + half * xScalingFactor;
+            } else if (x < width / 2) {
+                bgPosX = bgPosX - half * xScalingFactor;
+            }
+            
+            // Scale the y-offset instead of having a sharp transition
+            if (y > height / 2) {
+                bgPosY = bgPosY + yhalf * yScalingFactor;
+            } else if (y < height / 2) {
+                bgPosY = bgPosY - yhalf * yScalingFactor;
+            }
+
+
             magnifier.style.backgroundPosition = `${bgPosX}% ${bgPosY}%`;
+
+
         }
     };
 
