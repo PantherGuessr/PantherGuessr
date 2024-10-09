@@ -1,5 +1,3 @@
-"use client";
-
 import { Footer } from "@/components/footer";
 
 const TermsAndConditionsPage = () => {

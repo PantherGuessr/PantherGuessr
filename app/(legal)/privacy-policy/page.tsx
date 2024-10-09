@@ -1,5 +1,3 @@
-"use client";
-
 import { Footer } from "@/components/footer";
 import { BackgroundGradient } from "@/components/ui/backgroundgradient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
