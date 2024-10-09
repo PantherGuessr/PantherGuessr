@@ -1,9 +1,7 @@
 .gamemode-card {
-    color: white;
     margin: 0 auto;
     padding: 2em;
     width: 300px;
-    background: #1c1f2b;
     text-align: center;
     border-radius: 10px;
     position: relative;
@@ -25,7 +23,7 @@
     position: absolute;
     height: calc(100% + 6px);
     width: calc(100% + 6px);
-    background-image: conic-gradient(from var(--angle), #ff4545, #00ff99, #006aff, #ff0095, #ff4545);
+    background-image: conic-gradient(from var(--angle), #ff2525, #00ff99, #006aff, #ff0095, #ff2525);
     top: 50%;
     left: 50%;
     translate: -50% -50%;
