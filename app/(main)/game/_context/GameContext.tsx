@@ -9,6 +9,8 @@ interface GameContextType {
     score: number;
     currentLevelId: Id<"levels"> | null;
     currentImageSrcUrl: string;
+    markerHasBeenPlaced: boolean;
+    setMarkerHasBeenPlaced: (marker: boolean) => void;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -24,6 +26,7 @@ export const GameProvider = ({
     const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
     const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
     const [cacheBuster, setCacheBuster] = useState(Math.random());
+    const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
 
     const ids = useQuery(api.game.getRandomLevels, { cacheBuster });
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
@@ -38,7 +41,7 @@ export const GameProvider = ({
 
     useEffect(() => {
         if(currentLevelId) {
-            setCurrentSrcUrl(imageSrc ?? "");
+            setCurrentSrcUrl(imageSrc ?? "/Invalid-Image.jpg");
         }
     }, [currentLevelId, imageSrc]);
 
@@ -51,7 +54,7 @@ export const GameProvider = ({
     }
 
     return (
-        <GameContext.Provider value={{ levels, currentRound, score, currentLevelId, currentImageSrcUrl }}>
+        <GameContext.Provider value={{ levels, currentRound, score, currentLevelId, currentImageSrcUrl, markerHasBeenPlaced, setMarkerHasBeenPlaced }}>
             {children}
         </GameContext.Provider>
     );

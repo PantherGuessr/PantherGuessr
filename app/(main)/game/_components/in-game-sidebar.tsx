@@ -48,7 +48,7 @@ const InGameSidebar = () => {
     }
 
     // Retrieve Game Context
-    const { levels, currentRound, score, currentImageSrcUrl } = useGame();
+    const { levels, currentRound, score, currentImageSrcUrl, markerHasBeenPlaced } = useGame();
 
     return (
         <>
@@ -86,7 +86,7 @@ const InGameSidebar = () => {
                     {/* <Button disabled={true} className="w-full">
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
                     </Button> */}
-                    <Button disabled={true} className="w-full">
+                    <Button disabled={!markerHasBeenPlaced} className="w-full">
                         SUBMIT
                     </Button>
                 </div>
