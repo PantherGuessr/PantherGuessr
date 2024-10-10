@@ -2,7 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
+
 
 const Levels = () => {
 
@@ -32,7 +34,7 @@ const Levels = () => {
                     <TableRow>
                         <TableCell>Title</TableCell>
                         <TableCell>ID</TableCell>
-                        <TableCell>ImageID</TableCell>
+                        <TableCell>Image</TableCell>
                         <TableCell>Latitude</TableCell>
                         <TableCell>Longitude</TableCell>
                     </TableRow>
@@ -43,9 +45,27 @@ const Levels = () => {
                             <TableCell>{row.title}</TableCell>
                             <TableCell>{row._id}</TableCell>
                             <TableCell className="flex flex-col justify-items-center align-middle">
-                                <Button onClick={() => alert("pop up an image later")}>
-                                    {row.imageId}
-                                </Button>
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button>
+                                            Image
+                                        </Button>
+                                    </DialogTrigger>
+
+                                    <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>
+                                                {row.title}
+                                            </DialogTitle>
+                                            <DialogDescription>
+                                                Image ID: {row.imageId}
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="flex justify-center">
+                                            <Image className="w-full" width="300" height="150" src="/Invalid-Image.jpg" alt={row.title} id={"image-" + row.imageId} />
+                                        </div>
+                                    </DialogContent>
+                                </Dialog>
                             </TableCell>
                             <TableCell>{row.latitude}</TableCell>
                             <TableCell>{row.longitude}</TableCell>
