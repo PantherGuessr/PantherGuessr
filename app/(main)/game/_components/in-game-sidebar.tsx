@@ -70,10 +70,7 @@ const InGameSidebar = () => {
                 bgPosY = bgPosY - yhalf * yScalingFactor;
             }
 
-
             magnifier.style.backgroundPosition = `${bgPosX}% ${bgPosY}%`;
-
-
         }
     };
 
