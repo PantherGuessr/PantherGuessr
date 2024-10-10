@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import L from 'leaflet';
 
-import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
+import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 
 const InteractableMap = () => {
     const [markerPosition, setMarkerPosition] = useState<L.LatLng | null>(null);
@@ -23,7 +23,10 @@ const InteractableMap = () => {
         });
 
         return markerPosition === null ? null : (
-            <Marker icon={pantherGuessrMarkerIcon} position={markerPosition} />
+            <>
+                <Marker icon={pantherGuessrMarkerIcon} position={markerPosition} />
+                <CircleMarker center={markerPosition} pathOptions={{ color: '#a50034' }} radius={3} />
+            </>
         )
     }
     
