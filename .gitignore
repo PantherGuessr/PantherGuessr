@@ -6,6 +6,9 @@
 .pnp.js
 .yarn/install-state.gz
 
+# daniel's script to run
+drun.sh
+
 # testing
 /coverage
 
