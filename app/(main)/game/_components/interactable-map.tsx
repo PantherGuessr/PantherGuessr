@@ -9,7 +9,7 @@ import { useGame } from "../_context/GameContext";
 const InteractableMap = () => {
     const [markerPosition, setMarkerPosition] = useState<L.LatLng | null>(null);
 
-    const { setMarkerHasBeenPlaced } = useGame();
+    const { setMarkerHasBeenPlaced, isSubmittingGuess } = useGame();
 
     const pantherGuessrMarkerIcon = new L.Icon({
         iconUrl: '/PantherGuessrPin.svg',
@@ -20,8 +20,10 @@ const InteractableMap = () => {
     function LocationMarker() {
         useMapEvents({
             click(e) {
-                setMarkerPosition(e.latlng);
-                setMarkerHasBeenPlaced(true);
+                if(!isSubmittingGuess) {
+                    setMarkerPosition(e.latlng);
+                    setMarkerHasBeenPlaced(true);
+                }
             }
         });
 

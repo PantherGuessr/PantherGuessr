@@ -48,7 +48,7 @@ const InGameSidebar = () => {
     }
 
     // Retrieve Game Context
-    const { levels, currentRound, score, currentImageSrcUrl, markerHasBeenPlaced } = useGame();
+    const { levels, currentRound, score, currentImageSrcUrl, markerHasBeenPlaced, isSubmittingGuess, setIsSubmittingGuess } = useGame();
 
     return (
         <>
@@ -83,12 +83,15 @@ const InGameSidebar = () => {
                     className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0"
                 />
                 <div className="mt-auto p-4 w-full">
-                    {/* <Button disabled={true} className="w-full">
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
-                    </Button> */}
-                    <Button disabled={!markerHasBeenPlaced} className="w-full">
-                        SUBMIT
-                    </Button>
+                    {isSubmittingGuess ? (
+                        <Button disabled={true} className="w-full">
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
+                        </Button>
+                    ) : (
+                        <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={() => setIsSubmittingGuess(true)}>
+                            SUBMIT
+                        </Button>
+                    )}
                 </div>
             </aside>
         </>
