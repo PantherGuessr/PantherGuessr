@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import Link from "next/link"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import { Menu } from "lucide-react"
 
 export const Footer = () => {
     return (
@@ -30,7 +31,7 @@ export const Footer = () => {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm">
-                            Additional
+                            <Menu />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="m-2">
