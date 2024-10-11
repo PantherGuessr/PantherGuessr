@@ -31,8 +31,8 @@ const Analytics = () => {
 
     return (
         <>
-            <div className="flex flex-row text-start">
-                <div className="basis-1/3">
+            <div className="flex text-start flex-wrap justify-items-center">
+                <div className="md:basis-1/3 w-full my-4 flex-grow">
                     <Card className="p-2 m-2 h-full">
                         <CardHeader>
                             <h2 className="text-2xl">User Data</h2>
@@ -57,7 +57,7 @@ const Analytics = () => {
                         </CardContent>
                     </Card>
                 </div>
-                <div className="basis-1/3">
+                <div className="md:basis-1/3 w-full my-4 flex-grow">
                     <Card className="p-2 m-2 h-full">
                         <CardHeader>
                             Monthly Users
@@ -82,7 +82,7 @@ const Analytics = () => {
                         </CardContent>
                     </Card>
                 </div>
-                <div className="basis-1/3">
+                <div className="md:basis-1/3 w-full my-4 flex-grow">
                     <Card className="p-2 m-2 h-full">
                         <CardHeader>
                             Monthly Users

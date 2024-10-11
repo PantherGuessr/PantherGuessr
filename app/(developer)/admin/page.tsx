@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Analytics from "./_components/analytics";
 import Levels from "./_components/levels";
+import SiteSettings from "./_components/sitesettings";
 
 const AdminPage = () => {
     return (
@@ -20,7 +21,7 @@ const AdminPage = () => {
                     </TabsList>
                     <TabsContent value="analytics">
                         <Card className="mt-8 mx-10 p-2">
-                            <CardHeader className="text-4xl text-start">
+                            <CardHeader className="text-4xl ml-2 text-start">
                                 Analytics
                             </CardHeader>
                             <CardContent>
@@ -30,11 +31,21 @@ const AdminPage = () => {
                     </TabsContent>
                     <TabsContent value="levels">
                         <Card className="mt-8 mx-10 p-2">
-                            <CardHeader className="text-4xl text-start">
+                            <CardHeader className="text-4xl ml-2 text-start">
                                 Levels
                             </CardHeader>
                             <CardContent>
                                 <Levels />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="settings">
+                        <Card className="mt-8 mx-10 p-2">
+                            <CardHeader className="text-4xl ml-2 text-start">
+                                Site Settings
+                            </CardHeader>
+                            <CardContent>
+                                <SiteSettings />
                             </CardContent>
                         </Card>
                     </TabsContent>
