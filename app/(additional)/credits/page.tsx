@@ -9,7 +9,7 @@ const CreditsPage = () => {
     return (
         <div className="min-h-full flex flex-col">
             <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-                <h1 className="text-4xl md:text-6xl justify-self-center">Credits:</h1>
+                <h1 className="text-4xl md:text-6xl justify-self-center">Credits</h1>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mx-auto">
                     <Card className="hover:scale-105 hover:bg-[rgba(35,22,22,0.4)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.2)]">
                         <CardHeader>
