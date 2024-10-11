@@ -66,7 +66,7 @@ const Levels = () => {
                                     }
                                     <DialogTrigger asChild>
                                         <Button onClick={() => setClickedLevelId(row._id)}>
-                                            Image
+                                            View
                                         </Button>
                                     </DialogTrigger>
 
