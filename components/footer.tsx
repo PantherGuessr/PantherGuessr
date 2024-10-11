@@ -7,6 +7,7 @@ export const Footer = () => {
     return (
         <div className="flex items-center w-full p-6 bg-transparent z-5">
             <div className="md:ml-auto w-full justify-between md:justify-end flex items-center gap-x-2 text-muted-foreground">
+                {/* TODO: ADD a copyright message such as: © 2024 - PantherGuessr */}
                 <Link href="/credits">
                     <Button variant="ghost" size="sm">
                         Credits

@@ -14,7 +14,7 @@ const CreditsPage = () => {
                     <Card className="hover:scale-105 hover:bg-[rgba(35,22,22,0.4)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.2)]">
                         <CardHeader>
                             <Image className="rounded-lg mx-auto" src='/profile-pictures/dylan.jpeg' width={100} height={100} alt="Dylan" />
-                            <CardTitle>Dylan Ravel</CardTitle>
+                            <CardTitle className="pt-2">Dylan Ravel</CardTitle>
                             <p>Developer</p>
                             <div className="flex justify-center space-x-2 pt-2">
                                 <Link href='https://www.dylanravel.com'>
@@ -38,7 +38,7 @@ const CreditsPage = () => {
                     <Card className="hover:scale-105 hover:bg-[rgba(35,22,22,0.4)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.2)]">
                         <CardHeader>
                             <Image className="rounded-lg mx-auto" src='/profile-pictures/daniel.jpeg' width={100} height={100} alt="Daniel" />
-                            <CardTitle>Daniel Tsivkovski</CardTitle>
+                            <CardTitle className="pt-2">Daniel Tsivkovski</CardTitle>
                             <p>Developer</p>
                             <div className="flex justify-center space-x-2 pt-2">
                                 <Link href='https://tsiv.dev'>
@@ -62,8 +62,20 @@ const CreditsPage = () => {
                     <Card className="hover:scale-105 hover:bg-[rgba(35,22,22,0.4)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.2)]">
                         <CardHeader>
                             <Image className="rounded-lg mx-auto" src='/profile-pictures/jake.jpeg' width={100} height={100} alt="Jake" />
-                            <CardTitle>Jake Milam</CardTitle>
+                            <CardTitle className="pt-2">Jake Milam</CardTitle>
                             <p>Game Design</p>
+                            <div className="flex justify-center space-x-2 pt-2">
+                                <Link href='https://github.com/ssparkpilot'>
+                                    <Button variant="ghost" className="p-2">
+                                        <GithubIcon />
+                                    </Button>
+                                </Link>
+                                <Link href='https://www.linkedin.com/in/jake-milam-125258328'>
+                                    <Button variant="ghost" className="p-2">
+                                        <LinkedinIcon />
+                                    </Button>
+                                </Link>
+                            </div>
                         </CardHeader>
                     </Card>
                 </div>
