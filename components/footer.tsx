@@ -28,7 +28,7 @@ export const Footer = () => {
             </div>
             <div className="flex md:hidden ml-auto w-full justify-between items-end text-muted-foreground">
                 <DropdownMenu>
-                    <DropdownMenuTrigger>
+                    <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm">
                             Additional
                         </Button>
