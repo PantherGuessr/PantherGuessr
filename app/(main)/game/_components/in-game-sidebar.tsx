@@ -114,6 +114,11 @@ const InGameSidebar = () => {
         document.removeEventListener("mouseup", handleMouseUp);
     }
 
+    const handleSubmittingGuess = () => {
+        setIsSubmittingGuess(true)
+        // TODO: Implement submitting logic here
+    }
+
     // Retrieve Game Context
     const { levels, currentRound, score, currentImageSrcUrl, markerHasBeenPlaced, isSubmittingGuess, setIsSubmittingGuess } = useGame();
 
@@ -164,7 +169,7 @@ const InGameSidebar = () => {
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
                         </Button>
                     ) : (
-                        <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={() => setIsSubmittingGuess(true)}>
+                        <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={handleSubmittingGuess}>
                             SUBMIT
                         </Button>
                     )}

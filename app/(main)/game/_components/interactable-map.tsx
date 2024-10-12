@@ -17,6 +17,12 @@ const InteractableMap = () => {
         iconAnchor: [24, 48],
     });
 
+    const correctLocationPinMarker = new L.Icon({
+        iconUrl: '/CorrectPin.svg',
+        iconSize: [48, 48],
+        iconAnchor: [24, 48],
+    });
+
     function LocationMarker() {
         useMapEvents({
             click(e) {
