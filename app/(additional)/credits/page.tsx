@@ -1,7 +1,7 @@
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Github, GithubIcon, Globe, Linkedin, LinkedinIcon } from "lucide-react";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { GithubIcon, Globe, LinkedinIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
