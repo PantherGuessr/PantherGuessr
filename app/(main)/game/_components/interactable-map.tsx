@@ -3,7 +3,7 @@
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import L, { LatLng } from 'leaflet';
-import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMapEvents } from 'react-leaflet';
+import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import { useGame } from "../_context/GameContext";
 
 const InteractableMap = () => {
@@ -43,6 +43,20 @@ const InteractableMap = () => {
             </>
         )
     }
+
+    function CenterMapOnLine() {
+        const map = useMap();
+
+        useEffect(() => {
+            if(localMarkerPosition && correctLocation) {
+                const midpoint = new LatLng(
+                    (localMarkerPosition.lat + correctLocation.lat) / 2,
+                    (localMarkerPosition.lng + correctLocation.lng) / 2
+                );
+                map.setView(midpoint, map.getZoom());
+            }
+        }, [map]);
+    }
     
     return (
         <div className="flex min-h-full min-w-full grow">
@@ -72,6 +86,7 @@ const InteractableMap = () => {
                         <Marker icon={correctLocationPinMarker} position={correctLocation} />
                         <CircleMarker center={correctLocation} pathOptions={{ color: '#a50034' }} radius={3} />
                         <Polyline positions={[localMarkerPosition, correctLocation]} color="#a50034" />
+                        <CenterMapOnLine />
                     </>
                 )}
             </MapContainer>
