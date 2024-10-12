@@ -9,8 +9,7 @@ export const Footer = () => {
     return (
         <div className="flex items-center w-full p-6 bg-transparent z-5">
             <div className="hidden md:flex md:ml-auto w-full justify-end items-center gap-x-2 text-muted-foreground">
-                {/* TODO: ADD a copyright message such as: © 2024 - PantherGuessr */}
-                <p className="text-sm mr-auto ml-2">© 2024 | PantherGuessr</p>
+                <p className="text-sm mr-auto ml-2">© 2024 • PantherGuessr</p>
                 <Link href="/credits">
                     <Button variant="ghost" size="sm">
                         Credits
@@ -31,11 +30,11 @@ export const Footer = () => {
             <div className="flex md:hidden ml-auto w-full justify-between items-center text-muted-foreground">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm">
+                        <Button variant="outline" size="icon">
                             <Menu />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="m-2">
+                    <DropdownMenuContent align="start">
                         <Link href="/credits">
                         <DropdownMenuItem>
                             Credits
@@ -62,7 +61,7 @@ export const Footer = () => {
                         </DropdownMenuSub>
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <p className="text-sm mx-auto">© 2024 | PantherGuessr</p>
+                <p className="text-sm mx-auto">© 2024 • PantherGuessr</p>
                 <ModeToggle />
             </div>
         </div>
