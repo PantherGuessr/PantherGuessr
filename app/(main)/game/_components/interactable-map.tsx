@@ -2,14 +2,13 @@
 
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
-import L from 'leaflet';
+import L, { LatLng } from 'leaflet';
 import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import { useGame } from "../_context/GameContext";
 
 const InteractableMap = () => {
-    const [markerPosition, setMarkerPosition] = useState<L.LatLng | null>(null);
-
-    const { setMarkerHasBeenPlaced, isSubmittingGuess } = useGame();
+    const { markerHasBeenPlaced, setMarkerHasBeenPlaced, isSubmittingGuess, setMarkerPosition } = useGame()!;
+    const [markerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
 
     const pantherGuessrMarkerIcon = new L.Icon({
         iconUrl: '/PantherGuessrPin.svg',
@@ -27,8 +26,12 @@ const InteractableMap = () => {
         useMapEvents({
             click(e) {
                 if(!isSubmittingGuess) {
-                    setMarkerPosition(e.latlng);
+                    const position = e.latlng;
+                    setLocalMarkerPosition(position);
+                    setMarkerPosition(position);
                     setMarkerHasBeenPlaced(true);
+
+                    console.log(e.latlng);
                 }
             }
         });

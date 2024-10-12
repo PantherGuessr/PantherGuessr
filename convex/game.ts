@@ -67,6 +67,9 @@ export const checkGuess = mutation({
         const distanceInFeet = 0; // add later
         const score = 0; // If within 250 feet, score increases by distance if outside of 250 feet score = 0
 
+        console.log("Correct: " + correctLat + " " + correctLng);
+        console.log("User Guess: " + args.guessLatitude + " " + args.guessLongitude);
+
         return {
             correctLat,
             correctLng,

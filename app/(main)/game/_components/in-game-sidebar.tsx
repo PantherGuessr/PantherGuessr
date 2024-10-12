@@ -17,6 +17,25 @@ const InGameSidebar = () => {
     const navbar = useRef<ElementRef<"div">>(null);
     const [isResetting, setIsResetting] = useState(false);
 
+    // Retrieve Game Context
+    const {
+        levels,
+        currentRound,
+        score,
+        currentImageSrcUrl,
+        markerHasBeenPlaced,
+        isSubmittingGuess,
+        submitGuess,
+        markerPosition,
+    } = useGame()!;
+    
+    const handleSubmittingGuess = () => {
+        if(!markerHasBeenPlaced || !markerPosition) return;
+    
+        const { lat, lng } = markerPosition;
+        submitGuess(lat, lng);
+    };
+    
     const handleMouseEnter = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
         if (isResizingRef.current) return;
 
@@ -114,13 +133,6 @@ const InGameSidebar = () => {
         document.removeEventListener("mouseup", handleMouseUp);
     }
 
-    const handleSubmittingGuess = () => {
-        setIsSubmittingGuess(true)
-        // TODO: Implement submitting logic here
-    }
-
-    // Retrieve Game Context
-    const { levels, currentRound, score, currentImageSrcUrl, markerHasBeenPlaced, isSubmittingGuess, setIsSubmittingGuess } = useGame();
 
     return (
         <>
