@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import NavbarMain from "./navbar-main";
 
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
@@ -28,16 +29,16 @@ export const Navbar = () => {
             "z-50 bg-transparent fixed top-0 flex items-center p-6 w-full",
             scrolled && "backdrop-blur-sm border-b-2 border-[#450b0b4c] shadow-md"
         )}>
-            <Logo />
-            <div className="ml-auto justify-end flex items-center gap-x-2">
+            <div className="justify-between flex items-center gap-x-2 w-full">
+                <div className="mr-2"><Logo /></div>
                 {isLoading && (
-                    <>
-                    <Skeleton className="h-6 w-[100px]" />
+                    <div className="flex justify-end justify-items-end items-center">
+                    <Skeleton className="h-6 w-[120px] mr-1" />
                     <Skeleton className="h-8 w-8 rounded-full" />
-                    </>
+                    </div>
                 )}
                 {!isLoading && !isAuthenticated && (
-                    <>
+                    <div className="ml-auto">
                         <SignInButton mode="modal">
                             <Button variant="ghost" size="sm">
                                 Login
@@ -45,14 +46,17 @@ export const Navbar = () => {
                         </SignInButton>
                         <SignUpButton mode="modal">
                             <Button variant="default" size="sm">
-                                Register
+                                Sign Up
                             </Button>
                         </SignUpButton>
-                    </>
+                    </div>
                 )}
                 {isAuthenticated && !isLoading && (
-                    <>                        
-                        <div className="flex items-center gap-x-1">
+                    <>  
+                        <div className="items-center justify-items-end gap-x-1 mx-auto hidden sm:flex">
+                            <NavbarMain />
+                        </div>                      
+                        <div className="flex justify-end justify-items-end items-center gap-x-1 ml-2">
 
                             { /* email ends in @chapman.edu */
                             user?.emailAddresses?.some((email) => email.emailAddress.endsWith("@chapman.edu")) && (
@@ -86,18 +90,18 @@ export const Navbar = () => {
 
                             { /* Toast to copy username to clipboard */}
                             <Toaster />
-                            <p title="Copy" className="hidden md:flex cursor-pointer" onClick={() => {
+                            <p title="Copy" className="hidden sm:flex cursor-pointer" onClick={() => {
                                 navigator.clipboard.writeText(user?.username || "")
                                 toast({
                                     description: "Username copied to clipboard!",
                                 })
 
                             }}>{user?.username}</p>
-                        </div>
 
-                        <UserButton
-                            afterSignOutUrl="/"
-                        />
+                            <UserButton
+                                afterSignOutUrl="/"
+                            />
+                        </div>
                     </>
                 )}
             </div>
