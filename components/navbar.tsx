@@ -62,7 +62,7 @@ export const Navbar = () => {
                                             <Image src="/badges/verified-chapman-email-badge.svg" alt="Verified Chapman Email Badge" width="25" height="25" />
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                        <p className="text-sm p-2"> Welcome, fellow Chapman student! 😎 </p>
+                                            <p className="text-sm p-2"> Welcome, fellow Chapman student! 😎 </p>
                                         </TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
@@ -70,7 +70,18 @@ export const Navbar = () => {
 
                             { /* if user is an admin then display shield */
                             user?.publicMetadata?.role === "admin" && (
-                                <Link href="/admin"><Shield fill="#FFD700" /></Link> 
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <Link href="/admin">
+                                                <Shield fill="#A50034" />
+                                            </Link> 
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p className="text-sm p-2"> Click to visit the Admin page. </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             )}
 
                             { /* Toast to copy username to clipboard */}
