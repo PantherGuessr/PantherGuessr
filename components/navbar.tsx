@@ -14,6 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import Image from "next/image";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
@@ -49,10 +51,29 @@ export const Navbar = () => {
                     </>
                 )}
                 {isAuthenticated && !isLoading && (
-                    <>                        {user?.publicMetadata?.role === "admin" ? (
-                        <div className="flex items-center justify- gap-x-1">
+                    <>                        
+                        <div className="flex items-center gap-x-1">
+
+                            { /* email ends in @chapman.edu */
+                            user?.emailAddresses?.some((email) => email.emailAddress.endsWith("@chapman.edu")) && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Image className="cursor-pointer" src="/PantherGuessrPin.png" alt="PantherGuessr Pin" width="20" height="35" />
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <p className="text-sm p-2"> Welcome, fellow Chapman student! 😎 </p>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
+
+                            { /* if user is an admin then display shield */
+                            user?.publicMetadata?.role === "admin" && (
+                                <Link href="/admin"><Shield fill="#FFD700" /></Link> 
+                            )}
+
+                            { /* Toast to copy username to clipboard */}
                             <Toaster />
-                            <Link href="/admin"><Shield fill="#FFD700" /></Link> <p title="Copy" className="hidden md:flex cursor-pointer" onClick={() => {
+                            <p title="Copy" className="hidden md:flex cursor-pointer" onClick={() => {
                                 navigator.clipboard.writeText(user?.username || "")
                                 toast({
                                     description: "Username copied to clipboard!",
@@ -60,9 +81,6 @@ export const Navbar = () => {
 
                             }}>{user?.username}</p>
                         </div>
-                    ) : (
-                        <p className="hidden md:flex">{user?.username}</p>
-                    )}
 
                         <UserButton
                             afterSignOutUrl="/"
