@@ -15,7 +15,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import Image from "next/image";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
@@ -56,14 +56,16 @@ export const Navbar = () => {
 
                             { /* email ends in @chapman.edu */
                             user?.emailAddresses?.some((email) => email.emailAddress.endsWith("@chapman.edu")) && (
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Image className="cursor-pointer" src="/PantherGuessrPin.png" alt="PantherGuessr Pin" width="20" height="35" />
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <Image src="/badges/verified-chapman-email-badge.svg" alt="Verified Chapman Email Badge" width="25" height="25" />
+                                        </TooltipTrigger>
+                                        <TooltipContent>
                                         <p className="text-sm p-2"> Welcome, fellow Chapman student! 😎 </p>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
                             )}
 
                             { /* if user is an admin then display shield */
