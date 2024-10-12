@@ -17,18 +17,18 @@ const CreditsPage = () => {
                             <CardTitle className="pt-2">Dylan Ravel</CardTitle>
                             <p>Developer</p>
                             <div className="flex justify-center space-x-2 pt-2">
-                                <Link href='https://www.dylanravel.com'>
-                                    <Button variant="ghost" className="p-2">
+                                <Link href="https://www.dylanravel.com" target="blank">
+                                    <Button variant="ghost" size="icon">
                                         <Globe />
                                     </Button>
                                 </Link>
-                                <Link href='https://github.com/DylanDevelops'>
-                                    <Button variant="ghost" className="p-2">
+                                <Link href="https://github.com/DylanDevelops" target="blank">
+                                    <Button variant="ghost" size="icon">
                                         <GithubIcon />
                                     </Button>
                                 </Link>
-                                <Link href='https://www.linkedin.com/in/dylanravel'>
-                                    <Button variant="ghost" className="p-2">
+                                <Link href="https://www.linkedin.com/in/dylanravel" target="blank">
+                                    <Button variant="ghost" size="icon">
                                         <LinkedinIcon />
                                     </Button>
                                 </Link>
@@ -41,18 +41,18 @@ const CreditsPage = () => {
                             <CardTitle className="pt-2">Daniel Tsivkovski</CardTitle>
                             <p>Developer</p>
                             <div className="flex justify-center space-x-2 pt-2">
-                                <Link href='https://tsiv.dev'>
-                                    <Button variant="ghost" className="p-2">
+                                <Link href="https://tsiv.dev" target="blank">
+                                    <Button variant="ghost" size="icon">
                                         <Globe />
                                     </Button>
                                 </Link>
-                                <Link href='https://github.com/dtsivkovski'>
-                                    <Button variant="ghost" className="p-2">
+                                <Link href="https://github.com/dtsivkovski" target="blank">
+                                    <Button variant="ghost" size="icon">
                                         <GithubIcon />
                                     </Button>
                                 </Link>
-                                <Link href='https://www.linkedin.com/in/danieltsivkovski'>
-                                    <Button variant="ghost" className="p-2">
+                                <Link href="https://www.linkedin.com/in/danieltsivkovski" target="blank">
+                                    <Button variant="ghost" size="icon">
                                         <LinkedinIcon />
                                     </Button>
                                 </Link>
@@ -65,13 +65,13 @@ const CreditsPage = () => {
                             <CardTitle className="pt-2">Jake Milam</CardTitle>
                             <p>Game Design</p>
                             <div className="flex justify-center space-x-2 pt-2">
-                                <Link href='https://github.com/ssparkpilot'>
-                                    <Button variant="ghost" className="p-2">
+                                <Link href="https://github.com/ssparkpilot" target="blank">
+                                    <Button variant="ghost" size="icon">
                                         <GithubIcon />
                                     </Button>
                                 </Link>
-                                <Link href='https://www.linkedin.com/in/jake-milam-125258328'>
-                                    <Button variant="ghost" className="p-2">
+                                <Link href="https://www.linkedin.com/in/jake-milam-125258328" target="blank">
+                                    <Button variant="ghost" size="icon">
                                         <LinkedinIcon />
                                     </Button>
                                 </Link>
