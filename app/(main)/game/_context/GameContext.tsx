@@ -17,6 +17,8 @@ interface GameContextType {
     submitGuess: (lat: number, lng: number) => Promise<void>;
     markerPosition: LatLng | null;
     setMarkerPosition: (position: LatLng | null) => void;
+    correctLocation: LatLng | null;
+    setCorrectLocation: (position: LatLng | null) => void;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -35,6 +37,7 @@ export const GameProvider = ({
     const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
     const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
     const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
+    const [correctLocation, setCorrectLocation] = useState<LatLng | null>(null);
 
     const ids = useQuery(api.game.getRandomLevels, { cacheBuster });
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
@@ -63,10 +66,12 @@ export const GameProvider = ({
             const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
 
             setScore(prevScore => prevScore + result.score);
+            setCorrectLocation(new LatLng(result.correctLat, result.correctLng));
         } catch (error) {
             console.error("Error submitting guess:", error);
         } finally {
-            setIsSubmittingGuess(false);
+            // TODO: show next button. Transition into next round
+            // setIsSubmittingGuess(false);
         }
     }
 
@@ -91,6 +96,8 @@ export const GameProvider = ({
             submitGuess,
             markerPosition,
             setMarkerPosition,
+            correctLocation,
+            setCorrectLocation,
         }}>
             {children}
         </GameContext.Provider>

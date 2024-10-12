@@ -3,12 +3,12 @@
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import L, { LatLng } from 'leaflet';
-import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
+import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMapEvents } from 'react-leaflet';
 import { useGame } from "../_context/GameContext";
 
 const InteractableMap = () => {
-    const { markerHasBeenPlaced, setMarkerHasBeenPlaced, isSubmittingGuess, setMarkerPosition } = useGame()!;
-    const [markerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
+    const { markerHasBeenPlaced, setMarkerHasBeenPlaced, isSubmittingGuess, setMarkerPosition, correctLocation, markerPosition } = useGame()!;
+    const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
 
     const pantherGuessrMarkerIcon = new L.Icon({
         iconUrl: '/PantherGuessrPin.svg',
@@ -36,10 +36,10 @@ const InteractableMap = () => {
             }
         });
 
-        return markerPosition === null ? null : (
+        return localMarkerPosition === null ? null : (
             <>
-                <Marker icon={pantherGuessrMarkerIcon} position={markerPosition} />
-                <CircleMarker center={markerPosition} pathOptions={{ color: '#a50034' }} radius={3} />
+                <Marker icon={pantherGuessrMarkerIcon} position={localMarkerPosition} />
+                <CircleMarker center={localMarkerPosition} pathOptions={{ color: '#a50034' }} radius={3} />
             </>
         )
     }
@@ -67,6 +67,13 @@ const InteractableMap = () => {
                      */
                 />
                 <LocationMarker />
+                {correctLocation && localMarkerPosition && (
+                    <>
+                        <Marker icon={correctLocationPinMarker} position={correctLocation} />
+                        <CircleMarker center={correctLocation} pathOptions={{ color: '#a50034' }} radius={3} />
+                        <Polyline positions={[localMarkerPosition, correctLocation]} color="#a50034" />
+                    </>
+                )}
             </MapContainer>
         </div>
     );
