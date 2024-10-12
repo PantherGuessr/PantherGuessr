@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 // Gets the number of random Levels from the database
 export const getRandomLevels = query({
@@ -31,6 +31,7 @@ export const getRandomLevels = query({
     }
 });
 
+// Gets the image src url based on an id
 export const getImageSrc = query({
     args: { id: v.id("levels") },
     handler: async (ctx, args) => {
@@ -47,5 +48,30 @@ export const getImageSrc = query({
         const imageUrl = await ctx.storage.getUrl(level.imageId);
 
         return imageUrl;
+    }
+});
+
+export const checkGuess = mutation({
+    args: { id: v.id("levels"), guessLatitude: v.float64(), guessLongitude: v.float64() },
+    handler: async(ctx, args) => {
+        const level = await ctx.db.get(args.id);
+
+        if(!level) {
+            throw new Error("No levels exist");
+        }
+
+        const correctLat = level.latitude;
+        const correctLng = level.longitude;
+
+        // TODO: @Daniel you gotta do some math here cause i have no idea how to get the distance between two points 😭
+        const distanceInFeet = 0; // add later
+        const score = 0; // If within 250 feet, score increases by distance if outside of 250 feet score = 0
+
+        return {
+            correctLat,
+            correctLng,
+            distanceInFeet,
+            score,
+        }
     }
 });
