@@ -71,7 +71,6 @@ export const GameProvider = ({
         } catch (error) {
             console.error("Error submitting guess:", error);
         } finally {
-            // TODO: show next button. Transition into next round
             setIsSubmittingGuess(false);
         }
     }
