@@ -83,7 +83,7 @@ const InteractableMap = () => {
                 <LocationMarker />
                 {correctLocation && localMarkerPosition && (
                     <>
-                        <Marker icon={correctLocationPinMarker} position={correctLocation} />
+                        <Marker icon={correctLocationPinMarker} position={correctLocation} zIndexOffset={1000}/>
                         <CircleMarker center={correctLocation} pathOptions={{ color: '#a50034' }} radius={3} />
                         <Polyline positions={[localMarkerPosition, correctLocation]} color="#a50034" />
                         <CenterMapOnLine />
