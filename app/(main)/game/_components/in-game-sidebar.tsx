@@ -179,7 +179,7 @@ const InGameSidebar = () => {
                 </div>
                 <div className="mt-auto p-4 w-full">
                     {scoreAwarded!== null && distanceFromTarget !== null && (
-                        <div className="text-lg flex flex-col items-center text-center mx-4 p-2">
+                        <div className="text-lg flex flex-col items-center text-center mx-4 p-2 mb-4 outline rounded">
                             <p>You scored {scoreAwarded} points from being {distanceFromTarget} feet away from the target.</p>
                         </div>
                     )}
