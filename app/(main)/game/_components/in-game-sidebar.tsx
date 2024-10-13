@@ -31,6 +31,7 @@ const InGameSidebar = () => {
         setCorrectLocation,
         setMarkerHasBeenPlaced,
         setMarkerPosition,
+        nextRound,
     } = useGame()!;
     
     const handleSubmittingGuess = () => {
@@ -41,9 +42,7 @@ const InGameSidebar = () => {
     };
 
     const handleNextRound = () => {
-        setCorrectLocation(null);
-        setMarkerHasBeenPlaced(false);
-        setMarkerPosition(null);
+        nextRound();
     };
     
     const handleMouseEnter = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {

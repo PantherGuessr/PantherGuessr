@@ -19,6 +19,7 @@ interface GameContextType {
     setMarkerPosition: (position: LatLng | null) => void;
     correctLocation: LatLng | null;
     setCorrectLocation: (position: LatLng | null) => void;
+    nextRound: () => void;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -42,7 +43,7 @@ export const GameProvider = ({
     const ids = useQuery(api.game.getRandomLevels, { cacheBuster });
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
     const checkGuess = useMutation(api.game.checkGuess);
-    
+
     useEffect(() => {
         if (ids) {
             setLevels(ids);
@@ -75,6 +76,25 @@ export const GameProvider = ({
         }
     }
 
+    const nextRound = () => {
+        const nextRoundNumber = currentRound + 1;
+
+        if(nextRoundNumber > levels.length) {
+            // TODO: implement game win logic
+        } else {
+            setCurrentRound(nextRoundNumber);
+
+            const nextLevel = levels[nextRoundNumber - 1];
+            if(nextLevel) {
+                setCurrentLevel(nextLevel);
+            }
+
+            setMarkerHasBeenPlaced(false);
+            setMarkerPosition(null);
+            setCorrectLocation(null);
+        }
+    };
+
     if (ids === undefined || (currentLevelId && imageSrc === undefined)) {
         // The query is still loading
         /**
@@ -98,6 +118,7 @@ export const GameProvider = ({
             setMarkerPosition,
             correctLocation,
             setCorrectLocation,
+            nextRound,
         }}>
             {children}
         </GameContext.Provider>
