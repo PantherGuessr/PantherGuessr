@@ -20,6 +20,8 @@ interface GameContextType {
     correctLocation: LatLng | null;
     setCorrectLocation: (position: LatLng | null) => void;
     nextRound: () => void;
+    scoreAwarded: number | null;
+    distanceFromTarget: number | null;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -39,6 +41,8 @@ export const GameProvider = ({
     const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
     const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
     const [correctLocation, setCorrectLocation] = useState<LatLng | null>(null);
+    const [scoreAwarded, setScoreAwarded] = useState<number | null>(null);
+    const [distanceFromTarget, setDistanceFromTarget] = useState<number | null>(null);
 
     const ids = useQuery(api.game.getRandomLevels, { cacheBuster });
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
@@ -68,6 +72,9 @@ export const GameProvider = ({
 
             setScore(prevScore => prevScore + result.score);
             setCorrectLocation(new LatLng(result.correctLat, result.correctLng));
+
+            setDistanceFromTarget(result.distanceAway);
+            setScoreAwarded(result.score);
         } catch (error) {
             console.error("Error submitting guess:", error);
         } finally {
@@ -91,6 +98,8 @@ export const GameProvider = ({
             setMarkerHasBeenPlaced(false);
             setMarkerPosition(null);
             setCorrectLocation(null);
+            setDistanceFromTarget(null);
+            setScoreAwarded(null);
         }
     };
 
@@ -119,6 +128,8 @@ export const GameProvider = ({
             correctLocation,
             setCorrectLocation,
             nextRound,
+            scoreAwarded,
+            distanceFromTarget,
         }}>
             {children}
         </GameContext.Provider>

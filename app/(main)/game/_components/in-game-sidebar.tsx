@@ -28,10 +28,9 @@ const InGameSidebar = () => {
         submitGuess,
         markerPosition,
         correctLocation,
-        setCorrectLocation,
-        setMarkerHasBeenPlaced,
-        setMarkerPosition,
         nextRound,
+        scoreAwarded,
+        distanceFromTarget,
     } = useGame()!;
     
     const handleSubmittingGuess = () => {
@@ -142,7 +141,6 @@ const InGameSidebar = () => {
         document.removeEventListener("mouseup", handleMouseUp);
     }
 
-
     return (
         <>
             <aside ref={sidebarRef} className={cn(
@@ -179,12 +177,12 @@ const InGameSidebar = () => {
                         </div>
                     </div>
                 </div>
-                <div
-                    onMouseDown={handleMouseDown}
-                    onClick={() => {}}
-                    className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0"
-                />
                 <div className="mt-auto p-4 w-full">
+                    {scoreAwarded!== null && distanceFromTarget !== null && (
+                        <div className="text-lg flex flex-col items-center text-center mx-4 p-2">
+                            <p>You scored {scoreAwarded} points from being {distanceFromTarget} feet away from the target.</p>
+                        </div>
+                    )}
                     {isSubmittingGuess ? (
                         <Button disabled={true} className="w-full">
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
@@ -199,6 +197,11 @@ const InGameSidebar = () => {
                         </Button>
                     )}
                 </div>
+                <div
+                    onMouseDown={handleMouseDown}
+                    onClick={() => {}}
+                    className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0"
+                />
             </aside>
             <div ref={magnifierRef} className="magnifier"></div>
         </>

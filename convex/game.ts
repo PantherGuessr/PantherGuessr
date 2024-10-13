@@ -64,7 +64,7 @@ export const checkGuess = mutation({
         const correctLng = level.longitude;
 
         // TODO: @Daniel you gotta do some math here cause i have no idea how to get the distance between two points 😭
-        const distanceInFeet = 0; // add later
+        const distanceAway = 0; // add later
         const score = 0; // If within 250 feet, score increases by distance if outside of 250 feet score = 0
 
         console.log("Correct: " + correctLat + " " + correctLng);
@@ -73,7 +73,7 @@ export const checkGuess = mutation({
         return {
             correctLat,
             correctLng,
-            distanceInFeet,
+            distanceAway,
             score,
         }
     }
