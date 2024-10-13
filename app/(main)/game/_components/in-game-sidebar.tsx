@@ -17,6 +17,34 @@ const InGameSidebar = () => {
     const navbar = useRef<ElementRef<"div">>(null);
     const [isResetting, setIsResetting] = useState(false);
 
+    // Retrieve Game Context
+    const {
+        levels,
+        currentRound,
+        score,
+        currentImageSrcUrl,
+        markerHasBeenPlaced,
+        isSubmittingGuess,
+        submitGuess,
+        markerPosition,
+        correctLocation,
+        setCorrectLocation,
+        setMarkerHasBeenPlaced,
+        setMarkerPosition,
+        nextRound,
+    } = useGame()!;
+    
+    const handleSubmittingGuess = () => {
+        if(!markerHasBeenPlaced || !markerPosition) return;
+    
+        const { lat, lng } = markerPosition;
+        submitGuess(lat, lng);
+    };
+
+    const handleNextRound = () => {
+        nextRound();
+    };
+    
     const handleMouseEnter = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
         if (isResizingRef.current) return;
 
@@ -114,8 +142,6 @@ const InGameSidebar = () => {
         document.removeEventListener("mouseup", handleMouseUp);
     }
 
-    // Retrieve Game Context
-    const { levels, currentRound, score, currentImageSrcUrl, markerHasBeenPlaced, isSubmittingGuess, setIsSubmittingGuess } = useGame();
 
     return (
         <>
@@ -163,8 +189,12 @@ const InGameSidebar = () => {
                         <Button disabled={true} className="w-full">
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
                         </Button>
+                    ) : correctLocation ? (
+                        <Button disabled={false} onClick={handleNextRound} className="w-full">
+                            NEXT ROUND
+                        </Button>
                     ) : (
-                        <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={() => setIsSubmittingGuess(true)}>
+                        <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={handleSubmittingGuess}>
                             SUBMIT
                         </Button>
                     )}

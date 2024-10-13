@@ -2,14 +2,20 @@
 
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
-import L from 'leaflet';
-import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
+import L, { LatLng } from 'leaflet';
+import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import { useGame } from "../_context/GameContext";
 
 const InteractableMap = () => {
-    const [markerPosition, setMarkerPosition] = useState<L.LatLng | null>(null);
-
-    const { setMarkerHasBeenPlaced, isSubmittingGuess } = useGame();
+    const {
+        markerHasBeenPlaced,
+        setMarkerHasBeenPlaced,
+        isSubmittingGuess,
+        setMarkerPosition,
+        correctLocation,
+        markerPosition 
+    } = useGame()!;
+    const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
 
     const pantherGuessrMarkerIcon = new L.Icon({
         iconUrl: '/PantherGuessrPin.svg',
@@ -17,22 +23,50 @@ const InteractableMap = () => {
         iconAnchor: [24, 48],
     });
 
+    const correctLocationPinMarker = new L.Icon({
+        iconUrl: '/CorrectPin.svg',
+        iconSize: [48, 48],
+        iconAnchor: [24, 48],
+    });
+
     function LocationMarker() {
         useMapEvents({
             click(e) {
-                if(!isSubmittingGuess) {
-                    setMarkerPosition(e.latlng);
+                if(!isSubmittingGuess && !correctLocation) {
+                    const position = e.latlng;
+                    setLocalMarkerPosition(position);
+                    setMarkerPosition(position);
                     setMarkerHasBeenPlaced(true);
                 }
             }
         });
 
-        return markerPosition === null ? null : (
+        useEffect(() => {
+            if(!markerHasBeenPlaced) {
+                setLocalMarkerPosition(null);
+            }
+        });
+
+        return localMarkerPosition === null ? null : (
             <>
-                <Marker icon={pantherGuessrMarkerIcon} position={markerPosition} />
-                <CircleMarker center={markerPosition} pathOptions={{ color: '#a50034' }} radius={3} />
+                <Marker icon={pantherGuessrMarkerIcon} position={localMarkerPosition} />
+                <CircleMarker center={localMarkerPosition} pathOptions={{ color: '#a50034' }} radius={3} />
             </>
         )
+    }
+
+    function CenterMapOnLine() {
+        const map = useMap();
+
+        useEffect(() => {
+            if(localMarkerPosition && correctLocation) {
+                const midpoint = new LatLng(
+                    (localMarkerPosition.lat + correctLocation.lat) / 2,
+                    (localMarkerPosition.lng + correctLocation.lng) / 2
+                );
+                map.setView(midpoint, map.getZoom());
+            }
+        }, [map]);
     }
     
     return (
@@ -58,6 +92,14 @@ const InteractableMap = () => {
                      */
                 />
                 <LocationMarker />
+                {correctLocation && localMarkerPosition && (
+                    <>
+                        <Marker icon={correctLocationPinMarker} position={correctLocation} zIndexOffset={1000}/>
+                        <CircleMarker center={correctLocation} pathOptions={{ color: '#a50034' }} radius={3} />
+                        <Polyline positions={[localMarkerPosition, correctLocation]} color="#a50034" />
+                        <CenterMapOnLine />
+                    </>
+                )}
             </MapContainer>
         </div>
     );
