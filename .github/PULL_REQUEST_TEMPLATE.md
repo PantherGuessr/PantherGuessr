@@ -4,7 +4,7 @@ Checklist:
 
 - [ ] I have read and followed the [contribution guidelines](www.domain-does-not-exist-yet/contibuting).
 - [ ] I have read and followed the [how to open a pull request guide](www.domain-does-not-exist-yet/creating-a-pull-request).
-- [ ] My pull request targets the `main` branch of freeCodeCamp.
+- [ ] My pull request targets the `main` branch of PantherGuessr.
 - [ ] I have tested these changes locally on my machine.
 
 <!--If your pull request closes a GitHub issue, replace the XXXXX below with the issue number.-->
