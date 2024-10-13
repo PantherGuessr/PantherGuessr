@@ -27,6 +27,10 @@ const InGameSidebar = () => {
         isSubmittingGuess,
         submitGuess,
         markerPosition,
+        correctLocation,
+        setCorrectLocation,
+        setMarkerHasBeenPlaced,
+        setMarkerPosition,
     } = useGame()!;
     
     const handleSubmittingGuess = () => {
@@ -34,6 +38,12 @@ const InGameSidebar = () => {
     
         const { lat, lng } = markerPosition;
         submitGuess(lat, lng);
+    };
+
+    const handleNextRound = () => {
+        setCorrectLocation(null);
+        setMarkerHasBeenPlaced(false);
+        setMarkerPosition(null);
     };
     
     const handleMouseEnter = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
@@ -179,6 +189,10 @@ const InGameSidebar = () => {
                     {isSubmittingGuess ? (
                         <Button disabled={true} className="w-full">
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
+                        </Button>
+                    ) : correctLocation ? (
+                        <Button disabled={false} onClick={handleNextRound} className="w-full">
+                            NEXT ROUND
                         </Button>
                     ) : (
                         <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={handleSubmittingGuess}>

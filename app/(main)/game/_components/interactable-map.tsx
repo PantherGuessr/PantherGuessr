@@ -7,7 +7,14 @@ import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap, useMap
 import { useGame } from "../_context/GameContext";
 
 const InteractableMap = () => {
-    const { markerHasBeenPlaced, setMarkerHasBeenPlaced, isSubmittingGuess, setMarkerPosition, correctLocation, markerPosition } = useGame()!;
+    const {
+        markerHasBeenPlaced,
+        setMarkerHasBeenPlaced,
+        isSubmittingGuess,
+        setMarkerPosition,
+        correctLocation,
+        markerPosition 
+    } = useGame()!;
     const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
 
     const pantherGuessrMarkerIcon = new L.Icon({
@@ -25,14 +32,18 @@ const InteractableMap = () => {
     function LocationMarker() {
         useMapEvents({
             click(e) {
-                if(!isSubmittingGuess) {
+                if(!isSubmittingGuess && !correctLocation) {
                     const position = e.latlng;
                     setLocalMarkerPosition(position);
                     setMarkerPosition(position);
                     setMarkerHasBeenPlaced(true);
-
-                    console.log(e.latlng);
                 }
+            }
+        });
+
+        useEffect(() => {
+            if(!markerHasBeenPlaced) {
+                setLocalMarkerPosition(null);
             }
         });
 
