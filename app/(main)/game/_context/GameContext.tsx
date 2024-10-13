@@ -104,7 +104,8 @@ export const GameProvider = ({
     }
 
     return (
-        <GameContext.Provider value={{ levels,
+        <GameContext.Provider value={{
+            levels,
             currentRound,
             score,
             currentLevelId,
