@@ -175,8 +175,7 @@ const InGameSidebar = () => {
                             <AlertDialogHeader>
                             <AlertDialogTitle>Are you sure you want to leave the ongoing game?</AlertDialogTitle>
                             <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete your account
-                                and remove your data from our servers.
+                                You may return to the game at any time from the main menu.
                             </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
