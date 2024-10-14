@@ -22,6 +22,7 @@ interface GameContextType {
     nextRound: () => void;
     scoreAwarded: number | null;
     distanceFromTarget: number | null;
+    isLoading: boolean;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -43,6 +44,7 @@ export const GameProvider = ({
     const [correctLocation, setCorrectLocation] = useState<LatLng | null>(null);
     const [scoreAwarded, setScoreAwarded] = useState<number | null>(null);
     const [distanceFromTarget, setDistanceFromTarget] = useState<number | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const ids = useQuery(api.game.getRandomLevels, { cacheBuster });
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
@@ -103,12 +105,39 @@ export const GameProvider = ({
         }
     };
 
-    if (ids === undefined || (currentLevelId && imageSrc === undefined)) {
-        // The query is still loading
-        /**
-         * TODO: Add skeleton here @Daniel
-         */
-        return <div>Loading...</div>;
+    useEffect(() => {
+        if (ids === undefined || (currentLevelId && imageSrc === undefined)) {
+            setIsLoading(true);
+        } else {
+            setIsLoading(false);
+        }
+    }, [ids, currentLevelId, imageSrc]);
+
+    if (isLoading) {
+        return (
+            <GameContext.Provider value={{
+                levels,
+                currentRound,
+                score,
+                currentLevelId,
+                currentImageSrcUrl,
+                markerHasBeenPlaced,
+                setMarkerHasBeenPlaced,
+                isSubmittingGuess,
+                setIsSubmittingGuess,
+                submitGuess,
+                markerPosition,
+                setMarkerPosition,
+                correctLocation,
+                setCorrectLocation,
+                nextRound,
+                scoreAwarded,
+                distanceFromTarget,
+                isLoading
+            }}>
+                {children}
+            </GameContext.Provider>
+        );
     }
 
     return (
@@ -130,6 +159,7 @@ export const GameProvider = ({
             nextRound,
             scoreAwarded,
             distanceFromTarget,
+            isLoading
         }}>
             {children}
         </GameContext.Provider>

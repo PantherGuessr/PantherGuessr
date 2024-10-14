@@ -2,11 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Hash, Loader2, Medal, User } from "lucide-react";
+import { Hash, Loader2, LogOut, Medal, Settings, User } from "lucide-react";
 import Image from "next/image";
-import { ElementRef, useRef, useState } from "react";
+import { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useGame } from "../_context/GameContext";
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 const InGameSidebar = () => {
     const isMobile = useMediaQuery("(max-width: 768px");
@@ -31,7 +34,10 @@ const InGameSidebar = () => {
         nextRound,
         scoreAwarded,
         distanceFromTarget,
+        isLoading
     } = useGame()!;
+
+    const waiting = true;
     
     const handleSubmittingGuess = () => {
         if(!markerHasBeenPlaced || !markerPosition) return;
@@ -127,7 +133,7 @@ const InGameSidebar = () => {
 
         // Clamps so that the width of the sidebar
         // can't get too big or too small.
-        if(newWidth < 200) newWidth = 200;
+        if(newWidth < 270) newWidth = 270;
         if(newWidth > 600) newWidth = 600;
 
         if(sidebarRef.current) {
@@ -141,45 +147,100 @@ const InGameSidebar = () => {
         document.removeEventListener("mouseup", handleMouseUp);
     }
 
+    /*TODO: Comment this back in when ready
+
+    function preventUnload(event: BeforeUnloadEvent) {
+        event.preventDefault();
+    }
+
+    window.addEventListener("beforeunload", preventUnload);
+
+    */
+
     return (
         <>
             <aside ref={sidebarRef} className={cn(
-                "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-80 flex-col z-[999]",
+                "group/sidebar h-full bg-background overflow-y-auto relative flex w-80 flex-col z-[999]",
                 isResetting && "transition-all ease-in-out duration-300"
             )}>
-                <div className="flex justify-center p-3">
-                    <div className="text-xl flex flex-col items-center mx-4 outline p-4 rounded">
+                <div className="flex justify-center pt-4 px-3 pb-1">
+                    <div className="flex flex-row pr-2">
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="secondary" className="h-full text-sm">
+                                <LogOut className="rotate-180 text-sm" />
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure you want to leave the ongoing game?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete your account
+                                and remove your data from our servers.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction>Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                    </div>
+                    <div className="text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center p-4 w-full rounded-md gap-x-2">
                         <User />
                         <p>Singleplayer</p>
                     </div>
                 </div>
                 <div className="flex justify-center p-3">
-                    <Image
-                        src={currentImageSrcUrl}
-                        layout="responsive"
-                        width="0"
-                        height="0"
-                        alt=""
-                        onMouseEnter={handleMouseEnter}
-                        onMouseMove={handleMouseMoveMagnifier}
-                        onMouseLeave={handleMouseLeave}
-                    />
+                    { (isLoading) ? (
+                        <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
+                    ) : (
+                        <Image
+                            src={currentImageSrcUrl}
+                            layout="responsive"
+                            width="296"
+                            height="222"
+                            alt=""
+                            onMouseEnter={handleMouseEnter}
+                            onMouseMove={handleMouseMoveMagnifier}
+                            onMouseLeave={handleMouseLeave}
+                            className="rounded-md"
+                        />
+                    )}
                 </div>
                 <div className="mt-4 flex flex-col items-center">
                     <div className="flex justify-center w-full">
                         <div className="text-xl flex flex-col items-center mx-4">
-                            <Hash />
-                            <p>{currentRound}/{levels.length}</p>
+                            { (isLoading && currentRound == 0) ? (
+                                <>
+                                <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
+                                <Skeleton className="w-8 h-5 mt-1 bg-zinc-400 dark:bg-red-900" />
+                                </>
+                            ) : (
+                                <>
+                                <Hash />
+                                <p>{currentRound}/{levels.length}</p>
+                                </>
+                            )}
                         </div>
                         <div className="text-xl flex flex-col items-center mx-4">
-                            <Medal />
-                            <p>{score}</p>
+                            { (isLoading && currentRound == 0) ? (
+                                <>
+                                <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
+                                <Skeleton className="w-4 h-5 mt-1 bg-zinc-400 dark:bg-red-900" />
+                                </>
+                            ) : (
+                                <>
+                                <Medal />
+                                <p>{score}</p>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
                 <div className="mt-auto p-4 w-full">
                     {scoreAwarded!== null && distanceFromTarget !== null && (
-                        <div className="text-lg flex flex-col items-center text-center mx-4 p-2 mb-4 outline rounded">
+                        <div className="text-lg flex flex-col bg-secondary text-center text-secondary-foreground justify-items-center justify-center items-center p-4 mb-3 w-full rounded-md gap-x-2">
                             <p>You scored {scoreAwarded} points from being {distanceFromTarget} feet away from the target.</p>
                         </div>
                     )}
@@ -200,7 +261,7 @@ const InGameSidebar = () => {
                 <div
                     onMouseDown={handleMouseDown}
                     onClick={() => {}}
-                    className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0"
+                    className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-secondary right-0 top-0"
                 />
             </aside>
             <div ref={magnifierRef} className="magnifier"></div>
