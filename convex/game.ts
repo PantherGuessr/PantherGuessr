@@ -51,6 +51,23 @@ export const getImageSrc = query({
     }
 });
 
+export const haversineDistanceInFeet = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const toRadians = (degrees: number) => degrees * (Math.PI / 180);
+
+    const R = 3958.8; // Radius of the Earth in miles
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distanceInMiles = R * c;
+    const distanceInFeet = distanceInMiles * 5280; // Convert miles to feet
+
+    return distanceInFeet;
+};
+
 export const checkGuess = mutation({
     args: { id: v.id("levels"), guessLatitude: v.float64(), guessLongitude: v.float64() },
     handler: async(ctx, args) => {
@@ -64,8 +81,17 @@ export const checkGuess = mutation({
         const correctLng = level.longitude;
 
         // TODO: @Daniel you gotta do some math here cause i have no idea how to get the distance between two points 😭
-        const distanceAway = 0; // add later
-        const score = 0; // If within 250 feet, score increases by distance if outside of 250 feet score = 0
+        const distanceAway = parseInt(haversineDistanceInFeet(correctLat, correctLng, args.guessLatitude, args.guessLongitude).toFixed(0));
+        // give some leniency to the distance
+        let lenientDistance = distanceAway - 20;
+        if (lenientDistance < 0) {
+            lenientDistance = 0;
+        }
+        // If within 250 feet, score increases by distance if outside of 250 feet score = 0
+        let score = 250 - lenientDistance; 
+        if (score < 0) { // no negative score
+            score = 0;
+        }
 
         console.log("Correct: " + correctLat + " " + correctLng);
         console.log("User Guess: " + args.guessLatitude + " " + args.guessLongitude);

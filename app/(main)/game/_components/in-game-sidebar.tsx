@@ -36,8 +36,6 @@ const InGameSidebar = () => {
         distanceFromTarget,
         isLoading
     } = useGame()!;
-
-    const waiting = true;
     
     const handleSubmittingGuess = () => {
         if(!markerHasBeenPlaced || !markerPosition) return;
@@ -242,8 +240,12 @@ const InGameSidebar = () => {
                 <div className="mt-auto p-4 w-full">
                     {scoreAwarded!== null && distanceFromTarget !== null && (
                         <div className="text-lg flex flex-col bg-secondary text-center text-secondary-foreground justify-items-center justify-center items-center p-4 mb-3 w-full rounded-md gap-x-2">
-                            <p>You scored {scoreAwarded} points from being {distanceFromTarget} feet away from the target.</p>
-                        </div>
+                            {distanceFromTarget <= 20 ? (
+                                <p>Spot on! You scored {scoreAwarded} points.</p>
+                            ) : (
+                                <p>You scored {scoreAwarded} points from being {distanceFromTarget} feet away from the target.</p>
+                            )}
+                            </div>
                     )}
                     {isSubmittingGuess ? (
                         <Button disabled={true} className="w-full">
