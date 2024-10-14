@@ -8,6 +8,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 const Levels = () => {
@@ -61,9 +62,6 @@ const Levels = () => {
                                         handleDialogClose();
                                     }
                                 }}>
-                                    {
-                                        //TODO: Add Skeleton for image loading
-                                    }
                                     <DialogTrigger asChild>
                                         <Button onClick={() => setClickedLevelId(row._id)}>
                                             View
@@ -80,7 +78,11 @@ const Levels = () => {
                                             </DialogDescription>
                                         </DialogHeader>
                                         <div className="flex justify-center">
-                                            <Image className="w-full" width="300" height="225" src={currentImageSrcUrl} alt={row.title} id={"image-" + row.imageId} />
+                                            {currentImageSrcUrl === "/Invalid-Image.jpg" ? (
+                                                <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
+                                            ) : (
+                                                <Image className="w-full" width="300" height="225" src={currentImageSrcUrl} alt={row.title} id={"image-" + row.imageId} />
+                                            )}
                                         </div>
                                     </DialogContent>
                                 </Dialog>
