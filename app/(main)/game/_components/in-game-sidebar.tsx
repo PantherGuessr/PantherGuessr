@@ -181,7 +181,9 @@ const InGameSidebar = () => {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction>Continue</AlertDialogAction>
+                            <Link href="/">
+                            <AlertDialogAction >Continue</AlertDialogAction>
+                            </Link>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
