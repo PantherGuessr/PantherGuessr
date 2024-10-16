@@ -18,9 +18,11 @@ const ResultPage = () => {
         <div className="min-h-full flex flex-col">
             <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
                 <Card className="w-[350px] shadow-xl">
-                    <CardHeader>
+                    <CardHeader className="mt-4">
                         <CardTitle>Game Results</CardTitle>
                         <CardDescription>View the results of your recent game below.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col space-y-3">
                         <Separator />
                         <div className="flex flex-col space-y-4">
                             <div className="p-2">
@@ -38,8 +40,6 @@ const ResultPage = () => {
                             </div>
                         </div>
                         <Separator />
-                    </CardHeader>
-                    <CardContent className="flex flex-col space-y-4">
                         <div className="p-2">
                             <div className="flex flex-row justify-between">
                                 <h2 className="font-bold">Round #1</h2>
@@ -112,15 +112,15 @@ const ResultPage = () => {
                                 <p className="bg-primary text-primary-foreground px-2">0</p>
                             </div>
                         </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col space-y-4">
                         <Separator />
-                        <div className="p-2">
-                            <div className="flex flex-row justify-between">
-                                <Logo />
+                        <div className="flex flex-col space-y-4">
+                            <div className="p-2">
+                                <div className="flex flex-row justify-center">
+                                    <Logo />
+                                </div>
                             </div>
                         </div>
-                    </CardFooter>
+                    </CardContent>
                 </Card>
                 <div className="flex justify-between w-[350px]">
                     <Link href="/">
