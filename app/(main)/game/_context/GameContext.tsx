@@ -53,6 +53,9 @@ export const GameProvider = ({
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
     const checkGuess = useMutation(api.game.checkGuess);
 
+    const [allDistances, setAllDistances] = useState<number[]>([]);
+    const [allScores, setAllScores] = useState<number[]>([]);
+
     useEffect(() => {
         if (ids) {
             setLevels(ids);
@@ -80,6 +83,9 @@ export const GameProvider = ({
 
             setDistanceFromTarget(result.distanceAway);
             setScoreAwarded(result.score);
+
+            setAllDistances(prevDistances => [...prevDistances, result.distanceAway]);
+            setAllScores(prevScores => [...prevScores, result.score]);
         } catch (error) {
             console.error("Error submitting guess:", error);
         } finally {
@@ -92,15 +98,10 @@ export const GameProvider = ({
         const nextRoundNumber = currentRound + 1;
 
         if(nextRoundNumber > levels.length) {
-            // TODO: UPDATE THIS FOR REAL
-            const distances = [10, 20, 30, 40, 50];
-            const scores = [100, 200, 300, 400, 500];
-            const finalScore = 1500;
-
             const query = new URLSearchParams({
-                distances: JSON.stringify(distances),
-                scores: JSON.stringify(scores),
-                finalScore: finalScore.toString(),
+                distances: JSON.stringify(allDistances),
+                scores: JSON.stringify(allScores),
+                finalScore: score.toString(),
             });
 
             router.push(`/game-result?${query.toString()}`);
