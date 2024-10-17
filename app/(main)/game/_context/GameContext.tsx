@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "convex/react";
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { LatLng } from "leaflet";
+import { useRouter } from "next/navigation";
 
 interface GameContextType {
     levels: Id<"levels">[];
@@ -32,6 +33,8 @@ export const GameProvider = ({
 }: {
     children: React.ReactNode;
 }) => {
+    const router = useRouter();
+
     const [levels, setLevels] = useState<Id<"levels">[]>([]);
     const [currentRound, setCurrentRound] = useState(0);
     const [score, setScore] = useState(0);
@@ -85,13 +88,23 @@ export const GameProvider = ({
     }
 
     const nextRound = () => {
+        setCurrentRound(currentRound + 1);
         const nextRoundNumber = currentRound + 1;
 
         if(nextRoundNumber > levels.length) {
-            // TODO: implement game win logic
-        } else {
-            setCurrentRound(nextRoundNumber);
+            // TODO: UPDATE THIS FOR REAL
+            const distances = [10, 20, 30, 40, 50];
+            const scores = [100, 200, 300, 400, 500];
+            const finalScore = 1500;
 
+            const query = new URLSearchParams({
+                distances: JSON.stringify(distances),
+                scores: JSON.stringify(scores),
+                finalScore: finalScore.toString(),
+            });
+
+            router.push(`/game-result?${query.toString()}`);
+        } else {
             const nextLevel = levels[nextRoundNumber - 1];
             if(nextLevel) {
                 setCurrentLevel(nextLevel);

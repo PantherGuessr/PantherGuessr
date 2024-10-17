@@ -253,7 +253,7 @@ const InGameSidebar = () => {
                         </Button>
                     ) : correctLocation ? (
                         <Button disabled={false} onClick={handleNextRound} className="w-full">
-                            NEXT ROUND
+                            {currentRound >= levels.length ? 'FINISH GAME' : 'NEXT ROUND'}
                         </Button>
                     ) : (
                         <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={handleSubmittingGuess}>
