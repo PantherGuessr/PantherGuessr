@@ -7,17 +7,16 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Home, Instagram, Share, Slack } from "lucide-react";
 import Link from "next/link";
-import { useUser } from "@clerk/nextjs";
 import { useSearchParams } from 'next/navigation';
 
 
 const ResultPage = () => {
-    const { user } = useUser();
     const searchParams = useSearchParams();
 
     const distances = searchParams.get('distances') ? JSON.parse(searchParams.get('distances') as string) : [];
     const scores = searchParams.get('scores') ? JSON.parse(searchParams.get('scores') as string) : [];
     const finalScore = searchParams.get('finalScore') ? Number(searchParams.get('finalScore') as string) : 0;
+    const username = searchParams.get('username') ? String(searchParams.get('username')) : "Anonymous";
 
     return (
         <div className="min-h-full flex flex-col">
@@ -36,7 +35,7 @@ const ResultPage = () => {
                                 </div>
                                 <div className="flex flex-row justify-between">
                                     <h2>Player:</h2>
-                                    <p>{user?.username}</p>
+                                    <p>{username}</p>
                                 </div>
                                 <div className="flex flex-row justify-between">
                                     <h2>Level:</h2>

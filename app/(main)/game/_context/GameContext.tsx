@@ -4,6 +4,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { LatLng } from "leaflet";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 interface GameContextType {
     levels: Id<"levels">[];
@@ -34,6 +35,7 @@ export const GameProvider = ({
     children: React.ReactNode;
 }) => {
     const router = useRouter();
+    const user = useUser();
 
     const [levels, setLevels] = useState<Id<"levels">[]>([]);
     const [currentRound, setCurrentRound] = useState(0);
@@ -98,10 +100,13 @@ export const GameProvider = ({
         const nextRoundNumber = currentRound + 1;
 
         if(nextRoundNumber > levels.length) {
+            const username = user.user?.username ? user.user.username : "Anonymous";
+
             const query = new URLSearchParams({
                 distances: JSON.stringify(allDistances),
                 scores: JSON.stringify(allScores),
                 finalScore: score.toString(),
+                username: username,
             });
 
             router.push(`/game-result?${query.toString()}`);
