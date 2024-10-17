@@ -7,16 +7,21 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Home, Instagram, Share, Slack } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 
 
 const ResultPage = () => {
     const searchParams = useSearchParams();
 
-    const distances = searchParams.get('distances') ? JSON.parse(searchParams.get('distances') as string) : [];
-    const scores = searchParams.get('scores') ? JSON.parse(searchParams.get('scores') as string) : [];
-    const finalScore = searchParams.get('finalScore') ? Number(searchParams.get('finalScore') as string) : 0;
-    const username = searchParams.get('username') ? String(searchParams.get('username')) : "Anonymous";
+    const distances = JSON.parse(searchParams.get('distances') as string);
+    const scores = JSON.parse(searchParams.get('scores') as string);
+    const finalScore = Number(searchParams.get('finalScore') as string);
+    const username = String(searchParams.get('username'));
+
+    // if they are don't arrive at url with search parameters attached, kick them back to home
+    if(!distances || !scores || !finalScore || !username) {
+        return redirect("/");
+    }
 
     return (
         <div className="min-h-full flex flex-col">
