@@ -104,3 +104,27 @@ export const checkGuess = mutation({
         }
     }
 });
+
+export const updateTimesPlayed = mutation({
+    args: { id: v.id("levels") },
+    handler: async(ctx, args) => {
+        const level = await ctx.db.get(args.id);
+
+        if(!level) {
+            throw new Error("No levels exist");
+        }
+
+        const timesPlayed = level.timesPlayed + BigInt(1);
+
+        // update level
+        const newLevel = {
+            ...level,
+            timesPlayed
+        }
+
+        await ctx.db.replace(args.id, newLevel);
+
+        return { success: true };
+
+    }
+});

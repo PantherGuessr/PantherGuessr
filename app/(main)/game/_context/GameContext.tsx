@@ -37,7 +37,7 @@ export const GameProvider = ({
     const [score, setScore] = useState(0);
     const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
     const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
-    const [cacheBuster, setCacheBuster] = useState(Math.random());
+    const [cacheBuster] = useState(Math.random());
     const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
     const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
     const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
@@ -49,6 +49,7 @@ export const GameProvider = ({
     const ids = useQuery(api.game.getRandomLevels, { cacheBuster });
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
     const checkGuess = useMutation(api.game.checkGuess);
+    const updateTimesPlayed = useMutation(api.game.updateTimesPlayed);
 
     useEffect(() => {
         if (ids) {
@@ -77,6 +78,9 @@ export const GameProvider = ({
 
             setDistanceFromTarget(result.distanceAway);
             setScoreAwarded(result.score);
+
+            await updateTimesPlayed({ id: currentLevelId });
+
         } catch (error) {
             console.error("Error submitting guess:", error);
         } finally {
