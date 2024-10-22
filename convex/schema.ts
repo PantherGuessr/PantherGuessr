@@ -13,6 +13,7 @@ export default defineSchema({
         type: v.union(v.literal("daily"), v.literal("weekly"), v.literal("monthly")),
         isoTime: v.string(),
         isoDay: v.string(),
+        isoYearMonth: v.string(),
         count: v.int64(),
         lastUpdated: v.string()
     })

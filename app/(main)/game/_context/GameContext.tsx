@@ -50,9 +50,12 @@ export const GameProvider = ({
     const ids = useQuery(api.game.getRandomLevels, { cacheBuster });
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
     const checkGuess = useMutation(api.game.checkGuess);
+
+    // analytics
     const updateTimesPlayed = useMutation(api.game.updateTimesPlayed);
     const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
-    const hasIncrementedDailyGameStats = useRef(false);
+    const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
+    const hasIncrementedGameStats = useRef(false);
     
 
     useEffect(() => {
@@ -71,11 +74,12 @@ export const GameProvider = ({
 
     // this runs only once due to empty array after
     useEffect(() => {
-        if(!hasIncrementedDailyGameStats.current) {
+        if(!hasIncrementedGameStats.current) {
             incrementDailyGameStats();
-            hasIncrementedDailyGameStats.current = true;
+            incrementMonthlyGameStats();
+            hasIncrementedGameStats.current = true;
         }
-    }, [incrementDailyGameStats]);
+    }, [incrementDailyGameStats, incrementMonthlyGameStats]);
 
     const submitGuess = async (lat: number, lng: number) => {
         if(!currentLevelId) return;
