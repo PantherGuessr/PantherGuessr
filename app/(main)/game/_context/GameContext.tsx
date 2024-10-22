@@ -3,6 +3,8 @@ import { useMutation, useQuery } from "convex/react";
 import React, { createContext, useState, useEffect, useContext, useRef } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { LatLng } from "leaflet";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 interface GameContextType {
     levels: Id<"levels">[];
@@ -33,6 +35,9 @@ export const GameProvider = ({
 }: {
     children: React.ReactNode;
 }) => {
+    const router = useRouter();
+    const user = useUser();
+
     const [levels, setLevels] = useState<Id<"levels">[]>([]);
     const [currentRound, setCurrentRound] = useState(0);
     const [score, setScore] = useState(0);
@@ -56,7 +61,9 @@ export const GameProvider = ({
     const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
     const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
     const hasIncrementedGameStats = useRef(false);
-    
+        
+    const [allDistances, setAllDistances] = useState<number[]>([]);
+    const [allScores, setAllScores] = useState<number[]>([]);
 
     useEffect(() => {
         if (ids) {
@@ -94,9 +101,11 @@ export const GameProvider = ({
 
             setDistanceFromTarget(result.distanceAway);
             setScoreAwarded(result.score);
-
-            await updateTimesPlayed({ id: currentLevelId });
-
+          
+            await updateTimesPlayed({ id: currentLevelId }); // updates Times Played for level analytics
+          
+            setAllDistances(prevDistances => [...prevDistances, result.distanceAway]);
+            setAllScores(prevScores => [...prevScores, result.score]);
         } catch (error) {
             console.error("Error submitting guess:", error);
         } finally {
@@ -105,13 +114,21 @@ export const GameProvider = ({
     }
 
     const nextRound = () => {
+        setCurrentRound(currentRound + 1);
         const nextRoundNumber = currentRound + 1;
 
         if(nextRoundNumber > levels.length) {
-            // TODO: implement game win logic
-        } else {
-            setCurrentRound(nextRoundNumber);
+            const username = user.user?.username ? user.user.username : "Anonymous";
 
+            const query = new URLSearchParams({
+                distances: JSON.stringify(allDistances),
+                scores: JSON.stringify(allScores),
+                finalScore: score.toString(),
+                username: username,
+            });
+
+            router.push(`/game-result?${query.toString()}`);
+        } else {
             const nextLevel = levels[nextRoundNumber - 1];
             if(nextLevel) {
                 setCurrentLevel(nextLevel);
