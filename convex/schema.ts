@@ -9,4 +9,11 @@ export default defineSchema({
         imageId: v.id("_storage"),
         timesPlayed: v.int64()
     }),
+    gameStats: defineTable({
+        type: v.union(v.literal("daily"), v.literal("weekly"), v.literal("monthly")),
+        isoTime: v.string(),
+        isoDay: v.string(),
+        count: v.int64(),
+        lastUpdated: v.string()
+    })
 });

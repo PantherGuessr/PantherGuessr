@@ -1,6 +1,6 @@
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext, useRef } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { LatLng } from "leaflet";
 
@@ -27,6 +27,7 @@ interface GameContextType {
 
 const GameContext = createContext<GameContextType | null>(null);
 
+
 export const GameProvider = ({
     children
 }: {
@@ -50,6 +51,9 @@ export const GameProvider = ({
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
     const checkGuess = useMutation(api.game.checkGuess);
     const updateTimesPlayed = useMutation(api.game.updateTimesPlayed);
+    const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
+    const hasIncrementedDailyGameStats = useRef(false);
+    
 
     useEffect(() => {
         if (ids) {
@@ -64,6 +68,14 @@ export const GameProvider = ({
             setCurrentSrcUrl(imageSrc ?? "/Invalid-Image.jpg");
         }
     }, [currentLevelId, imageSrc]);
+
+    // this runs only once due to empty array after
+    useEffect(() => {
+        if(!hasIncrementedDailyGameStats.current) {
+            incrementDailyGameStats();
+            hasIncrementedDailyGameStats.current = true;
+        }
+    }, [incrementDailyGameStats]);
 
     const submitGuess = async (lat: number, lng: number) => {
         if(!currentLevelId) return;
