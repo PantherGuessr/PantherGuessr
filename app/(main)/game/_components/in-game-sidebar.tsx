@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Hash, Loader2, LogOut, Medal, Settings, User } from "lucide-react";
+import { Hash, Loader2, LogOut, Medal, User } from "lucide-react";
 import Image from "next/image";
-import { ElementRef, useEffect, useRef, useState } from "react";
+import { ElementRef, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useGame } from "../_context/GameContext";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,12 +12,11 @@ import Link from "next/link";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 const InGameSidebar = () => {
-    const isMobile = useMediaQuery("(max-width: 768px");
+    const isMobile = useMediaQuery("(max-width: 600px");
 
     const magnifierRef = useRef<HTMLDivElement>(null);
     const isResizingRef = useRef(false);
     const sidebarRef = useRef<ElementRef<"aside">>(null);
-    const navbar = useRef<ElementRef<"div">>(null);
     const [isResetting, setIsResetting] = useState(false);
 
     // Retrieve Game Context
@@ -158,8 +157,9 @@ const InGameSidebar = () => {
     return (
         <>
             <aside ref={sidebarRef} className={cn(
-                "group/sidebar h-full bg-background overflow-y-auto relative flex w-80 flex-col z-[999]",
-                isResetting && "transition-all ease-in-out duration-300"
+                "group/sidebar h-full bg-background overflow-y-auto relative flex flex-col z-[999]",
+                isResetting && "transition-all ease-in-out duration-300",
+                isMobile ? "w-full h-auto" : "w-80 px-1",
             )}>
                 <div className="flex justify-center pt-4 px-3 pb-1">
                     <div className="flex flex-row pr-2">
@@ -185,10 +185,25 @@ const InGameSidebar = () => {
                         </AlertDialogContent>
                     </AlertDialog>
                     </div>
-                    <div className="text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center p-4 w-full rounded-md gap-x-2">
+                    <div className={
+                        cn("text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center p-4 w-full rounded-md gap-x-2",
+                            isMobile && "basis-1/5"
+                        )}>
                         <User />
-                        <p>Singleplayer</p>
+                        {!isMobile && (<p>Singleplayer</p>)}
                     </div>
+                    {isMobile && (
+                        <>
+                            <div className="text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center mx-2 w-full rounded-md gap-x-2">
+                                <Hash />
+                                <p className="pr-1">{currentRound}/{levels.length}</p>
+                            </div>
+                            <div className="text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center w-full rounded-md gap-x-2">
+                                <Medal />
+                                <p>{score}</p>
+                            </div>
+                        </>
+                    )}
                 </div>
                 <div className="flex justify-center p-3">
                     { (isLoading) ? (
@@ -197,8 +212,8 @@ const InGameSidebar = () => {
                         <Image
                             src={currentImageSrcUrl}
                             layout="responsive"
-                            width="296"
-                            height="222"
+                            width={isMobile ? 250 : 296}
+                            height={isMobile ? 188 : 222}
                             alt=""
                             onMouseEnter={handleMouseEnter}
                             onMouseMove={handleMouseMoveMagnifier}
@@ -207,6 +222,7 @@ const InGameSidebar = () => {
                         />
                     )}
                 </div>
+                {!isMobile && (
                 <div className="mt-4 flex flex-col items-center">
                     <div className="flex justify-center w-full">
                         <div className="text-xl flex flex-col items-center mx-4">
@@ -237,7 +253,14 @@ const InGameSidebar = () => {
                         </div>
                     </div>
                 </div>
-                <div className="mt-auto p-4 w-full">
+                )}
+                <div className={
+                    cn(
+                        "mt-auto px-3 w-full",
+                        isMobile ? "py-2" : "py-4"
+
+                    )
+                    }>
                     {scoreAwarded!== null && distanceFromTarget !== null && (
                         <div className="text-lg flex flex-col bg-secondary text-center text-secondary-foreground justify-items-center justify-center items-center p-4 mb-3 w-full rounded-md gap-x-2">
                             {distanceFromTarget <= 20 ? (
@@ -264,7 +287,7 @@ const InGameSidebar = () => {
                 <div
                     onMouseDown={handleMouseDown}
                     onClick={() => {}}
-                    className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-secondary right-0 top-0"
+                    className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 right-0 top-0"
                 />
             </aside>
             <div ref={magnifierRef} className="magnifier"></div>

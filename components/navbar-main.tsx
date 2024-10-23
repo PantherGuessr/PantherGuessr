@@ -28,7 +28,7 @@ const NavbarMain = () => {
                                 </Link>
                             </li>
                             <li className="row-span-2">
-                                <Link href="/play">
+                                <Link href="/game">
                                     <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 bg-primary text-primary-foreground rounded-md">
                                         Singleplayer
                                     </div>
