@@ -59,7 +59,6 @@ export const GameProvider = ({
     // analytics
     const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
     const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
-    const hasIncrementedGameStats = useRef(false);
         
     const [allDistances, setAllDistances] = useState<number[]>([]);
     const [allScores, setAllScores] = useState<number[]>([]);
