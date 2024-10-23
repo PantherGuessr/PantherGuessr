@@ -1,6 +1,6 @@
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import React, { createContext, useState, useEffect, useContext, useRef } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { LatLng } from "leaflet";
 import { useRouter } from "next/navigation";
@@ -83,8 +83,6 @@ export const GameProvider = ({
         setIsSubmittingGuess(true);
 
         try {
-          
-            
             const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
 
             setScore(prevScore => prevScore + result.score);
@@ -103,8 +101,6 @@ export const GameProvider = ({
     }
 
     const nextRound = () => {
-
-        setCurrentRound(currentRound + 1);
         const nextRoundNumber = currentRound + 1;
 
         if(nextRoundNumber > levels.length) {
@@ -122,6 +118,7 @@ export const GameProvider = ({
 
             router.push(`/game-result?${query.toString()}`);
         } else {
+            setCurrentRound(currentRound + 1);
             const nextLevel = levels[nextRoundNumber - 1];
             if(nextLevel) {
                 setCurrentLevel(nextLevel);
