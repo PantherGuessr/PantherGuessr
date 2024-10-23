@@ -57,7 +57,6 @@ export const GameProvider = ({
     const checkGuess = useMutation(api.game.checkGuess);
 
     // analytics
-    const updateTimesPlayed = useMutation(api.game.updateTimesPlayed);
     const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
     const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
     const hasIncrementedGameStats = useRef(false);
@@ -79,21 +78,14 @@ export const GameProvider = ({
         }
     }, [currentLevelId, imageSrc]);
 
-    // this runs only once due to empty array after
-    useEffect(() => {
-        if(!hasIncrementedGameStats.current) {
-            incrementDailyGameStats();
-            incrementMonthlyGameStats();
-            hasIncrementedGameStats.current = true;
-        }
-    }, [incrementDailyGameStats, incrementMonthlyGameStats]);
-
     const submitGuess = async (lat: number, lng: number) => {
         if(!currentLevelId) return;
 
         setIsSubmittingGuess(true);
 
         try {
+          
+            
             const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
 
             setScore(prevScore => prevScore + result.score);
@@ -101,8 +93,6 @@ export const GameProvider = ({
 
             setDistanceFromTarget(result.distanceAway);
             setScoreAwarded(result.score);
-          
-            await updateTimesPlayed({ id: currentLevelId }); // updates Times Played for level analytics
           
             setAllDistances(prevDistances => [...prevDistances, result.distanceAway]);
             setAllScores(prevScores => [...prevScores, result.score]);
@@ -114,11 +104,15 @@ export const GameProvider = ({
     }
 
     const nextRound = () => {
+
         setCurrentRound(currentRound + 1);
         const nextRoundNumber = currentRound + 1;
 
         if(nextRoundNumber > levels.length) {
             const username = user.user?.username ? user.user.username : "Anonymous";
+
+            incrementDailyGameStats();
+            incrementMonthlyGameStats();
 
             const query = new URLSearchParams({
                 distances: JSON.stringify(allDistances),

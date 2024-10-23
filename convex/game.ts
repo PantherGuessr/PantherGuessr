@@ -80,7 +80,6 @@ export const checkGuess = mutation({
         const correctLat = level.latitude;
         const correctLng = level.longitude;
 
-        // TODO: @Daniel you gotta do some math here cause i have no idea how to get the distance between two points 😭
         const distanceAway = parseInt(haversineDistanceInFeet(correctLat, correctLng, args.guessLatitude, args.guessLongitude).toFixed(0));
         // give some leniency to the distance
         let lenientDistance = distanceAway - 20;
@@ -114,7 +113,7 @@ export const updateTimesPlayed = mutation({
             throw new Error("No levels exist");
         }
 
-        const timesPlayed = level.timesPlayed + BigInt(1);
+        const timesPlayed = (level.timesPlayed ?? BigInt(0)) + BigInt(1);
 
         // update level
         const newLevel = {
