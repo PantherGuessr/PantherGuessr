@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Analytics from "./_components/analytics";
 import Levels from "./_components/levels";
 import SiteSettings from "./_components/sitesettings";
+import LevelUpload from "./_components/helpers/levelupload";
+import { MarkerProvider } from "./_components/helpers/MarkerContext";
 
 const AdminPage = () => {
     return (
@@ -31,8 +33,11 @@ const AdminPage = () => {
                     </TabsContent>
                     <TabsContent value="levels">
                         <Card className="mt-8 mx-10 p-2">
-                            <CardHeader className="text-4xl ml-2 text-start">
-                                Levels
+                            <CardHeader className="flex flex-row justify-between">
+                                <p className="text-4xl ml-2 text-start ">Levels</p>
+                                <MarkerProvider >
+                                    <LevelUpload />
+                                </MarkerProvider>
                             </CardHeader>
                             <CardContent>
                                 <Levels />
