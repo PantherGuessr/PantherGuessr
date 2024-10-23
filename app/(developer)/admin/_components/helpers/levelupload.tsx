@@ -4,11 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import UploadMap from "./upload-map";
 import { useMarker } from "./MarkerContext";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import convert from "heic-convert";
 import imageCompression from 'browser-image-compression';
+import { LoaderCircle } from "lucide-react";
 
 const LevelUpload = () => {
 
@@ -16,10 +17,21 @@ const LevelUpload = () => {
     const imageInput = useRef<HTMLInputElement>(null);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [description, setDescription] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
     const [levelCreatorDialogOpen, setLevelCreatorDialogOpen] = useState(false);
     const generateUploadUrl = useMutation(api.levelcreator.generateUploadUrl);
     const createLevelWithImageStorageId = useMutation(api.levelcreator.createLevelWithImageStorageId);
+
+    // disable submit button if no image, description, or marker position
+    useEffect(() => {
+        if (!selectedImage || !description || !localMarkerPosition) {
+            setSubmitButtonDisabled(true);
+        }
+        else {
+            setSubmitButtonDisabled(false);
+        }
+    }, [selectedImage, description, localMarkerPosition]);
 
     async function handleImageSubmission() {
         const description = document.getElementById("description") as HTMLInputElement;
@@ -31,10 +43,11 @@ const LevelUpload = () => {
             return;
         }
         else {
+            setIsSubmitting(true);
             setSubmitButtonDisabled(true);
             // create buffers for HEIC to JPEG conversion
             const imageBuffer = await selectedImage.arrayBuffer();
-            let convertedBuffer;
+            let convertedBuffer: ArrayBuffer | undefined;
             let imageConverted = false;
             let chosenImage = selectedImage;
     
@@ -49,7 +62,7 @@ const LevelUpload = () => {
             } 
 
             // only change the file if it was converted
-            if (imageConverted) {
+            if (imageConverted && convertedBuffer) {
                 // convert buffer to a Blob
                 const blob = new Blob([convertedBuffer], { type: 'image/jpeg' });
                 // convert Blob to File
@@ -84,12 +97,13 @@ const LevelUpload = () => {
                 longitude: markerPosition.lng 
             });
 
+            // reset form and close dialog
             setSelectedImage(null);
             imageInput.current!.value = "";
             setDescription("");
             setSubmitButtonDisabled(false);
             setLevelCreatorDialogOpen(false);
-
+            setIsSubmitting(false);
         }
         
     }
@@ -131,11 +145,22 @@ const LevelUpload = () => {
                         <div className="flex w-full h-80 grow py-2">
                             <UploadMap />
                         </div>
-                        <Button 
-                            variant="default" 
-                            className="w-full my-2"
-                            disabled={submitButtonDisabled}
-                            onClick={handleImageSubmission}>Submit</Button>
+                        {isSubmitting ? (
+                            <Button
+                                variant="default"
+                                className="w-full my-2 flex flex-row"
+                                disabled={true}>
+                                    <LoaderCircle className="animate-spin mr-2" size={24} /> Submitting
+                            </Button>
+                        ) : (
+                            <Button 
+                                variant="default" 
+                                className="w-full my-2"
+                                disabled={submitButtonDisabled}
+                                onClick={handleImageSubmission}>
+                                    Submit
+                            </Button>
+                        )}
                     </div>
                 </DialogContent>
             </Dialog>
