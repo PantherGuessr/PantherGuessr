@@ -29,6 +29,7 @@ interface GameContextType {
 
 const GameContext = createContext<GameContextType | null>(null);
 
+
 export const GameProvider = ({
     children
 }: {
@@ -42,7 +43,7 @@ export const GameProvider = ({
     const [score, setScore] = useState(0);
     const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
     const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
-    const [cacheBuster, setCacheBuster] = useState(Math.random());
+    const [cacheBuster] = useState(Math.random());
     const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
     const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
     const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
@@ -55,6 +56,10 @@ export const GameProvider = ({
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
     const checkGuess = useMutation(api.game.checkGuess);
 
+    // analytics
+    const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
+    const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
+        
     const [allDistances, setAllDistances] = useState<number[]>([]);
     const [allScores, setAllScores] = useState<number[]>([]);
 
@@ -85,7 +90,7 @@ export const GameProvider = ({
 
             setDistanceFromTarget(result.distanceAway);
             setScoreAwarded(result.score);
-
+          
             setAllDistances(prevDistances => [...prevDistances, result.distanceAway]);
             setAllScores(prevScores => [...prevScores, result.score]);
         } catch (error) {
@@ -96,11 +101,13 @@ export const GameProvider = ({
     }
 
     const nextRound = () => {
-        setCurrentRound(currentRound + 1);
         const nextRoundNumber = currentRound + 1;
 
         if(nextRoundNumber > levels.length) {
             const username = user.user?.username ? user.user.username : "Anonymous";
+
+            incrementDailyGameStats();
+            incrementMonthlyGameStats();
 
             const query = new URLSearchParams({
                 distances: JSON.stringify(allDistances),
@@ -111,6 +118,7 @@ export const GameProvider = ({
 
             router.push(`/game-result?${query.toString()}`);
         } else {
+            setCurrentRound(currentRound + 1);
             const nextLevel = levels[nextRoundNumber - 1];
             if(nextLevel) {
                 setCurrentLevel(nextLevel);

@@ -7,5 +7,14 @@ export default defineSchema({
         latitude: v.float64(),
         longitude: v.float64(),
         imageId: v.id("_storage"),
+        timesPlayed: v.int64()
     }),
+    gameStats: defineTable({
+        type: v.union(v.literal("daily"), v.literal("weekly"), v.literal("monthly")),
+        isoTime: v.string(),
+        isoDay: v.string(),
+        isoYearMonth: v.string(),
+        count: v.int64(),
+        lastUpdated: v.string()
+    })
 });

@@ -17,6 +17,7 @@ import type {
 } from "convex/server";
 import type * as admin from "../admin.js";
 import type * as game from "../game.js";
+import type * as gamestats from "../gamestats.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -29,6 +30,7 @@ import type * as game from "../game.js";
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   game: typeof game;
+  gamestats: typeof gamestats;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

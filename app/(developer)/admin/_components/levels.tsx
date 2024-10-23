@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -48,6 +48,7 @@ const Levels = () => {
                         <TableCell>Image</TableCell>
                         <TableCell>Latitude</TableCell>
                         <TableCell>Longitude</TableCell>
+                        <TableCell>Times Played</TableCell>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -89,6 +90,7 @@ const Levels = () => {
                             </TableCell>
                             <TableCell>{row.latitude}</TableCell>
                             <TableCell>{row.longitude}</TableCell>
+                            <TableCell>{row.timesPlayed.toString()}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
