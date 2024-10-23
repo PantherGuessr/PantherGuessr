@@ -159,7 +159,7 @@ const InGameSidebar = () => {
             <aside ref={sidebarRef} className={cn(
                 "group/sidebar h-full bg-background overflow-y-auto relative flex flex-col z-[999]",
                 isResetting && "transition-all ease-in-out duration-300",
-                isMobile ? "w-full h-auto" : "w-80",
+                isMobile ? "w-full h-auto" : "w-80 px-1",
             )}>
                 <div className="flex justify-center pt-4 px-3 pb-1">
                     <div className="flex flex-row pr-2">
@@ -254,7 +254,13 @@ const InGameSidebar = () => {
                     </div>
                 </div>
                 )}
-                <div className="mt-auto p-4 w-full">
+                <div className={
+                    cn(
+                        "mt-auto px-3 w-full",
+                        isMobile ? "py-2" : "py-4"
+
+                    )
+                    }>
                     {scoreAwarded!== null && distanceFromTarget !== null && (
                         <div className="text-lg flex flex-col bg-secondary text-center text-secondary-foreground justify-items-center justify-center items-center p-4 mb-3 w-full rounded-md gap-x-2">
                             {distanceFromTarget <= 20 ? (
