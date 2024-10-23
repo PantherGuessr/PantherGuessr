@@ -2,14 +2,12 @@
 
 import { useConvexAuth } from "convex/react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { SignUpButton, useUser } from "@clerk/clerk-react";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMediaQuery } from "usehooks-ts";
-import { Card, CardContent } from "@/components/ui/card";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import MobileDrawer from "./mobiledrawer";
 
 

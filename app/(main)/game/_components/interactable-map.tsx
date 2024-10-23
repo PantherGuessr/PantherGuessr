@@ -72,7 +72,7 @@ const InteractableMap = () => {
     return (
         <div className="flex min-h-full min-w-full grow">
             <MapContainer
-                className='w-full h-full'
+                className='w-full h-full rounded-md'
                 attributionControl={true}
                 center={[33.793332, -117.851475]}
                 zoom={16}
