@@ -7,11 +7,15 @@ import Link from "next/link";
 import { SignUpButton, useUser } from "@clerk/clerk-react";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMediaQuery } from "usehooks-ts";
+import MobileDrawer from "./mobiledrawer";
+
 
 export const Heading = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
     const { user } = useUser();
 
+    const isDesktop = useMediaQuery("(min-width: 640px)");
 
     return (
         <div className="max-w-3xl space-y-4">
@@ -36,11 +40,17 @@ export const Heading = () => {
                 </>
             )}
             {isAuthenticated && !isLoading && (
+                <>
+                {isDesktop ? (
                 <Button asChild>
                     <Link href="/play">
                         Enter PantherGuessr <ArrowRight className="h-4 w-4 ml-2" />
                     </Link>
                 </Button>
+                ) : (
+                    <MobileDrawer />
+                )}
+                </>
             )}
             {!isAuthenticated && !isLoading && (
                 <>

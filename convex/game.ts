@@ -80,7 +80,6 @@ export const checkGuess = mutation({
         const correctLat = level.latitude;
         const correctLng = level.longitude;
 
-        // TODO: @Daniel you gotta do some math here cause i have no idea how to get the distance between two points 😭
         const distanceAway = parseInt(haversineDistanceInFeet(correctLat, correctLng, args.guessLatitude, args.guessLongitude).toFixed(0));
         // give some leniency to the distance
         let lenientDistance = distanceAway - 20;
@@ -102,5 +101,29 @@ export const checkGuess = mutation({
             distanceAway,
             score,
         }
+    }
+});
+
+export const updateTimesPlayed = mutation({
+    args: { id: v.id("levels") },
+    handler: async(ctx, args) => {
+        const level = await ctx.db.get(args.id);
+
+        if(!level) {
+            throw new Error("No levels exist");
+        }
+
+        const timesPlayed = (level.timesPlayed ?? BigInt(0)) + BigInt(1);
+
+        // update level
+        const newLevel = {
+            ...level,
+            timesPlayed
+        }
+
+        await ctx.db.replace(args.id, newLevel);
+
+        return { success: true };
+
     }
 });

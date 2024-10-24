@@ -41,7 +41,7 @@ Let @DylanDevelops know if you have any questions
 
 ## Environment Variables
 
-To run this project, you will need to add the following environment variables to your .env.local file if you don't already have them. Please contact @DylanDevelops for how to get these.
+To run this project, you will need to add the following environment variables to your .env.local file if you don't already have them. Please contact [@DylanDevelops](https://www.github.com/dylandevelops) for how to get these.
 
 1. `CONVEX_DEPLOYMENT`
 2. `NEXT_PUBLIC_CONVEX_URL`

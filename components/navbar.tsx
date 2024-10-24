@@ -33,7 +33,7 @@ export const Navbar = () => {
             scrolled && "backdrop-blur-sm border-b-2 border-[#450b0b4c] shadow-md"
         )}>
             <div className="justify-between flex items-center gap-x-2 w-full">
-                <div className="mr-2"><Logo /></div>
+                <div className="mr-2"><Logo clickable={true} href="/" /></div>
                 {isLoading && (
                     <div className="flex justify-end justify-items-end items-center">
                     <Skeleton className="h-6 w-[120px] mr-1" />

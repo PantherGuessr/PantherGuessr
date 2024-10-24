@@ -19,6 +19,8 @@ import type * as admin from "../admin.js";
 import type * as game from "../game.js";
 import type * as http from "../http.js";
 import type * as users from "../users.js";
+import type * as gamestats from "../gamestats.js";
+import type * as levelcreator from "../levelcreator.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -33,6 +35,8 @@ declare const fullApi: ApiFromModules<{
   game: typeof game;
   http: typeof http;
   users: typeof users;
+  gamestats: typeof gamestats;
+  levelcreator: typeof levelcreator;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
