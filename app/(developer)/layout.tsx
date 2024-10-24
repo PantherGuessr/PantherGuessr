@@ -6,6 +6,7 @@ import { useRoleCheck } from "@/hooks/use-role-check";
 import { RedirectToSignIn } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
 import { redirect } from "next/navigation";
+import { AdminProvider } from "./admin/_components/adminprovider";
 
 const AdminLayout = ({
     children
@@ -14,6 +15,8 @@ const AdminLayout = ({
 }) => {
     const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
     const { result: isAdmin, isLoading: isAdminLoading } = useRoleCheck("admin");
+    const searchParams = useSearchParams();
+    const tab = searchParams.get('tab') || 'analytics';
 
     // If they are loading
     if(authLoading || isAdminLoading) {
@@ -37,12 +40,14 @@ const AdminLayout = ({
     }
 
     return ( 
+        <AdminProvider tab={tab}>
         <div className="h-full">
             <Navbar />
             <main className="h-full pt-32">
                 {children}
             </main>
         </div> 
+        </AdminProvider>
     );
 }
  

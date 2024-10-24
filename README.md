@@ -13,7 +13,12 @@ npm -v # Should be 10.8.3
 npx -v # Should be 10.8.3
 ```
 
-Note: If any of the versions do not match, please install the versions listed above
+Note: If any of the versions do not match, please install the versions listed above. If you use `nvm`, you can run the following commands:
+
+```bash
+nvm install
+nvm use
+```
 
 2. Install all node dependencies by running the following command in the project's root directory:
 
