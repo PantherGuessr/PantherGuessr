@@ -2,9 +2,9 @@
 
 import { Navbar } from "@/components/navbar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/convex/_generated/api";
-import { RedirectToSignIn, useUser } from "@clerk/nextjs";
-import { useConvexAuth, useQuery } from "convex/react";
+import { useRoleCheck } from "@/hooks/use-role-check";
+import { RedirectToSignIn } from "@clerk/nextjs";
+import { useConvexAuth } from "convex/react";
 import { redirect } from "next/navigation";
 
 const AdminLayout = ({
@@ -12,12 +12,11 @@ const AdminLayout = ({
 }: {
     children: React.ReactNode;
 }) => {
-    const { isAuthenticated, isLoading } = useConvexAuth();
-    const { user } = useUser();
-    const isAdmin = useQuery(api.users.hasRole, { clerkId: user?.id || "", role: "admin" });
+    const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
+    const { data: isAdmin, isLoading: isAdminLoading } = useRoleCheck("admin");
 
     // If they are loading
-    if(isLoading) {
+    if(authLoading || isAdminLoading) {
         return (
             <div className="h-full flex items-center justify-center">
                 <Skeleton className="w-[240px] h-[40px] translate-y-[40%]" />
