@@ -5,7 +5,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { RedirectToSignIn, useUser } from "@clerk/nextjs";
 import { useConvexAuth, useQuery } from "convex/react";
-import { redirect } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
+import { AdminProvider } from "./admin/_components/adminprovider";
 
 const AdminLayout = ({
     children
@@ -15,6 +16,8 @@ const AdminLayout = ({
     const { isAuthenticated, isLoading } = useConvexAuth();
     const { user } = useUser();
     const isAdmin = useQuery(api.users.hasRole, { clerkId: user?.id || "", role: "admin" });
+    const searchParams = useSearchParams();
+    const tab = searchParams.get('tab') || 'analytics';
 
     // If they are loading
     if(isLoading) {
@@ -38,12 +41,14 @@ const AdminLayout = ({
     }
 
     return ( 
+        <AdminProvider tab={tab}>
         <div className="h-full">
             <Navbar />
             <main className="h-full pt-32">
                 {children}
             </main>
         </div> 
+        </AdminProvider>
     );
 }
  

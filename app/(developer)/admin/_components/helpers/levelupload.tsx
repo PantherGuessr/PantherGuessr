@@ -9,7 +9,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import convert from "heic-convert";
 import imageCompression from 'browser-image-compression';
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, Plus } from "lucide-react";
 
 const LevelUpload = () => {
 
@@ -112,7 +112,7 @@ const LevelUpload = () => {
         <>
             <Dialog open={levelCreatorDialogOpen} onOpenChange={setLevelCreatorDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="default">Create Level</Button>
+                    <Button variant="default"><Plus className="h-4 w-4 mr-2" /> Create Level</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
