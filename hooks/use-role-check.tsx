@@ -9,10 +9,10 @@ import { useEffect, useState } from "react";
  *
  * @param {string} role - The role to check for.
  * @param {User | null} [userToCheck=null] - Optional user object to check the role for. If not provided, the current user will be used.
- * @returns {{ data: any, isLoading: boolean }} - An object containing the query result data and a loading state.
+ * @returns {{ result: any, isLoading: boolean }} - An object containing the query result data and a loading state.
  *
  * @example
- * const { data, isLoading } = useRoleCheck('admin');
+ * const { result, isLoading } = useRoleCheck('admin');
  */
 export const useRoleCheck = (role: string, userToCheck: User | null = null) => {
     const { user } = useUser();
@@ -26,5 +26,5 @@ export const useRoleCheck = (role: string, userToCheck: User | null = null) => {
         }
     }, [queryResult]);
 
-    return { data: queryResult, isLoading };
+    return { result: queryResult, isLoading };
 };

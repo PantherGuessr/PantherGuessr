@@ -13,7 +13,7 @@ const AdminLayout = ({
     children: React.ReactNode;
 }) => {
     const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
-    const { data: isAdmin, isLoading: isAdminLoading } = useRoleCheck("admin");
+    const { result: isAdmin, isLoading: isAdminLoading } = useRoleCheck("admin");
 
     // If they are loading
     if(authLoading || isAdminLoading) {
