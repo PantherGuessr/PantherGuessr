@@ -44,6 +44,37 @@ export const deleteFromClerk = internalMutation({
     },
 });
 
+export const hasRole = query({
+    args: {
+        clerkId: v.string(),
+        role: v.string(),
+    },
+    async handler(ctx, args) {
+        const user = await userByClerkId(ctx, args.clerkId);
+
+        if(!user) {
+            return false;
+        }
+
+        return user.roles?.includes(args.role);
+    }
+});
+
+export const hasChapmanEmail = query({
+    args: {
+        clerkId: v.string()
+    },
+    async handler(ctx, args) {
+        const user = await userByClerkId(ctx, args.clerkId);
+
+        if(!user) {
+            return false;
+        }
+
+        return user.emails.some(email => email.endsWith("@chapman.edu"));
+    }
+});
+
 export async function getCurrentUserOrThrow(ctx: QueryCtx) {
     const userRecord = await getCurrentUser(ctx);
     if (!userRecord) throw new Error("Can't get current user");

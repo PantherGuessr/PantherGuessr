@@ -6,7 +6,7 @@ import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
-import { useConvexAuth } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/clerk-react";
 import { Shield } from "lucide-react";
@@ -17,10 +17,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import NavbarMain from "./navbar-main";
+import { api } from "@/convex/_generated/api";
 
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
     const { user } = useUser();
+    const isAdmin = useQuery(api.users.hasRole, { clerkId: user?.id || "", role: "admin" });
+    const isChapmanStudent = useQuery(api.users.hasChapmanEmail, { clerkId: user?.id || "" });
     const scrolled = useScrollTop();
     const { toast } = useToast();
 
@@ -59,7 +62,7 @@ export const Navbar = () => {
                         <div className="flex justify-end justify-items-end items-center gap-x-1 ml-2">
 
                             { /* email ends in @chapman.edu */
-                            user?.emailAddresses?.some((email) => email.emailAddress.endsWith("@chapman.edu")) && (
+                            isChapmanStudent && (
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger>
@@ -73,7 +76,7 @@ export const Navbar = () => {
                             )}
 
                             { /* if user is an admin then display shield */
-                            user?.publicMetadata?.role === "admin" && (
+                            isAdmin && (
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger>
