@@ -8,16 +8,14 @@ import Levels from "./_components/levels";
 import SiteSettings from "./_components/sitesettings";
 import LevelUpload from "./_components/helpers/levelupload";
 import { MarkerProvider } from "./_components/helpers/MarkerContext";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useAdmin } from "./_components/adminprovider";
 
 
 
 const AdminPage = () => {
 
-    const searchParams = useSearchParams();
-    const tab = searchParams.get('tab') || 'analytics';
+    const { tab } = useAdmin();
+
 
     const handleTabChange = (value: string) => {
         window.history.pushState(null, '', `?tab=${value}`);

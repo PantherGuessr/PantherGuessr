@@ -16,7 +16,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DataTable } from "./helpers/datatable";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 import { useMarker } from "./helpers/MarkerContext";
 import { LatLng } from "leaflet";
 import PreviewMap from "./helpers/preview-map";
@@ -97,7 +97,7 @@ const Levels = () => {
             }
         }}>
             <DialogTrigger asChild>
-                <Button onClick={() => handleDialogOpen(row._id)}>
+                <Button onClick={() => handleDialogOpen(row._id)} className="my-0 py-0" variant="outline">
                     View
                 </Button>
             </DialogTrigger>
@@ -130,7 +130,7 @@ const Levels = () => {
             }
         }}>
             <DialogTrigger asChild>
-                <Button onClick={() => handleMapDialogOpen(row._id, row.latitude, row.longitude)}>
+                <Button onClick={() => handleMapDialogOpen(row._id, row.latitude, row.longitude)} variant="outline">
                     View
                 </Button>
             </DialogTrigger>
@@ -156,16 +156,46 @@ const Levels = () => {
     const columns: ColumnDef<Level>[] = [
         {
             accessorKey: "title",
-            header: "Title",
+            header: ({ column }) => {
+                return (
+                  <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                  >
+                    Title
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                )
+              },
         },
         {
-            accessorKey: "_id",
-            header: "Author",
+            accessorKey: "_creationTime",
+            header: ({ column }) => {
+                return (
+                  <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                  >
+                    Author
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                )
+              },
             cell: "dtsivkovs@gmail.com"
         },
         {
             accessorKey: "timesPlayed",
-            header: "Times Played",
+            header: ({ column }) => {
+                return (
+                  <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                  >
+                    Times Played
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                  </Button>
+                )
+              },
         },
         {
             accessorKey: "imageId",
