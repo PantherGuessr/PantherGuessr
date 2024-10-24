@@ -3,9 +3,6 @@
 import { Button } from "@/components/ui/button";
 import {
     ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
   } from "@tanstack/react-table"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
