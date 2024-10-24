@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { RedirectToSignIn } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
-import { redirect } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import { AdminProvider } from "./admin/_components/adminprovider";
 
 const AdminLayout = ({
