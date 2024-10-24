@@ -7,14 +7,6 @@ import {
     getCoreRowModel,
     useReactTable,
   } from "@tanstack/react-table"
-   
-  import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHeader,
-    TableRow,
-  } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
 import { useQuery } from "convex/react";
@@ -22,8 +14,12 @@ import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StorageId } from "convex/server";
 import { DataTable } from "./helpers/datatable";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
+import { useMarker } from "./helpers/MarkerContext";
+import { LatLng } from "leaflet";
+import PreviewMap from "./helpers/preview-map";
 
 type Level = {
     _id: Id<"levels">;
@@ -38,12 +34,16 @@ type Level = {
 
 const Levels = () => {
 
+    // get marker context positions
+    const { localMarkerPosition, setLocalMarkerPosition } = useMarker();
+
     const defaultImageSource = "/Invalid-Image.jpg";
 
     // accessors and mutators for states
     const [clickedLevelId, setClickedLevelId] = useState<Id<"levels"> | null>(null);
     const [currentImageSrcUrl, setCurrentSrcUrl] = useState(defaultImageSource);
     const [openDialogId, setOpenDialogId] = useState<Id<"levels"> | null>(null);
+    const [openMapDialogId, setOpenMapDialogId] = useState<Id<"levels"> | null>(null);
 
     // convex api functions
     const tableData = useQuery(api.admin.getAllLevels);
@@ -73,6 +73,20 @@ const Levels = () => {
     // opens dialog
     const handleDialogOpen = (levelId: Id<"levels">) => {
         setClickedLevelId(levelId);
+    };
+
+    // closes map dialog
+    const handleMapDialogClose = () => {
+        setLocalMarkerPosition(null);
+        setOpenMapDialogId(null);
+    };
+
+    // opens map dialog
+    const handleMapDialogOpen = (levelId: Id<"levels">, latitude : number, longitude : number) => {
+        console.log("handleMapDialogOpen called with:", { levelId, latitude, longitude });
+        const latlng = new LatLng(latitude, longitude);
+        setLocalMarkerPosition(latlng);
+        setOpenMapDialogId(levelId);
     };
 
     // creates image dialog button
@@ -109,7 +123,34 @@ const Levels = () => {
     );
     }
 
-    // creates cell for image view dialog
+    function mapDialogCreator(row: Level) {return (
+        <Dialog open={openMapDialogId === row._id} onOpenChange={(open) => {
+            if (!open) {
+                handleMapDialogClose();
+            }
+        }}>
+            <DialogTrigger asChild>
+                <Button onClick={() => handleMapDialogOpen(row._id, row.latitude, row.longitude)}>
+                    View
+                </Button>
+            </DialogTrigger>
+
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        {row.title}
+                    </DialogTitle>
+                    <DialogDescription>
+                        (Latitude: {row.latitude}, Longitude: {row.longitude})
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="flex w-full h-80 grow py-2">
+                    <PreviewMap />
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+    }
 
     // columns key value pairs for shadcn DataTable component
     const columns: ColumnDef<Level>[] = [
@@ -119,10 +160,8 @@ const Levels = () => {
         },
         {
             accessorKey: "_id",
-            header: "ID",
-            cell: (cell) => {
-                return cell.row.original._id;
-            }
+            header: "Author",
+            cell: "dtsivkovs@gmail.com"
         },
         {
             accessorKey: "timesPlayed",
@@ -134,68 +173,61 @@ const Levels = () => {
             cell: (cell) => {
                 return imageDialogCreator(cell.row.original);
             }
+        },
+        {
+            header: "Map",
+            cell: (cell) => {
+                return mapDialogCreator(cell.row.original);
+            }
+        },
+        {
+            accessorKey: "_id",
+            header: "Actions",
+            cell: ({ row }) => {
+                const level = row.original
+           
+                return (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem
+                        onClick={() => navigator.clipboard.writeText(level._id)}
+                      >
+                        Copy Level ID
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => navigator.clipboard.writeText(level.imageId)}
+                      >
+                        Copy Image ID
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={() => navigator.clipboard.writeText("(" + level.latitude + ", " + level.longitude + ")")}
+                      >
+                        Copy Coordinates
+                        </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="text-red-600 dark:text-red-500" onClick={ () =>
+                        alert("Sorry, delete level action not implemented yet.")
+                      }>
+                        Delete
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )
+              }
         }
     ]
 
     return (
         <>
             <DataTable columns={columns} data={tableData || []} />
-            {/* <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableCell>Title</TableCell>
-                        <TableCell>ID</TableCell>
-                        <TableCell>Image</TableCell>
-                        <TableCell>Latitude</TableCell>
-                        <TableCell>Longitude</TableCell>
-                        <TableCell>Times Played</TableCell>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {tableData && tableData.map((row) => (
-                        <TableRow key={row._id}>
-                            <TableCell>{row.title}</TableCell>
-                            <TableCell>{row._id}</TableCell>
-                            <TableCell className="flex flex-col justify-items-center align-middle">
-                                <Dialog onOpenChange={(open) => {
-                                    setIsDialogOpen(open);
-                                    if (!open) {
-                                        handleDialogClose();
-                                    }
-                                }}>
-                                    <DialogTrigger asChild>
-                                        <Button onClick={() => setClickedLevelId(row._id)}>
-                                            View
-                                        </Button>
-                                    </DialogTrigger>
-
-                                    <DialogContent>
-                                        <DialogHeader>
-                                            <DialogTitle>
-                                                {row.title}
-                                            </DialogTitle>
-                                            <DialogDescription>
-                                                Image ID: {row.imageId}
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="flex justify-center">
-                                            {currentImageSrcUrl === "/Invalid-Image.jpg" ? (
-                                                <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
-                                            ) : (
-                                                <Image className="w-full" width="300" height="225" src={currentImageSrcUrl} alt={row.title} id={"image-" + row.imageId} />
-                                            )}
-                                        </div>
-                                    </DialogContent>
-                                </Dialog>
-                            </TableCell>
-                            <TableCell>{row.latitude}</TableCell>
-                            <TableCell>{row.longitude}</TableCell>
-                            <TableCell>{row.timesPlayed.toString()}</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table> */}
-
         </>
     );
 }
