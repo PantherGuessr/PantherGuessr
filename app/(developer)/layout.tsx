@@ -2,8 +2,9 @@
 
 import { Navbar } from "@/components/navbar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
 import { RedirectToSignIn, useUser } from "@clerk/nextjs";
-import { useConvexAuth } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { redirect } from "next/navigation";
 
 const AdminLayout = ({
@@ -13,6 +14,7 @@ const AdminLayout = ({
 }) => {
     const { isAuthenticated, isLoading } = useConvexAuth();
     const { user } = useUser();
+    const isAdmin = useQuery(api.users.hasRole, { clerkId: user?.id || "", role: "admin" });
 
     // If they are loading
     if(isLoading) {
@@ -31,7 +33,7 @@ const AdminLayout = ({
     }
 
     // If they are not an admin
-    if(user?.publicMetadata?.role !== "admin") {
+    if(!isAdmin) {
         return redirect("/");
     }
 
