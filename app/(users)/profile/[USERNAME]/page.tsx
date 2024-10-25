@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { Loader2, UserSearch } from "lucide-react";
+import { Loader2, LucideShield, Shield, UserSearch } from "lucide-react";
+import "./backgrounds.css";
 import Image from "next/image";
 import Link from "next/link";
+import { Progress } from "@/components/ui/progress";
 
 type Props = {
     params: { USERNAME: string }
@@ -46,33 +48,54 @@ const ProfilePage = ({ params }: Props) => {
     }
 
     // THIS RENDERS WHEN THE USER YOU ARE VIEWING IS YOU
-    if(clerkUser.user?.id === user.clerkId) {
-        return (
-            <div>
-                TIS ME
-            </div>
-        )
-    }
+    // if(clerkUser.user?.id === user.clerkId) {
+    //     return (
+    //         <div>
+    //             TIS ME
+    //         </div>
+    //     )
+    // }
 
     return (
-        <div className="min-h-full flex flex-col">
-            <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-                <Image className="rounded-full" src={user.picture} width={100} height={100} alt="Profile Picture" />
-                <h1 className="text-3xl sm:text-5xl font-bold">@{user.username}</h1>
+        <>
+        <div className="min-h-full flex flex-col mt-20">
+        <div className="min-h-full flex flex-col bg-gradient-red-purple">
+            <div className="flex w-full h-96 bg-gradient-to-b from-background to-transparent">
+
+            </div>
+            <script>
+                document.
+            </script>
+            <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10 bg-background">
+                <div className="flex w-full flex-row items-start justify-between px-20">
+                    <div className="flex flex-row items-start pt-4">
+                        <Image className="rounded-full translate-y-[-5em] border-8 border-background" src={user.picture} width={200} height={200} alt="Profile Picture" />
+                        <div className="flex flex-col items-start justify-center gap-y-1">
+                            <div className="flex flex-row items-start">
+                                <h1 className="text-4xl font-bold pl-4 cursor-default">{user.username}</h1>
+                                {user.roles?.includes("admin") && (
+                                    <Shield className="h-8 w-8 ml-3 mt-1" fill="#A50034" />
+                                )}           
+                            </div>
+                            <p className="text-md pl-4 font-bold text-muted-foreground italic">{user.tagline}</p>
+                            <p className="text-md pl-4 font-bold text-muted-foreground/60 italic">Guesser since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-col items-start pt-4">
+                        <div className="flex flex-row justify-between w-full">
+                            <p className="text-md font-bold">Level {Number(user.level)}</p>
+                            <p className="text-md text-muted-foreground font-bold">{Number(user.currentXP)}/{100} XP</p>
+                        </div>
+                        <Progress className="w-64 mt-1" value={Number(user.currentXP)} />
+                    </div>
+                </div>
                 <div>
-                    <h1 className="text-1xl sm:text-3xl font-bold">Clerk Id: {user.clerkId}</h1>
-                    <h1 className="text-1xl sm:text-3xl font-bold">Convex DB ID: {user._id}</h1>
-                    <h1 className="text-1xl sm:text-3xl font-bold">Email: {user.emails.map((email) => email + ", ")}</h1>
-                    <h1 className="text-1xl sm:text-3xl font-bold">Tagline: {user.tagline}</h1>
-                    <h1 className="text-1xl sm:text-3xl font-bold">Level: {user.level}</h1>
-                    <h1 className="text-1xl sm:text-3xl font-bold">CurrentXP: {user.currentXP}</h1>
-                    <h1 className="text-1xl sm:text-3xl font-bold">Achievements: {user.achievements?.map((achievement) => achievement + ", ")}</h1>
-                    <h1 className="text-1xl sm:text-3xl font-bold">Roles: {user.roles?.map((role) => role + ", ")}</h1>
-                    <h1 className="text-1xl sm:text-3xl font-bold">Account Creation Date: {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</h1>
                 </div>
             </div>
-            <Footer />
         </div>
+        <Footer />
+        </div>
+        </>
     )
     
 }
