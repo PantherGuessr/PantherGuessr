@@ -3,7 +3,7 @@
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
-import { useUser } from "@clerk/nextjs";
+import { ClerkProvider, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { Loader2, LucideShield, Save, Shield, SquarePen, UserSearch, X } from "lucide-react";
 import "./backgrounds.css";
@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { set } from "date-fns";
+import { clerkClient } from "@clerk/nextjs/server";
 
 type Props = {
     params: { USERNAME: string }
@@ -112,7 +113,7 @@ const ProfilePage = ({ params }: Props) => {
                                             setIsEditingUsername(false);
                                         }} />
                                         <Save className="h-7 w-7 ml-1 mt-1 cursor-pointer" onClick={() => {
-                                            //TODO: implement saving that username
+                                            // clerkClient.users.updateUser(user.clerkId, { username: usernameForUpdate})
                                             setIsEditingUsername(false);
                                         }} />
                                         </>
