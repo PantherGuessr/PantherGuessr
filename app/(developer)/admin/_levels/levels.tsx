@@ -32,7 +32,7 @@ type Level = {
 const Levels = () => {
 
     // get marker context positions
-    const { localMarkerPosition, setLocalMarkerPosition } = useMarker();
+    const { setLocalMarkerPosition } = useMarker();
 
     const defaultImageSource = "/Invalid-Image.jpg";
 
