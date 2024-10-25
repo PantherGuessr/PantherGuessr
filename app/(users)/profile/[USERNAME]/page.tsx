@@ -3,6 +3,7 @@
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
+import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { Loader2, UserSearch } from "lucide-react";
 import Image from "next/image";
@@ -14,6 +15,7 @@ type Props = {
 
 const ProfilePage = ({ params }: Props) => {
     const usernameSubPage = params.USERNAME as string;
+    const clerkUser = useUser();
     const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
 
     if(user === undefined) {
@@ -43,6 +45,15 @@ const ProfilePage = ({ params }: Props) => {
         )
     }
 
+    // THIS RENDERS WHEN THE USER YOU ARE VIEWING IS YOU
+    if(clerkUser.user?.id === user.clerkId) {
+        return (
+            <div>
+                TIS ME
+            </div>
+        )
+    }
+
     return (
         <div className="min-h-full flex flex-col">
             <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -52,6 +63,10 @@ const ProfilePage = ({ params }: Props) => {
                     <h1 className="text-1xl sm:text-3xl font-bold">Clerk Id: {user.clerkId}</h1>
                     <h1 className="text-1xl sm:text-3xl font-bold">Convex DB ID: {user._id}</h1>
                     <h1 className="text-1xl sm:text-3xl font-bold">Email: {user.emails.map((email) => email + ", ")}</h1>
+                    <h1 className="text-1xl sm:text-3xl font-bold">Tagline: {user.tagline}</h1>
+                    <h1 className="text-1xl sm:text-3xl font-bold">Level: {user.level}</h1>
+                    <h1 className="text-1xl sm:text-3xl font-bold">CurrentXP: {user.currentXP}</h1>
+                    <h1 className="text-1xl sm:text-3xl font-bold">Achievements: {user.achievements?.map((achievement) => achievement + ", ")}</h1>
                     <h1 className="text-1xl sm:text-3xl font-bold">Roles: {user.roles?.map((role) => role + ", ")}</h1>
                     <h1 className="text-1xl sm:text-3xl font-bold">Account Creation Date: {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</h1>
                 </div>

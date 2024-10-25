@@ -39,18 +39,27 @@ export const current = query({
 export const upsertFromClerk = internalMutation({
     args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
     async handler(ctx, { data }) {
-        const userAttributes = {
-            clerkId: data.id!,
-            username: data.username!,
-            emails: data.email_addresses ? data.email_addresses.map(email => email.email_address) : [],
-            picture: data.image_url,
-        };
-
+        
         const user = await userByClerkId(ctx, data.id);
-    
         if (user === null) {
+            const userAttributes = {
+                clerkId: data.id!,
+                username: data.username!,
+                emails: data.email_addresses ? data.email_addresses.map(email => email.email_address) : [],
+                level: 1n,
+                currentXP: 0n,
+                picture: data.image_url,
+            };
+            
             await ctx.db.insert("users", userAttributes);
         } else {
+            const userAttributes = {
+                clerkId: data.id!,
+                username: data.username!,
+                emails: data.email_addresses ? data.email_addresses.map(email => email.email_address) : [],
+                picture: data.image_url,
+            };
+
             await ctx.db.patch(user._id, userAttributes);
         }
     },
