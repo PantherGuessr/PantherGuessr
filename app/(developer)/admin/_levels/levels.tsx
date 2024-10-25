@@ -11,12 +11,12 @@ import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DataTable } from "./helpers/datatable";
+import { DataTable } from "./_helpers/datatable";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, ArrowUpDown } from "lucide-react";
-import { useMarker } from "./helpers/MarkerContext";
+import { useMarker } from "./_helpers/MarkerContext";
 import { LatLng } from "leaflet";
-import PreviewMap from "./helpers/preview-map";
+import PreviewMap from "./_helpers/preview-map";
 
 type Level = {
     _id: Id<"levels">;
@@ -166,7 +166,7 @@ const Levels = () => {
               },
         },
         {
-            accessorKey: "_creationTime",
+            accessorKey: "authorUsername",
             header: ({ column }) => {
                 return (
                   <Button
@@ -178,7 +178,6 @@ const Levels = () => {
                   </Button>
                 )
               },
-            cell: "dtsivkovs@gmail.com"
         },
         {
             accessorKey: "timesPlayed",

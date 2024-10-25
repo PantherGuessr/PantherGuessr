@@ -15,7 +15,8 @@ export default defineSchema({
         latitude: v.float64(),
         longitude: v.float64(),
         imageId: v.id("_storage"),
-        timesPlayed: v.int64()
+        timesPlayed: v.int64(),
+        authorUsername: v.optional(v.string())
     }),
 
     gameStats: defineTable({
@@ -25,5 +26,15 @@ export default defineSchema({
         isoYearMonth: v.string(),
         count: v.int64(),
         lastUpdated: v.string()
+    }),
+
+    weeklyChallenges: defineTable({
+        startDate: v.string(),
+        endDate: v.string(),
+        round_1: v.id("levels"),
+        round_2: v.id("levels"),
+        round_3: v.id("levels"),
+        round_4: v.id("levels"),
+        round_5: v.id("levels")
     })
 });

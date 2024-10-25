@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
-import AnalyticsHelper from "./helpers/analyticshelper";
+import AnalyticsHelper from "./_helpers/analyticshelper";
 
 const Analytics = () => {
 
