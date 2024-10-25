@@ -8,7 +8,7 @@ export default defineSchema({
         emails: v.array(v.string()),
         roles: v.optional(v.array(v.string())),
         picture: v.string(),
-    }).index("byClerkId", ["clerkId"]),
+    }).index("byClerkId", ["clerkId"]).index("byUsername", ["username"]),
 
     levels: defineTable({
         title: v.string(),

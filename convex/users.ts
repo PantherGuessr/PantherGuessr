@@ -90,6 +90,26 @@ export const deleteFromClerk = internalMutation({
 });
 
 /**
+ * Query to get a user by their username.
+ *
+ * This query takes a username as an argument and retrieves the corresponding user document
+ * from the users table. It uses an index on the username field to perform the query efficiently.
+ *
+ * @param {Object} args - The arguments object.
+ * @param {string} args.username - The username of the user to retrieve.
+ * @returns {Promise<Object|null>} - A promise that resolves to the user document if found, or null if not found.
+*/
+export const getUserByUsername = query({
+    args: {
+        username: v.string(),
+    },
+    async handler(ctx, args) {
+        const user = await userByUsername(ctx, args.username);
+        return user;
+    }
+});
+
+/**
  * Query to check if a user has a specific role.
  *
  * @param {Object} args - The arguments object.
@@ -181,5 +201,19 @@ async function userByClerkId(ctx: QueryCtx, clerkId: string) {
     return await ctx.db
         .query("users")
         .withIndex("byClerkId", (q) => q.eq("clerkId", clerkId))
+        .unique();
+}
+
+/**
+ * Retrieves a user by their username from the database.
+ *
+ * @param ctx - The context object containing the database connection.
+ * @param username - The username of the user to retrieve.
+ * @returns A promise that resolves to the user object if found, otherwise null.
+ */
+async function userByUsername(ctx: QueryCtx, username: string) {
+    return await ctx.db
+        .query("users")
+        .withIndex("byUsername", (q) => q.eq("username", username))
         .unique();
 }
