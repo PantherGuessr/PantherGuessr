@@ -3,8 +3,6 @@
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
