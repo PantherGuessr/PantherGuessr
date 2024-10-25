@@ -6,9 +6,16 @@ export default defineSchema({
         clerkId: v.string(),
         username: v.string(),
         emails: v.array(v.string()),
+        tagline: v.optional(v.string()),
+        level: v.int64(),
+        currentXP: v.int64(),
         roles: v.optional(v.array(v.string())),
+        achievements: v.optional(v.array(v.string())),
         picture: v.string(),
-    }).index("byClerkId", ["clerkId"]),
+    })
+    .index("byClerkId", ["clerkId"])
+    .index("byUsername", ["username"])
+    .index("byLevel", ["level"]),
 
     levels: defineTable({
         title: v.string(),
