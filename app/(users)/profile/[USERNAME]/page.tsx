@@ -47,14 +47,8 @@ const ProfilePage = ({ params }: Props) => {
         )
     }
 
-    // THIS RENDERS WHEN THE USER YOU ARE VIEWING IS YOU
-    // if(clerkUser.user?.id === user.clerkId) {
-    //     return (
-    //         <div>
-    //             TIS ME
-    //         </div>
-    //     )
-    // }
+    // checks if the current user is the same as the user being viewed
+    const isCurrentUser = clerkUser.user?.id === user.clerkId;
 
     return (
         <>
@@ -67,26 +61,28 @@ const ProfilePage = ({ params }: Props) => {
                 document.
             </script>
             <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10 bg-background">
-                <div className="flex w-full flex-row items-start justify-between px-20">
-                    <div className="flex flex-row items-start pt-4">
-                        <Image className="rounded-full translate-y-[-5em] border-8 border-background" src={user.picture} width={200} height={200} alt="Profile Picture" />
-                        <div className="flex flex-col items-start justify-center gap-y-1">
-                            <div className="flex flex-row items-start">
-                                <h1 className="text-4xl font-bold pl-4 cursor-default">{user.username}</h1>
-                                {user.roles?.includes("admin") && (
-                                    <Shield className="h-8 w-8 ml-3 mt-1" fill="#A50034" />
-                                )}           
+                <div className="flex w-full md:flex-row flex-col md:items-start items-center justify-between px-4 md:px-10 lg:px-20">
+                    <div className="flex md:flex-row flex-col items-center md:items-start md:pt-4">
+                        <Image className="rounded-full translate-y-[-5em] mb-[-5em] md:mb-0 border-8 border-background" src={user.picture} width={200} height={200} alt="Profile Picture" />
+                        <div className="flex flex-col items-center text-center md:text-start md:items-start justify-center gap-y-1">
+                            <div className="flex md:flex-row flex-col items-center md:items-start">
+                                <h1 className="text-4xl font-bold md:pl-4 cursor-default">{user.username}</h1>
+                                <div className="flex flex-row items-center md:items-start">
+                                    {user.roles?.includes("admin") && (
+                                        <Shield className="h-8 w-8 ml-3 mt-1" fill="#A50034" />
+                                    )}           
+                                </div>
                             </div>
-                            <p className="text-md pl-4 font-bold text-muted-foreground italic">{user.tagline}</p>
-                            <p className="text-md pl-4 font-bold text-muted-foreground/60 italic">Guesser since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+                            <p className="text-md md:pl-4 font-bold text-muted-foreground italic">{user.tagline}</p>
+                            <p className="text-md md:pl-4 font-bold text-muted-foreground/60 italic">Guesser since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
                         </div>
                     </div>
-                    <div className="flex flex-col items-start pt-4">
+                    <div className="flex flex-col w-full md:w-auto items-start pt-4">
                         <div className="flex flex-row justify-between w-full">
-                            <p className="text-md font-bold">Level {Number(user.level)}</p>
+                            <p className="text-md font-bold mr-4">Level {Number(user.level)}</p>
                             <p className="text-md text-muted-foreground font-bold">{Number(user.currentXP)}/{100} XP</p>
                         </div>
-                        <Progress className="w-64 mt-1" value={Number(user.currentXP)} />
+                        <Progress className="w-full lg:w-64 mt-1" value={Number(user.currentXP)} />
                     </div>
                 </div>
                 <div>
