@@ -4,6 +4,16 @@ import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 import { format, addDays } from 'date-fns';
 
+interface Level {
+    _id: Id<"levels">;
+    _creationTime: number;
+    title: string;
+    latitude: number;
+    longitude: number;
+    imageId: string;
+    timesPlayed: bigint;
+}
+
 // attempts to get the weekly challenge where today is between the start and end date of the weekly challenge
 export const getWeeklyChallenge = query({
     handler: async (ctx) => {
@@ -75,26 +85,6 @@ export const getLevelsFromWeeklyChallenge = query({
     }
 });
 
-interface Level {
-    _id: Id<"levels">;
-    _creationTime: number;
-    title: string;
-    latitude: number;
-    longitude: number;
-    imageId: string;
-    timesPlayed: bigint;
-}
-
-interface PopulatedWeeklyChallenge {
-    startDate: string;
-    endDate: string;
-    round_1: Level;
-    round_2: Level;
-    round_3: Level;
-    round_4: Level;
-    round_5: Level;
-}
-
 // gets weekly challenge with populated levels
 export const getPopulatedLevelsFromWeeklyChallenge = query({
     handler: async (ctx) => {
@@ -120,6 +110,7 @@ export const getPopulatedLevelsFromWeeklyChallenge = query({
             const round_5 = (await ctx.db.query("levels").filter(q => q.eq(q.field("_id"), weeklyChallenge.round_5)).collect())[0];
 
             return {
+                _id: weeklyChallenge._id,
                 startDate: weeklyChallenge.startDate,
                 endDate: weeklyChallenge.endDate,
                 round_1,
@@ -129,5 +120,39 @@ export const getPopulatedLevelsFromWeeklyChallenge = query({
                 round_5
         }
     }
+    }
+});
+
+// updates a specific weekly challenge's specific round with a new level ID
+export const updateWeeklyChallengeRound = mutation({
+    args: { weeklyChallengeId: v.id("weeklyChallenges"), roundNumber: v.int64() , levelId: v.id("levels") },
+    handler: async (ctx, args) => {
+        const weeklyChallenge = await ctx.db.get(args.weeklyChallengeId);
+
+        if (!weeklyChallenge) {
+            return;
+        }
+        
+        // switch
+        switch (Number(args.roundNumber)) {
+            case 1:
+                weeklyChallenge.round_1 = args.levelId;
+                break;
+            case 2:
+                weeklyChallenge.round_2 = args.levelId;
+                break;
+            case 3:
+                weeklyChallenge.round_3 = args.levelId;
+                break;
+            case 4:
+                weeklyChallenge.round_4 = args.levelId;
+                break;
+            case 5:
+                weeklyChallenge.round_5 = args.levelId;
+                break;
+            default:
+                break
+        }
+        await ctx.db.patch(args.weeklyChallengeId, weeklyChallenge);
     }
 });

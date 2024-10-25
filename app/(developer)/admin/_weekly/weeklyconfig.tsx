@@ -5,7 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import Image from "next/image";
@@ -16,6 +16,7 @@ import { MoreHorizontal } from "lucide-react";
 import { LatLng } from "leaflet";
 import { FunctionReference } from "convex/server";
 import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
+import { Input } from "@/components/ui/input";
 
 type Level = {
     _id: Id<"levels">;
@@ -25,6 +26,7 @@ type Level = {
     longitude: number;
     imageId: string;
     timesPlayed: bigint;
+    authorUsername?: string;
 };
 
 const WeeklyChallengeConfig = () => {
@@ -38,9 +40,15 @@ const WeeklyChallengeConfig = () => {
     const [currentImageSrcUrl, setCurrentSrcUrl] = useState(defaultImageSource);
     const [openDialogId, setOpenDialogId] = useState<Id<"levels"> | null>(null);
     const [openMapDialogId, setOpenMapDialogId] = useState<Id<"levels"> | null>(null);
+    const [levelUpdaterInput, setLevelUpdaterInput] = useState("");
+    const [levelUpdaterDialogOpen, setLevelUpdaterDialogOpen] = useState<boolean>(false);
+    const [roundToBeUpdated, setRoundToBeUpdated] = useState<number | null>(null);
 
     // fetch weekly challenge data
     const weeklyChallenge = useWeeklyChallenge();
+
+    // mutation to update weekly challenge round
+    const updateWeeklyChallengeRoundMutation = useMutation(api.weeklychallenge.updateWeeklyChallengeRound);
 
     // fetch image source
     const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
@@ -97,6 +105,13 @@ const WeeklyChallengeConfig = () => {
         const latlng = new LatLng(latitude, longitude);
         setLocalMarkerPosition(latlng);
         setOpenMapDialogId(levelId);
+    };
+
+    // handles the updating of a round in the weekly challenge
+    const updateWeeklyChallengeRound = (levelId: Id<"levels">) => {
+        if (weeklyChallenge && roundToBeUpdated) {
+            updateWeeklyChallengeRoundMutation({ weeklyChallengeId: weeklyChallenge._id, roundNumber : BigInt(roundToBeUpdated), levelId });
+        }
     };
 
     // creates image dialog button
@@ -177,9 +192,8 @@ const WeeklyChallengeConfig = () => {
             header: "Title"
         },
         {
-            accessorKey: "_creationTime",
+            accessorKey: "authorEmail",
             header: "Author",
-            cell: "dtsivkovs@gmail.com"
         },
         {
             accessorKey: "timesPlayed",
@@ -204,6 +218,7 @@ const WeeklyChallengeConfig = () => {
             cell: ({ row }) => {
                 const level = row.original;
                 return (
+                    <>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -224,11 +239,16 @@ const WeeklyChallengeConfig = () => {
                                 Copy Coordinates
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-blue-600 dark:text-blue-500" onClick={() => alert("Sorry, delete level action not implemented yet.")}>
-                                Replace Level
+                            <DropdownMenuItem className="text-blue-600 dark:text-blue-500" onClick={() => {
+                                setLevelUpdaterDialogOpen(true);
+                                setRoundToBeUpdated(row.index + 1);
+                            }}>
+                                Change Level
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
+                    
+                    </>
                 );
             }
         }
@@ -237,6 +257,30 @@ const WeeklyChallengeConfig = () => {
     return (
         <>
             <DataTable columns={columns} data={tableData || []} />
+            <Dialog open={levelUpdaterDialogOpen} onOpenChange={(open) => {
+                        if (!open) {
+                            setLevelUpdaterDialogOpen(false);
+                        }
+                    }}
+                    >
+                    <DialogContent>
+                        <DialogHeader>
+                        <DialogTitle>Change Level</DialogTitle>
+                        <DialogDescription>
+                            Please paste the new level ID below.
+                        </DialogDescription>
+                        </DialogHeader>
+                        <Input placeholder="Level ID" value={levelUpdaterInput} onChange={(event) => setLevelUpdaterInput(event.target.value)} />
+                        <DialogFooter>
+                        <Button variant="default" onClick={() => {
+                            updateWeeklyChallengeRound(levelUpdaterInput as Id<"levels">);
+                            setLevelUpdaterDialogOpen(false);
+                        }}>
+                            Submit
+                        </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                    </Dialog>
         </>
     );
 };

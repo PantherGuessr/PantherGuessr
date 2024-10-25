@@ -15,7 +15,8 @@ export default defineSchema({
         latitude: v.float64(),
         longitude: v.float64(),
         imageId: v.id("_storage"),
-        timesPlayed: v.int64()
+        timesPlayed: v.int64(),
+        authorUsername: v.optional(v.string())
     }),
 
     gameStats: defineTable({

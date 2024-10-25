@@ -94,7 +94,8 @@ const LevelUpload = () => {
                 storageId, 
                 description: description.value, 
                 latitude: markerPosition.lat, 
-                longitude: markerPosition.lng 
+                longitude: markerPosition.lng,
+                authorUsername: "dtsivkovski"
             });
 
             // reset form and close dialog

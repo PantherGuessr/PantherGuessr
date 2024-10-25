@@ -166,7 +166,7 @@ const Levels = () => {
               },
         },
         {
-            accessorKey: "_creationTime",
+            accessorKey: "authorUsername",
             header: ({ column }) => {
                 return (
                   <Button
@@ -178,7 +178,6 @@ const Levels = () => {
                   </Button>
                 )
               },
-            cell: "dtsivkovs@gmail.com"
         },
         {
             accessorKey: "timesPlayed",
