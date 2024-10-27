@@ -43,7 +43,7 @@ export const Navbar = () => {
                     </div>
                 )}
                 {!isLoading && !isAuthenticated && (
-                    <div className="ml-auto">
+                    <div className="ml-auto space-x-2">
                         <SignInButton mode="modal">
                             <Button variant="ghost" size="sm">
                                 Login
