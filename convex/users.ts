@@ -173,7 +173,7 @@ export const hasChapmanEmail = query({
         if(!user) {
             return false;
         }
-
+        
         return user.emails.some(email => email.endsWith("@chapman.edu"));
     }
 });

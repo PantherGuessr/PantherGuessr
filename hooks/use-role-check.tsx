@@ -1,6 +1,5 @@
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/server";
 import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 
@@ -8,15 +7,14 @@ import { useEffect, useState } from "react";
  * Custom hook to check if a user has a specific role.
  *
  * @param {string} role - The role to check for.
- * @param {User | null} [userToCheck=null] - Optional user object to check the role for. If not provided, the current user will be used.
- * @returns {{ result: any, isLoading: boolean }} - An object containing the query result data and a loading state.
- *
+ * @param {string | null} [userClerkIdToCheck=null] - Optional Clerk ID of the user to check. If not provided, the current user's ID will be used.
+ * @returns {{ result: any, isLoading: boolean }} - An object containing the query result and a loading state.
  * @example
- * const { result, isLoading } = useRoleCheck('admin');
+ * const { result, isLoading } = useRoleCheck("developer");
  */
-export const useRoleCheck = (role: string, userToCheck: User | null = null) => {
+export const useRoleCheck = (role: string, userClerkIdToCheck: string | null = null) => {
     const { user } = useUser();
-    const clerkId = userToCheck?.id || user?.id || "";
+    const clerkId = userClerkIdToCheck || user?.id || "";
     const queryResult = useQuery(api.users.hasRole, { clerkId, role });
     const [isLoading, setIsLoading] = useState(true);
 

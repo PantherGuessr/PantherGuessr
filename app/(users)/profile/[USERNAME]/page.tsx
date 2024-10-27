@@ -21,6 +21,7 @@ import { backgrounds } from "./customizationOptions";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
+import { useRoleCheck } from "@/hooks/use-role-check";
 
 type Props = {
     params: { USERNAME: string }
@@ -36,7 +37,10 @@ const ProfilePage = ({ params }: Props) => {
 
     const clerkUser = useUser();
     const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
-    const isChapmanStudent = useHasChapmanEmail();
+    const {result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
+    const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
+    const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
+    const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
 
     // username editing
     const [usernameForUpdate, setUsernameForUpdate] = useState(user?.username);
@@ -94,7 +98,15 @@ const ProfilePage = ({ params }: Props) => {
         }
     }, [taglineForUpdate]);
 
-    if(user === undefined) {
+    if(
+        // All the following elements need to load before
+        // rendering page.
+        user === undefined
+        || isChapmanStudentLoading
+        || developerRoleLoading
+        || moderatorRoleLoading
+        || friendRoleLoading
+    ) {
         return (
             <div className="min-h-full flex flex-col">
                 <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -123,7 +135,6 @@ const ProfilePage = ({ params }: Props) => {
 
     // checks if the current user is the same as the user being viewed
     const isCurrentUser = clerkUser.user?.id === user.clerkId;
-
 
     return (
         <>
@@ -207,13 +218,13 @@ const ProfilePage = ({ params }: Props) => {
                                         <h1 className="text-4xl font-bold md:pl-4">{user.username}</h1>
                                     )}
                                 </div>
-                                <div className="flex flex-row items-center md:items-start pl-3 pt-2 gap-x-2">
-                                    {user.roles?.includes("developer") && (
+                                <div className="flex flex-row items-center md:items-start gap-x-2 pl-0 pt-0 sm:md:pl-3 sm:md:pt-2">
+                                    {isDeveloperRole && (
                                         (
                                             <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                                                 <Tooltip>
                                                     <TooltipTrigger>
-                                                        <Image src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
+                                                        <Image draggable={false} className="select-none cursor-default" src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
                                                     </TooltipTrigger>
                                                     <TooltipContent>
                                                         <p className="text-sm p-1"> Developer </p>
@@ -222,12 +233,12 @@ const ProfilePage = ({ params }: Props) => {
                                             </TooltipProvider>
                                         )
                                     )}
-                                    {user.roles?.includes("moderator") && (
+                                    {isModeratorRole && (
                                         <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                                         <Tooltip>
                                             <TooltipTrigger>
                                                 <Link href="/moderator" onClick={(e) => {e.preventDefault(); alert("MODERATOR PAGE COMING SOON")}}>
-                                                    <Image src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
+                                                    <Image draggable={false} className="select-none cursor-default" src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
                                                 </Link> 
                                             </TooltipTrigger>
                                             <TooltipContent>
@@ -236,11 +247,11 @@ const ProfilePage = ({ params }: Props) => {
                                         </Tooltip>
                                     </TooltipProvider>
                                     )}
-                                    {user.roles?.includes("friend") && (
+                                    {isFriendRole && (
                                         <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                                         <Tooltip>
                                             <TooltipTrigger>
-                                                <Image src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
+                                                <Image draggable={false} className="select-none cursor-default" src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p className="text-sm p-1"> Friend of a Developer </p>
@@ -252,7 +263,7 @@ const ProfilePage = ({ params }: Props) => {
                                         <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                                         <Tooltip>
                                             <TooltipTrigger>
-                                                <Image src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
+                                                <Image draggable={false} className="select-none cursor-default" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p className="text-sm p-1"> Chapman Community </p>
