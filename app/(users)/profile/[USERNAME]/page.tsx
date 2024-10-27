@@ -3,9 +3,9 @@
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
-import { ClerkProvider, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { Check, ChevronsUpDown, Loader2, LucideShield, PenLine, Save, Shield, SquarePen, UserSearch, X } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, PenLine, Save, SquarePen, UserSearch, X } from "lucide-react";
 import "./backgrounds.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,15 +19,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { taglines } from "./customizationOptions";
 import { backgrounds } from "./customizationOptions";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useRoleCheck } from "@/hooks/use-role-check";
+import { useRouter } from "next/navigation";
 
 type Props = {
     params: { USERNAME: string }
 }
 
 const ProfilePage = ({ params }: Props) => {
-
     const usernameSubPage = params.USERNAME as string;
+    const router = useRouter();
+
+    if(usernameSubPage !== usernameSubPage.toLowerCase()) {
+        router.push(`/profile/${usernameSubPage.toLowerCase()}`);
+    }
+
     const clerkUser = useUser();
     const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
     const isChapmanStudent = useQuery(api.users.hasChapmanEmail, { clerkId: user?.clerkId || "" });
