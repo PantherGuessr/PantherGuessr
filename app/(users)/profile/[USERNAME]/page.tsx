@@ -5,21 +5,26 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { ClerkProvider, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { Loader2, LucideShield, Save, Shield, SquarePen, UserSearch, X } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, LucideShield, PenLine, Save, Shield, SquarePen, UserSearch, X } from "lucide-react";
 import "./backgrounds.css";
 import Image from "next/image";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { set } from "date-fns";
-import { clerkClient } from "@clerk/nextjs/server";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { taglines } from "./customizationOptions";
+import { backgrounds } from "./customizationOptions";
 
 type Props = {
     params: { USERNAME: string }
 }
 
 const ProfilePage = ({ params }: Props) => {
+
     const usernameSubPage = params.USERNAME as string;
     const clerkUser = useUser();
     const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
@@ -28,6 +33,16 @@ const ProfilePage = ({ params }: Props) => {
     const [usernameForUpdate, setUsernameForUpdate] = useState(user?.username);
     const [isEditingUsername, setIsEditingUsername] = useState(false);
     const [userNameInputWidth, setUserNameInputWidth] = useState(0);
+
+    // tagline editing
+    const [taglineForUpdate, setTaglineForUpdate] = useState(user?.tagline);
+    const [isEditingTagline, setIsEditingTagline] = useState(false);
+    const [taglineInputWidth, setTaglineInputWidth] = useState(0);
+    const [taglinePopoverOpen, setTaglinePopoverOpen] = useState(false);
+
+    // background editing
+    const [isEditingBackground, setIsEditingBackground] = useState(false);
+    const [backgroundImageValue, setBackgroundImageValue] = useState<string | undefined>(backgrounds[0].value);
 
     // recalculate the width of the input based on the username length
     useEffect(() => {
@@ -47,6 +62,25 @@ const ProfilePage = ({ params }: Props) => {
             }
         }
     }, [usernameForUpdate]);
+
+    // recalculate the width of the input based on the tagline length
+    useEffect(() => {
+        if (!taglineForUpdate) {
+            setTaglineInputWidth(64);
+        }
+        else {
+            if (taglineForUpdate.length > 64) {
+                setTaglineForUpdate(taglineForUpdate.slice(0, 64));
+            }
+            const width = taglineForUpdate.length * 9 + 64;
+            if (width < 64) {
+                setTaglineInputWidth(64);
+            }
+            else {
+                setTaglineInputWidth(width);
+            }
+        }
+    }, [taglineForUpdate]);
 
     if(user === undefined) {
         return (
@@ -78,12 +112,46 @@ const ProfilePage = ({ params }: Props) => {
     // checks if the current user is the same as the user being viewed
     const isCurrentUser = clerkUser.user?.id === user.clerkId;
 
+
     return (
         <>
         <div className="min-h-full flex flex-col mt-20">
-        <div className="min-h-full flex flex-col bg-gradient-red-purple">
-            <div className="flex w-full h-96 bg-gradient-to-b from-background to-transparent">
-
+        <div className={
+            cn("min-h-full flex flex-col"
+                , backgroundImageValue ?? "bg-gradient-red-purple")
+        }>
+            <div className="flex w-full h-96 bg-gradient-to-b from-background to-transparent justify-center items-center md:justify-end md:items-end p-6">
+                {isCurrentUser && (isEditingBackground ? (
+                    <>
+                        <Card className="translate-y-[-2em] md:translate-y-0">
+                            <CardHeader>
+                                <CardTitle>Background</CardTitle>
+                                <CardDescription>Select a new background for your profile</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-2 md:grid-cols-3 grid-flow-row gap-4 max-h-24 md:max-h-48 overflow-scroll">
+                                    {backgrounds.map((background) => (
+                                        <div key={background.value} className={cn("flex items-center justify-center h-20 w-32 rounded-md cursor-pointer bg-gradient-red-purple"
+                                            , background.value
+                                            )
+                                        }onClick={() => {
+                                            setBackgroundImageValue(background.value);
+                                            setIsEditingBackground(false);
+                                        }}>{background.value === backgroundImageValue && (
+                                            <p className="text-white text-sm">Selected</p>
+                                        )}</div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </>
+                ) : (
+                    <>
+                    <div className="w-full h-full flex justify-end items-end">
+                    <Button onClick={() => setIsEditingBackground(true)} className="h-10 w-10 p-0" variant="secondary"><PenLine className="h-4 w-4" /></Button>
+                    </div>
+                    </>
+                ))}
             </div>
             <script>
                 document.
@@ -113,7 +181,7 @@ const ProfilePage = ({ params }: Props) => {
                                             setIsEditingUsername(false);
                                         }} />
                                         <Save className="h-7 w-7 ml-1 mt-1 cursor-pointer" onClick={() => {
-                                            // clerkClient.users.updateUser(user.clerkId, { username: usernameForUpdate})
+                                            // update username and close input
                                             setIsEditingUsername(false);
                                         }} />
                                         </>
@@ -135,8 +203,73 @@ const ProfilePage = ({ params }: Props) => {
                                     )}           
                                 </div>
                             </div>
-                            <p className="text-md md:pl-4 font-bold text-muted-foreground italic">{user.tagline}</p>
-                            <p className="text-md md:pl-4 font-bold text-muted-foreground/60 italic">Guesser since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+                            <div className="flex flex-row items-center">
+                            {isCurrentUser ? (isEditingTagline ? (
+                                        <>
+                                        <Popover open={taglinePopoverOpen} onOpenChange={setTaglinePopoverOpen}>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                aria-expanded={taglinePopoverOpen}
+                                                className="w-auto justify-between transition-all ml-4"
+                                                >
+                                                {taglineForUpdate
+                                                    ? taglines.find((tagline) => tagline.value === taglineForUpdate)?.label
+                                                    : "Select tagline..."}
+                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0 transition-all">
+                                                <Command>
+                                                <CommandInput placeholder="Search tagline..." />
+                                                <CommandList>
+                                                    <CommandEmpty>No tagline found.</CommandEmpty>
+                                                    <CommandGroup>
+                                                    {taglines.map((tagline) => (
+                                                        <CommandItem
+                                                        key={tagline.value}
+                                                        value={tagline.value}
+                                                        onSelect={(currentValue) => {
+                                                            setTaglineForUpdate(currentValue === taglineForUpdate ? "" : currentValue)
+                                                            setTaglinePopoverOpen(false)
+                                                        }}
+                                                        >
+                                                        <Check
+                                                            className={cn(
+                                                            "mr-2 h-4 w-4",
+                                                            taglineForUpdate === tagline.value ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                        {tagline.label}
+                                                        </CommandItem>
+                                                    ))}
+                                                    </CommandGroup>
+                                                </CommandList>
+                                                </Command>
+                                            </PopoverContent>
+                                        </Popover>
+                                        <X className="h-5 w-5 ml-1 mt-1 cursor-pointer" onClick={() => {
+                                            setIsEditingTagline(false);
+                                        }} />
+                                        <Save className="h-5 w-5 ml-1 mt-1 cursor-pointer" onClick={() => {
+                                            // update tagline and close input
+                                            setIsEditingTagline(false);
+                                        }} />
+                                        </>
+                                    ) : (   
+                                        <> 
+                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic cursor-default">{user.tagline}</p>
+                                        <SquarePen className="h-5 w-5 ml-1 mt-1 cursor-pointer" onClick={() => {
+                                            setTaglineForUpdate(user.tagline);
+                                            setIsEditingTagline(true)
+                                        }} />
+                                        </>  
+                                    )): (
+                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic">{user.tagline}</p>
+                                    )}
+                            </div>
+                            <p className="text-md md:pl-4 font-bold text-muted-foreground/60 italic">Guessr since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
                         </div>
                     </div>
                     <div className="flex flex-col w-full md:w-auto items-start pt-4">
