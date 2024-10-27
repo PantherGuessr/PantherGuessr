@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { taglines } from "./customizationOptions";
 import { backgrounds } from "./customizationOptions";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRoleCheck } from "@/hooks/use-role-check";
 
 type Props = {
     params: { USERNAME: string }
@@ -28,6 +30,7 @@ const ProfilePage = ({ params }: Props) => {
     const usernameSubPage = params.USERNAME as string;
     const clerkUser = useUser();
     const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
+    const isChapmanStudent = useQuery(api.users.hasChapmanEmail, { clerkId: user?.clerkId || "" });
 
     // username editing
     const [usernameForUpdate, setUsernameForUpdate] = useState(user?.username);
@@ -153,9 +156,6 @@ const ProfilePage = ({ params }: Props) => {
                     </>
                 ))}
             </div>
-            <script>
-                document.
-            </script>
             <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10 bg-background">
                 <div className="flex w-full md:flex-row flex-col md:items-start items-center justify-between px-4 md:px-10 lg:px-20">
                     <div className="flex md:flex-row flex-col items-center md:items-start md:pt-4">
@@ -197,10 +197,59 @@ const ProfilePage = ({ params }: Props) => {
                                         <h1 className="text-4xl font-bold md:pl-4">{user.username}</h1>
                                     )}
                                 </div>
-                                <div className="flex flex-row items-center md:items-start">
-                                    {user.roles?.includes("admin") && (
-                                        <Shield className="h-8 w-8 ml-3 mt-1" fill="#A50034" />
-                                    )}           
+                                <div className="flex flex-row items-center md:items-start pl-3 pt-2 gap-x-2">
+                                    {user.roles?.includes("developer") && (
+                                        (
+                                            <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+                                                <Tooltip>
+                                                    <TooltipTrigger>
+                                                        <Image src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p className="text-sm p-1"> Developer </p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        )
+                                    )}
+                                    {user.roles?.includes("moderator") && (
+                                        <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+                                        <Tooltip>
+                                            <TooltipTrigger>
+                                                <Link href="/moderator" onClick={(e) => {e.preventDefault(); alert("MODERATOR PAGE COMING SOON")}}>
+                                                    <Image src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
+                                                </Link> 
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p className="text-sm p-1"> Admin </p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                    )}
+                                    {user.roles?.includes("friend") && (
+                                        <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+                                        <Tooltip>
+                                            <TooltipTrigger>
+                                                <Image src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p className="text-sm p-1"> Friend of a Developer </p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        </TooltipProvider>
+                                    )}
+                                    {isChapmanStudent && (
+                                        <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+                                        <Tooltip>
+                                            <TooltipTrigger>
+                                                <Image src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p className="text-sm p-1"> Chapman Student </p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        </TooltipProvider>
+                                    )}
                                 </div>
                             </div>
                             <div className="flex flex-row items-center">
