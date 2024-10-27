@@ -44,12 +44,15 @@ const ProfilePage = ({ params }: Props) => {
     const [userNameInputWidth, setUserNameInputWidth] = useState(0);
 
     // tagline editing
-    const [taglineForUpdate, setTaglineForUpdate] = useState(user?.tagline);
+    //TODO: get tagline from query from profileTaglines table and set it to user.profileTagline
+    //TODO: get all populated unlockedProfileTaglines from user and set it to user.unlockedProfileTaglines to be used in the selector
+    const [taglineForUpdate, setTaglineForUpdate] = useState(user?.profileTagline.toString()); 
     const [isEditingTagline, setIsEditingTagline] = useState(false);
     const [taglineInputWidth, setTaglineInputWidth] = useState(0);
     const [taglinePopoverOpen, setTaglinePopoverOpen] = useState(false);
 
     // background editing
+    //TODO: see above, same thing but for images
     const [isEditingBackground, setIsEditingBackground] = useState(false);
     const [backgroundImageValue, setBackgroundImageValue] = useState<string | undefined>(backgrounds[0].value);
 
@@ -315,14 +318,14 @@ const ProfilePage = ({ params }: Props) => {
                                         </>
                                     ) : (   
                                         <> 
-                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic cursor-default">{user.tagline}</p>
+                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic cursor-default">{user.profileTagline}</p>
                                         <SquarePen className="h-5 w-5 ml-1 mt-1 cursor-pointer" onClick={() => {
-                                            setTaglineForUpdate(user.tagline);
+                                            setTaglineForUpdate(user.profileTagline);
                                             setIsEditingTagline(true)
                                         }} />
                                         </>  
                                     )): (
-                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic">{user.tagline}</p>
+                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic">{user.profileTagline}</p>
                                     )}
                             </div>
                             <p className="text-md md:pl-4 font-bold text-muted-foreground/60 italic">Guessr since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>

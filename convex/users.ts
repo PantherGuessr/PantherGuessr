@@ -41,6 +41,8 @@ export const upsertFromClerk = internalMutation({
     async handler(ctx, { data }) {
         
         const user = await userByClerkId(ctx, data.id);
+        const background = await ctx.db.query("profileBackgrounds").withIndex("by_creation_time").first(); // generates background
+        const tagline = await ctx.db.query("profileTaglines").filter((q) => q.eq("tagline", "Just born!")).first(); // generates tagline
         if (user === null) {
             const userAttributes = {
                 clerkId: data.id!,
@@ -49,6 +51,10 @@ export const upsertFromClerk = internalMutation({
                 level: 1n,
                 currentXP: 0n,
                 picture: data.image_url,
+                profileBackground: background!._id,
+                profileTagline: tagline!._id,
+                unlockedProfileBackgrounds: [background!._id],
+                unlockedProfileTaglines: [tagline!._id],
             };
             
             await ctx.db.insert("users", userAttributes);
