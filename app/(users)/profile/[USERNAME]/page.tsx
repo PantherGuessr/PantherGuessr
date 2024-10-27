@@ -119,6 +119,7 @@ const ProfilePage = ({ params }: Props) => {
     return (
         <>
         <div className="min-h-full flex flex-col mt-20">
+        <div className="min-h-full flex flex-col">
         <div className={
             cn("min-h-full flex flex-col"
                 , backgroundImageValue ?? "bg-gradient-red-purple")
@@ -221,7 +222,7 @@ const ProfilePage = ({ params }: Props) => {
                                                 </Link> 
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p className="text-sm p-1"> Admin </p>
+                                                <p className="text-sm p-1"> Moderator </p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -333,7 +334,10 @@ const ProfilePage = ({ params }: Props) => {
                 </div>
             </div>
         </div>
-        <Footer />
+        </div>
+        </div>
+        <div className="flex-col justify-end">
+            <Footer />      
         </div>
         </>
     )
