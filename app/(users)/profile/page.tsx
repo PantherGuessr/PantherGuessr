@@ -17,7 +17,7 @@ const ProfileSearchPage = () => {
     };
 
     return (
-        <div className="min-h-full flex flex-col">
+        <div className="min-h-full flex flex-col pt-40">
             <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
                 <h1 className="text-3xl sm:text-5xl font-bold">Find Profile</h1>
                 <div className="flex w-full max-w-sm items-center space-x-2">
