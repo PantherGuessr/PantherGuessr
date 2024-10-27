@@ -246,7 +246,7 @@ const ProfilePage = ({ params }: Props) => {
                                                 <Image src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p className="text-sm p-1"> Chapman Student </p>
+                                                <p className="text-sm p-1"> Chapman Community </p>
                                             </TooltipContent>
                                         </Tooltip>
                                         </TooltipProvider>
