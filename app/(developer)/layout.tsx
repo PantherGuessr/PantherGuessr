@@ -14,12 +14,12 @@ const AdminLayout = ({
     children: React.ReactNode;
 }) => {
     const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
-    const { result: isAdmin, isLoading: isAdminLoading } = useRoleCheck("admin");
+    const { result: isDeveloper, isLoading: isDeveloperLoading } = useRoleCheck("developer");
     const searchParams = useSearchParams();
     const tab = searchParams.get('tab') || 'analytics';
 
     // If they are loading
-    if(authLoading || isAdminLoading) {
+    if(authLoading || isDeveloperLoading) {
         return (
             <div className="h-full flex items-center justify-center">
                 <Skeleton className="w-[240px] h-[40px] translate-y-[40%]" />
@@ -35,7 +35,7 @@ const AdminLayout = ({
     }
 
     // If they are not an admin
-    if(!isAdmin) {
+    if(!isDeveloper) {
         return redirect("/");
     }
 
