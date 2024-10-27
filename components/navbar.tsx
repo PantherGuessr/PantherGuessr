@@ -22,10 +22,10 @@ import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
     const { user } = useUser();
-    const { result: isDeveloper } = useRoleCheck("developer");
-    const { result: isModerator } = useRoleCheck("moderator");
-    const { result: isFriend } = useRoleCheck("friend");
-    const isChapmanStudent = useHasChapmanEmail();
+    const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer");
+    const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator");
+    const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend");
+    const {result: isChapmanStudent, isLoading: chapmanRoleLoading } = useHasChapmanEmail();
     const scrolled = useScrollTop();
     const { toast } = useToast();
 
@@ -36,10 +36,17 @@ export const Navbar = () => {
         )}>
             <div className="justify-between flex items-center gap-x-2 w-full">
                 <div className="mr-2"><Logo clickable={true} href="/" /></div>
-                {isLoading && (
+                {
+                    isLoading
+                    || developerRoleLoading
+                    || moderatorRoleLoading
+                    || friendRoleLoading
+                    || chapmanRoleLoading
+                    &&
+                (
                     <div className="flex justify-end justify-items-end items-center">
-                    <Skeleton className="h-6 w-[120px] mr-1" />
-                    <Skeleton className="h-8 w-8 rounded-full" />
+                        <Skeleton className="h-6 w-[120px] mr-1" />
+                        <Skeleton className="h-8 w-8 rounded-full" />
                     </div>
                 )}
                 {!isLoading && !isAuthenticated && (
@@ -68,7 +75,7 @@ export const Navbar = () => {
                                     <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                                         <Tooltip>
                                             <TooltipTrigger>
-                                                <Image src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
+                                                <Image draggable={false} className="select-none cursor-default" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p className="text-sm p-2"> Welcome, fellow Chapman student! 😎 </p>
@@ -78,11 +85,11 @@ export const Navbar = () => {
                                 )}
 
                                 { /* user has the friend role */
-                                isFriend && (
+                                isFriendRole && (
                                     <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                                         <Tooltip>
                                             <TooltipTrigger>
-                                                <Image src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
+                                                <Image draggable={false} className="select-none cursor-default" src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p className="text-sm p-2"> You are a friend of PantherGuessr! </p>
@@ -92,12 +99,12 @@ export const Navbar = () => {
                                 )}
 
                                 { /* if user is an admin then display shield */
-                                isModerator && (
+                                isModeratorRole && (
                                     <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                                         <Tooltip>
                                             <TooltipTrigger>
                                                 <Link href="/moderator" onClick={(e) => {e.preventDefault(); alert("MODERATOR PAGE COMING SOON")}}>
-                                                    <Image src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
+                                                    <Image draggable={false} className="select-none" src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
                                                 </Link> 
                                             </TooltipTrigger>
                                             <TooltipContent>
@@ -108,12 +115,12 @@ export const Navbar = () => {
                                 )}
 
                                 { /* if user is an admin then display shield */
-                                isDeveloper && (
+                                isDeveloperRole && (
                                     <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                                         <Tooltip>
                                             <TooltipTrigger>
                                                 <Link href="/admin">
-                                                    <Image src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
+                                                    <Image draggable={false} className="select-none" src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
                                                 </Link> 
                                             </TooltipTrigger>
                                             <TooltipContent>
