@@ -20,6 +20,7 @@ import { taglines } from "./customizationOptions";
 import { backgrounds } from "./customizationOptions";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
+import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 
 type Props = {
     params: { USERNAME: string }
@@ -35,7 +36,7 @@ const ProfilePage = ({ params }: Props) => {
 
     const clerkUser = useUser();
     const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
-    const isChapmanStudent = useQuery(api.users.hasChapmanEmail, { clerkId: user?.clerkId || "" });
+    const isChapmanStudent = useHasChapmanEmail();
 
     // username editing
     const [usernameForUpdate, setUsernameForUpdate] = useState(user?.username);

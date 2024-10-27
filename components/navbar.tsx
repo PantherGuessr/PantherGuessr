@@ -6,7 +6,7 @@ import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
-import { useConvexAuth, useQuery } from "convex/react";
+import { useConvexAuth } from "convex/react";
 import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/clerk-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,8 +16,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import NavbarMain from "./navbar-main";
-import { api } from "@/convex/_generated/api";
 import { useRoleCheck } from "@/hooks/use-role-check";
+import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 
 export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
@@ -25,7 +25,7 @@ export const Navbar = () => {
     const { result: isDeveloper } = useRoleCheck("developer");
     const { result: isModerator } = useRoleCheck("moderator");
     const { result: isFriend } = useRoleCheck("friend");
-    const isChapmanStudent = useQuery(api.users.hasChapmanEmail, { clerkId: user?.id || "" });
+    const isChapmanStudent = useHasChapmanEmail();
     const scrolled = useScrollTop();
     const { toast } = useToast();
 
