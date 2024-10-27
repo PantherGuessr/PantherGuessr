@@ -50,15 +50,15 @@ const ProfilePage = ({ params }: Props) => {
     // recalculate the width of the input based on the username length
     useEffect(() => {
         if (!usernameForUpdate) {
-            setUserNameInputWidth(64);
+            setUserNameInputWidth(48);
         }
         else {
             if (usernameForUpdate.length > 32) {
                 setUsernameForUpdate(usernameForUpdate.slice(0, 32));
             }
-            const width = usernameForUpdate.length * 19 + 64;
-            if (width < 64) {
-                setUserNameInputWidth(64);
+            const width = usernameForUpdate.length * 19 + 48;
+            if (width < 48) {
+                setUserNameInputWidth(48);
             }
             else {
                 setUserNameInputWidth(width);
@@ -170,7 +170,7 @@ const ProfilePage = ({ params }: Props) => {
                                             type="text" 
                                             value={usernameForUpdate} 
                                             onChange={(e) => setUsernameForUpdate(e.target.value)}
-                                            className="text-4xl font-bold md:pl-4 transition-all duration-[25] ease-in-out"
+                                            className="text-4xl font-bold md:ml-4 mt-2 md:mt-0 transition-all duration-[25] ease-in-out"
                                             style={{ width: userNameInputWidth }}
                                             onKeyDown={(e) => {
                                                 if(e.key === "Escape") {
