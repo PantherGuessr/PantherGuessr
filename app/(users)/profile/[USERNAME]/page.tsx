@@ -222,7 +222,7 @@ const ProfilePage = ({ params }: Props) => {
                                                 </Link> 
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p className="text-sm p-1"> Moderator </p>
+                                                <p className="text-sm p-1">Moderator</p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -239,7 +239,7 @@ const ProfilePage = ({ params }: Props) => {
                                         </Tooltip>
                                         </TooltipProvider>
                                     )}
-                                    {isChapmanStudent && (
+                                    {(isChapmanStudent || user.username === "pete") && (
                                         <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                                         <Tooltip>
                                             <TooltipTrigger>
