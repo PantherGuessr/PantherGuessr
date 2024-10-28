@@ -372,12 +372,25 @@ const ProfilePage = ({ params }: Props) => {
                             <p className="text-md md:pl-4 font-bold text-muted-foreground/60 italic">Guessr since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
                         </div>
                     </div>
-                    <div className="flex flex-col w-full md:w-auto items-start pt-4">
-                        <div className="flex flex-row justify-between w-full">
-                            <p className="text-md font-bold mr-4">Level {Number(user.level)}</p>
-                            <p className="text-md text-muted-foreground font-bold">{Number(user.currentXP)}/{100} XP</p>
+                    <div className="flex flex-col w-full md:w-auto space-y-10 items-start pt-4">
+                        <div className="flex flex-col w-full">
+                            <div className="flex flex-row justify-between w-full">
+                                <p className="text-md font-bold mr-4">Level {Number(user.level)}</p>
+                                <p className="text-md text-muted-foreground font-bold">{Number(user.currentXP)}/{100} XP</p>
+                            </div>
+                            <Progress className="w-full lg:w-64 mt-1" value={Number(user.currentXP)} />
                         </div>
-                        <Progress className="w-full lg:w-64 mt-1" value={Number(user.currentXP)} />
+                        <div className="flex flex-col w-full items-start">
+                            <p className="text-md font-bold mr-4">Unlocked Achievements</p>
+                            <div className="grid grid-cols-6 md:sm:grid-cols-3 gap-2 w-full md:w-auto">
+                                <Image src="/achievements/early_adopter_achievement.svg" width={80} height={80} alt="Early Adopter Achievement" />
+                                <Image src="/achievements/first_steps_achievement.svg" width={80} height={80} alt="First Steps Achievement" />
+                                <Image src="/achievements/map_master_achievement.svg" width={80} height={80} alt="Map Master Achievement" />
+                                <Image src="/achievements/on_fire_achievement.svg" width={80} height={80} alt="On Fire Achievement" />
+                                <Image src="/achievements/perfect_game_achievement.svg" width={80} height={80} alt="Perfect Game Achievement" />
+                                <Image src="/achievements/photo_scout_achievement.svg" width={80} height={80} alt="Photo Scout Achievement" />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div>
