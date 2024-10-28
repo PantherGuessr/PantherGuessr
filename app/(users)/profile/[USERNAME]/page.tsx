@@ -4,7 +4,7 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Check, ChevronsUpDown, Loader2, PenLine, Save, SquarePen, UserSearch, X } from "lucide-react";
 import "./backgrounds.css";
 import Image from "next/image";
@@ -16,12 +16,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { taglines } from "./customizationOptions";
-import { backgrounds } from "./customizationOptions";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { useRoleCheck } from "@/hooks/use-role-check";
+import { useGetUnlockedTaglines } from "@/hooks/userProfiles/use-get-unlocked-taglines";
+import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
+import { useGetUnlockedBackgrounds } from "@/hooks/userProfiles/use-get-unlocked-backgrounds";
+import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
 
 type Props = {
     params: { USERNAME: string }
@@ -37,10 +39,18 @@ const ProfilePage = ({ params }: Props) => {
 
     const clerkUser = useUser();
     const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
-    const {result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
+    const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
     const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
     const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
     const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
+    const { result: unlockedProfileTaglines, isLoading: unlockedProfileTaglinesLoading } = useGetUnlockedTaglines();
+    const { result: profileTagline, isLoading: profileTaglineLoading } = useGetSelectedTagline(user?.clerkId);
+    const { result: unlockedProfileBackgrounds, isLoading: unlockedProfileBackgroundsLoading } = useGetUnlockedBackgrounds();
+    const { result: profileBackground, isLoading: profileBackgroundLoading } = useGetSelectedBackground(user?.clerkId);
+
+    // mutations for updating user data
+    const updateSelectedTagline = useMutation(api.users.updateSelectedTagline);
+    const updateSelectedBackground = useMutation(api.users.updateSelectedBackground);
 
     // username editing
     const [usernameForUpdate, setUsernameForUpdate] = useState(user?.username);
@@ -48,17 +58,18 @@ const ProfilePage = ({ params }: Props) => {
     const [userNameInputWidth, setUserNameInputWidth] = useState(0);
 
     // tagline editing
-    //TODO: get tagline from query from profileTaglines table and set it to user.profileTagline
-    //TODO: get all populated unlockedProfileTaglines from user and set it to user.unlockedProfileTaglines to be used in the selector
-    const [taglineForUpdate, setTaglineForUpdate] = useState(user?.profileTagline.toString()); 
+    const [taglineForUpdate, setTaglineForUpdate] = useState(profileTagline?.tagline); 
+    const [taglineIdForUpdate, setTaglineIdForUpdate] = useState(profileTagline?._id);
     const [isEditingTagline, setIsEditingTagline] = useState(false);
-    const [taglineInputWidth, setTaglineInputWidth] = useState(0);
     const [taglinePopoverOpen, setTaglinePopoverOpen] = useState(false);
 
     // background editing
-    //TODO: see above, same thing but for images
     const [isEditingBackground, setIsEditingBackground] = useState(false);
-    const [backgroundImageValue, setBackgroundImageValue] = useState<string | undefined>(backgrounds[0].value);
+    const [backgroundCSSValue, setBackgroundCSSValue] = useState<string | undefined>(profileBackground?.backgroundCSS);
+    const [backgroundIdForUpdate, setBackgroundIdForUpdate] = useState(profileBackground?._id);
+
+    // page reloading effect that is just a CSS class change
+    const [taglineReloadingEffect, setTaglineReloadingEffect] = useState(false);
 
     // recalculate the width of the input based on the username length
     useEffect(() => {
@@ -79,24 +90,13 @@ const ProfilePage = ({ params }: Props) => {
         }
     }, [usernameForUpdate]);
 
-    // recalculate the width of the input based on the tagline length
+    // useEffect to select the user's current background to ensure that the selected text is correct
     useEffect(() => {
-        if (!taglineForUpdate) {
-            setTaglineInputWidth(64);
+        if(profileBackground) {
+            setBackgroundCSSValue(profileBackground.backgroundCSS);
+            setBackgroundIdForUpdate(profileBackground._id);
         }
-        else {
-            if (taglineForUpdate.length > 64) {
-                setTaglineForUpdate(taglineForUpdate.slice(0, 64));
-            }
-            const width = taglineForUpdate.length * 9 + 64;
-            if (width < 64) {
-                setTaglineInputWidth(64);
-            }
-            else {
-                setTaglineInputWidth(width);
-            }
-        }
-    }, [taglineForUpdate]);
+    }, [profileBackground]);
 
     if(
         // All the following elements need to load before
@@ -106,6 +106,10 @@ const ProfilePage = ({ params }: Props) => {
         || developerRoleLoading
         || moderatorRoleLoading
         || friendRoleLoading
+        || unlockedProfileTaglinesLoading
+        || profileTaglineLoading
+        || unlockedProfileBackgroundsLoading
+        || profileBackgroundLoading
     ) {
         return (
             <div className="min-h-full flex flex-col">
@@ -141,10 +145,14 @@ const ProfilePage = ({ params }: Props) => {
         <div className="min-h-full flex flex-col mt-20">
         <div className="min-h-full flex flex-col">
         <div className={
-            cn("min-h-full flex flex-col"
-                , backgroundImageValue ?? "bg-gradient-red-purple")
+            cn("min-h-full flex flex-col")
         }>
-            <div className="flex w-full h-96 bg-gradient-to-b from-background to-transparent justify-center items-center md:justify-end md:items-end p-6">
+            <div className={
+                cn("flex w-full h-96",
+                    backgroundCSSValue ?? "bg-gradient-red-purple"
+                )
+            }>
+                <div className="flex h-full w-full bg-gradient-to-b from-background to-transparent justify-center items-center md:justify-end md:items-end p-6">
                 {isCurrentUser && (isEditingBackground ? (
                     <>
                         <Card className="translate-y-[-2em] md:translate-y-0">
@@ -154,14 +162,19 @@ const ProfilePage = ({ params }: Props) => {
                             </CardHeader>
                             <CardContent>
                                 <div className="grid grid-cols-2 md:grid-cols-3 grid-flow-row gap-4 max-h-24 md:max-h-48 overflow-scroll">
-                                    {backgrounds.map((background) => (
-                                        <div key={background.value} className={cn("flex items-center justify-center h-20 w-32 rounded-md cursor-pointer bg-gradient-red-purple"
-                                            , background.value
+                                    {unlockedProfileBackgrounds?.map((background) => (
+                                        <div key={background?._id} className={cn("flex items-center justify-center h-20 w-32 rounded-md cursor-pointer bg-gradient-red-purple"
+                                            , background?.backgroundCSS
                                             )
                                         }onClick={() => {
-                                            setBackgroundImageValue(background.value);
+                                            setBackgroundCSSValue(background?.backgroundCSS);
+                                            setBackgroundIdForUpdate(background!._id);
+                                            updateSelectedBackground({
+                                                clerkId: user.clerkId,
+                                                backgroundId: background!._id
+                                            });
                                             setIsEditingBackground(false);
-                                        }}>{background.value === backgroundImageValue && (
+                                        }}>{background?._id == backgroundIdForUpdate && (
                                             <p className="text-white text-sm">Selected</p>
                                         )}</div>
                                     ))}
@@ -176,6 +189,7 @@ const ProfilePage = ({ params }: Props) => {
                     </div>
                     </>
                 ))}
+                </div>
             </div>
             <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10 bg-background">
                 <div className="flex w-full md:flex-row flex-col md:items-start items-center justify-between px-4 md:px-10 lg:px-20">
@@ -209,10 +223,12 @@ const ProfilePage = ({ params }: Props) => {
                                     ) : (   
                                         <> 
                                         <h1 className="text-4xl font-bold md:pl-4 cursor-default">{user.username}</h1>
+                                        {/* //TODO: make username editing possible with clerk hook, then uncomment the code below
                                         <SquarePen className="h-7 w-7 ml-1 mt-1 cursor-pointer" onClick={() => {
-                                            setIsEditingUsername(true)
-                                            setUsernameForUpdate(user.username);
+                                            // setIsEditingUsername(true)
+                                            // setUsernameForUpdate(user.username);
                                         }} />
+                                         */}
                                         </>  
                                     )): (
                                         <h1 className="text-4xl font-bold md:pl-4">{user.username}</h1>
@@ -237,9 +253,7 @@ const ProfilePage = ({ params }: Props) => {
                                         <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                                         <Tooltip>
                                             <TooltipTrigger>
-                                                <Link href="/moderator" onClick={(e) => {e.preventDefault(); alert("MODERATOR PAGE COMING SOON")}}>
-                                                    <Image draggable={false} className="select-none cursor-default" src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
-                                                </Link> 
+                                                <Image draggable={false} className="select-none cursor-default" src="/badges/moderator_badge.svg" width="25" height="25" alt="Moderator Badge" />
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p className="text-sm p-1">Moderator</p>
@@ -273,7 +287,9 @@ const ProfilePage = ({ params }: Props) => {
                                     )}
                                 </div>
                             </div>
-                            <div className="flex flex-row items-center">
+                            <div className={cn("flex flex-row items-center transition-all duration-100",
+                                taglineReloadingEffect && "page-fade-out-and-in"
+                            )}>
                             {isCurrentUser ? (isEditingTagline ? (
                                         <>
                                         <Popover open={taglinePopoverOpen} onOpenChange={setTaglinePopoverOpen}>
@@ -285,7 +301,7 @@ const ProfilePage = ({ params }: Props) => {
                                                 className="w-auto justify-between transition-all ml-4"
                                                 >
                                                 {taglineForUpdate
-                                                    ? taglines.find((tagline) => tagline.value === taglineForUpdate)?.label
+                                                    ? unlockedProfileTaglines?.find((tagline) => tagline?.tagline === taglineForUpdate)?.tagline
                                                     : "Select tagline..."}
                                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                                 </Button>
@@ -296,22 +312,23 @@ const ProfilePage = ({ params }: Props) => {
                                                 <CommandList>
                                                     <CommandEmpty>No tagline found.</CommandEmpty>
                                                     <CommandGroup>
-                                                    {taglines.map((tagline) => (
+                                                    {unlockedProfileTaglines?.map((tagline) => (
                                                         <CommandItem
-                                                        key={tagline.value}
-                                                        value={tagline.value}
+                                                        key={tagline?._id}
+                                                        value={tagline?.tagline}
                                                         onSelect={(currentValue) => {
                                                             setTaglineForUpdate(currentValue === taglineForUpdate ? "" : currentValue)
+                                                            setTaglineIdForUpdate(tagline?._id)
                                                             setTaglinePopoverOpen(false)
                                                         }}
                                                         >
                                                         <Check
                                                             className={cn(
                                                             "mr-2 h-4 w-4",
-                                                            taglineForUpdate === tagline.value ? "opacity-100" : "opacity-0"
+                                                            taglineForUpdate === tagline?.tagline ? "opacity-100" : "opacity-0"
                                                             )}
                                                         />
-                                                        {tagline.label}
+                                                        {tagline?.tagline}
                                                         </CommandItem>
                                                     ))}
                                                     </CommandGroup>
@@ -324,19 +341,32 @@ const ProfilePage = ({ params }: Props) => {
                                         }} />
                                         <Save className="h-5 w-5 ml-1 mt-1 cursor-pointer" onClick={() => {
                                             // update tagline and close input
-                                            setIsEditingTagline(false);
+                                            // Checks if IDs are not the same to avoid unnecessary updates
+                                            if(taglineIdForUpdate !== profileTagline?._id) {
+                                                updateSelectedTagline({
+                                                    clerkId: user.clerkId,
+                                                    taglineId: taglineIdForUpdate!
+                                                });
+                                            }
+                                            setTaglineReloadingEffect(true);
+                                            setTimeout(() => {
+                                                setTaglineReloadingEffect(false);
+                                            }, 2000);
+                                            setTimeout(() => {
+                                                setIsEditingTagline(false);
+                                            }, 250);
                                         }} />
                                         </>
                                     ) : (   
                                         <> 
-                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic cursor-default">{user.profileTagline}</p>
-                                        <SquarePen className="h-5 w-5 ml-1 mt-1 cursor-pointer" onClick={() => {
-                                            setTaglineForUpdate(user.profileTagline);
+                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic cursor-default">{profileTagline?.tagline}</p>
+                                        <SquarePen className="h-4 w-4 ml-1 cursor-pointer" onClick={() => {
+                                            setTaglineForUpdate(profileTagline?.tagline);
                                             setIsEditingTagline(true)
                                         }} />
                                         </>  
                                     )): (
-                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic">{user.profileTagline}</p>
+                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic">{taglineForUpdate}</p>
                                     )}
                             </div>
                             <p className="text-md md:pl-4 font-bold text-muted-foreground/60 italic">Guessr since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
