@@ -20,6 +20,7 @@ import { Copy, LogOut, Settings, Shield, UserRound, UserRoundSearch, Wrench } fr
 import { api } from "@/convex/_generated/api";
 import { Toaster } from "./ui/toaster";
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export const Navbar = () => {
     const router = useRouter();
@@ -95,7 +96,7 @@ export const Navbar = () => {
                                 <MenubarMenu>
                                     <MenubarTrigger className="bg-transparent outline-none hover:bg-accent focus:bg-accent cursor-pointer">
                                         <div className="flex justify-end justify-items-end items-center">
-                                            <div className="flex items-center gap-x-2 mr-2">
+                                            <div className="hidden xs:flex items-center gap-x-2 mr-2">
                                                 { /* email ends in @chapman.edu */
                                                 isChapmanStudent && (
                                                     <Image draggable={false} className="select-none" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
@@ -117,8 +118,11 @@ export const Navbar = () => {
                                                 )}
                                             </div>
                                             { /* Toast to copy username to clipboard */}
-                                            <p title="Copy" className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
-                                            <Image className="rounded-full" src={user?.picture} width={25} height={25} alt="User Profile Picture" />
+                                            <p className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
+                                            <Avatar className="w-[25px] h-[25px]">
+                                                <AvatarImage src={user?.picture} alt={`${user?.username}'s Profile Picture`} />
+                                                <AvatarFallback>{user?.username[0].toUpperCase()}</AvatarFallback>
+                                            </Avatar>
                                         </div>
                                     </MenubarTrigger>
                                     <MenubarContent>
