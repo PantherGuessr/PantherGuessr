@@ -1,4 +1,4 @@
-import { internalMutation, query, QueryCtx } from "./_generated/server";
+import { internalMutation, mutation, query, QueryCtx } from "./_generated/server";
 import { UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
 
@@ -41,6 +41,8 @@ export const upsertFromClerk = internalMutation({
     async handler(ctx, { data }) {
         
         const user = await userByClerkId(ctx, data.id);
+        const background = await ctx.db.query("profileBackgrounds").withIndex("by_creation_time").first(); // generates background
+        const tagline = await ctx.db.query("profileTaglines").filter((q) => q.eq("tagline", "Just born!")).first(); // generates tagline
         if (user === null) {
             const userAttributes = {
                 clerkId: data.id!,
@@ -49,6 +51,10 @@ export const upsertFromClerk = internalMutation({
                 level: 1n,
                 currentXP: 0n,
                 picture: data.image_url,
+                profileBackground: background!._id,
+                profileTagline: tagline!._id,
+                unlockedProfileBackgrounds: [background!._id],
+                unlockedProfileTaglines: [tagline!._id],
             };
             
             await ctx.db.insert("users", userAttributes);
@@ -171,6 +177,161 @@ export const hasChapmanEmail = query({
         return user.emails.some(email => email.endsWith("@chapman.edu"));
     }
 });
+
+/**
+ * Retrieves the unlocked profile taglines for a user based on their Clerk ID.
+ *
+ * @param {Object} args - The arguments object.
+ * @param {string} args.clerkId - The Clerk ID of the user.
+ * @returns {Promise<Array<Object>|null>} A promise that resolves to an array of unlocked profile taglines or null if the user is not found.
+ *
+ * @async
+ * @function getUnlockedTaglines
+ * @memberof module:users
+ */
+export const getUnlockedTaglines = query({
+    args: {
+        clerkId: v.string()
+    },
+    async handler(ctx, args) {
+        const user = await userByClerkId(ctx, args.clerkId);
+
+        if(!user) {
+            return null;
+        }
+
+        const taglineIds = user?.unlockedProfileTaglines;
+
+        // iterate through taglines to return objects
+        const taglines = [];
+        for (const taglineId of taglineIds) {
+            const tagline = await ctx.db.query("profileTaglines").withIndex("by_id", (q) => q.eq("_id", taglineId)).unique();
+            taglines.push(tagline);
+        }
+        
+        return taglines;
+    }
+});
+
+/**
+ * Retrieves the selected tagline for a user based on their Clerk ID.
+ *
+ * @param {Object} args - The arguments object.
+ * @param {string} args.clerkId - The Clerk ID of the user.
+ * @returns {Promise<Object|null>} The selected tagline object if found, otherwise null.
+ *
+ * @async
+ * @function getSelectedTagline
+ * @param {Object} ctx - The context object.
+ * @param {Object} args - The arguments object containing the Clerk ID.
+ */
+export const getSelectedTagline = query({
+    args: {
+        clerkId: v.string()
+    },
+    async handler(ctx, args) {
+        const user = await userByClerkId(ctx, args.clerkId);
+
+        if(!user) {
+            return null;
+        }
+
+        const taglineId = user?.profileTagline;
+
+        const tagline = await ctx.db.query("profileTaglines").withIndex("by_id", (q) => q.eq("_id", taglineId)).unique();
+        
+        return tagline;
+    }
+})
+
+/**
+ * Updates the selected tagline for a user.
+ *
+ * @mutation
+ * @param {Object} args - The arguments for the mutation.
+ * @param {string} args.clerkId - The Clerk ID of the user.
+ * @param {string} args.taglineId - The ID of the selected tagline from the profileTaglines collection.
+ * @returns {Promise<null | void>} - Returns null if the user is not found, otherwise void.
+ *
+ * @async
+ * @function
+ * @name updateSelectedTagline
+ * @param {Object} ctx - The context object containing the database instance.
+ * @param {Object} args - The arguments object containing the Clerk ID and tagline ID.
+ */
+export const updateSelectedTagline = mutation({
+    args: {
+        clerkId: v.string(),
+        taglineId: v.id("profileTaglines")
+    },
+    async handler(ctx, args) {
+        const user = await userByClerkId(ctx, args.clerkId);
+
+        if(!user) {
+            return null;
+        }
+
+        await ctx.db.patch(user._id, { profileTagline: args.taglineId });
+    }
+})
+
+export const getUnlockedBackgrounds = query({
+    args: {
+        clerkId: v.string()
+    },
+    async handler(ctx, args) {
+        const user = await userByClerkId(ctx, args.clerkId);
+
+        if(!user) {
+            return null;
+        }
+
+        const backgroundIds = user?.unlockedProfileBackgrounds;
+
+        const backgrounds = [];
+        for (const backgroundId of backgroundIds) {
+            const background = await ctx.db.query("profileBackgrounds").withIndex("by_id", (q) => q.eq("_id", backgroundId)).unique();
+            backgrounds.push(background);
+        }
+        
+        return backgrounds;
+    }
+});
+
+export const getSelectedBackground = query({
+    args: {
+        clerkId: v.string()
+    },
+    async handler(ctx, args) {
+        const user = await userByClerkId(ctx, args.clerkId);
+
+        if(!user) {
+            return null;
+        }
+
+        const backgroundId = user?.profileBackground;
+
+        const background = await ctx.db.query("profileBackgrounds").withIndex("by_id", (q) => q.eq("_id", backgroundId)).unique();
+        
+        return background;
+    }
+})
+
+export const updateSelectedBackground = mutation({
+    args: {
+        clerkId: v.string(),
+        backgroundId: v.id("profileBackgrounds")
+    },
+    async handler(ctx, args) {
+        const user = await userByClerkId(ctx, args.clerkId);
+
+        if(!user) {
+            return null;
+        }
+
+        await ctx.db.patch(user._id, { profileBackground: args.backgroundId });
+    }
+})
 
 /**
  * Retrieves the current user record or throws an error if the user is not found.

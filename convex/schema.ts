@@ -6,7 +6,10 @@ export default defineSchema({
         clerkId: v.string(),
         username: v.string(),
         emails: v.array(v.string()),
-        tagline: v.optional(v.string()),
+        profileTagline: v.id("profileTaglines"),
+        profileBackground: v.id("profileBackgrounds"),
+        unlockedProfileTaglines: v.array(v.id("profileTaglines")),
+        unlockedProfileBackgrounds: v.array(v.id("profileBackgrounds")),
         level: v.int64(),
         currentXP: v.int64(),
         roles: v.optional(v.array(v.string())),
@@ -43,5 +46,14 @@ export default defineSchema({
         round_3: v.id("levels"),
         round_4: v.id("levels"),
         round_5: v.id("levels")
+    }),
+
+    profileTaglines: defineTable({
+        tagline: v.string()
+    }),
+
+    profileBackgrounds: defineTable({
+        title: v.string(),
+        backgroundCSS: v.string(),
     })
 });
