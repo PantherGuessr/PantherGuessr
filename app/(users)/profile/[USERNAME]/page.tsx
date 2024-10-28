@@ -366,7 +366,7 @@ const ProfilePage = ({ params }: Props) => {
                                         }} />
                                         </>  
                                     )): (
-                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic">{taglineForUpdate}</p>
+                                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic">{profileTagline?.tagline}</p>
                                     )}
                             </div>
                             <p className="text-md md:pl-4 font-bold text-muted-foreground/60 italic">Guessr since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
