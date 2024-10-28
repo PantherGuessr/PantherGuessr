@@ -42,6 +42,7 @@ export const Navbar = () => {
     }, [user]);
 
     return (
+        <>
         <div className={cn(
             "z-50 bg-transparent fixed top-0 flex items-center p-6 w-full",
             scrolled && "backdrop-blur-sm border-b-2 border-[#450b0b4c] shadow-md"
@@ -160,12 +161,13 @@ export const Navbar = () => {
                                         }}><LogOut className="h-4 w-4 mr-2" />Logout</MenubarItem>
                                     </MenubarContent>
                                 </MenubarMenu>
-                            </Menubar>               
-                            <Toaster />
+                            </Menubar>
                         </div>
                     </>
                 )}
             </div>
-        </div>
+        </div>        
+        <Toaster />
+        </>
     );
 }
