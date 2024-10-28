@@ -142,10 +142,10 @@ const ProfilePage = ({ params }: Props) => {
 
     return (
         <>
-        <div className="min-h-full flex flex-col mt-20">
-        <div className="min-h-full flex flex-col">
+        <div className="flex flex-col">
+        <div className="flex flex-col">
         <div className={
-            cn("min-h-full flex flex-col")
+            cn("h-full flex flex-col")
         }>
             <div className={
                 cn("flex w-full h-96",
@@ -191,7 +191,7 @@ const ProfilePage = ({ params }: Props) => {
                 ))}
                 </div>
             </div>
-            <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10 bg-background">
+            <div className="flex flex-col items-center justify-center text-center gap-y-2 flex-1 px-6 pb-4 bg-background">
                 <div className="flex w-full md:flex-row flex-col md:items-start items-center justify-between px-4 md:px-10 lg:px-20">
                     <div className="flex md:flex-row flex-col items-center md:items-start md:pt-4">
                         <Image className="rounded-full translate-y-[-5em] mb-[-5em] md:mb-0 border-8 border-background" src={user.picture} width={200} height={200} alt="Profile Picture" />
@@ -387,8 +387,8 @@ const ProfilePage = ({ params }: Props) => {
         </div>
         </div>
         <div className="flex-col justify-end">
-            <Footer />      
         </div>
+        <Footer />      
         </>
     )
     

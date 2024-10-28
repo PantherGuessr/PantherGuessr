@@ -8,7 +8,7 @@ const ProfilePageLayouts = ({
     return (
         <div className="h-full">
             <Navbar />
-            <main className="h-full">
+            <main className="h-full pt-24">
                 {children}
             </main>
         </div> 
