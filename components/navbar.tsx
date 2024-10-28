@@ -88,78 +88,80 @@ export const Navbar = () => {
                     <>
                         <div className="items-center justify-items-end gap-x-1 mx-auto hidden sm:flex">
                             <NavbarMain />
-                        </div>                      
-                        <Menubar className="p-0 hover:bg-accent focus:bg-accent cursor-pointer">
-                            <MenubarMenu>
-                                <MenubarTrigger className="hover:bg-accent focus:bg-accent cursor-pointer">
-                                    <div className="flex justify-end justify-items-end items-center">
-                                        <div className="flex items-center gap-x-2 mr-2">
-                                            { /* email ends in @chapman.edu */
-                                            isChapmanStudent && (
-                                                <Image draggable={false} className="select-none" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
-                                            )}
+                        </div>       
+                        <div className="flex justify-end justify-items-end items-center gap-x-0 ml-2">
+                            <Menubar className="flex-1 bg-transparent outline-none p-0 hover:bg-accent focus:bg-accent cursor-pointer">
+                                <MenubarMenu>
+                                    <MenubarTrigger className="bg-transparent outline-none hover:bg-accent focus:bg-accent cursor-pointer">
+                                        <div className="flex justify-end justify-items-end items-center">
+                                            <div className="flex items-center gap-x-2 mr-2">
+                                                { /* email ends in @chapman.edu */
+                                                isChapmanStudent && (
+                                                    <Image draggable={false} className="select-none" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
+                                                )}
 
-                                            { /* user has the friend role */
-                                            isFriendRole && (
-                                                <Image draggable={false} className="select-none" src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
-                                            )}
+                                                { /* user has the friend role */
+                                                isFriendRole && (
+                                                    <Image draggable={false} className="select-none" src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
+                                                )}
 
-                                            { /* if user is an admin then display shield */
-                                            isModeratorRole && (
-                                                <Image draggable={false} className="select-none" src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
-                                            )}
+                                                { /* if user is an admin then display shield */
+                                                isModeratorRole && (
+                                                    <Image draggable={false} className="select-none" src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
+                                                )}
 
-                                            { /* if user is an admin then display shield */
-                                            isDeveloperRole && (
-                                                <Image draggable={false} className="select-none" src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
-                                            )}
+                                                { /* if user is an admin then display shield */
+                                                isDeveloperRole && (
+                                                    <Image draggable={false} className="select-none" src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
+                                                )}
+                                            </div>
+                                            { /* Toast to copy username to clipboard */}
+                                            <p title="Copy" className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
+                                            <Image className="rounded-full" src={user?.picture} width={25} height={25} alt="User Profile Picture" />
                                         </div>
-                                        { /* Toast to copy username to clipboard */}
-                                        <p title="Copy" className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
-                                        <Image className="rounded-full" src={user?.picture} width={25} height={25} alt="User Profile Picture" />
-                                    </div>
-                                </MenubarTrigger>
-                                <MenubarContent className="right-auto left-auto absolute">
-                                    <MenubarItem className="cursor-pointer" onClick={() => {
-                                        navigator.clipboard.writeText(user!.username);
-                                        toast({
-                                            description: `"${user!.username}" has been copied to clipboard!`,
-                                        });
-                                    }}><Copy className="h-4 w-4 mr-2" /> Copy Username</MenubarItem>
-                                    <MenubarItem className="cursor-pointer" onClick={() => {
-                                        router.push('/profile');
-                                    }}><UserRoundSearch className="h-4 w-4 mr-2" /> Search Profiles</MenubarItem>
-                                    <MenubarSeparator />
-                                    <MenubarItem className="cursor-pointer" onClick={() => {
-                                        router.push(`/profile/${user!.username}`);
-                                    }}><UserRound className="h-4 w-4 mr-2" /> My Profile</MenubarItem>
-                                    <MenubarItem className="cursor-pointer" onClick={() => {
-                                        openUserProfile();
-                                    }}><Settings className="h-4 w-4 mr-2" /> Account Settings</MenubarItem>
-
-                                    {(isDeveloperRole || isModeratorRole) && (
+                                    </MenubarTrigger>
+                                    <MenubarContent>
+                                        <MenubarItem className="cursor-pointer" onClick={() => {
+                                            navigator.clipboard.writeText(user!.username);
+                                            toast({
+                                                description: `"${user!.username}" has been copied to clipboard!`,
+                                            });
+                                        }}><Copy className="h-4 w-4 mr-2" /> Copy Username</MenubarItem>
+                                        <MenubarItem className="cursor-pointer" onClick={() => {
+                                            router.push('/profile');
+                                        }}><UserRoundSearch className="h-4 w-4 mr-2" /> Search Profiles</MenubarItem>
                                         <MenubarSeparator />
-                                    )}
-
-                                    {isDeveloperRole && (
                                         <MenubarItem className="cursor-pointer" onClick={() => {
-                                            router.push('/admin');
-                                        }}><Wrench className="h-4 w-4 mr-2" />Developer Portal</MenubarItem>
-                                    )}
-
-                                    {(isModeratorRole || isDeveloperRole) && (
+                                            router.push(`/profile/${user!.username}`);
+                                        }}><UserRound className="h-4 w-4 mr-2" /> My Profile</MenubarItem>
                                         <MenubarItem className="cursor-pointer" onClick={() => {
-                                            // router.push('/moderator'); <- TODO: ADD THIS BACK WHEN WE GET THE PAGE WORKING
-                                            alert("Moderator page coming soon!");
-                                        }}><Shield className="h-4 w-4 mr-2" />Moderator Portal</MenubarItem>
-                                    )}
-                                    <MenubarSeparator />
-                                    <MenubarItem className="cursor-pointer" onClick={() => {
-                                        signOut({ redirectUrl: '/' });
-                                    }}><LogOut className="h-4 w-4 mr-2" />Logout</MenubarItem>
-                                </MenubarContent>
-                            </MenubarMenu>
-                        </Menubar>
+                                            openUserProfile();
+                                        }}><Settings className="h-4 w-4 mr-2" /> Account Settings</MenubarItem>
+
+                                        {(isDeveloperRole || isModeratorRole) && (
+                                            <MenubarSeparator />
+                                        )}
+
+                                        {isDeveloperRole && (
+                                            <MenubarItem className="cursor-pointer" onClick={() => {
+                                                router.push('/admin');
+                                            }}><Wrench className="h-4 w-4 mr-2" />Developer Portal</MenubarItem>
+                                        )}
+
+                                        {(isModeratorRole || isDeveloperRole) && (
+                                            <MenubarItem className="cursor-pointer" onClick={() => {
+                                                // router.push('/moderator'); <- TODO: ADD THIS BACK WHEN WE GET THE PAGE WORKING
+                                                alert("Moderator page coming soon!");
+                                            }}><Shield className="h-4 w-4 mr-2" />Moderator Portal</MenubarItem>
+                                        )}
+                                        <MenubarSeparator />
+                                        <MenubarItem className="cursor-pointer" onClick={() => {
+                                            signOut({ redirectUrl: '/' });
+                                        }}><LogOut className="h-4 w-4 mr-2" />Logout</MenubarItem>
+                                    </MenubarContent>
+                                </MenubarMenu>
+                            </Menubar>
+                        </div>               
                         <Toaster />
                     </>
                 )}
