@@ -160,9 +160,9 @@ export const Navbar = () => {
                                         }}><LogOut className="h-4 w-4 mr-2" />Logout</MenubarItem>
                                     </MenubarContent>
                                 </MenubarMenu>
-                            </Menubar>
-                        </div>               
-                        <Toaster />
+                            </Menubar>               
+                            <Toaster />
+                        </div>
                     </>
                 )}
             </div>
