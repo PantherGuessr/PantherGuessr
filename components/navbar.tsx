@@ -6,28 +6,31 @@ import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
-import { useConvexAuth } from "convex/react";
-import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { useConvexAuth, useQuery } from "convex/react";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/clerk-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Toaster } from "@/components/ui/toaster"
-import { useToast } from "@/hooks/use-toast";
-import Link from "next/link";
+import { toast } from "@/hooks/use-toast";
 import Image from "next/image";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import NavbarMain from "./navbar-main";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
+import { Copy, LogOut, Settings, Shield, UserRound, Wrench } from "lucide-react";
+import { api } from "@/convex/_generated/api";
+import { Toaster } from "./ui/toaster";
+import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
+    const router = useRouter();
     const { isAuthenticated, isLoading } = useConvexAuth();
-    const { user } = useUser();
+    const clerkUser = useUser();
+    const user = useQuery(api.users.getUserByUsername, { username: clerkUser.user?.username ?? "" });
     const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer");
     const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator");
     const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend");
     const {result: isChapmanStudent, isLoading: chapmanRoleLoading } = useHasChapmanEmail();
     const scrolled = useScrollTop();
-    const { toast } = useToast();
 
     return (
         <div className={cn(
@@ -63,88 +66,83 @@ export const Navbar = () => {
                         </SignUpButton>
                     </div>
                 )}
-                {isAuthenticated && !isLoading && (
-                    <>  
+                {
+                    isAuthenticated 
+                    && !isLoading 
+                    && !developerRoleLoading
+                    && !moderatorRoleLoading
+                    && !friendRoleLoading
+                    && !chapmanRoleLoading &&
+                (
+                    <>
                         <div className="items-center justify-items-end gap-x-1 mx-auto hidden sm:flex">
                             <NavbarMain />
                         </div>                      
-                        <div className="flex justify-end justify-items-end items-center gap-x-0 ml-2">
-                            <div className="flex items-center gap-x-2 mr-2">
-                                { /* email ends in @chapman.edu */
-                                isChapmanStudent && (
-                                    <TooltipProvider delayDuration={0} skipDelayDuration={0}>
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <Image draggable={false} className="select-none cursor-default" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p className="text-sm p-2"> Welcome, fellow Chapman student! 😎 </p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                )}
+                        <Menubar className="p-0 hover:bg-accent focus:bg-accent cursor-pointer">
+                            <MenubarMenu>
+                                <MenubarTrigger className="hover:bg-accent focus:bg-accent cursor-pointer">
+                                    <div className="flex justify-end justify-items-end items-center">
+                                        <div className="flex items-center gap-x-2 mr-2">
+                                            { /* email ends in @chapman.edu */
+                                            isChapmanStudent && (
+                                                <Image draggable={false} className="select-none" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
+                                            )}
 
-                                { /* user has the friend role */
-                                isFriendRole && (
-                                    <TooltipProvider delayDuration={0} skipDelayDuration={0}>
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <Image draggable={false} className="select-none cursor-default" src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p className="text-sm p-2"> You are a friend of PantherGuessr! </p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                )}
+                                            { /* user has the friend role */
+                                            isFriendRole && (
+                                                <Image draggable={false} className="select-none" src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
+                                            )}
 
-                                { /* if user is an admin then display shield */
-                                isModeratorRole && (
-                                    <TooltipProvider delayDuration={0} skipDelayDuration={0}>
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <Link href="/moderator" onClick={(e) => {e.preventDefault(); alert("MODERATOR PAGE COMING SOON")}}>
-                                                    <Image draggable={false} className="select-none" src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
-                                                </Link> 
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p className="text-sm p-2"> Click to visit the Moderator Page. </p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                )}
+                                            { /* if user is an admin then display shield */
+                                            isModeratorRole && (
+                                                <Image draggable={false} className="select-none" src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
+                                            )}
 
-                                { /* if user is an admin then display shield */
-                                isDeveloperRole && (
-                                    <TooltipProvider delayDuration={0} skipDelayDuration={0}>
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <Link href="/admin">
-                                                    <Image draggable={false} className="select-none" src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
-                                                </Link> 
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p className="text-sm p-2"> Click to visit the Developer Page. </p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                )}
-                            </div>
+                                            { /* if user is an admin then display shield */
+                                            isDeveloperRole && (
+                                                <Image draggable={false} className="select-none" src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
+                                            )}
+                                        </div>
+                                        { /* Toast to copy username to clipboard */}
+                                        <p title="Copy" className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
+                                        <Image className="rounded-full" src={user!.picture} width={25} height={25} alt="User Profile Picture" />
+                                    </div>
+                                </MenubarTrigger>
+                                <MenubarContent className="right-auto left-auto absolute">
+                                    <MenubarItem className="cursor-pointer" onClick={() => {
+                                        navigator.clipboard.writeText(user!.username);
+                                        toast({
+                                            description: `"${user!.username}" has been copied to clipboard!`,
+                                        });
+                                    }}><Copy className="h-4 w-4 mr-2" /> Copy Username</MenubarItem>
+                                    <MenubarSeparator />
+                                    <MenubarItem className="cursor-pointer" onClick={() => {
+                                        router.push(`/profile/${user!.username}`);
+                                    }}><UserRound className="h-4 w-4 mr-2" /> My Profile</MenubarItem>
+                                    <MenubarItem className="cursor-pointer"><Settings className="h-4 w-4 mr-2" /> Account Settings</MenubarItem>
 
-                            { /* Toast to copy username to clipboard */}
-                            <Toaster />
-                            <p title="Copy" className="hidden sm:flex cursor-pointer mr-2" onClick={() => {
-                                navigator.clipboard.writeText(user?.username || "")
-                                toast({
-                                    description: "Username copied to clipboard!",
-                                })
+                                    {(isDeveloperRole || isModeratorRole) && (
+                                        <MenubarSeparator />
+                                    )}
 
-                            }}>{user?.username}</p>
+                                    {isDeveloperRole && (
+                                        <MenubarItem className="cursor-pointer" onClick={() => {
+                                            router.push('/admin');
+                                        }}><Wrench className="h-4 w-4 mr-2" />Developer Portal</MenubarItem>
+                                    )}
 
-                            <UserButton
-                                afterSignOutUrl="/"
-                            />
-                        </div>
+                                    {(isModeratorRole || isDeveloperRole) && (
+                                        <MenubarItem className="cursor-pointer" onClick={() => {
+                                            // router.push('/moderator'); <- TODO: ADD THIS BACK WHEN WE GET THE PAGE WORKING
+                                            alert("Moderator page coming soon!");
+                                        }}><Shield className="h-4 w-4 mr-2" />Moderator Portal</MenubarItem>
+                                    )}
+                                    <MenubarSeparator />
+                                    <MenubarItem className="cursor-pointer"><LogOut className="h-4 w-4 mr-2" />Logout</MenubarItem>
+                                </MenubarContent>
+                            </MenubarMenu>
+                        </Menubar>
+                        <Toaster />
                     </>
                 )}
             </div>
