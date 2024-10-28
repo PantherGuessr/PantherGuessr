@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
@@ -8,7 +8,7 @@ import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
 import { useConvexAuth, useQuery } from "convex/react";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
-import { useUser } from "@clerk/clerk-react";
+import { useClerk, useUser } from "@clerk/clerk-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import Image from "next/image";
@@ -16,7 +16,7 @@ import NavbarMain from "./navbar-main";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
-import { Copy, LogOut, Settings, Shield, UserRound, Wrench } from "lucide-react";
+import { Copy, LogOut, Settings, Shield, UserRound, UserRoundSearch, Wrench } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Toaster } from "./ui/toaster";
 import { useRouter } from "next/navigation";
@@ -26,11 +26,20 @@ export const Navbar = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
     const clerkUser = useUser();
     const user = useQuery(api.users.getUserByUsername, { username: clerkUser.user?.username ?? "" });
+    const { signOut, openUserProfile } = useClerk();
+
     const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer");
     const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator");
     const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend");
     const {result: isChapmanStudent, isLoading: chapmanRoleLoading } = useHasChapmanEmail();
     const scrolled = useScrollTop();
+
+    const [isUserLoading, setIsUserLoading] = useState(true);
+    useEffect(() => {
+        if(user !== undefined) {
+            setIsUserLoading(false);
+        }
+    }, [user]);
 
     return (
         <div className={cn(
@@ -45,7 +54,7 @@ export const Navbar = () => {
                     || moderatorRoleLoading
                     || friendRoleLoading
                     || chapmanRoleLoading
-                    &&
+                    || isUserLoading &&
                 (
                     <div className="flex justify-end justify-items-end items-center">
                         <Skeleton className="h-6 w-[120px] mr-1" />
@@ -72,7 +81,9 @@ export const Navbar = () => {
                     && !developerRoleLoading
                     && !moderatorRoleLoading
                     && !friendRoleLoading
-                    && !chapmanRoleLoading &&
+                    && !chapmanRoleLoading
+                    && !isUserLoading 
+                    && user?.picture !== undefined &&
                 (
                     <>
                         <div className="items-center justify-items-end gap-x-1 mx-auto hidden sm:flex">
@@ -105,7 +116,7 @@ export const Navbar = () => {
                                         </div>
                                         { /* Toast to copy username to clipboard */}
                                         <p title="Copy" className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
-                                        <Image className="rounded-full" src={user!.picture} width={25} height={25} alt="User Profile Picture" />
+                                        <Image className="rounded-full" src={user?.picture} width={25} height={25} alt="User Profile Picture" />
                                     </div>
                                 </MenubarTrigger>
                                 <MenubarContent className="right-auto left-auto absolute">
@@ -115,11 +126,16 @@ export const Navbar = () => {
                                             description: `"${user!.username}" has been copied to clipboard!`,
                                         });
                                     }}><Copy className="h-4 w-4 mr-2" /> Copy Username</MenubarItem>
+                                    <MenubarItem className="cursor-pointer" onClick={() => {
+                                        router.push('/profile');
+                                    }}><UserRoundSearch className="h-4 w-4 mr-2" /> Search Profiles</MenubarItem>
                                     <MenubarSeparator />
                                     <MenubarItem className="cursor-pointer" onClick={() => {
                                         router.push(`/profile/${user!.username}`);
                                     }}><UserRound className="h-4 w-4 mr-2" /> My Profile</MenubarItem>
-                                    <MenubarItem className="cursor-pointer"><Settings className="h-4 w-4 mr-2" /> Account Settings</MenubarItem>
+                                    <MenubarItem className="cursor-pointer" onClick={() => {
+                                        openUserProfile();
+                                    }}><Settings className="h-4 w-4 mr-2" /> Account Settings</MenubarItem>
 
                                     {(isDeveloperRole || isModeratorRole) && (
                                         <MenubarSeparator />
@@ -138,7 +154,9 @@ export const Navbar = () => {
                                         }}><Shield className="h-4 w-4 mr-2" />Moderator Portal</MenubarItem>
                                     )}
                                     <MenubarSeparator />
-                                    <MenubarItem className="cursor-pointer"><LogOut className="h-4 w-4 mr-2" />Logout</MenubarItem>
+                                    <MenubarItem className="cursor-pointer" onClick={() => {
+                                        signOut({ redirectUrl: '/' });
+                                    }}><LogOut className="h-4 w-4 mr-2" />Logout</MenubarItem>
                                 </MenubarContent>
                             </MenubarMenu>
                         </Menubar>
