@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import "./header-animation.css";
 
 const MobileDrawer = () => {
 
@@ -12,7 +13,7 @@ const MobileDrawer = () => {
 
         <Sheet>
         <SheetTrigger asChild>
-            <Button>
+            <Button className="px-8 py-6">
                 Enter PantherGuessr <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
         </SheetTrigger>
@@ -31,16 +32,19 @@ const MobileDrawer = () => {
                     </CardContent>
                 </Card>
                 </Link>
-                <Link href="/game">
                 <Card className="bg-primary text-primary-foreground">
-                    <CardContent className="p-4">
+                    <CardContent className="p-4" onClick={() => {
+                        document.body.classList.add("animate-body-opacity-scale");
+                        setTimeout(() => {
+                            window.location.href="/game";
+                        }, 800);
+                    }}>
                         <div className="flex flex-col gap-x-2 align-center text-center justify-center">
                             <h1 className="text-xl font-bold">Singleplayer</h1>
                             <p className="italic text-sm">The classic way to play PantherGuessr</p>
                         </div>
                     </CardContent>
                 </Card>
-                </Link>
                 <Link href="/play">
                 <Card className="bg-primary text-primary-foreground">
                     <CardContent className="p-4">
