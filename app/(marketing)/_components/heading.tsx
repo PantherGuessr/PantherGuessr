@@ -23,7 +23,7 @@ export const Heading = () => {
     const { user } = useUser();
     const [hoveredMain, setHoveredMain] = useState(false);
 
-    const isDesktop = useMediaQuery("(min-width: 768px)");
+    const isDesktop = useMediaQuery("(min-width: 900px)");
 
     const [welcomeMessage, setWelcomeMessage] = useState('');
 
