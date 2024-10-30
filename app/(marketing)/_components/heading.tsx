@@ -23,7 +23,7 @@ export const Heading = () => {
     const { user } = useUser();
     const [hoveredMain, setHoveredMain] = useState(false);
 
-    const isDesktop = useMediaQuery("(min-width: 640px)");
+    const isDesktop = useMediaQuery("(min-width: 768px)");
 
     const [welcomeMessage, setWelcomeMessage] = useState('');
 
@@ -49,7 +49,7 @@ export const Heading = () => {
 
                 {isDesktop ?
                 (
-                <div className="flex flex-row justify-center items-center gap-x-20 mt-20 px-20" onMouseEnter={() => setHoveredMain(true)} onMouseLeave={() => setHoveredMain(false)}>
+                <div className="flex flex-row justify-center items-center lg:gap-x-20 sm:gap-x-5 mt-20 px-20" onMouseEnter={() => setHoveredMain(true)} onMouseLeave={() => setHoveredMain(false)}>
                     <div className={
                             cn("flex flex-col justify-between h-full items-center basis-1/3 transition-all drop-shadow-lg",
                                 hoveredMain ? "skew-y-0 translate-x-0 scale-100" : "-skew-y-3 -translate-x-4 scale-90"
