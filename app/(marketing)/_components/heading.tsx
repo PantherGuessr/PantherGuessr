@@ -13,6 +13,9 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import './header-animation.css';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 
 
 export const Heading = () => {
@@ -46,28 +49,29 @@ export const Heading = () => {
 
                 {isDesktop ?
                 (
-                <div className="flex flex-row justify-center items-center gap-x-20 pt-20 px-20">
-                    <div className="flex flex-col justify-center items-center basis-1/2">
-                        <div className={
-                            cn("flex flex-col transition-all justify-center items-center drop-shadow-lg rounded-lg bg-gradient-to-b from-transparent to-primary/50 mb-6",
-                                hoveredMain ? "skew-y-0 translate-x-0 scale-100" : "-skew-y-3 -translate-x-4 scale-90")
-                            }>
+                <div className="flex flex-row justify-center items-center gap-x-20 mt-20 px-20" onMouseEnter={() => setHoveredMain(true)} onMouseLeave={() => setHoveredMain(false)}>
+                    <div className={
+                            cn("flex flex-col justify-between h-full items-center basis-1/3 transition-all drop-shadow-lg",
+                                hoveredMain ? "skew-y-0 translate-x-0 scale-100" : "-skew-y-3 -translate-x-4 scale-90"
+                            )}>
+                        <div className="flex flex-col justify-center items-center">
+                        <div className="flex flex-col transition-all justify-center items-center drop-shadow-lg rounded-lg bg-gradient-to-b from-transparent to-primary/50 mb-6">
                         <Image src="/profile-banner-images/chapmanpantherwaving.gif"
                             className="rounded-lg transition-all border-primary border-4"
                              alt="Chapman Panther Waving" width={400} height={400} />
                         </div>
-                        <h1 className={
-                            cn("text-3xl sm:text-3xl md:text-3xl font-bold transition-all drop-shadow-lg",
-                                hoveredMain ? "skew-y-0 translate-x-0 scale-100" : "-skew-y-3 -translate-x-4 scale-90"
-                            )}>
+                        <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold">
                             Welcome back, <span className="underline">{user?.username}</span>. {welcomeMessage}
                         </h1>
+                        </div>
+                        <div className={"w-72 h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
                     </div>
-                    <div className="flex flex-col justify-center items-center basis-1/2">
+                    <div className={cn("flex flex-col justify-between items-center basis-1/3 transition-all h-full",
+                        hoveredMain ? "" : "-translate-y-8 scale-90"
+                    )}>
                     <ul className={
-                        cn("grid grid-rows-8 p-2 grid-flow-col gap-2 w-full duration-150 transition-all drop-shadow-lg",
-                         hoveredMain ? "skew-y-0 translate-x-0 scale-100" : "skew-y-3 translate-x-4 scale-90")
-                     } onMouseEnter={() => setHoveredMain(true)} onMouseLeave={() => setHoveredMain(false)}>
+                        cn("grid grid-rows-8 p-2 grid-flow-col gap-2 w-full duration-150 transition-all drop-shadow-lg")
+                     }>
                             <li className="row-span-2 w-full">
                                 <Link href="/play">
                                     <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
@@ -97,6 +101,68 @@ export const Heading = () => {
                                 </Link>
                             </li>
                         </ul>
+                        <div className={cn("w-72 h-4 bg-black/30 rounded-[50%] blur-lg transition-all",
+                            hoveredMain ? "mt-20" : "mt-12"
+                        )}></div>
+                    </div>
+                    <div className={
+                            cn("flex flex-col justify-between h-full items-center basis-1/3 transition-all",
+                                hoveredMain ? "skew-y-0 translate-x-0 scale-100" : "skew-y-3 translate-x-4 scale-90")}>
+                        <Card className="w-full dropshadow-lg">
+                            <CardHeader>
+                                <CardTitle className="mb-2">
+                                    Last Active Friends
+                                </CardTitle>
+                                <CardContent className="flex flex-col gap-y-2">
+                                    <Separator />
+                                    <div className="flex flex-row items-center justify-between">
+                                        <div className="flex flex-row items-center gap-x-2">
+                                        <Avatar>
+                                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                            <AvatarFallback>CN</AvatarFallback>
+                                        </Avatar>
+                                        <h3 className="text-lg font-bold">dylan</h3>
+                                        </div>
+                                        <h2 className="text-sm font-bold text-muted-foreground">1m ago</h2>
+                                    </div>
+                                    <Separator />
+                                    <div className="flex flex-row items-center justify-between">
+                                        <div className="flex flex-row items-center gap-x-2">
+                                        <Avatar>
+                                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                            <AvatarFallback>CN</AvatarFallback>
+                                        </Avatar>
+                                        <h3 className="text-lg font-bold">jake</h3>
+                                        </div>
+                                        <h2 className="text-sm font-bold text-muted-foreground">5m ago</h2>
+                                    </div>
+                                    <Separator />
+                                    <div className="flex flex-row items-center justify-between">
+                                        <div className="flex flex-row items-center gap-x-2">
+                                        <Avatar>
+                                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                            <AvatarFallback>CN</AvatarFallback>
+                                        </Avatar>
+                                        <h3 className="text-lg font-bold">dan</h3>
+                                        </div>
+                                        <h2 className="text-sm font-bold text-muted-foreground">16m ago</h2>
+                                    </div>
+                                    <Separator />
+                                    <div className="flex flex-row items-center justify-between">
+                                        <div className="flex flex-row items-center gap-x-2">
+                                        <Avatar>
+                                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                            <AvatarFallback>CN</AvatarFallback>
+                                        </Avatar>
+                                        <h3 className="text-lg font-bold">pete</h3>
+                                        </div>
+                                        <h2 className="text-sm font-bold text-muted-foreground">2h ago</h2>
+                                    </div>
+                                </CardContent>
+                            </CardHeader>
+
+                        </Card>
+                        <div className={"w-72 h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
                     </div>
                 </div>) : (
                     <>
