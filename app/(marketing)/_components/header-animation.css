@@ -51,3 +51,25 @@
         opacity: 0%;
     }
 }
+
+.animate-flip-left-right {
+    animation: flip-left-right 5s linear infinite;
+}
+
+@keyframes flip-left-right {
+    0% {
+        transform: rotateX(15deg) skewX(2deg);
+    }
+    25% {
+        transform: rotateX(0deg);
+    }
+    50% {
+        transform: rotateX(-15deg) skewX(-2deg);
+    }
+    75% {
+        transform: rotateX(0deg);
+    }
+    100% {
+        transform: rotateX(15deg) skewX(2deg);
+    }
+}
