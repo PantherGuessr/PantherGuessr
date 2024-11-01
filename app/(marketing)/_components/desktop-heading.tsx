@@ -130,7 +130,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
                                 </Avatar>
                                 <h3 className="text-lg font-bold">dan</h3>
                                 </div>
-                                <h2 className="text-sm font-bold text-muted-foreground">16m ago</h2>
+                                <h2 className="text-sm font-bold text-muted-foreground">11h ago</h2>
                             </div>
                             <Separator />
                             <div className="flex flex-row items-center justify-center hover:scale-105 transition-all">
