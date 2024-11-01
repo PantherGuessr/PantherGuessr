@@ -42,10 +42,10 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
                     alt="Chapman Panther Waving" width={400} height={225} />
                 </div>
                 <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold hover:scale-105 transition-all cursor-default">
-                    Welcome back, <span className="underline">{username}</span>. {welcomeMessage}
+                    Welcome back, <Link href={"/profile/" + username}><span className="underline">{username}</span></Link>. {welcomeMessage}
                 </h1>
                 </div>
-                <div className={"w-72 h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
+                <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
             </div>
             <div className={cn("flex flex-col justify-between items-center basis-1/3 transition-all h-full",
                 hoveredCenterMain ? "" : "-translate-y-8 scale-90"
@@ -57,34 +57,34 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
             }>
                     <li className="row-span-2 w-full">
                         <Link href="/play">
-                            <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                            <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                                 Weekly Challenge
                             </div>
                         </Link>
                     </li>
                     <li className="row-span-2 w-full">
                         <Link href="/game">
-                            <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                            <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                                 Singleplayer
                             </div>
                         </Link>
                     </li>
                     <li className="row-span-2 w-full">
                         <Link href="/play">
-                            <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                            <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                                 Multiplayer
                             </div>
                         </Link>
                     </li>
                     <li className="row-span-2 w-full">
                         <Link href="/play">
-                            <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 w-full h-full bg-secondary rounded-md">
+                            <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-secondary rounded-md">
                                 All Gamemodes
                             </div>
                         </Link>
                     </li>
                 </ul>
-                <div className={cn("w-72 h-4 rounded-[50%] blur-lg transition-all",
+                <div className={cn("w-[90%] h-4 rounded-[50%] blur-lg transition-all",
                     hoveredCenterMain ? "mt-16 bg-black/20" : "mt-16 bg-black/30"
                 )}></div>
             </div>
@@ -142,7 +142,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
                     </CardHeader>
 
                 </Card>
-                <div className={"w-72 h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
+                <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
             </div>
         </div> );}
  else {
@@ -160,10 +160,10 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
             alt="Chapman Panther Waving" width={400} height={400} />
         </div>
         <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold cursor-default hover:scale-105 transition-all">
-            Welcome back, <span className="underline">{username}</span>. {welcomeMessage}
+            Welcome back, <Link href={"/profile/" + username}><span className="underline">{username}</span></Link>. {welcomeMessage}
         </h1>
         </div>
-        <div className={"w-72 h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
+        <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
     </div>
     <div className={cn("flex flex-col justify-between items-center basis-1/2 transition-all h-full",
         hoveredRightMain ? "skew-y-0 translate-x-0 scale-100" : "skew-y-3 translate-x-4 scale-90"
@@ -175,34 +175,34 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
     }>
             <li className="row-span-2 w-full">
                 <Link href="/play">
-                    <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                         Weekly Challenge
                     </div>
                 </Link>
             </li>
             <li className="row-span-2 w-full">
                 <Link href="/game">
-                    <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                         Singleplayer
                     </div>
                 </Link>
             </li>
             <li className="row-span-2 w-full">
                 <Link href="/play">
-                    <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                         Multiplayer
                     </div>
                 </Link>
             </li>
             <li className="row-span-2 w-full">
                 <Link href="/play">
-                    <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 w-full h-full bg-secondary rounded-md">
+                    <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-secondary rounded-md">
                         All Gamemodes
                     </div>
                 </Link>
             </li>
         </ul>
-        <div className={"w-72 h-4 mt-20 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
+        <div className={"w-[90%] h-4 mt-20 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
     </div>
 </div>
     );
