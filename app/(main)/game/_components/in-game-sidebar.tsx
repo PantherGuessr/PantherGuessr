@@ -8,11 +8,12 @@ import { ElementRef, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useGame } from "../_context/GameContext";
 import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 const InGameSidebar = () => {
     const isMobile = useMediaQuery("(max-width: 600px");
+    const router = useRouter();
 
     const magnifierRef = useRef<HTMLDivElement>(null);
     const isResizingRef = useRef(false);
@@ -178,9 +179,9 @@ const InGameSidebar = () => {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <Link href="/">
-                            <AlertDialogAction >Leave Game</AlertDialogAction>
-                            </Link>
+                            <AlertDialogAction onClick={() => {
+                                router.push("/");
+                            }}>Leave Game</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
