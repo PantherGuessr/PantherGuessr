@@ -2,9 +2,8 @@
 
 import { useConvexAuth } from "convex/react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, LoaderCircle } from "lucide-react";
 import { SignUpButton, useUser } from "@clerk/clerk-react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useMediaQuery } from "usehooks-ts";
 import MobileDrawer from "./mobiledrawer";
 import Image from "next/image";
@@ -12,6 +11,7 @@ import './header-animation.css';
 import DesktopHeading from "./desktop-heading";
 import { useEffect, useState } from "react";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
+import DesktopHeadingLoading from "./desktop-heading-loading";
 
 
 export const Heading = () => {
@@ -22,19 +22,24 @@ export const Heading = () => {
 
     useEffect(() => {
         setWelcomeMessage(WelcomeMessage());
-    }, [WelcomeMessage]);
+    }, []);
 
     const isDesktop = useMediaQuery("(min-width: 640px)");
+
+
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 w-full">
             {isLoading && (
-                <div className="flex flex-col justify-center items-center">
-                    <Skeleton className="justify-self-center m-1 h-16 w-[400px]" />
-                    <Skeleton className="justify-self-center m-1 h-16 w-[80vw]" />
-                    <Skeleton className="justify-self-center m-1 h-16 w-[75vw]" />
-                    <Skeleton className="justify-self-center mt-6 h-8 w-[40vw]" />
-                    <Skeleton className="justify-self-center mt-2 h-8 w-[40vw]" />
-                </div>
+                <>
+                    <div className="hidden md:flex flex-col w-full">
+                    <DesktopHeadingLoading />
+                        
+                    </div>
+                    {/* mobile loading */}
+                    <div className={"md:hidden flex flex-col justify-center items-center"}>
+                        <LoaderCircle className="h-20 w-20 animate-spin" />
+                    </div>
+                </>
             )}
             {isAuthenticated && !isLoading && (
                 <>
