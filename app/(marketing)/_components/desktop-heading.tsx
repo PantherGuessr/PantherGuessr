@@ -23,9 +23,9 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
 
     useEffect(() => {
         setWelcomeMessage(WelcomeMessage());
-    }, [WelcomeMessage]);
+    }, []);
 
-    const isLargeDesktop = useMediaQuery("(min-width: 1000px)");
+    const isLargeDesktop = useMediaQuery("(min-width: 1024px)");
 
 
     if (isLargeDesktop) {
@@ -39,7 +39,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
                 <div className="flex flex-col transition-all justify-center items-center drop-shadow-lg rounded-lg bg-gradient-to-b from-transparent to-primary/50 mb-6 hover:scale-105 cursor-default">
                 <Image src="/profile-banner-images/chapmanpantherwaving.gif"
                     className="rounded-lg transition-all border-primary border-4"
-                    alt="Chapman Panther Waving" width={400} height={400} />
+                    alt="Chapman Panther Waving" width={400} height={225} />
                 </div>
                 <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold hover:scale-105 transition-all cursor-default">
                     Welcome back, <span className="underline">{username}</span>. {welcomeMessage}
@@ -103,8 +103,8 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
                             <div className="flex flex-row items-center justify-between hover:scale-105 transition-all">
                                 <div className="flex flex-row items-center gap-x-2">
                                 <Avatar>
-                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                    <AvatarFallback>CN</AvatarFallback>
+                                    <AvatarImage src="https://github.com/dylandevelops.png" alt="@dylandevelops" />
+                                    <AvatarFallback>DR</AvatarFallback>
                                 </Avatar>
                                 <h3 className="text-lg font-bold">dylan</h3>
                                 </div>
@@ -114,8 +114,8 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
                             <div className="flex flex-row items-center justify-between hover:scale-105 transition-all">
                                 <div className="flex flex-row items-center gap-x-2">
                                 <Avatar>
-                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                    <AvatarFallback>CN</AvatarFallback>
+                                    <AvatarImage src="https://github.com/ssparkpilot.png" alt="@ssparkpilot" />
+                                    <AvatarFallback>JM</AvatarFallback>
                                 </Avatar>
                                 <h3 className="text-lg font-bold">jake</h3>
                                 </div>
@@ -125,23 +125,18 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username}) => {
                             <div className="flex flex-row items-center justify-between hover:scale-105 transition-all">
                                 <div className="flex flex-row items-center gap-x-2">
                                 <Avatar>
-                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                    <AvatarFallback>CN</AvatarFallback>
+                                    <AvatarImage src="https://github.com/dtsivkovski.png" alt="@dtsivkovski" />
+                                    <AvatarFallback>DT</AvatarFallback>
                                 </Avatar>
                                 <h3 className="text-lg font-bold">dan</h3>
                                 </div>
                                 <h2 className="text-sm font-bold text-muted-foreground">16m ago</h2>
                             </div>
                             <Separator />
-                            <div className="flex flex-row items-center justify-between hover:scale-105 transition-all">
-                                <div className="flex flex-row items-center gap-x-2">
-                                <Avatar>
-                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                    <AvatarFallback>CN</AvatarFallback>
-                                </Avatar>
-                                <h3 className="text-lg font-bold">pete</h3>
-                                </div>
-                                <h2 className="text-sm font-bold text-muted-foreground">2h ago</h2>
+                            <div className="flex flex-row items-center justify-center hover:scale-105 transition-all">
+                                <Link href="/">
+                                <p className="text-md font-bold text-primary pt-1">View More...</p>
+                                </Link>
                             </div>
                         </CardContent>
                     </CardHeader>
