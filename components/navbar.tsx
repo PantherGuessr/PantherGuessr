@@ -119,9 +119,9 @@ export const Navbar = () => {
                                             </div>
                                             { /* Toast to copy username to clipboard */}
                                             <p className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
-                                            <Avatar className="w-[25px] h-[25px]">
-                                                <AvatarImage src={user?.picture} alt={`${user?.username}'s Profile Picture`} />
+                                            <Avatar className="w-[25px] h-[25px] overflow-hidden">
                                                 <AvatarFallback>{user?.username[0].toUpperCase()}</AvatarFallback>
+                                                <AvatarImage src={user?.picture} alt={`${user?.username}'s Profile Picture`} className="object-cover" />
                                             </Avatar>
                                         </div>
                                     </MenubarTrigger>

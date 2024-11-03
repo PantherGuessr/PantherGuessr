@@ -24,6 +24,7 @@ import { useGetUnlockedTaglines } from "@/hooks/userProfiles/use-get-unlocked-ta
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
 import { useGetUnlockedBackgrounds } from "@/hooks/userProfiles/use-get-unlocked-backgrounds";
 import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Props = {
     params: { USERNAME: string }
@@ -194,7 +195,10 @@ const ProfilePage = ({ params }: Props) => {
             <div className="flex flex-col items-center justify-center text-center gap-y-2 flex-1 px-6 pb-4 bg-background">
                 <div className="flex w-full md:flex-row flex-col md:items-start items-center justify-between px-4 md:px-10 lg:px-20">
                     <div className="flex md:flex-row flex-col items-center md:items-start md:pt-4">
-                        <Image className="rounded-full translate-y-[-5em] mb-[-5em] md:mb-0 border-8 border-background" src={user.picture} width={200} height={200} alt="Profile Picture" />
+                        <Avatar className="flex-col translate-y-[-5em] w-[200px] h-[200px] mb-[-5em] md:mb-0 border-8 border-background overflow-hidden">
+                            <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+                            <AvatarImage src={user.picture} alt={`${user.username}'s Profile Picture`} className="object-cover" />
+                        </Avatar>
                         <div className="flex flex-col items-center text-center md:text-start md:items-start justify-center gap-y-1">
                             <div className="flex md:flex-row flex-col items-center md:items-start">
                                 <div className="flex flex-row items-center">
