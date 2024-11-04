@@ -38,6 +38,18 @@ export default defineSchema({
         lastUpdated: v.string()
     }),
 
+    /* // TODO: create a games schema to store unique game data
+    Needs to include the following:
+    - Round 1 LevelID
+    - Round 2 LevelID
+    - Round 3 LevelID
+    - Round 4 LevelID
+    - Round 5 LevelID
+    - Time allowed per round, int64
+    - First played by, user clerk ID
+    - [] of leaderboard entries
+    */
+
     weeklyChallenges: defineTable({
         startDate: v.string(),
         endDate: v.string(),
@@ -46,7 +58,30 @@ export default defineSchema({
         round_3: v.id("levels"),
         round_4: v.id("levels"),
         round_5: v.id("levels")
+        //TODO: Add a leaderboard entries array for weekly challenge leaderboards
     }),
+
+    /* //TODO: Add a leaderboard entries schema to store leaderboard entries for all game types
+    Needs to include the following:
+    - union of games schema entries or weeklyChallenges schema entries
+    - user clerk ID
+    - round 1 score
+    - round 2 score
+    - round 3 score
+    - round 4 score
+    - round 5 score
+    - total time taken
+    */
+
+    /* //TODO: Add a ongoing games schema to store any ongoing games
+    Needs to include the following:
+    - union of games schema entries or weeklyChallenges schema entries
+    - user clerk ID
+    - current round
+    - total time taken so far in game
+    - time left in current round (defaults to 5 seconds if not saved in time)
+
+    */
 
     profileTaglines: defineTable({
         tagline: v.string()
