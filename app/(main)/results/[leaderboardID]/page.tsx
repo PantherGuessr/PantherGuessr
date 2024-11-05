@@ -6,17 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Download, Facebook, Home, Instagram, Share, Slack } from "lucide-react";
+import { Download, Facebook, Home, Instagram, Loader2, Share, Slack } from "lucide-react";
 import Link from "next/link";
-import { redirect, useSearchParams } from 'next/navigation';
 import html2canvas from 'html2canvas';
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Id } from "@/convex/_generated/dataModel";
-import { useUser } from "@clerk/nextjs";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { clerkClient } from "@clerk/nextjs/server";
 
 type Props = {
     params: { leaderboardID: Id<"leaderboardEntries"> }
@@ -100,6 +97,16 @@ const ResultPage = ({ params }: Props) => {
             document.body.removeChild(link);
         }
     };
+
+    while(leaderboardEntry === undefined) {
+        return (
+            <div className="min-h-full flex flex-col">
+                <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+                    <Loader2 className="h-20 w-20 animate-spin" />
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-full flex flex-col">

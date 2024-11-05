@@ -123,7 +123,7 @@ export const GameProvider = ({
             incrementDailyGameStats();
             incrementMonthlyGameStats();
 
-            const userLeaderboardEntry = addLeaderboardEntryToGame({
+            addLeaderboardEntryToGame({
                 gameId: game!._id,
                 username: username,
                 round_1: BigInt(allScores[0]),
