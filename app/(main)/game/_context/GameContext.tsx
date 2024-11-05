@@ -118,6 +118,9 @@ export const GameProvider = ({
         if(nextRoundNumber > levels.length) {
             const username = user.user?.username ? user.user.username : "Anonymous";
 
+            incrementDailyGameStats();
+            incrementMonthlyGameStats();
+
             const query = new URLSearchParams({
                 distances: JSON.stringify(allDistances),
                 scores: JSON.stringify(allScores),
