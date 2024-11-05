@@ -26,14 +26,14 @@ interface GameContextType {
     scoreAwarded: number | null;
     distanceFromTarget: number | null;
     isLoading: boolean;
+    isModalVisible: boolean;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
 
-
 export const GameProvider = ({
     children,
-    gameId
+    gameId,
 }: {
     children: React.ReactNode;
     gameId?: Id<"games">;
@@ -53,6 +53,7 @@ export const GameProvider = ({
     const [scoreAwarded, setScoreAwarded] = useState<number | null>(null);
     const [distanceFromTarget, setDistanceFromTarget] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const game = useGameById(gameId);
     const ids = useMemo(() => 
@@ -118,6 +119,7 @@ export const GameProvider = ({
         const nextRoundNumber = currentRound + 1;
 
         if(nextRoundNumber > levels.length) {
+            setIsModalVisible(true);
             const username = user.user?.username ? user.user.username : "Anonymous";
 
             incrementDailyGameStats();
@@ -191,7 +193,8 @@ export const GameProvider = ({
                 nextRound,
                 scoreAwarded,
                 distanceFromTarget,
-                isLoading
+                isLoading,
+                isModalVisible
             }}>
                 {children}
             </GameContext.Provider>
@@ -217,7 +220,8 @@ export const GameProvider = ({
             nextRound,
             scoreAwarded,
             distanceFromTarget,
-            isLoading
+            isLoading,
+            isModalVisible
         }}>
             {children}
         </GameContext.Provider>
