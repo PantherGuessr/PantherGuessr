@@ -34,7 +34,6 @@ export const getWeeklyChallenge = query({
 // makes the weekly challenge for the current week by picking 5 random levels from the levels table
 export const makeWeeklyChallenge = mutation({
     handler: async (ctx) => {
-        const date = new Date();
         const today = format(new Date(), 'yyyy-MM-dd');
         const endDate = format(addDays(new Date(), 6), 'yyyy-MM-dd');
         const levels = await ctx.db.query("levels").collect();
@@ -58,7 +57,8 @@ export const makeWeeklyChallenge = mutation({
             round_2: randomLevels[1],
             round_3: randomLevels[2],
             round_4: randomLevels[3],
-            round_5: randomLevels[4]
+            round_5: randomLevels[4],
+            timeAllowedPerRound: BigInt(60)
         });
     }
 });

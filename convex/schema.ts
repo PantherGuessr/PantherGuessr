@@ -49,6 +49,16 @@ export default defineSchema({
     - First played by, user clerk ID
     - [] of leaderboard entries
     */
+    games: defineTable({
+        round_1: v.id("levels"),
+        round_2: v.id("levels"),
+        round_3: v.id("levels"),
+        round_4: v.id("levels"),
+        round_5: v.id("levels"),    
+        timeAllowedPerRound: v.optional(v.int64()),
+        firstPlayedByClerkId: v.optional(v.string()),
+        leaderboard: v.optional(v.array(v.id("leaderboardEntries")))
+    }),
 
     weeklyChallenges: defineTable({
         startDate: v.string(),
@@ -57,31 +67,30 @@ export default defineSchema({
         round_2: v.id("levels"),
         round_3: v.id("levels"),
         round_4: v.id("levels"),
-        round_5: v.id("levels")
-        //TODO: Add a leaderboard entries array for weekly challenge leaderboards
+        round_5: v.id("levels"),
+        timeAllowedPerRound: v.optional(v.int64()),
+        firstPlayedByClerkId: v.optional(v.string()),
+        leaderboard: v.optional(v.array(v.id("leaderboardEntries")))
     }),
 
-    /* //TODO: Add a leaderboard entries schema to store leaderboard entries for all game types
-    Needs to include the following:
-    - union of games schema entries or weeklyChallenges schema entries
-    - user clerk ID
-    - round 1 score
-    - round 2 score
-    - round 3 score
-    - round 4 score
-    - round 5 score
-    - total time taken
-    */
+    leaderboardEntries: defineTable({
+        game: v.union(v.id("games"), v.id("weeklyChallenges")),
+        userClerkId: v.string(),
+        round_1: v.int64(),
+        round_2: v.int64(),
+        round_3: v.int64(),
+        round_4: v.int64(),
+        round_5: v.int64(),
+        totalTimeTaken: v.int64(),
+    }),
 
-    /* //TODO: Add a ongoing games schema to store any ongoing games
-    Needs to include the following:
-    - union of games schema entries or weeklyChallenges schema entries
-    - user clerk ID
-    - current round
-    - total time taken so far in game
-    - time left in current round (defaults to 5 seconds if not saved in time)
-
-    */
+    ongoingGames: defineTable({
+        game: v.union(v.id("games"), v.id("weeklyChallenges")),
+        userClerkId: v.string(),
+        currentRound: v.int64(),
+        timeLeftInRound: v.optional(v.int64()),
+        totalTimeTaken: v.int64(),
+    }),
 
     profileTaglines: defineTable({
         tagline: v.string()
