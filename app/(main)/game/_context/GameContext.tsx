@@ -57,8 +57,13 @@ export const GameProvider = ({
 
     const game = useGameById(gameId);
     const ids = useMemo(() => 
-        game ? [game.round_1, game.round_2, game.round_3, game.round_4, game.round_5] : []
-    , [game]);
+    {
+        if (game) {
+            window.history.pushState(null, '', `/game/${game._id}`);
+            return [game.round_1, game.round_2, game.round_3, game.round_4, game.round_5];
+        }
+        return [];
+    }, [game]);
 
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
     const checkGuess = useMutation(api.game.checkGuess);
@@ -112,9 +117,6 @@ export const GameProvider = ({
 
         if(nextRoundNumber > levels.length) {
             const username = user.user?.username ? user.user.username : "Anonymous";
-
-            incrementDailyGameStats();
-            incrementMonthlyGameStats();
 
             const query = new URLSearchParams({
                 distances: JSON.stringify(allDistances),

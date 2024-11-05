@@ -9,15 +9,15 @@ import "../_components/game-animations.css";
 import { Id } from "@/convex/_generated/dataModel";
 
 type Props = {
-    params: { gameId: string }
+    params: { GAMEID: string }
 }
 
 const GamePage = ({ params }: Props) => {
-    const gameId = params.gameId as Id<"games">;
-    const isMobile = useMediaQuery("(max-width: 600px");
+    const gameIdAsId = params.GAMEID as Id<"games">;
+    const isMobile = useMediaQuery("(max-width: 600px)");
 
     return (
-        <GameProvider gameId={gameId}>
+        <GameProvider gameId={gameIdAsId}>
             <div className={
                 cn("h-full w-full flex overflow-y-auto",
                     isMobile ? "animate-body-opacity-scale-in flex-col" : "flex-row")}>

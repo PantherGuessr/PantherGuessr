@@ -1,42 +1,38 @@
-import { useEffect, useState } from 'react';
-import { api } from '@/convex/_generated/api';
-import { useMutation, useQuery } from 'convex/react';
-import { Id } from '@/convex/_generated/dataModel';
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { useEffect, useState } from "react";
 
 const useGameById = (gameId?: Id<"games">) => {
-    // State to store the game ID (either provided or created)
-    const [currentGameId, setCurrentGameId] = useState<Id<"games"> | undefined>(gameId);
+    const [createdGameId, setCreatedGameId] = useState<Id<"games"> | null>(null);
+    const gameData = useQuery(api.game.getExistingGame, gameId ? { gameId } : createdGameId ? { gameId: createdGameId } : "skip");
+    const createGame = useMutation(api.game.createNewGame);
+    const [shouldCreateGame, setShouldCreateGame] = useState(false);
 
-    // Query existing game if ID is available
-    const existingGame = useQuery(api.game.getExistingGame, 
-        currentGameId ? { gameId: currentGameId } : "skip"
-    );
-
-    // Mutation to create a new game
-    const createNewGame = useMutation(api.game.createNewGame);
-
-    // State to track if game creation has been attempted
-    const [gameCreated, setGameCreated] = useState(false);
-
-    // Create new game if no ID provided and not already created
     useEffect(() => {
-        const createGame = async () => {
-            if (!currentGameId && !gameCreated) {
-                try {
-                    // Default 30 seconds per round
-                    const newGameId = await createNewGame({ timeAllowedPerRound: BigInt(30) });
-                    setCurrentGameId(newGameId);
-                    setGameCreated(true);
-                } catch (error) {
-                    console.error("Error creating new game:", error);
-                }
-            }
-        };
+        console.log("Checking if game should be created:", { gameData, gameId, shouldCreateGame });
+        if (!gameData && !gameId && !createdGameId && !shouldCreateGame) {
+            console.log("Setting shouldCreateGame to true");
+            setShouldCreateGame(true);
+        }
+    }, [gameData, gameId, createdGameId, shouldCreateGame]);
 
-        createGame();
-    }, [currentGameId, gameCreated, createNewGame]);
+    useEffect(() => {
+        if (shouldCreateGame) {
+            console.log("Creating game...");
+            createGame({ timeAllowedPerRound: BigInt(60) })
+                .then(response => {
+                    console.log('Game created with ID:', response);
+                    setCreatedGameId(response);
+                    setShouldCreateGame(false);
+                })
+                .catch(error => {
+                    console.error('Error creating game:', error);
+                });
+        }
+    }, [shouldCreateGame, createGame]);
 
-    return existingGame;
-};
+    return gameData;
+}
 
 export default useGameById;
