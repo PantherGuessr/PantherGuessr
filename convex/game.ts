@@ -91,7 +91,72 @@ export const getGameById = query({
     }
 });
 
-// Gets the image src url based on an id
+/**
+ * Adds a leaderboard entry for a completed game.
+ * 
+ * @param args.gameId - ID of the game the entry is for
+ * @param args.userClerkId - Clerk ID of the user who completed the game
+ * @param args.round_1 - Score for round 1 
+ * @param args.round_2 - Score for round 2
+ * @param args.round_3 - Score for round 3
+ * @param args.round_4 - Score for round 4
+ * @param args.round_5 - Score for round 5
+ * @param args.totalTimeTaken - Total time taken to complete all rounds
+ * @returns Object indicating success/failure of adding the entry
+ * 
+ * This mutation:
+ * 1. Creates a new leaderboard entry document with the provided scores
+ * 2. Retrieves the game document
+ * 3. Adds the new entry ID to the game's leaderboard array
+ * 4. Returns success status
+ */
+export const addLeaderboardEntryToGame = mutation({
+    args: {
+        gameId: v.id("games"),
+        userClerkId: v.string(),
+        round_1: v.int64(),
+        round_2: v.int64(),
+        round_3: v.int64(),
+        round_4: v.int64(),
+        round_5: v.int64(),
+        totalTimeTaken: v.int64()
+    },
+    handler: async (ctx, args) => {
+        // make leaderboard entry
+        const leaderboardEntry = await ctx.db.insert("leaderboardEntries", {
+            game: args.gameId,
+            userClerkId: args.userClerkId,
+            round_1: args.round_1,
+            round_2: args.round_2,
+            round_3: args.round_3,
+            round_4: args.round_4,
+            round_5: args.round_5,
+            totalTimeTaken: args.totalTimeTaken
+        });
+
+        // get game by ID
+        const game = await ctx.db.get(args.gameId);
+
+        // add leaderboard entry to game with existing entries
+        if (game) {
+            await ctx.db.patch(args.gameId, {
+                leaderboard: [...(game?.leaderboard ?? []), leaderboardEntry]
+            });
+        }
+        else {
+            return { success: false };
+        }
+        
+        return { success: true };
+    }
+});
+
+/**
+ * Retrieves the image src url based on an id
+ * 
+ * @param args.id - The ID of the level to retrieve
+ * @returns The image src url
+ */
 export const getImageSrc = query({
     args: { id: v.id("levels") },
     handler: async (ctx, args) => {
@@ -111,6 +176,15 @@ export const getImageSrc = query({
     }
 });
 
+/**
+ * Calculates the distance between two points in feet using the Haversine formula
+ * 
+ * @param lat1 - Latitude of the first point
+ * @param lon1 - Longitude of the first point
+ * @param lat2 - Latitude of the second point
+ * @param lon2 - Longitude of the second point
+ * @returns The distance in feet
+ */
 export const haversineDistanceInFeet = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
     const toRadians = (degrees: number) => degrees * (Math.PI / 180);
 
@@ -128,6 +202,14 @@ export const haversineDistanceInFeet = (lat1: number, lon1: number, lat2: number
     return distanceInFeet;
 };
 
+/**
+ * Checks a user's guess against the correct latitude and longitude of a level
+ * 
+ * @param args.id - The ID of the level to check against
+ * @param args.guessLatitude - The user's guess for the latitude
+ * @param args.guessLongitude - The user's guess for the longitude
+ * @returns An object containing the correct latitude, correct longitude, distance away, and score
+ */
 export const checkGuess = mutation({
     args: { id: v.id("levels"), guessLatitude: v.float64(), guessLongitude: v.float64() },
     handler: async(ctx, args) => {
@@ -164,6 +246,12 @@ export const checkGuess = mutation({
     }
 });
 
+/**
+ * Updates the timesPlayed field for a level //TODO: Fix this to enable it to work
+ * 
+ * @param args.id - The ID of the level to update
+ * @returns Object indicating success/failure of updating the timesPlayed field
+ */
 export const updateTimesPlayed = mutation({
     args: { id: v.id("levels") },
     handler: async(ctx, args) => {
