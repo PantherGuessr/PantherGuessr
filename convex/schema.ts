@@ -37,18 +37,7 @@ export default defineSchema({
         count: v.int64(),
         lastUpdated: v.string()
     }),
-
-    /* // TODO: create a games schema to store unique game data
-    Needs to include the following:
-    - Round 1 LevelID
-    - Round 2 LevelID
-    - Round 3 LevelID
-    - Round 4 LevelID
-    - Round 5 LevelID
-    - Time allowed per round, int64
-    - First played by, user clerk ID
-    - [] of leaderboard entries
-    */
+    
     games: defineTable({
         round_1: v.id("levels"),
         round_2: v.id("levels"),
