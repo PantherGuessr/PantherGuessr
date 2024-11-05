@@ -127,24 +127,34 @@ export const getGameById = query({
 export const addLeaderboardEntryToGame = mutation({
     args: {
         gameId: v.id("games"),
-        userClerkId: v.string(),
+        username: v.string(),
         round_1: v.int64(),
+        round_1_distance: v.int64(),
         round_2: v.int64(),
+        round_2_distance: v.int64(),
         round_3: v.int64(),
+        round_3_distance: v.int64(),
         round_4: v.int64(),
+        round_4_distance: v.int64(),
         round_5: v.int64(),
+        round_5_distance: v.int64(),
         totalTimeTaken: v.int64()
     },
     handler: async (ctx, args) => {
         // make leaderboard entry
         const leaderboardEntry = await ctx.db.insert("leaderboardEntries", {
             game: args.gameId,
-            userClerkId: args.userClerkId,
+            username: args.username,
             round_1: args.round_1,
+            round_1_distance: args.round_1_distance,
             round_2: args.round_2,
+            round_2_distance: args.round_2_distance,
             round_3: args.round_3,
+            round_3_distance: args.round_3_distance,
             round_4: args.round_4,
+            round_4_distance: args.round_4_distance,
             round_5: args.round_5,
+            round_5_distance: args.round_5_distance,
             totalTimeTaken: args.totalTimeTaken
         });
 
@@ -162,6 +172,19 @@ export const addLeaderboardEntryToGame = mutation({
         }
         
         return { success: true };
+    }
+});
+
+/**
+ * Retrieves a leaderboard entry by its ID
+ * 
+ * @param args.id - The ID of the leaderboard entry to retrieve
+ * @returns The leaderboard entry
+ */
+export const getPersonalLeaderboardEntryById = query({
+    args: { id: v.id("leaderboardEntries") },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.id);
     }
 });
 

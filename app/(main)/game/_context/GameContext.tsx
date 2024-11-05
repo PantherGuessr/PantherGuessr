@@ -133,12 +133,17 @@ export const GameProvider = ({
 
             addLeaderboardEntryToGame({
                 gameId: game!._id,
-                userClerkId: user.user?.id ?? "",
-                round_1: BigInt(allDistances[0]),
-                round_2: BigInt(allDistances[1]),
-                round_3: BigInt(allDistances[2]),
-                round_4: BigInt(allDistances[3]),
-                round_5: BigInt(allDistances[4]),
+                username: username,
+                round_1: BigInt(allScores[0]),
+                round_1_distance: BigInt(allDistances[0]),
+                round_2: BigInt(allScores[1]),
+                round_2_distance: BigInt(allDistances[1]),
+                round_3: BigInt(allScores[2]),
+                round_3_distance: BigInt(allDistances[2]),
+                round_4: BigInt(allScores[3]),
+                round_4_distance: BigInt(allDistances[3]),
+                round_5: BigInt(allScores[4]),
+                round_5_distance: BigInt(allDistances[4]),
                 totalTimeTaken: BigInt(0)
             }).then(() => {
                 console.log("Leaderboard entry added");
