@@ -1,10 +1,11 @@
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext, useMemo } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { LatLng } from "leaflet";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import useGameById from "@/hooks/use-game-by-id";
 
 interface GameContextType {
     levels: Id<"levels">[];
@@ -31,9 +32,11 @@ const GameContext = createContext<GameContextType | null>(null);
 
 
 export const GameProvider = ({
-    children
+    children,
+    gameId
 }: {
     children: React.ReactNode;
+    gameId?: Id<"games">;
 }) => {
     const router = useRouter();
     const user = useUser();
@@ -52,7 +55,11 @@ export const GameProvider = ({
     const [distanceFromTarget, setDistanceFromTarget] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const ids = useQuery(api.game.getRandomLevels, { cacheBuster });
+    const game = useGameById(gameId);
+    const ids = useMemo(() => 
+        game ? [game.round_1, game.round_2, game.round_3, game.round_4, game.round_5] : []
+    , [game]);
+
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
     const checkGuess = useMutation(api.game.checkGuess);
 

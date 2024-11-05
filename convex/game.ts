@@ -32,6 +32,20 @@ import { mutation, query } from "./_generated/server";
 // });
 
 /**
+ * Retrieves a game document by its ID.
+ * 
+ * @param args.gameId - The ID of the game to retrieve
+ * @returns The game document if found, null otherwise
+ */
+export const getExistingGame = query({
+    args: { gameId: v.id("games") },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.gameId);
+    }
+});
+
+
+/**
  * Creates a new game with 5 randomly selected levels.
  * 
  * @param args.timeAllowedPerRound - The time limit in seconds for each round
