@@ -138,8 +138,7 @@ export const GameProvider = ({
                 round_5_distance: BigInt(allDistances[4]),
                 totalTimeTaken: BigInt(0)
             }).then(leaderboardEntry => {
-                console.log("Leaderboard entry added");
-                window.location.href = `/results/${leaderboardEntry}`;
+                setLeaderboardEntryId(leaderboardEntry);
             });
         } else {
             setCurrentRound(currentRound + 1);
@@ -155,6 +154,14 @@ export const GameProvider = ({
             setScoreAwarded(null);
         }
     };
+
+    const [leaderboardEntryId, setLeaderboardEntryId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (leaderboardEntryId) {
+            router.push(`/results/${leaderboardEntryId}`);
+        }
+    }, [leaderboardEntryId, router]);
 
     useEffect(() => {
         if (ids === undefined || (currentLevelId && imageSrc === undefined)) {
