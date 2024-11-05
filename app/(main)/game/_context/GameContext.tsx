@@ -71,6 +71,9 @@ export const GameProvider = ({
     // analytics
     const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
     const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
+
+    // leaderboard
+    const addLeaderboardEntryToGame = useMutation(api.game.addLeaderboardEntryToGame);
         
     const [allDistances, setAllDistances] = useState<number[]>([]);
     const [allScores, setAllScores] = useState<number[]>([]);
@@ -128,7 +131,19 @@ export const GameProvider = ({
                 username: username,
             });
 
-            router.push(`/game-result?${query.toString()}`);
+            addLeaderboardEntryToGame({
+                gameId: game!._id,
+                userClerkId: user.user?.id ?? "",
+                round_1: BigInt(allDistances[0]),
+                round_2: BigInt(allDistances[1]),
+                round_3: BigInt(allDistances[2]),
+                round_4: BigInt(allDistances[3]),
+                round_5: BigInt(allDistances[4]),
+                totalTimeTaken: BigInt(0)
+            }).then(() => {
+                console.log("Leaderboard entry added");
+                window.location.href = `/game-result?${query.toString()}`;
+            });
         } else {
             setCurrentRound(currentRound + 1);
             const nextLevel = levels[nextRoundNumber - 1];
