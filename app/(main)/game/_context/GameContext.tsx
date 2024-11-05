@@ -140,10 +140,10 @@ export const GameProvider = ({
                 round_4: BigInt(allDistances[3]),
                 round_5: BigInt(allDistances[4]),
                 totalTimeTaken: BigInt(0)
-            }).then(() => {
-                console.log("Leaderboard entry added");
-                window.location.href = `/game-result?${query.toString()}`;
             });
+
+            console.log("Leaderboard entry added");
+            router.push(`/game-result?${query}`);
         } else {
             setCurrentRound(currentRound + 1);
             const nextLevel = levels[nextRoundNumber - 1];
