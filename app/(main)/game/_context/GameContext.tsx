@@ -123,14 +123,7 @@ export const GameProvider = ({
             incrementDailyGameStats();
             incrementMonthlyGameStats();
 
-            const query = new URLSearchParams({
-                distances: JSON.stringify(allDistances),
-                scores: JSON.stringify(allScores),
-                finalScore: score.toString(),
-                username: username,
-            });
-
-            addLeaderboardEntryToGame({
+            const userLeaderboardEntry = addLeaderboardEntryToGame({
                 gameId: game!._id,
                 username: username,
                 round_1: BigInt(allScores[0]),
@@ -144,10 +137,10 @@ export const GameProvider = ({
                 round_5: BigInt(allScores[4]),
                 round_5_distance: BigInt(allDistances[4]),
                 totalTimeTaken: BigInt(0)
+            }).then(leaderboardEntry => {
+                console.log("Leaderboard entry added");
+                window.location.href = `/results/${leaderboardEntry}`;
             });
-
-            console.log("Leaderboard entry added");
-            router.push(`/game-result?${query}`);
         } else {
             setCurrentRound(currentRound + 1);
             const nextLevel = levels[nextRoundNumber - 1];

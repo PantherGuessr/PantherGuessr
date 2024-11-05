@@ -168,10 +168,10 @@ export const addLeaderboardEntryToGame = mutation({
             });
         }
         else {
-            return { success: false };
+            return null;
         }
         
-        return { success: true };
+        return leaderboardEntry;
     }
 });
 
