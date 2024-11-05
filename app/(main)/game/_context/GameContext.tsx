@@ -46,7 +46,6 @@ export const GameProvider = ({
     const [score, setScore] = useState(0);
     const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
     const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
-    const [cacheBuster] = useState(Math.random());
     const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
     const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
     const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
@@ -145,10 +144,10 @@ export const GameProvider = ({
                 round_5: BigInt(allScores[4]),
                 round_5_distance: BigInt(allDistances[4]),
                 totalTimeTaken: BigInt(0)
-            }).then(() => {
-                console.log("Leaderboard entry added");
-                window.location.href = `/game-result?${query.toString()}`;
             });
+
+            console.log("Leaderboard entry added");
+            router.push(`/game-result?${query}`);
         } else {
             setCurrentRound(currentRound + 1);
             const nextLevel = levels[nextRoundNumber - 1];
