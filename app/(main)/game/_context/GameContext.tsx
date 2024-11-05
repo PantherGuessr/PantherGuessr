@@ -46,7 +46,6 @@ export const GameProvider = ({
     const [score, setScore] = useState(0);
     const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
     const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
-    const [cacheBuster] = useState(Math.random());
     const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
     const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
     const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
