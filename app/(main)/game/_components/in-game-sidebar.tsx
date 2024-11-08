@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Hash, Loader2, LogOut, Medal, User } from "lucide-react";
 import Image from "next/image";
-import { ElementRef, useEffect, useRef, useState } from "react";
+import { ElementRef, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useGame } from "../_context/GameContext";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,6 +18,8 @@ const InGameSidebar = () => {
     const magnifierRef = useRef<HTMLDivElement>(null);
     const isResizingRef = useRef(false);
     const sidebarRef = useRef<ElementRef<"aside">>(null);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isResetting, setIsResetting] = useState(false);
 
     // Retrieve Game Context

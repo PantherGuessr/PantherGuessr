@@ -13,7 +13,7 @@ type Props = {
     params: { GAMEID: string }
 }
 
-const GamePage = ({ params }: Props) => {
+const GameIdPage = ({ params }: Props) => {
     const gameIdAsId = params.GAMEID as Id<"games">;
     const isMobile = useMediaQuery("(max-width: 600px)");
 
@@ -53,4 +53,4 @@ const GameContent = ({ isMobile }: { isMobile: boolean }) => {
     );
 }
 
-export default GamePage;
+export default GameIdPage;

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Download, Facebook, Home, Instagram, Loader2, Share, Slack } from "lucide-react";
+import { Download, Home, Loader2, Share } from "lucide-react";
 import Link from "next/link";
 import html2canvas from 'html2canvas';
 import { useEffect, useRef, useState } from "react";
