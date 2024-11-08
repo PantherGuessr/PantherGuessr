@@ -18,6 +18,8 @@ const InGameSidebar = () => {
     const magnifierRef = useRef<HTMLDivElement>(null);
     const isResizingRef = useRef(false);
     const sidebarRef = useRef<ElementRef<"aside">>(null);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isResetting, setIsResetting] = useState(false);
 
     // Retrieve Game Context
@@ -144,6 +146,7 @@ const InGameSidebar = () => {
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
     }
+
 
     /*TODO: Comment this back in when ready
 

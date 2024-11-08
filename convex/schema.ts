@@ -37,18 +37,7 @@ export default defineSchema({
         count: v.int64(),
         lastUpdated: v.string()
     }),
-
-    /* // TODO: create a games schema to store unique game data
-    Needs to include the following:
-    - Round 1 LevelID
-    - Round 2 LevelID
-    - Round 3 LevelID
-    - Round 4 LevelID
-    - Round 5 LevelID
-    - Time allowed per round, int64
-    - First played by, user clerk ID
-    - [] of leaderboard entries
-    */
+    
     games: defineTable({
         round_1: v.id("levels"),
         round_2: v.id("levels"),
@@ -75,12 +64,17 @@ export default defineSchema({
 
     leaderboardEntries: defineTable({
         game: v.union(v.id("games"), v.id("weeklyChallenges")),
-        userClerkId: v.string(),
+        username: v.string(),
         round_1: v.int64(),
+        round_1_distance: v.int64(),
         round_2: v.int64(),
+        round_2_distance: v.int64(),
         round_3: v.int64(),
+        round_3_distance: v.int64(),
         round_4: v.int64(),
+        round_4_distance: v.int64(),
         round_5: v.int64(),
+        round_5_distance: v.int64(),
         totalTimeTaken: v.int64(),
     }),
 

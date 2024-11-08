@@ -13,7 +13,6 @@ const InteractableMap = () => {
         isSubmittingGuess,
         setMarkerPosition,
         correctLocation,
-        markerPosition 
     } = useGame()!;
     const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
 
@@ -55,18 +54,20 @@ const InteractableMap = () => {
         )
     }
 
-    function CenterMapOnLine() {
+    function CenterMapOnLine({ localMarkerPosition, correctLocation }: { localMarkerPosition: LatLng | null, correctLocation: LatLng }) {
         const map = useMap();
-
+    
         useEffect(() => {
-            if(localMarkerPosition && correctLocation) {
+            if (localMarkerPosition && correctLocation) {
                 const midpoint = new LatLng(
                     (localMarkerPosition.lat + correctLocation.lat) / 2,
                     (localMarkerPosition.lng + correctLocation.lng) / 2
                 );
                 map.setView(midpoint, map.getZoom());
             }
-        }, [map]);
+        }, [localMarkerPosition, correctLocation, map]);
+    
+        return null;
     }
     
     return (
@@ -97,7 +98,7 @@ const InteractableMap = () => {
                         <Marker icon={correctLocationPinMarker} position={correctLocation} zIndexOffset={1000}/>
                         <CircleMarker center={correctLocation} pathOptions={{ color: '#a50034' }} radius={3} />
                         <Polyline positions={[localMarkerPosition, correctLocation]} color="#a50034" />
-                        <CenterMapOnLine />
+                        <CenterMapOnLine localMarkerPosition={localMarkerPosition} correctLocation={correctLocation} />
                     </>
                 )}
             </MapContainer>

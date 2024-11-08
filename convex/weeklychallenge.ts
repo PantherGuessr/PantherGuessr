@@ -1,18 +1,7 @@
 import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
 import { format, addDays } from 'date-fns';
-
-interface Level {
-    _id: Id<"levels">;
-    _creationTime: number;
-    title: string;
-    latitude: number;
-    longitude: number;
-    imageId: string;
-    timesPlayed: bigint;
-}
 
 // attempts to get the weekly challenge where today is between the start and end date of the weekly challenge
 export const getWeeklyChallenge = query({
@@ -62,8 +51,6 @@ export const makeWeeklyChallenge = mutation({
         });
     }
 });
-
-
 
 // gets weekly challenge with levels
 export const getLevelsFromWeeklyChallenge = query({
