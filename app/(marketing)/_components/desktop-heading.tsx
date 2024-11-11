@@ -48,7 +48,51 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
                     alt="Chapman Panther Waving" width={400} height={225} />
                 </div>
                 <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold hover:scale-105 transition-all cursor-default">
-                    Welcome back, <Link href={"/profile/" + username}><span className="underline">{username}</span></Link>. {welcomeMessage}
+                    Welcome back, {" "}
+                    <HoverCard openDelay={0} closeDelay={0}>
+                        <HoverCardTrigger asChild>
+                            <Link href={"/profile/" + username}>
+                                <span className="underline">{username}</span>
+                            </Link>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-80 z-50">
+                            <div className="flex space-x-4">
+                                <Avatar>
+                                    <AvatarImage src={picture} />
+                                    <AvatarFallback>{username[0].toUpperCase()}</AvatarFallback>
+                                </Avatar>
+                                <div className="space-y-1 text-left">
+                                    <div className="flex md:flex-row flex-col items-center md:items-start">
+                                        <div className="flex flex-row items-center">
+                                            <h4 className="text-sm font-semibold">@{username}</h4>
+                                            <div className="flex flex-row items-center gap-x-2 pl-2">
+                                                {isDeveloperRole && (
+                                                    <Image draggable={false} className="select-none cursor-default" src="/badges/developer_badge.svg" width="15" height="15" alt="Developer Badge" />
+                                                )}
+                                                {isModeratorRole && (
+                                                    <Image draggable={false} className="select-none cursor-default" src="/badges/moderator_badge.svg" width="15" height="15" alt="Moderator Badge" />
+                                                )}
+                                                {isFriendRole && (
+                                                    <Image draggable={false} className="select-none cursor-default" src="/badges/friend_badge.svg" alt="Friend Badge" width="15" height="15" />
+                                                )}
+                                                {isChapmanStudent && (
+                                                    <Image draggable={false} className="select-none cursor-default" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="15" height="15" />
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground italic">{tagline}</p>
+                                    <div className="flex items-center pt-2">
+                                        <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
+                                        <span className="text-xs text-muted-foreground">
+                                            Joined {new Date(joinDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </HoverCardContent>
+                    </HoverCard>.
+                    {" " + welcomeMessage}
                 </h1>
                 </div>
                 <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
@@ -173,7 +217,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
                         <span className="underline">{username}</span>
                     </Link>
                 </HoverCardTrigger>
-                <HoverCardContent className="w-80">
+                <HoverCardContent className="w-80 z-50">
                     <div className="flex space-x-4">
                         <Avatar>
                             <AvatarImage src={picture} />
