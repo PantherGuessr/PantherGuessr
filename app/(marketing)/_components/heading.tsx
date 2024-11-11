@@ -1,6 +1,6 @@
 "use client";
 
-import { useConvexAuth } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, LoaderCircle } from "lucide-react";
 import { SignUpButton, useUser } from "@clerk/clerk-react";
@@ -12,11 +12,21 @@ import DesktopHeading from "./desktop-heading";
 import { useEffect, useState } from "react";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
 import DesktopHeadingLoading from "./desktop-heading-loading";
+import { api } from "@/convex/_generated/api";
+import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
+import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
+import { useRoleCheck } from "@/hooks/use-role-check";
 
 
 export const Heading = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
-    const { user } = useUser();
+    const clerkUser = useUser();
+    const user = useQuery(api.users.getUserByUsername, { username: clerkUser.user?.username ?? "" });
+    const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
+    const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
+    const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
+    const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
+    const { result: profileTagline } = useGetSelectedTagline(user?.clerkId);
 
     const [welcomeMessage, setWelcomeMessage] = useState('');
 
@@ -25,7 +35,6 @@ export const Heading = () => {
     }, []);
 
     const isDesktop = useMediaQuery("(min-width: 640px)");
-
 
     return (
         <div className="space-y-4 w-full">
@@ -41,20 +50,33 @@ export const Heading = () => {
                     </div>
                 </>
             )}
-            {isAuthenticated && !isLoading && (
+            {
+                isAuthenticated
+                && !isLoading
+                && user
+                && clerkUser.user
+                && profileTagline
+                && !isChapmanStudentLoading
+                && !developerRoleLoading
+                && !moderatorRoleLoading
+                && !friendRoleLoading
+                && (
                 <>
-
                 {isDesktop ?
                 (
-                    <DesktopHeading username={user!.username || "Guest"} />
+                    <DesktopHeading 
+                        username={user.username || "Guest"}
+                        picture={clerkUser.user.imageUrl}
+                        tagline={profileTagline.tagline}
+                        joinDate={user._creationTime}
+                        isChapmanStudent={isChapmanStudent ?? false}
+                        isDeveloperRole={isDeveloperRole ?? false}
+                        isModeratorRole={isModeratorRole ?? false}
+                        isFriendRole={isFriendRole ?? false}
+                    />
                 ) : (
                     <>
                     <div className="flex flex-col justify-center items-center basis-1/2 px-8 mb-4">
-                        {/* <div className={"flex flex-col transition-all justify-center items-center drop-shadow-lg rounded-lg bg-gradient-to-b from-transparent to-primary/50 mb-6"}>
-                        <Image src="/profile-banner-images/chapmanpantherwaving.gif"
-                            className="rounded-lg transition-all border-primary border-4"
-                            alt="Chapman Panther Waving" width={400} height={400} />
-                        </div> */}
                         <Image 
                             src="/logo.svg"
                             height="120"
@@ -70,7 +92,7 @@ export const Heading = () => {
                             className="hidden dark:block animate-fly-in-from-top-delay-0ms"
                         />
                         <h1 className={"text-2xl sm:text-3xl md:text-3xl font-bold transition-all drop-shadow-lg px-2 mb-3 mt-6 animate-fly-in-from-top-delay-500ms"}>
-                            Welcome back, <span className="underline">{user?.username}</span>. {welcomeMessage}
+                            Welcome back, <span className="underline">{user.username}</span>. {welcomeMessage}
                         </h1>
                     </div>
                     <div className="flex justify-center items-center px-8 animate-fly-in-from-top-delay-1000ms">
