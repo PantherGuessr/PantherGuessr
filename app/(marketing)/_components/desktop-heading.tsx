@@ -49,7 +49,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
                 </div>
                 <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold hover:scale-105 transition-all cursor-default">
                     Welcome back, {" "}
-                    <HoverCard openDelay={0} closeDelay={0}>
+                    <HoverCard openDelay={0} closeDelay={50}>
                         <HoverCardTrigger asChild>
                             <Link href={"/profile/" + username}>
                                 <span className="underline">{username}</span>
@@ -211,7 +211,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
         </div>
         <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold cursor-default hover:scale-105 transition-all">
             Welcome back, {" "}
-            <HoverCard openDelay={0} closeDelay={0}>
+            <HoverCard openDelay={0} closeDelay={50}>
                 <HoverCardTrigger asChild>
                     <Link href={"/profile/" + username}>
                         <span className="underline">{username}</span>
