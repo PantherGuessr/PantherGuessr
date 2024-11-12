@@ -12,10 +12,10 @@ import { v, Validator } from "convex/values";
  * @returns {Promise<User>} The current user.
  */
 export const current = query({
-    args: {},
-    handler: async (ctx) => {
-        return await getCurrentUser(ctx);
-    },
+  args: {},
+  handler: async (ctx) => {
+    return await getCurrentUser(ctx);
+  },
 });
 
 /**
@@ -37,38 +37,38 @@ export const current = query({
  * @returns {Promise<void>} - A promise that resolves when the upsert operation is complete.
  */
 export const upsertFromClerk = internalMutation({
-    args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
-    async handler(ctx, { data }) {
+  args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
+  async handler(ctx, { data }) {
         
-        const user = await userByClerkId(ctx, data.id);
-        const background = await ctx.db.query("profileBackgrounds").withIndex("by_creation_time").first(); // generates background
-        const tagline = await ctx.db.query("profileTaglines").filter((q) => q.eq("tagline", "Just born!")).first(); // generates tagline
-        if (user === null) {
-            const userAttributes = {
-                clerkId: data.id!,
-                username: data.username!,
-                emails: data.email_addresses ? data.email_addresses.map(email => email.email_address) : [],
-                level: 1n,
-                currentXP: 0n,
-                picture: data.image_url,
-                profileBackground: background!._id,
-                profileTagline: tagline!._id,
-                unlockedProfileBackgrounds: [background!._id],
-                unlockedProfileTaglines: [tagline!._id],
-            };
+    const user = await userByClerkId(ctx, data.id);
+    const background = await ctx.db.query("profileBackgrounds").withIndex("by_creation_time").first(); // generates background
+    const tagline = await ctx.db.query("profileTaglines").filter((q) => q.eq("tagline", "Just born!")).first(); // generates tagline
+    if (user === null) {
+      const userAttributes = {
+        clerkId: data.id!,
+        username: data.username!,
+        emails: data.email_addresses ? data.email_addresses.map(email => email.email_address) : [],
+        level: 1n,
+        currentXP: 0n,
+        picture: data.image_url,
+        profileBackground: background!._id,
+        profileTagline: tagline!._id,
+        unlockedProfileBackgrounds: [background!._id],
+        unlockedProfileTaglines: [tagline!._id],
+      };
             
-            await ctx.db.insert("users", userAttributes);
-        } else {
-            const userAttributes = {
-                clerkId: data.id!,
-                username: data.username!,
-                emails: data.email_addresses ? data.email_addresses.map(email => email.email_address) : [],
-                picture: data.image_url,
-            };
+      await ctx.db.insert("users", userAttributes);
+    } else {
+      const userAttributes = {
+        clerkId: data.id!,
+        username: data.username!,
+        emails: data.email_addresses ? data.email_addresses.map(email => email.email_address) : [],
+        picture: data.image_url,
+      };
 
-            await ctx.db.patch(user._id, userAttributes);
-        }
-    },
+      await ctx.db.patch(user._id, userAttributes);
+    }
+  },
 });
 
 
@@ -90,18 +90,18 @@ export const upsertFromClerk = internalMutation({
  * ```
  */
 export const deleteFromClerk = internalMutation({
-    args: { clerkUserId: v.string() },
-    async handler(ctx, { clerkUserId }) {
-        const user = await userByClerkId(ctx, clerkUserId);
+  args: { clerkUserId: v.string() },
+  async handler(ctx, { clerkUserId }) {
+    const user = await userByClerkId(ctx, clerkUserId);
 
-        if (user !== null) {
-            await ctx.db.delete(user._id);
-        } else {
-            console.warn(
-                `Can't delete user, there is none for Clerk user ID: ${clerkUserId}`,
-            );
-        }
-    },
+    if (user !== null) {
+      await ctx.db.delete(user._id);
+    } else {
+      console.warn(
+        `Can't delete user, there is none for Clerk user ID: ${clerkUserId}`,
+      );
+    }
+  },
 });
 
 /**
@@ -115,13 +115,13 @@ export const deleteFromClerk = internalMutation({
  * @returns {Promise<Object|null>} - A promise that resolves to the user document if found, or null if not found.
 */
 export const getUserByUsername = query({
-    args: {
-        username: v.string(),
-    },
-    async handler(ctx, args) {
-        const user = await userByUsername(ctx, args.username);
-        return user;
-    }
+  args: {
+    username: v.string(),
+  },
+  async handler(ctx, args) {
+    const user = await userByUsername(ctx, args.username);
+    return user;
+  }
 });
 
 /**
@@ -141,19 +141,19 @@ export const getUserByUsername = query({
  * @returns {Promise<boolean>} - Returns `true` if the user has the specified role, otherwise `false`.
  */
 export const hasRole = query({
-    args: {
-        clerkId: v.string(),
-        role: v.string(),
-    },
-    async handler(ctx, args) {
-        const user = await userByClerkId(ctx, args.clerkId);
+  args: {
+    clerkId: v.string(),
+    role: v.string(),
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
 
-        if(!user) {
-            return false;
-        }
-
-        return user.roles?.includes(args.role);
+    if(!user) {
+      return false;
     }
+
+    return user.roles?.includes(args.role);
+  }
 });
 
 /**
@@ -164,18 +164,18 @@ export const hasRole = query({
  * @returns {Promise<boolean>} - Returns a promise that resolves to `true` if the user has an email ending with "@chapman.edu", otherwise `false`.
  */
 export const hasChapmanEmail = query({
-    args: {
-        clerkId: v.string()
-    },
-    async handler(ctx, args) {
-        const user = await userByClerkId(ctx, args.clerkId);
+  args: {
+    clerkId: v.string()
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
 
-        if(!user) {
-            return false;
-        }
-        
-        return user.emails.some(email => email.endsWith("@chapman.edu"));
+    if(!user) {
+      return false;
     }
+        
+    return user.emails.some(email => email.endsWith("@chapman.edu"));
+  }
 });
 
 /**
@@ -190,27 +190,27 @@ export const hasChapmanEmail = query({
  * @memberof module:users
  */
 export const getUnlockedTaglines = query({
-    args: {
-        clerkId: v.string()
-    },
-    async handler(ctx, args) {
-        const user = await userByClerkId(ctx, args.clerkId);
+  args: {
+    clerkId: v.string()
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
 
-        if(!user) {
-            return null;
-        }
-
-        const taglineIds = user?.unlockedProfileTaglines;
-
-        // iterate through taglines to return objects
-        const taglines = [];
-        for (const taglineId of taglineIds) {
-            const tagline = await ctx.db.query("profileTaglines").withIndex("by_id", (q) => q.eq("_id", taglineId)).unique();
-            taglines.push(tagline);
-        }
-        
-        return taglines;
+    if(!user) {
+      return null;
     }
+
+    const taglineIds = user?.unlockedProfileTaglines;
+
+    // iterate through taglines to return objects
+    const taglines = [];
+    for (const taglineId of taglineIds) {
+      const tagline = await ctx.db.query("profileTaglines").withIndex("by_id", (q) => q.eq("_id", taglineId)).unique();
+      taglines.push(tagline);
+    }
+        
+    return taglines;
+  }
 });
 
 /**
@@ -226,23 +226,23 @@ export const getUnlockedTaglines = query({
  * @param {Object} args - The arguments object containing the Clerk ID.
  */
 export const getSelectedTagline = query({
-    args: {
-        clerkId: v.string()
-    },
-    async handler(ctx, args) {
-        const user = await userByClerkId(ctx, args.clerkId);
+  args: {
+    clerkId: v.string()
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
 
-        if(!user) {
-            return null;
-        }
-
-        const taglineId = user?.profileTagline;
-
-        const tagline = await ctx.db.query("profileTaglines").withIndex("by_id", (q) => q.eq("_id", taglineId)).unique();
-        
-        return tagline;
+    if(!user) {
+      return null;
     }
-})
+
+    const taglineId = user?.profileTagline;
+
+    const tagline = await ctx.db.query("profileTaglines").withIndex("by_id", (q) => q.eq("_id", taglineId)).unique();
+        
+    return tagline;
+  }
+});
 
 /**
  * Updates the selected tagline for a user.
@@ -260,78 +260,78 @@ export const getSelectedTagline = query({
  * @param {Object} args - The arguments object containing the Clerk ID and tagline ID.
  */
 export const updateSelectedTagline = mutation({
-    args: {
-        clerkId: v.string(),
-        taglineId: v.id("profileTaglines")
-    },
-    async handler(ctx, args) {
-        const user = await userByClerkId(ctx, args.clerkId);
+  args: {
+    clerkId: v.string(),
+    taglineId: v.id("profileTaglines")
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
 
-        if(!user) {
-            return null;
-        }
-
-        await ctx.db.patch(user._id, { profileTagline: args.taglineId });
+    if(!user) {
+      return null;
     }
-})
+
+    await ctx.db.patch(user._id, { profileTagline: args.taglineId });
+  }
+});
 
 export const getUnlockedBackgrounds = query({
-    args: {
-        clerkId: v.string()
-    },
-    async handler(ctx, args) {
-        const user = await userByClerkId(ctx, args.clerkId);
+  args: {
+    clerkId: v.string()
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
 
-        if(!user) {
-            return null;
-        }
-
-        const backgroundIds = user?.unlockedProfileBackgrounds;
-
-        const backgrounds = [];
-        for (const backgroundId of backgroundIds) {
-            const background = await ctx.db.query("profileBackgrounds").withIndex("by_id", (q) => q.eq("_id", backgroundId)).unique();
-            backgrounds.push(background);
-        }
-        
-        return backgrounds;
+    if(!user) {
+      return null;
     }
+
+    const backgroundIds = user?.unlockedProfileBackgrounds;
+
+    const backgrounds = [];
+    for (const backgroundId of backgroundIds) {
+      const background = await ctx.db.query("profileBackgrounds").withIndex("by_id", (q) => q.eq("_id", backgroundId)).unique();
+      backgrounds.push(background);
+    }
+        
+    return backgrounds;
+  }
 });
 
 export const getSelectedBackground = query({
-    args: {
-        clerkId: v.string()
-    },
-    async handler(ctx, args) {
-        const user = await userByClerkId(ctx, args.clerkId);
+  args: {
+    clerkId: v.string()
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
 
-        if(!user) {
-            return null;
-        }
-
-        const backgroundId = user?.profileBackground;
-
-        const background = await ctx.db.query("profileBackgrounds").withIndex("by_id", (q) => q.eq("_id", backgroundId)).unique();
-        
-        return background;
+    if(!user) {
+      return null;
     }
-})
+
+    const backgroundId = user?.profileBackground;
+
+    const background = await ctx.db.query("profileBackgrounds").withIndex("by_id", (q) => q.eq("_id", backgroundId)).unique();
+        
+    return background;
+  }
+});
 
 export const updateSelectedBackground = mutation({
-    args: {
-        clerkId: v.string(),
-        backgroundId: v.id("profileBackgrounds")
-    },
-    async handler(ctx, args) {
-        const user = await userByClerkId(ctx, args.clerkId);
+  args: {
+    clerkId: v.string(),
+    backgroundId: v.id("profileBackgrounds")
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
 
-        if(!user) {
-            return null;
-        }
-
-        await ctx.db.patch(user._id, { profileBackground: args.backgroundId });
+    if(!user) {
+      return null;
     }
-})
+
+    await ctx.db.patch(user._id, { profileBackground: args.backgroundId });
+  }
+});
 
 /**
  * Retrieves the current user record or throws an error if the user is not found.
@@ -341,9 +341,9 @@ export const updateSelectedBackground = mutation({
  * @throws Will throw an error if the current user cannot be retrieved.
  */
 export async function getCurrentUserOrThrow(ctx: QueryCtx) {
-    const userRecord = await getCurrentUser(ctx);
-    if (!userRecord) throw new Error("Can't get current user");
-    return userRecord;
+  const userRecord = await getCurrentUser(ctx);
+  if (!userRecord) throw new Error("Can't get current user");
+  return userRecord;
 }
 
 /**
@@ -353,11 +353,11 @@ export async function getCurrentUserOrThrow(ctx: QueryCtx) {
  * @returns A promise that resolves to the current user or null if no user is authenticated.
  */
 export async function getCurrentUser(ctx: QueryCtx) {
-    const identity = await ctx.auth.getUserIdentity();
-    if (identity === null) {
-        return null;
-    }
-    return await userByClerkId(ctx, identity.subject);
+  const identity = await ctx.auth.getUserIdentity();
+  if (identity === null) {
+    return null;
+  }
+  return await userByClerkId(ctx, identity.subject);
 }
 
 /**
@@ -368,10 +368,10 @@ export async function getCurrentUser(ctx: QueryCtx) {
  * @returns A promise that resolves to the user object if found, otherwise null.
  */
 async function userByClerkId(ctx: QueryCtx, clerkId: string) {
-    return await ctx.db
-        .query("users")
-        .withIndex("byClerkId", (q) => q.eq("clerkId", clerkId))
-        .unique();
+  return await ctx.db
+    .query("users")
+    .withIndex("byClerkId", (q) => q.eq("clerkId", clerkId))
+    .unique();
 }
 
 /**
@@ -382,8 +382,8 @@ async function userByClerkId(ctx: QueryCtx, clerkId: string) {
  * @returns A promise that resolves to the user object if found, otherwise null.
  */
 async function userByUsername(ctx: QueryCtx, username: string) {
-    return await ctx.db
-        .query("users")
-        .withIndex("byUsername", (q) => q.eq("username", username))
-        .unique();
+  return await ctx.db
+    .query("users")
+    .withIndex("byUsername", (q) => q.eq("username", username))
+    .unique();
 }
