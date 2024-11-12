@@ -13,16 +13,16 @@ import { useEffect, useState } from "react";
  * @returns {boolean} isLoading - A boolean indicating if the query is still loading.
  */
 export const useGetUnlockedBackgrounds = (userClerkId: string | null = null) => {
-    const { user } = useUser();
-    const clerkId = userClerkId || user?.id || "";
-    const queryResult = useQuery(api.users.getUnlockedBackgrounds, { clerkId });
-    const [isLoading, setIsLoading] = useState(true);
+  const { user } = useUser();
+  const clerkId = userClerkId || user?.id || "";
+  const queryResult = useQuery(api.users.getUnlockedBackgrounds, { clerkId });
+  const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        if(queryResult !== undefined) {
-            setIsLoading(false);
-        }
-    }, [queryResult]);
+  useEffect(() => {
+    if(queryResult !== undefined) {
+      setIsLoading(false);
+    }
+  }, [queryResult]);
 
-    return { result: queryResult, isLoading };
+  return { result: queryResult, isLoading };
 };

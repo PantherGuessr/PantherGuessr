@@ -18,46 +18,46 @@ import { mutation, query } from "./_generated/server";
  * }
  */
 export const getDailyGameStats = query({
-    handler: async (ctx) => {
-        const date = new Date()
-        const today = date.toISOString().split("T")[0];
-        const gameStats = await ctx.db
-            .query("gameStats")
-            .filter(q => q.and(
-                q.eq(q.field("type"), "daily"),
-                q.eq(q.field("isoDay"), today)
-            ))
-            .collect();
+  handler: async (ctx) => {
+    const date = new Date();
+    const today = date.toISOString().split("T")[0];
+    const gameStats = await ctx.db
+      .query("gameStats")
+      .filter(q => q.and(
+        q.eq(q.field("type"), "daily"),
+        q.eq(q.field("isoDay"), today)
+      ))
+      .collect();
             
-            return gameStats;
+    return gameStats;
 
-        }
+  }
 });
 
 export const getPastNDaysOfStats = query({
-    args: { n : v.number() },
-    handler: async (ctx, args) => {
-        // get the current data and past n days of data
-        const todayDate = new Date();
-        const dataCollection = [];
-        for (let i = 0; i < args.n; i++) {
-            const date = new Date(todayDate);
-            date.setDate(date.getDate() - i);
-            const dateString = date.toISOString().split("T")[0];
-            const gameStats = await ctx.db
-                .query("gameStats")
-                .filter(q => q.and(
-                    q.eq(q.field("type"), "daily"),
-                    q.eq(q.field("isoDay"), dateString)
-                ))
-                .collect();
-            if (gameStats.length > 0) {
-                dataCollection.push(gameStats[0]);
-            }
-        }
-
-        return dataCollection;
+  args: { n : v.number() },
+  handler: async (ctx, args) => {
+    // get the current data and past n days of data
+    const todayDate = new Date();
+    const dataCollection = [];
+    for (let i = 0; i < args.n; i++) {
+      const date = new Date(todayDate);
+      date.setDate(date.getDate() - i);
+      const dateString = date.toISOString().split("T")[0];
+      const gameStats = await ctx.db
+        .query("gameStats")
+        .filter(q => q.and(
+          q.eq(q.field("type"), "daily"),
+          q.eq(q.field("isoDay"), dateString)
+        ))
+        .collect();
+      if (gameStats.length > 0) {
+        dataCollection.push(gameStats[0]);
+      }
     }
+
+    return dataCollection;
+  }
 });
 
 /**
@@ -70,18 +70,18 @@ export const getPastNDaysOfStats = query({
  * @returns A promise that resolves to a BigInt value of 0.
  */
 export const createDailyGameStats = mutation({
-    handler: async (ctx) => {
-        const date = new Date()
-        await ctx.db.insert("gameStats", {
-            type: "daily",
-            isoTime: date.toISOString(),
-            isoDay: date.toISOString().split("T")[0],
-            isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
-            count: BigInt(0),
-            lastUpdated: date.toISOString()
-        });
-        return BigInt(0);
-    }
+  handler: async (ctx) => {
+    const date = new Date();
+    await ctx.db.insert("gameStats", {
+      type: "daily",
+      isoTime: date.toISOString(),
+      isoDay: date.toISOString().split("T")[0],
+      isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
+      count: BigInt(0),
+      lastUpdated: date.toISOString()
+    });
+    return BigInt(0);
+  }
 });
 
 
@@ -97,106 +97,106 @@ export const createDailyGameStats = mutation({
  * @returns {Promise<bigint>} - The updated count of daily game statistics.
  */
 export const incrementDailyGameStats = mutation({
-    handler: async (ctx) => {
-        const date = new Date()
-        const today = date.toISOString().split("T")[0];
-        const gameStats = await ctx.db
-            .query("gameStats")
-            .filter(q => q.and(
-                q.eq(q.field("type"), "daily"),
-                q.eq(q.field("isoDay"), today)
-            ))
-            .collect();
+  handler: async (ctx) => {
+    const date = new Date();
+    const today = date.toISOString().split("T")[0];
+    const gameStats = await ctx.db
+      .query("gameStats")
+      .filter(q => q.and(
+        q.eq(q.field("type"), "daily"),
+        q.eq(q.field("isoDay"), today)
+      ))
+      .collect();
 
-        if (gameStats.length > 0) {
+    if (gameStats.length > 0) {
 
-            const gameStat = gameStats[0];
-            const newGameStat = {
-                ...gameStat,
-                count: gameStat.count + BigInt(1),
-                lastUpdated: date.toISOString()
-            }
-            const count = gameStat.count + BigInt(1);
-            await ctx.db.replace(gameStat._id, newGameStat);
-            return count;
-        } else {
-            await ctx.db.insert("gameStats", {
-                type: "daily",
-                isoTime: date.toISOString(),
-                isoDay: date.toISOString().split("T")[0],
-                isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
-                count: BigInt(1),
-                lastUpdated: date.toISOString()
-            });
-            return BigInt(1);
-        }
+      const gameStat = gameStats[0];
+      const newGameStat = {
+        ...gameStat,
+        count: gameStat.count + BigInt(1),
+        lastUpdated: date.toISOString()
+      };
+      const count = gameStat.count + BigInt(1);
+      await ctx.db.replace(gameStat._id, newGameStat);
+      return count;
+    } else {
+      await ctx.db.insert("gameStats", {
+        type: "daily",
+        isoTime: date.toISOString(),
+        isoDay: date.toISOString().split("T")[0],
+        isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
+        count: BigInt(1),
+        lastUpdated: date.toISOString()
+      });
+      return BigInt(1);
     }
+  }
 });
 
 // monthly stats
 
 export const getMonthlyGameStats = query({
-    handler: async (ctx) => {
-        const date = new Date()
-        const isoYearMonth = date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1];
-        const gameStats = await ctx.db
-            .query("gameStats")
-            .filter(q => q.and(
-                q.eq(q.field("type"), "monthly"),
-                q.eq(q.field("isoYearMonth"), isoYearMonth))
-            )
-            .collect();
-        return gameStats;
-    }
+  handler: async (ctx) => {
+    const date = new Date();
+    const isoYearMonth = date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1];
+    const gameStats = await ctx.db
+      .query("gameStats")
+      .filter(q => q.and(
+        q.eq(q.field("type"), "monthly"),
+        q.eq(q.field("isoYearMonth"), isoYearMonth))
+      )
+      .collect();
+    return gameStats;
+  }
 });
 
 export const createMonthlyGameStats = mutation({
-    handler: async (ctx) => {
-        const date = new Date()
-        await ctx.db.insert("gameStats", {
-            type: "monthly",
-            isoTime: date.toISOString(),
-            isoDay: date.toISOString().split("T")[0],
-            isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
-            count: BigInt(0),
-            lastUpdated: date.toISOString()
-        });
-        return BigInt(0);
-    }
+  handler: async (ctx) => {
+    const date = new Date();
+    await ctx.db.insert("gameStats", {
+      type: "monthly",
+      isoTime: date.toISOString(),
+      isoDay: date.toISOString().split("T")[0],
+      isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
+      count: BigInt(0),
+      lastUpdated: date.toISOString()
+    });
+    return BigInt(0);
+  }
 });
 
 export const incrementMonthlyGameStats = mutation({
-    handler: async (ctx) => {
-        const date = new Date()
-        const isoYearMonth = date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1];
-        const gameStats = await ctx.db
-            .query("gameStats")
-            .filter(q => q.and(
-                q.eq(q.field("type"), "monthly"),
-                q.eq(q.field("isoYearMonth"), isoYearMonth)
-            ))
-            .collect();
+  handler: async (ctx) => {
+    const date = new Date();
+    const isoYearMonth = date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1];
+    const gameStats = await ctx.db
+      .query("gameStats")
+      .filter(q => q.and(
+        q.eq(q.field("type"), "monthly"),
+        q.eq(q.field("isoYearMonth"), isoYearMonth)
+      ))
+      .collect();
 
-        if (gameStats.length > 0) {
-            const gameStat = gameStats[0];
-            const newGameStat = {
-                ...gameStat,
-                count: gameStat.count + BigInt(1),
-                lastUpdated: date.toISOString()
-            }
-            const count = gameStat.count + BigInt(1);
-            await ctx.db.replace(gameStat._id, newGameStat);
-            return count;
-        } else {
-            await ctx.db.insert("gameStats", {
-                type: "monthly",
-                isoTime: date.toISOString(),
-                isoDay: date.toISOString().split("T")[0],
-                isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
-                count: BigInt(1),
-                lastUpdated: date.toISOString()
-            });
-            return BigInt(1);
-        }
+    if (gameStats.length > 0) {
+      const gameStat = gameStats[0];
+      const newGameStat = {
+        ...gameStat,
+        count: gameStat.count + BigInt(1),
+        lastUpdated: date.toISOString()
+      };
+      const count = gameStat.count + BigInt(1);
+      await ctx.db.replace(gameStat._id, newGameStat);
+      return count;
+    } else {
+      await ctx.db.insert("gameStats", {
+        type: "monthly",
+        isoTime: date.toISOString(),
+        isoDay: date.toISOString().split("T")[0],
+        isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
+        count: BigInt(1),
+        lastUpdated: date.toISOString()
+      });
+      return BigInt(1);
     }
+  }
 });

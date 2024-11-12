@@ -9,19 +9,19 @@ interface MarkerContextType {
 const MarkerContext = createContext<MarkerContextType | undefined>(undefined);
 
 export const MarkerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
+  const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
 
-    return (
-        <MarkerContext.Provider value={{ localMarkerPosition, setLocalMarkerPosition }}>
-            {children}
-        </MarkerContext.Provider>
-    );
+  return (
+    <MarkerContext.Provider value={{ localMarkerPosition, setLocalMarkerPosition }}>
+      {children}
+    </MarkerContext.Provider>
+  );
 };
 
 export const useMarker = () => {
-    const context = useContext(MarkerContext);
-    if (!context) {
-        throw new Error('useMarker must be used within a MarkerProvider');
-    }
-    return context;
+  const context = useContext(MarkerContext);
+  if (!context) {
+    throw new Error('useMarker must be used within a MarkerProvider');
+  }
+  return context;
 };

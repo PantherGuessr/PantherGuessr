@@ -2,18 +2,18 @@ import { Navbar } from "@/components/navbar";
 import "./play.css";
 
 const PlayPageLayout = ({
-    children
+  children
 } : {
     children: React.ReactNode;
 }) => {
-    return (
-        <div className="h-full">
-            <Navbar />
-            <main className="h-full pt-40">
-                {children}
-            </main>
-        </div> 
-    );
-}
+  return (
+    <div className="h-full">
+      <Navbar />
+      <main className="h-full pt-40">
+        {children}
+      </main>
+    </div> 
+  );
+};
  
 export default PlayPageLayout;
