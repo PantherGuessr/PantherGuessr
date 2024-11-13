@@ -6,21 +6,38 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Download, Home, Share } from "lucide-react";
+import { Download, Home, Loader2, Share } from "lucide-react";
 import Link from "next/link";
-import { redirect, useSearchParams } from 'next/navigation';
 import html2canvas from 'html2canvas';
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { Id } from "@/convex/_generated/dataModel";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
+
+type Props = {
+    params: { leaderboardID: Id<"leaderboardEntries"> }
+}
 
 
-const ResultPage = () => {
-  const searchParams = useSearchParams();
+const ResultPage = ({ params }: Props) => {
 
-  const distances = JSON.parse(searchParams.get('distances') as string);
-  const scores = JSON.parse(searchParams.get('scores') as string);
-  const finalScore = Number(searchParams.get('finalScore') as string);
-  const username = String(searchParams.get('username'));
+  const leaderboardId = params.leaderboardID as Id<"leaderboardEntries">;
+  const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardId });
+  const [distances, setDistances] = useState<number[]>([]);
+  const [scores, setScores] = useState<number[]>([]);
+  const [finalScore, setFinalScore] = useState<number>(0);
+  const [username, setUsername] = useState<string>("");
+
+  useEffect(() => {
+    if(leaderboardEntry) {
+      setDistances([Number(leaderboardEntry.round_1_distance), Number(leaderboardEntry.round_2_distance), Number(leaderboardEntry.round_3_distance), Number(leaderboardEntry.round_4_distance), Number(leaderboardEntry.round_5_distance)]);
+      setScores([Number(leaderboardEntry.round_1), Number(leaderboardEntry.round_2), Number(leaderboardEntry.round_3), Number(leaderboardEntry.round_4), Number(leaderboardEntry.round_5)]);
+      const totalScore = Number(leaderboardEntry.round_1) + Number(leaderboardEntry.round_2) + Number(leaderboardEntry.round_3) + Number(leaderboardEntry.round_4) + Number(leaderboardEntry.round_5);
+      setFinalScore(totalScore);
+      setUsername(leaderboardEntry.username);
+    }
+  }, [leaderboardEntry]);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState<{ title: string; description: string; imageSrc?: string }>({ title: "", description: "" });
@@ -80,10 +97,15 @@ const ResultPage = () => {
       document.body.removeChild(link);
     }
   };
-    
-  // if they are don't arrive at url with search parameters attached, kick them back to home
-  if(!distances || !scores || !finalScore || !username) {
-    return redirect("/");
+
+  while(leaderboardEntry === undefined) {
+    return (
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <Loader2 className="h-20 w-20 animate-spin" />
+        </div>
+      </div>
+    );
   }
 
   return (

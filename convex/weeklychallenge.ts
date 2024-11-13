@@ -3,17 +3,6 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { format, addDays } from 'date-fns';
 
-// This was unused so I commented it out. Add back if it causes issues
-// interface Level {
-//     _id: Id<"levels">;
-//     _creationTime: number;
-//     title: string;
-//     latitude: number;
-//     longitude: number;
-//     imageId: string;
-//     timesPlayed: bigint;
-// }
-
 // attempts to get the weekly challenge where today is between the start and end date of the weekly challenge
 export const getWeeklyChallenge = query({
   handler: async (ctx) => {
@@ -34,7 +23,6 @@ export const getWeeklyChallenge = query({
 // makes the weekly challenge for the current week by picking 5 random levels from the levels table
 export const makeWeeklyChallenge = mutation({
   handler: async (ctx) => {
-    // const date = new Date();
     const today = format(new Date(), 'yyyy-MM-dd');
     const endDate = format(addDays(new Date(), 6), 'yyyy-MM-dd');
     const levels = await ctx.db.query("levels").collect();
@@ -58,12 +46,11 @@ export const makeWeeklyChallenge = mutation({
       round_2: randomLevels[1],
       round_3: randomLevels[2],
       round_4: randomLevels[3],
-      round_5: randomLevels[4]
+      round_5: randomLevels[4],
+      timeAllowedPerRound: BigInt(60)
     });
   }
 });
-
-
 
 // gets weekly challenge with levels
 export const getLevelsFromWeeklyChallenge = query({
