@@ -1,5 +1,8 @@
 {
-    "cSpell.words": [
-        "Guessr"
-    ]
+    "editor.wordWrap": "on",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "always"
+    },
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
 }
