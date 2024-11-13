@@ -32,8 +32,8 @@ interface GameContextType {
 const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider = ({
-    children,
-    gameId,
+  children,
+  gameId,
 }: {
     children: React.ReactNode;
     gameId?: Id<"games">;
@@ -41,39 +41,39 @@ export const GameProvider = ({
   const router = useRouter();
   const user = useUser();
 
-    const [levels, setLevels] = useState<Id<"levels">[]>([]);
-    const [currentRound, setCurrentRound] = useState(0);
-    const [score, setScore] = useState(0);
-    const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
-    const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
-    const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
-    const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
-    const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
-    const [correctLocation, setCorrectLocation] = useState<LatLng | null>(null);
-    const [scoreAwarded, setScoreAwarded] = useState<number | null>(null);
-    const [distanceFromTarget, setDistanceFromTarget] = useState<number | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isModalVisible, setIsModalVisible] = useState(false);
+  const [levels, setLevels] = useState<Id<"levels">[]>([]);
+  const [currentRound, setCurrentRound] = useState(0);
+  const [score, setScore] = useState(0);
+  const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
+  const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
+  const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
+  const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
+  const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
+  const [correctLocation, setCorrectLocation] = useState<LatLng | null>(null);
+  const [scoreAwarded, setScoreAwarded] = useState<number | null>(null);
+  const [distanceFromTarget, setDistanceFromTarget] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const game = useGameById(gameId);
-    const ids = useMemo(() => 
-    {
-        if (game) {
-            window.history.pushState(null, '', `/game/${game._id}`);
-            return [game.round_1, game.round_2, game.round_3, game.round_4, game.round_5];
-        }
-        return [];
-    }, [game]);
+  const game = useGameById(gameId);
+  const ids = useMemo(() => 
+  {
+    if (game) {
+      window.history.pushState(null, '', `/game/${game._id}`);
+      return [game.round_1, game.round_2, game.round_3, game.round_4, game.round_5];
+    }
+    return [];
+  }, [game]);
 
-    const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
-    const checkGuess = useMutation(api.game.checkGuess);
+  const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
+  const checkGuess = useMutation(api.game.checkGuess);
 
   // analytics
   const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
   const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
 
-    // leaderboard
-    const addLeaderboardEntryToGame = useMutation(api.game.addLeaderboardEntryToGame);
+  // leaderboard
+  const addLeaderboardEntryToGame = useMutation(api.game.addLeaderboardEntryToGame);
         
   const [allDistances, setAllDistances] = useState<number[]>([]);
   const [allScores, setAllScores] = useState<number[]>([]);
@@ -118,52 +118,52 @@ export const GameProvider = ({
   const nextRound = () => {
     const nextRoundNumber = currentRound + 1;
 
-        if(nextRoundNumber > levels.length) {
-            setIsModalVisible(true);
-            const username = user.user?.username ? user.user.username : "Anonymous";
+    if(nextRoundNumber > levels.length) {
+      setIsModalVisible(true);
+      const username = user.user?.username ? user.user.username : "Anonymous";
 
       incrementDailyGameStats();
       incrementMonthlyGameStats();
 
-            addLeaderboardEntryToGame({
-                gameId: game!._id,
-                username: username,
-                round_1: BigInt(allScores[0]),
-                round_1_distance: BigInt(allDistances[0]),
-                round_2: BigInt(allScores[1]),
-                round_2_distance: BigInt(allDistances[1]),
-                round_3: BigInt(allScores[2]),
-                round_3_distance: BigInt(allDistances[2]),
-                round_4: BigInt(allScores[3]),
-                round_4_distance: BigInt(allDistances[3]),
-                round_5: BigInt(allScores[4]),
-                round_5_distance: BigInt(allDistances[4]),
-                totalTimeTaken: BigInt(0)
-            }).then(leaderboardEntry => {
-                setLeaderboardEntryId(leaderboardEntry);
-            });
-        } else {
-            setCurrentRound(currentRound + 1);
-            const nextLevel = levels[nextRoundNumber - 1];
-            if(nextLevel) {
-                setCurrentLevel(nextLevel);
-            }
+      addLeaderboardEntryToGame({
+        gameId: game!._id,
+        username: username,
+        round_1: BigInt(allScores[0]),
+        round_1_distance: BigInt(allDistances[0]),
+        round_2: BigInt(allScores[1]),
+        round_2_distance: BigInt(allDistances[1]),
+        round_3: BigInt(allScores[2]),
+        round_3_distance: BigInt(allDistances[2]),
+        round_4: BigInt(allScores[3]),
+        round_4_distance: BigInt(allDistances[3]),
+        round_5: BigInt(allScores[4]),
+        round_5_distance: BigInt(allDistances[4]),
+        totalTimeTaken: BigInt(0)
+      }).then(leaderboardEntry => {
+        setLeaderboardEntryId(leaderboardEntry);
+      });
+    } else {
+      setCurrentRound(currentRound + 1);
+      const nextLevel = levels[nextRoundNumber - 1];
+      if(nextLevel) {
+        setCurrentLevel(nextLevel);
+      }
 
-            setMarkerHasBeenPlaced(false);
-            setMarkerPosition(null);
-            setCorrectLocation(null);
-            setDistanceFromTarget(null);
-            setScoreAwarded(null);
-        }
-    };
+      setMarkerHasBeenPlaced(false);
+      setMarkerPosition(null);
+      setCorrectLocation(null);
+      setDistanceFromTarget(null);
+      setScoreAwarded(null);
+    }
+  };
 
-    const [leaderboardEntryId, setLeaderboardEntryId] = useState<string | null>(null);
+  const [leaderboardEntryId, setLeaderboardEntryId] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (leaderboardEntryId) {
-            router.push(`/results/${leaderboardEntryId}`);
-        }
-    }, [leaderboardEntryId, router]);
+  useEffect(() => {
+    if (leaderboardEntryId) {
+      router.push(`/results/${leaderboardEntryId}`);
+    }
+  }, [leaderboardEntryId, router]);
 
   useEffect(() => {
     if (ids === undefined || (currentLevelId && imageSrc === undefined)) {
@@ -173,59 +173,59 @@ export const GameProvider = ({
     }
   }, [ids, currentLevelId, imageSrc]);
 
-    if (isLoading) {
-        return (
-            <GameContext.Provider value={{
-                levels,
-                currentRound,
-                score,
-                currentLevelId,
-                currentImageSrcUrl,
-                markerHasBeenPlaced,
-                setMarkerHasBeenPlaced,
-                isSubmittingGuess,
-                setIsSubmittingGuess,
-                submitGuess,
-                markerPosition,
-                setMarkerPosition,
-                correctLocation,
-                setCorrectLocation,
-                nextRound,
-                scoreAwarded,
-                distanceFromTarget,
-                isLoading,
-                isModalVisible
-            }}>
-                {children}
-            </GameContext.Provider>
-        );
-    }
-
+  if (isLoading) {
     return (
-        <GameContext.Provider value={{
-            levels,
-            currentRound,
-            score,
-            currentLevelId,
-            currentImageSrcUrl,
-            markerHasBeenPlaced,
-            setMarkerHasBeenPlaced,
-            isSubmittingGuess,
-            setIsSubmittingGuess,
-            submitGuess,
-            markerPosition,
-            setMarkerPosition,
-            correctLocation,
-            setCorrectLocation,
-            nextRound,
-            scoreAwarded,
-            distanceFromTarget,
-            isLoading,
-            isModalVisible
-        }}>
-            {children}
-        </GameContext.Provider>
+      <GameContext.Provider value={{
+        levels,
+        currentRound,
+        score,
+        currentLevelId,
+        currentImageSrcUrl,
+        markerHasBeenPlaced,
+        setMarkerHasBeenPlaced,
+        isSubmittingGuess,
+        setIsSubmittingGuess,
+        submitGuess,
+        markerPosition,
+        setMarkerPosition,
+        correctLocation,
+        setCorrectLocation,
+        nextRound,
+        scoreAwarded,
+        distanceFromTarget,
+        isLoading,
+        isModalVisible
+      }}>
+        {children}
+      </GameContext.Provider>
     );
+  }
+
+  return (
+    <GameContext.Provider value={{
+      levels,
+      currentRound,
+      score,
+      currentLevelId,
+      currentImageSrcUrl,
+      markerHasBeenPlaced,
+      setMarkerHasBeenPlaced,
+      isSubmittingGuess,
+      setIsSubmittingGuess,
+      submitGuess,
+      markerPosition,
+      setMarkerPosition,
+      correctLocation,
+      setCorrectLocation,
+      nextRound,
+      scoreAwarded,
+      distanceFromTarget,
+      isLoading,
+      isModalVisible
+    }}>
+      {children}
+    </GameContext.Provider>
+  );
 };
 
 // Export the hook so that components can use game context

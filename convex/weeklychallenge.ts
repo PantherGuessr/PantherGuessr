@@ -22,34 +22,34 @@ export const getWeeklyChallenge = query({
 
 // makes the weekly challenge for the current week by picking 5 random levels from the levels table
 export const makeWeeklyChallenge = mutation({
-    handler: async (ctx) => {
-        const today = format(new Date(), 'yyyy-MM-dd');
-        const endDate = format(addDays(new Date(), 6), 'yyyy-MM-dd');
-        const levels = await ctx.db.query("levels").collect();
-        const randomLevels = [];
-        const randomIndices: number[] = [];
-        for (let i = 0; i < 5; i++) {
-            const randomIndex = Math.floor(Math.random() * levels.length);
-            // redo random level if it's already in the list
-            if (randomIndices.includes(randomIndex)) {
-                i--;
-                continue;
-            }
-            randomIndices.push(randomIndex);
-            randomLevels.push(levels[randomIndex]._id);
-        }
-
-        await ctx.db.insert("weeklyChallenges", {
-            startDate: today,
-            endDate: endDate,
-            round_1: randomLevels[0],
-            round_2: randomLevels[1],
-            round_3: randomLevels[2],
-            round_4: randomLevels[3],
-            round_5: randomLevels[4],
-            timeAllowedPerRound: BigInt(60)
-        });
+  handler: async (ctx) => {
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const endDate = format(addDays(new Date(), 6), 'yyyy-MM-dd');
+    const levels = await ctx.db.query("levels").collect();
+    const randomLevels = [];
+    const randomIndices: number[] = [];
+    for (let i = 0; i < 5; i++) {
+      const randomIndex = Math.floor(Math.random() * levels.length);
+      // redo random level if it's already in the list
+      if (randomIndices.includes(randomIndex)) {
+        i--;
+        continue;
+      }
+      randomIndices.push(randomIndex);
+      randomLevels.push(levels[randomIndex]._id);
     }
+
+    await ctx.db.insert("weeklyChallenges", {
+      startDate: today,
+      endDate: endDate,
+      round_1: randomLevels[0],
+      round_2: randomLevels[1],
+      round_3: randomLevels[2],
+      round_4: randomLevels[3],
+      round_5: randomLevels[4],
+      timeAllowedPerRound: BigInt(60)
+    });
+  }
 });
 
 // gets weekly challenge with levels

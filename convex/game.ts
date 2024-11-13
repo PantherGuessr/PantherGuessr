@@ -38,10 +38,10 @@ import { mutation, query } from "./_generated/server";
  * @returns The game document if found, null otherwise
  */
 export const getExistingGame = query({
-    args: { gameId: v.id("games") },
-    handler: async (ctx, args) => {
-        return await ctx.db.get(args.gameId);
-    }
+  args: { gameId: v.id("games") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.gameId);
+  }
 });
 
 
@@ -58,33 +58,33 @@ export const getExistingGame = query({
  * 4. Returns the game ID
  */
 export const createNewGame = mutation({
-    args: { timeAllowedPerRound: v.int64() },
-    handler: async (ctx, args) => {
-        const levels = await ctx.db.query("levels").collect();
-        const randomLevels = [];
-        const randomIndices: number[] = [];
+  args: { timeAllowedPerRound: v.int64() },
+  handler: async (ctx, args) => {
+    const levels = await ctx.db.query("levels").collect();
+    const randomLevels = [];
+    const randomIndices: number[] = [];
         
-        for (let i = 0; i < 5; i++) {
-            const randomIndex = Math.floor(Math.random() * levels.length);
-            if (randomIndices.includes(randomIndex)) {
-                i--;
-                continue;
-            }
-            randomIndices.push(randomIndex);
-            randomLevels.push(levels[randomIndex]._id);
-        }
-
-        const gameId = await ctx.db.insert("games", {
-            round_1: randomLevels[0],
-            round_2: randomLevels[1], 
-            round_3: randomLevels[2],
-            round_4: randomLevels[3],
-            round_5: randomLevels[4],
-            timeAllowedPerRound: args.timeAllowedPerRound
-        });
-
-        return gameId;
+    for (let i = 0; i < 5; i++) {
+      const randomIndex = Math.floor(Math.random() * levels.length);
+      if (randomIndices.includes(randomIndex)) {
+        i--;
+        continue;
+      }
+      randomIndices.push(randomIndex);
+      randomLevels.push(levels[randomIndex]._id);
     }
+
+    const gameId = await ctx.db.insert("games", {
+      round_1: randomLevels[0],
+      round_2: randomLevels[1], 
+      round_3: randomLevels[2],
+      round_4: randomLevels[3],
+      round_5: randomLevels[4],
+      timeAllowedPerRound: args.timeAllowedPerRound
+    });
+
+    return gameId;
+  }
 });
 
 /**
@@ -99,10 +99,10 @@ export const createNewGame = mutation({
  * 3. Returns the full game document or null if not found
  */
 export const getGameById = query({
-    args: { id: v.id("games") },
-    handler: async (ctx, args) => {
-        return await ctx.db.get(args.id);
-    }
+  args: { id: v.id("games") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id);
+  }
 });
 
 /**
@@ -125,54 +125,54 @@ export const getGameById = query({
  * 4. Returns success status
  */
 export const addLeaderboardEntryToGame = mutation({
-    args: {
-        gameId: v.id("games"),
-        username: v.string(),
-        round_1: v.int64(),
-        round_1_distance: v.int64(),
-        round_2: v.int64(),
-        round_2_distance: v.int64(),
-        round_3: v.int64(),
-        round_3_distance: v.int64(),
-        round_4: v.int64(),
-        round_4_distance: v.int64(),
-        round_5: v.int64(),
-        round_5_distance: v.int64(),
-        totalTimeTaken: v.int64()
-    },
-    handler: async (ctx, args) => {
-        // make leaderboard entry
-        const leaderboardEntry = await ctx.db.insert("leaderboardEntries", {
-            game: args.gameId,
-            username: args.username,
-            round_1: args.round_1,
-            round_1_distance: args.round_1_distance,
-            round_2: args.round_2,
-            round_2_distance: args.round_2_distance,
-            round_3: args.round_3,
-            round_3_distance: args.round_3_distance,
-            round_4: args.round_4,
-            round_4_distance: args.round_4_distance,
-            round_5: args.round_5,
-            round_5_distance: args.round_5_distance,
-            totalTimeTaken: args.totalTimeTaken
-        });
+  args: {
+    gameId: v.id("games"),
+    username: v.string(),
+    round_1: v.int64(),
+    round_1_distance: v.int64(),
+    round_2: v.int64(),
+    round_2_distance: v.int64(),
+    round_3: v.int64(),
+    round_3_distance: v.int64(),
+    round_4: v.int64(),
+    round_4_distance: v.int64(),
+    round_5: v.int64(),
+    round_5_distance: v.int64(),
+    totalTimeTaken: v.int64()
+  },
+  handler: async (ctx, args) => {
+    // make leaderboard entry
+    const leaderboardEntry = await ctx.db.insert("leaderboardEntries", {
+      game: args.gameId,
+      username: args.username,
+      round_1: args.round_1,
+      round_1_distance: args.round_1_distance,
+      round_2: args.round_2,
+      round_2_distance: args.round_2_distance,
+      round_3: args.round_3,
+      round_3_distance: args.round_3_distance,
+      round_4: args.round_4,
+      round_4_distance: args.round_4_distance,
+      round_5: args.round_5,
+      round_5_distance: args.round_5_distance,
+      totalTimeTaken: args.totalTimeTaken
+    });
 
-        // get game by ID
-        const game = await ctx.db.get(args.gameId);
+    // get game by ID
+    const game = await ctx.db.get(args.gameId);
 
-        // add leaderboard entry to game with existing entries
-        if (game) {
-            await ctx.db.patch(args.gameId, {
-                leaderboard: [...(game?.leaderboard ?? []), leaderboardEntry]
-            });
-        }
-        else {
-            return null;
-        }
-        
-        return leaderboardEntry;
+    // add leaderboard entry to game with existing entries
+    if (game) {
+      await ctx.db.patch(args.gameId, {
+        leaderboard: [...(game?.leaderboard ?? []), leaderboardEntry]
+      });
     }
+    else {
+      return null;
+    }
+        
+    return leaderboardEntry;
+  }
 });
 
 /**
@@ -182,10 +182,10 @@ export const addLeaderboardEntryToGame = mutation({
  * @returns The leaderboard entry
  */
 export const getPersonalLeaderboardEntryById = query({
-    args: { id: v.id("leaderboardEntries") },
-    handler: async (ctx, args) => {
-        return await ctx.db.get(args.id);
-    }
+  args: { id: v.id("leaderboardEntries") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id);
+  }
 });
 
 /**

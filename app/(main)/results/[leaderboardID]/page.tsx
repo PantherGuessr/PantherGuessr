@@ -22,22 +22,22 @@ type Props = {
 
 const ResultPage = ({ params }: Props) => {
 
-    const leaderboardId = params.leaderboardID as Id<"leaderboardEntries">;
-    const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardId });
-    const [distances, setDistances] = useState<number[]>([]);
-    const [scores, setScores] = useState<number[]>([]);
-    const [finalScore, setFinalScore] = useState<number>(0);
-    const [username, setUsername] = useState<string>("");
+  const leaderboardId = params.leaderboardID as Id<"leaderboardEntries">;
+  const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardId });
+  const [distances, setDistances] = useState<number[]>([]);
+  const [scores, setScores] = useState<number[]>([]);
+  const [finalScore, setFinalScore] = useState<number>(0);
+  const [username, setUsername] = useState<string>("");
 
-    useEffect(() => {
-        if(leaderboardEntry) {
-            setDistances([Number(leaderboardEntry.round_1_distance), Number(leaderboardEntry.round_2_distance), Number(leaderboardEntry.round_3_distance), Number(leaderboardEntry.round_4_distance), Number(leaderboardEntry.round_5_distance)]);
-            setScores([Number(leaderboardEntry.round_1), Number(leaderboardEntry.round_2), Number(leaderboardEntry.round_3), Number(leaderboardEntry.round_4), Number(leaderboardEntry.round_5)]);
-            const totalScore = Number(leaderboardEntry.round_1) + Number(leaderboardEntry.round_2) + Number(leaderboardEntry.round_3) + Number(leaderboardEntry.round_4) + Number(leaderboardEntry.round_5);
-            setFinalScore(totalScore);
-            setUsername(leaderboardEntry.username);
-        }
-    }, [leaderboardEntry]);
+  useEffect(() => {
+    if(leaderboardEntry) {
+      setDistances([Number(leaderboardEntry.round_1_distance), Number(leaderboardEntry.round_2_distance), Number(leaderboardEntry.round_3_distance), Number(leaderboardEntry.round_4_distance), Number(leaderboardEntry.round_5_distance)]);
+      setScores([Number(leaderboardEntry.round_1), Number(leaderboardEntry.round_2), Number(leaderboardEntry.round_3), Number(leaderboardEntry.round_4), Number(leaderboardEntry.round_5)]);
+      const totalScore = Number(leaderboardEntry.round_1) + Number(leaderboardEntry.round_2) + Number(leaderboardEntry.round_3) + Number(leaderboardEntry.round_4) + Number(leaderboardEntry.round_5);
+      setFinalScore(totalScore);
+      setUsername(leaderboardEntry.username);
+    }
+  }, [leaderboardEntry]);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState<{ title: string; description: string; imageSrc?: string }>({ title: "", description: "" });
@@ -87,26 +87,26 @@ const ResultPage = ({ params }: Props) => {
     }
   };
 
-    const handleDownloadClick = () => {
-        if(dialogContent.imageSrc) {
-            const link = document.createElement('a');
-            link.href = dialogContent.imageSrc;
-            link.download = 'game-receipt.png';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    };
-
-    while(leaderboardEntry === undefined) {
-        return (
-            <div className="min-h-full flex flex-col">
-                <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-                    <Loader2 className="h-20 w-20 animate-spin" />
-                </div>
-            </div>
-        )
+  const handleDownloadClick = () => {
+    if(dialogContent.imageSrc) {
+      const link = document.createElement('a');
+      link.href = dialogContent.imageSrc;
+      link.download = 'game-receipt.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
+  };
+
+  while(leaderboardEntry === undefined) {
+    return (
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <Loader2 className="h-20 w-20 animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full flex flex-col">
