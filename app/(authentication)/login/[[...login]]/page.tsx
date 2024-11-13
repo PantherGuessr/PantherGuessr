@@ -1,15 +1,15 @@
 import { Footer } from "@/components/footer";
+import { SignIn } from "@clerk/nextjs";
 
-const TermsAndConditionsPage = () => {
+const LoginPage = () => {
   return (
     <div className="min-h-full flex flex-col">
       <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-        <p>Terms and Conditions</p>
+        <SignIn />
       </div>
       <Footer />
     </div>
   );
-    
 };
  
-export default TermsAndConditionsPage;
+export default LoginPage;

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "next:lint": "next lint",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.7.2",
@@ -14,6 +16,7 @@
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@radix-ui/react-hover-card": "^1.1.2",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-menubar": "^1.1.2",
     "@radix-ui/react-navigation-menu": "^1.2.1",

@@ -38,8 +38,8 @@ export const GameProvider = ({
     children: React.ReactNode;
     gameId?: Id<"games">;
 }) => {
-    const router = useRouter();
-    const user = useUser();
+  const router = useRouter();
+  const user = useUser();
 
     const [levels, setLevels] = useState<Id<"levels">[]>([]);
     const [currentRound, setCurrentRound] = useState(0);
@@ -68,62 +68,62 @@ export const GameProvider = ({
     const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
     const checkGuess = useMutation(api.game.checkGuess);
 
-    // analytics
-    const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
-    const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
+  // analytics
+  const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
+  const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
 
     // leaderboard
     const addLeaderboardEntryToGame = useMutation(api.game.addLeaderboardEntryToGame);
         
-    const [allDistances, setAllDistances] = useState<number[]>([]);
-    const [allScores, setAllScores] = useState<number[]>([]);
+  const [allDistances, setAllDistances] = useState<number[]>([]);
+  const [allScores, setAllScores] = useState<number[]>([]);
 
-    useEffect(() => {
-        if (ids) {
-            setLevels(ids);
-            setCurrentRound(1);
-            setCurrentLevel(ids[0]);
-        }
-    }, [ids]);
-
-    useEffect(() => {
-        if(currentLevelId) {
-            setCurrentSrcUrl(imageSrc ?? "/Invalid-Image.jpg");
-        }
-    }, [currentLevelId, imageSrc]);
-
-    const submitGuess = async (lat: number, lng: number) => {
-        if(!currentLevelId) return;
-
-        setIsSubmittingGuess(true);
-
-        try {
-            const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
-
-            setScore(prevScore => prevScore + result.score);
-            setCorrectLocation(new LatLng(result.correctLat, result.correctLng));
-
-            setDistanceFromTarget(result.distanceAway);
-            setScoreAwarded(result.score);
-          
-            setAllDistances(prevDistances => [...prevDistances, result.distanceAway]);
-            setAllScores(prevScores => [...prevScores, result.score]);
-        } catch (error) {
-            console.error("Error submitting guess:", error);
-        } finally {
-            setIsSubmittingGuess(false);
-        }
+  useEffect(() => {
+    if (ids) {
+      setLevels(ids);
+      setCurrentRound(1);
+      setCurrentLevel(ids[0]);
     }
+  }, [ids]);
 
-    const nextRound = () => {
-        const nextRoundNumber = currentRound + 1;
+  useEffect(() => {
+    if(currentLevelId) {
+      setCurrentSrcUrl(imageSrc ?? "/Invalid-Image.jpg");
+    }
+  }, [currentLevelId, imageSrc]);
+
+  const submitGuess = async (lat: number, lng: number) => {
+    if(!currentLevelId) return;
+
+    setIsSubmittingGuess(true);
+
+    try {
+      const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
+
+      setScore(prevScore => prevScore + result.score);
+      setCorrectLocation(new LatLng(result.correctLat, result.correctLng));
+
+      setDistanceFromTarget(result.distanceAway);
+      setScoreAwarded(result.score);
+          
+      setAllDistances(prevDistances => [...prevDistances, result.distanceAway]);
+      setAllScores(prevScores => [...prevScores, result.score]);
+    } catch (error) {
+      console.error("Error submitting guess:", error);
+    } finally {
+      setIsSubmittingGuess(false);
+    }
+  };
+
+  const nextRound = () => {
+    const nextRoundNumber = currentRound + 1;
 
         if(nextRoundNumber > levels.length) {
             setIsModalVisible(true);
             const username = user.user?.username ? user.user.username : "Anonymous";
 
-            incrementDailyGameStats();
-            incrementMonthlyGameStats();
+      incrementDailyGameStats();
+      incrementMonthlyGameStats();
 
             addLeaderboardEntryToGame({
                 gameId: game!._id,
@@ -165,13 +165,13 @@ export const GameProvider = ({
         }
     }, [leaderboardEntryId, router]);
 
-    useEffect(() => {
-        if (ids === undefined || (currentLevelId && imageSrc === undefined)) {
-            setIsLoading(true);
-        } else {
-            setIsLoading(false);
-        }
-    }, [ids, currentLevelId, imageSrc]);
+  useEffect(() => {
+    if (ids === undefined || (currentLevelId && imageSrc === undefined)) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [ids, currentLevelId, imageSrc]);
 
     if (isLoading) {
         return (

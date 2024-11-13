@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/navbar";
 
-const ProfilePageLayouts = ({
+const AuthenticationLayout = ({
   children
 } : {
     children: React.ReactNode;
@@ -8,11 +8,11 @@ const ProfilePageLayouts = ({
   return (
     <div className="h-full">
       <Navbar />
-      <main className="h-full pt-24">
+      <main className="h-full pt-40">
         {children}
       </main>
     </div> 
   );
 };
  
-export default ProfilePageLayouts;
+export default AuthenticationLayout;
