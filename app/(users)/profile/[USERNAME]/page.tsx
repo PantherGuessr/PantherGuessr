@@ -25,6 +25,8 @@ import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tag
 import { useGetUnlockedBackgrounds } from "@/hooks/userProfiles/use-get-unlocked-backgrounds";
 import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Achievement from "./_components/Achievement";
+import { useAchievementCheck } from "@/hooks/userProfiles/use-get-unlocked-achievements";
 
 type Props = {
     params: { USERNAME: string }
@@ -48,6 +50,14 @@ const ProfilePage = ({ params }: Props) => {
   const { result: profileTagline, isLoading: profileTaglineLoading } = useGetSelectedTagline(user?.clerkId);
   const { result: unlockedProfileBackgrounds, isLoading: unlockedProfileBackgroundsLoading } = useGetUnlockedBackgrounds();
   const { result: profileBackground, isLoading: profileBackgroundLoading } = useGetSelectedBackground(user?.clerkId);
+
+  // gets profile achievements
+  const { result: hasEarlyAdopter, description: earlyAdopterDescription, isLoading: isEarlyAdopterLoading } = useAchievementCheck("Early Adopter", user?.clerkId);
+  const { result: hasFirstSteps, description: firstStepsDescription, isLoading: isFirstStepsLoading } = useAchievementCheck("First Steps", user?.clerkId);
+  const { result: hasMapMaster, description: mapMasterDescription, isLoading: isMapMasterLoading } = useAchievementCheck("Map Master", user?.clerkId);
+  const { result: hasOnFire, description: onFireDescription, isLoading: isOnFireLoading } = useAchievementCheck("On Fire", user?.clerkId);
+  const { result: hasSniped, description: snipedDescription, isLoading: isSnipedLoading } = useAchievementCheck("Sniped", user?.clerkId);
+  const { result: hasPhotoScout, description: photoScoutDescription, isLoading: isPhotoScoutLoading } = useAchievementCheck("Photo Scout", user?.clerkId);
 
   // mutations for updating user data
   const updateSelectedTagline = useMutation(api.users.updateSelectedTagline);
@@ -111,6 +121,12 @@ const ProfilePage = ({ params }: Props) => {
         || profileTaglineLoading
         || unlockedProfileBackgroundsLoading
         || profileBackgroundLoading
+        || isEarlyAdopterLoading
+        || isFirstStepsLoading
+        || isMapMasterLoading
+        || isOnFireLoading
+        || isSnipedLoading
+        || isPhotoScoutLoading
   ) {
     return (
       <div className="min-h-full flex flex-col">
@@ -376,26 +392,58 @@ const ProfilePage = ({ params }: Props) => {
                     <p className="text-md md:pl-4 font-bold text-muted-foreground/60 italic">Guessr since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
                   </div>
                 </div>
-                <div className="flex flex-col w-full md:w-auto items-start pt-4">
-                  <div className="flex flex-row justify-between w-full">
-                    <p className="text-md font-bold mr-4">Level {Number(user.level)}</p>
-                    <p className="text-md text-muted-foreground font-bold">{Number(user.currentXP)}/{100} XP</p>
+                <div className="flex flex-col w-full md:w-auto space-y-10 items-start pt-4">
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-row justify-between w-full">
+                      <p className="text-md font-bold mr-4">Level {Number(user.level)}</p>
+                      <p className="text-md text-muted-foreground font-bold">{Number(user.currentXP)}/{100} XP</p>
+                    </div>
+                    <Progress className="w-full lg:w-64 mt-1" value={Number(user.currentXP)} />
                   </div>
-                  <Progress className="w-full lg:w-64 mt-1" value={Number(user.currentXP)} />
+                  <div className="flex flex-col w-full items-start">
+                    <p className="text-md font-bold mr-4">Unlocked Achievements</p>
+                    {(hasEarlyAdopter || hasFirstSteps || hasMapMaster || hasOnFire || hasSniped || hasPhotoScout) ? (
+                      <>
+                        <div className="grid grid-cols-6 md:sm:grid-cols-3 gap-2 w-full md:w-auto">
+
+                          {hasEarlyAdopter && (
+                            <Achievement name="Early Adopter" description={earlyAdopterDescription!} imageSrc="/achievements/early_adopter_achievement.svg" />
+                          )}
+
+                          {hasFirstSteps && (
+                            <Achievement name="First Steps" description={firstStepsDescription!} imageSrc="/achievements/first_steps_achievement.svg" />
+                          )}
+
+                          {hasMapMaster && (
+                            <Achievement name="Map Master" description={mapMasterDescription!} imageSrc="/achievements/map_master_achievement.svg" />
+                          )}
+
+                          {hasOnFire && (
+                            <Achievement name="On Fire" description={onFireDescription!} imageSrc="/achievements/on_fire_achievement.svg" />
+                          )}
+
+                          {hasSniped && (
+                            <Achievement name="Sniped" description={snipedDescription!} imageSrc="/achievements/perfect_game_achievement.svg" />
+                          )}
+
+                          {hasPhotoScout && (
+                            <Achievement name="Photo Scout" description={photoScoutDescription!} imageSrc="/achievements/photo_scout_achievement.svg" />
+                          )}
+                        </div>
+                      </>
+                    ): (
+                      <p className="font-bold text-muted-foreground/60 italic">None</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="flex-col justify-end">
-      </div>
       <Footer />      
     </>
   );
-    
 };
- 
+
 export default ProfilePage;
