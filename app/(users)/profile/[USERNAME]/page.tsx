@@ -25,6 +25,7 @@ import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tag
 import { useGetUnlockedBackgrounds } from "@/hooks/userProfiles/use-get-unlocked-backgrounds";
 import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Achievement from "./_components/Achievement";
 
 type Props = {
     params: { USERNAME: string }
@@ -387,12 +388,12 @@ const ProfilePage = ({ params }: Props) => {
                   <div className="flex flex-col w-full items-start">
                     <p className="text-md font-bold mr-4">Unlocked Achievements</p>
                     <div className="grid grid-cols-6 md:sm:grid-cols-3 gap-2 w-full md:w-auto">
-                      <Image src="/achievements/early_adopter_achievement.svg" width={80} height={80} alt="Early Adopter Achievement" />
-                      <Image src="/achievements/first_steps_achievement.svg" width={80} height={80} alt="First Steps Achievement" />
-                      <Image src="/achievements/map_master_achievement.svg" width={80} height={80} alt="Map Master Achievement" />
-                      <Image src="/achievements/on_fire_achievement.svg" width={80} height={80} alt="On Fire Achievement" />
-                      <Image src="/achievements/perfect_game_achievement.svg" width={80} height={80} alt="Perfect Game Achievement" />
-                      <Image src="/achievements/photo_scout_achievement.svg" width={80} height={80} alt="Photo Scout Achievement" />
+                      <Achievement name="Early Adopter" description="dahjkdahlkjdsahdjklas" imageSrc="/achievements/early_adopter_achievement.svg" />
+                      <Achievement name="First Steps" description="dahjkdahlkjdsahdjklas" imageSrc="/achievements/first_steps_achievement.svg" />
+                      <Achievement name="Map Master" description="dahjkdahlkjdsahdjklas" imageSrc="/achievements/map_master_achievement.svg" />
+                      <Achievement name="On Fire" description="dahjkdahlkjdsahdjklas" imageSrc="/achievements/on_fire_achievement.svg" />
+                      <Achievement name="Sniped" description="dahjkdahlkjdsahdjklas" imageSrc="/achievements/perfect_game_achievement.svg" />
+                      <Achievement name="Photo Scout" description="dahjkdahlkjdsahdjklas" imageSrc="/achievements/photo_scout_achievement.svg" />
                     </div>
                   </div>
                 </div>

@@ -93,5 +93,12 @@ export default defineSchema({
   profileBackgrounds: defineTable({
     title: v.string(),
     backgroundCSS: v.string(),
+  }),
+
+  achievements: defineTable({
+    name: v.string(),
+    description: v.string(),
+    isEnabled: v.boolean(),
+    canUnlock: v.boolean()
   })
 });
