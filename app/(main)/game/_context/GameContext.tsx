@@ -120,6 +120,7 @@ export const GameProvider = ({
 
     if(nextRoundNumber > levels.length) {
       setIsModalVisible(true);
+      setIsLoading(true);
       const username = user.user?.username ? user.user.username : "Anonymous";
 
       incrementDailyGameStats();
