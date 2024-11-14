@@ -59,6 +59,16 @@ export const updateOngoingGame = mutation({
   }
 });
 
+/**
+ * Updates an existing ongoing game entry or creates a new one if none exists.
+ * Used to save a user's current game state as they play.
+ * 
+ * @param gameId - ID of the game being saved
+ * @param userClerkId - Clerk ID of the user saving the game
+ * @param currentRound - The current round number (1-5) the user is on
+ * @param timeLeftInRound - Optional time remaining in current round in seconds
+ * @param totalTimeTaken - Total time taken across all rounds in seconds
+ */
 export const updateOngoingGameOrCreate = mutation({
   args: {
     gameId: v.id("games"),
@@ -141,6 +151,25 @@ export const getOngoingGameFromUser = query({
     const { userClerkId } = args;
     const ongoingGame = await ctx.db.query("ongoingGames").withIndex("byUserClerkId").filter(q => q.eq(q.field("userClerkId"), userClerkId)).first();
     return ongoingGame;
+  }
+});
+
+/**
+ * Deletes all ongoing games for a user.
+ * Used when a user starts a new game to delete any old ongoing games.
+ * 
+ * @param userClerkId - The Clerk ID of the user to delete ongoing games for
+ */
+export const deleteOldOngoingGames = mutation({
+  args: {
+    userClerkId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { userClerkId } = args;
+    const ongoingGames = await ctx.db.query("ongoingGames").withIndex("byUserClerkId").filter(q => q.eq(q.field("userClerkId"), userClerkId)).collect();
+    for (const game of ongoingGames) {
+      await ctx.db.delete(game._id);
+    }
   }
 });
 

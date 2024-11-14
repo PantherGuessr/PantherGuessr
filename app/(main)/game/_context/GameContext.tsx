@@ -6,6 +6,7 @@ import { LatLng } from "leaflet";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import useGameById from "@/hooks/use-game-by-id";
+import { deleteOldOngoingGames } from "@/convex/continuegame";
 
 interface GameContextType {
     levels: Id<"levels">[];
@@ -87,6 +88,7 @@ export const GameProvider = ({
   const addLeaderboardEntryToGame = useMutation(api.game.addLeaderboardEntryToGame);
 
   // continue game
+  const deleteOldOngoingGames = useMutation(api.continuegame.deleteOldOngoingGames);
   const updateOngoingGameOrCreate = useMutation(api.continuegame.updateOngoingGameOrCreate);
   const deleteOngoingGame = useMutation(api.continuegame.deleteOngoingGame);
         
@@ -99,6 +101,14 @@ export const GameProvider = ({
       setCurrentLevel(ids[currentRound - 1]);
     }
   }, [ids, currentRound]);
+
+  // delete old ongoing games first time for a new game
+  useEffect(() => {
+    if(user?.user?.id && !startingRound) {
+      deleteOldOngoingGames({ userClerkId: user.user.id });
+      window.localStorage.removeItem("hasOngoingGame");
+    }
+  }, [user?.user?.id, deleteOldOngoingGames, startingRound]);
 
   useEffect(() => {
     if(currentLevelId) {
