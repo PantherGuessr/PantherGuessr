@@ -112,7 +112,7 @@ export const Heading = () => {
             your directional skills are challenged.
           </h3>
 
-          <SignUpButton mode="modal">
+          <SignUpButton mode="modal" fallbackRedirectUrl={window.location.href}>
             <Button>
               Join for Free <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
