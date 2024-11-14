@@ -5,7 +5,7 @@ interface IAchievement {
   name: string;
   description: string;
   imageSrc: string;
-};
+}
 
 const Achievement = ({ name, description, imageSrc }: IAchievement) => {
   return (
