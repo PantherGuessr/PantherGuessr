@@ -82,6 +82,8 @@ const ProfilePage = ({ params }: Props) => {
   // page reloading effect that is just a CSS class change
   const [taglineReloadingEffect, setTaglineReloadingEffect] = useState(false);
 
+  
+
   // recalculate the width of the input based on the username length
   useEffect(() => {
     if (!usernameForUpdate) {

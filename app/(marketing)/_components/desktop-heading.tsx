@@ -28,6 +28,8 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
 
   const [welcomeMessage, setWelcomeMessage] = useState('');
 
+  const hasOngoingGame = window.localStorage.getItem("hasOngoingGame") === "true";
+
   useEffect(() => {
     setWelcomeMessage(WelcomeMessage());
   }, []);
@@ -105,30 +107,45 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
       onMouseEnter={() => setHoveredCenterMain(true)} onMouseLeave={() => setHoveredCenterMain(false)}
       >
         <ul className={
-          cn("grid grid-rows-8 p-2 grid-flow-col gap-2 w-full duration-150 transition-all drop-shadow-lg")
+          cn("grid grid-rows-8 grid-cols-2 p-2 grid-flow-row gap-2 w-full duration-150 transition-all drop-shadow-lg")
         }>
-          <li className="row-span-2 w-full">
-            <Link href="/play">
-              <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                Weekly Challenge
-              </div>
-            </Link>
-          </li>
-          <li className="row-span-2 w-full">
-            <Link href="/game">
-              <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                Singleplayer
-              </div>
-            </Link>
-          </li>
-          <li className="row-span-2 w-full">
+          {hasOngoingGame ? (
+            <>
+              <li className="row-span-2 col-span-1">
+                <Link href="/game/continue">
+                  <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">Continue</div>
+                </Link>
+              </li>
+              <li className="row-span-2 col-span-1">
+                <Link href="/game">
+                  <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">New Game</div>
+                </Link>
+              </li>
+            </>
+          ) : (
+            <li className="row-span-2 col-span-2">
+              <Link href="/game">
+                <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                  Singleplayer
+                </div>
+              </Link>
+            </li>
+          )}
+          <li className="row-span-2 col-span-2">
             <Link href="/play">
               <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                 Multiplayer
               </div>
             </Link>
           </li>
-          <li className="row-span-2 w-full">
+          <li className="row-span-2 col-span-2">
+            <Link href="/play">
+              <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                Weekly Challenge
+              </div>
+            </Link>
+          </li>
+          <li className="row-span-2 col-span-2">
             <Link href="/play">
               <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-secondary rounded-md">
                 All Gamemodes
