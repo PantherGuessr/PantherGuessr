@@ -87,7 +87,7 @@ const CreditsPage = () => {
             </CardHeader>
           </Card>
         </div>
-        <p>Made with ❤️ at Chapman University</p>
+        <p>Made with 🩸, 💦, and 😢 at Chapman University</p>
       </div>
       <Footer />
     </div>
