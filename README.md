@@ -1,7 +1,22 @@
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/39e5850e-4999-4dad-afc9-1a6933a0ea2e" style="display: block; margin-left: auto; margin-right: auto; width: 15%; height: 75%; border-radius: 25px;">
+</p>
 
-# PantherGuessr
+<p align="center">
+  <a href="https://github.com/DylanDevelops/SimpleShapesLibrary">
+      <h1 align="center">PantherGuessr</h1>
+  </a>
+</p>
 
-PantherGuessr is the fun game where your directional skills are challenged.
+<p align="center">
+  <em>PantherGuessr is the fun game where your directional skills are challenged on Chapman University's campus.</em>
+</p>
+<p align="center">
+  <a href="https://github.com/PantherGuessr/PantherGuessr/blob/main/LICENSE"><img alt="GitHub License" src="https://img.shields.io/github/license/pantherguessr/pantherguessr?style=for-the-badge"></a>
+  <a href="https://www.codefactor.io/repository/github/pantherguessr/pantherguessr/overview/main"><img alt="CodeFactor Grade" src="https://img.shields.io/codefactor/grade/github/PantherGuessr/PantherGuessr?style=for-the-badge"></a>
+  <a href="https://github.com/pantherguessr/pantherguessr/releases"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/PantherGuessr/PantherGuessr?style=for-the-badge"></a>
+  <a href="https://makeapullrequest.com/"><img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge"></a>
+</p>
 
 ## Installation
 
