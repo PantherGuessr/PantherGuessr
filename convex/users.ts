@@ -40,11 +40,13 @@ export const current = query({
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
   async handler(ctx, { data }) {
-        
     const user = await userByClerkId(ctx, data.id);
-    const background = await ctx.db.query("profileBackgrounds").withIndex("by_creation_time").first(); // generates background
-    const tagline = await ctx.db.query("profileTaglines").filter((q) => q.eq("tagline", "Just born!")).first(); // generates tagline
-    if (user === null) {
+    
+    if (user === null) {      
+      const background = await ctx.db.query("profileBackgrounds").withIndex("by_creation_time").first(); // generates background
+      // TODO: Guarantee that the "Just born" tagline is always set
+      const tagline = await ctx.db.query("profileTaglines").first(); // generates tagline
+
       const userAttributes = {
         clerkId: data.id!,
         username: data.username!,
