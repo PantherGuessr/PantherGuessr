@@ -12,7 +12,6 @@ import { useClerk, useUser } from "@clerk/clerk-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import Image from "next/image";
-import NavbarMain from "./navbar-main";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
@@ -88,9 +87,9 @@ export const Navbar = () => {
                     && user?.picture !== undefined &&
                 (
                   <>
-                    <div className="items-center justify-items-end gap-x-1 mx-auto hidden sm:flex">
+                    {/* <div className="items-center justify-items-end gap-x-1 mx-auto hidden sm:flex">
                       <NavbarMain />
-                    </div>       
+                    </div>        */}
                     <div className="flex justify-end justify-items-end items-center gap-x-0 ml-2">
                       <Menubar className="flex-1 bg-transparent outline-none p-0 hover:bg-accent focus:bg-accent cursor-pointer">
                         <MenubarMenu>
