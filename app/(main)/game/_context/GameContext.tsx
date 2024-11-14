@@ -6,7 +6,6 @@ import { LatLng } from "leaflet";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import useGameById from "@/hooks/use-game-by-id";
-import { deleteOldOngoingGames } from "@/convex/continuegame";
 
 interface GameContextType {
     levels: Id<"levels">[];
@@ -48,8 +47,9 @@ export const GameProvider = ({
   const router = useRouter();
   const user = useUser();
 
+  // states for the game
   const [levels, setLevels] = useState<Id<"levels">[]>([]);
-  const [currentRound, setCurrentRound] = useState(startingRound ?? 1);
+  const [currentRound, setCurrentRound] = useState(startingRound ?? 1); // uses starting round if continuing game, or 1 is first round
   const [score, setScore] = useState(0);
   const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
   const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
@@ -61,22 +61,27 @@ export const GameProvider = ({
   const [distanceFromTarget, setDistanceFromTarget] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [allDistances, setAllDistances] = useState<number[]>(startingDistances ?? []); // imports starting distances if continuing game
+  const [allScores, setAllScores] = useState<number[]>(startingScores ?? []); // imports starting scores if continuing game
+  const [leaderboardEntryId, setLeaderboardEntryId] = useState<string | null>(null);
 
-  const game = useGameById(gameId);
+  const game = useGameById(gameId); // gets the game by id
+
   const ids = useMemo(() => 
   {
     if (game) {
       if (!startingRound) {
-        window.history.pushState(null, '', `/game/${game._id}`);
+        window.history.pushState(null, '', `/game/${game._id}`); // pushes game id URL if not continuing game
       }
       else {
-        window.history.pushState(null, '', `/game/continue`);
+        window.history.pushState(null, '', `/game/continue`); // pushes continue URL if continuing game
       }
-      return [game.round_1, game.round_2, game.round_3, game.round_4, game.round_5];
+      return [game.round_1, game.round_2, game.round_3, game.round_4, game.round_5]; // returns all levels for the game
     }
     return [];
   }, [game, startingRound]);
 
+  // image sources and check guess query/mutations
   const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
   const checkGuess = useMutation(api.game.checkGuess);
 
@@ -91,37 +96,35 @@ export const GameProvider = ({
   const deleteOldOngoingGames = useMutation(api.continuegame.deleteOldOngoingGames);
   const updateOngoingGameOrCreate = useMutation(api.continuegame.updateOngoingGameOrCreate);
   const deleteOngoingGame = useMutation(api.continuegame.deleteOngoingGame);
-        
-  const [allDistances, setAllDistances] = useState<number[]>(startingDistances ?? []);
-  const [allScores, setAllScores] = useState<number[]>(startingScores ?? []);
 
   useEffect(() => {
     if (ids) {
-      setLevels(ids);
-      setCurrentLevel(ids[currentRound - 1]);
+      setLevels(ids); // sets the levels
+      setCurrentLevel(ids[currentRound - 1]); // sets the current level
     }
   }, [ids, currentRound]);
 
   // delete old ongoing games first time for a new game
   useEffect(() => {
     if(user?.user?.id && !startingRound) {
-      deleteOldOngoingGames({ userClerkId: user.user.id });
-      window.localStorage.removeItem("hasOngoingGame");
+      deleteOldOngoingGames({ userClerkId: user.user.id }); // deletes old ongoing games
+      window.localStorage.removeItem("hasOngoingGame"); // removes ongoing game from local storage
     }
   }, [user?.user?.id, deleteOldOngoingGames, startingRound]);
 
   useEffect(() => {
     if(currentLevelId) {
-      setCurrentSrcUrl(imageSrc ?? "/Invalid-Image.jpg");
+      setCurrentSrcUrl(imageSrc ?? "/Invalid-Image.jpg"); // sets the current image source URL
     }
   }, [currentLevelId, imageSrc]);
 
   const submitGuess = async (lat: number, lng: number) => {
-    if(!currentLevelId) return;
+    if(!currentLevelId) return; 
 
-    setIsSubmittingGuess(true);
+    setIsSubmittingGuess(true); 
 
     try {
+      // checks the guess and updates the scores, correct values, distances, and scores arrays
       const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
 
       setScore(prevScore => prevScore + result.score);
@@ -143,6 +146,7 @@ export const GameProvider = ({
 
     const nextRoundNumber = currentRound + 1;
 
+    // updates the ongoing game for continuing later (if user leaves before finishing)
     updateOngoingGameOrCreate({
       gameId: game!._id,
       userClerkId: user?.user?.id ?? "",
@@ -154,19 +158,23 @@ export const GameProvider = ({
     window.localStorage.setItem("hasOngoingGame", "true");
 
     if(nextRoundNumber > levels.length) {
-      setIsModalVisible(true);
+      // adds loading states
       setIsLoading(true);
-      const username = user.user?.username ? user.user.username : "Anonymous";
+      setIsModalVisible(true);
 
+      // incrementing daily and monthly statistics
       incrementDailyGameStats();
       incrementMonthlyGameStats();
 
+      // deletes ongoing game and removes it from local storage
       window.localStorage.removeItem("hasOngoingGame");
-
       deleteOngoingGame({
         gameId: game!._id,
         userClerkId: user?.user?.id ?? ""
       });
+
+      // gets username for leaderboard entry
+      const username = user.user?.username ? user.user.username : "Anonymous";
 
       addLeaderboardEntryToGame({
         gameId: game!._id,
@@ -186,12 +194,14 @@ export const GameProvider = ({
         setLeaderboardEntryId(leaderboardEntry);
       });
     } else {
+      // updates the current round to the next round and updates the level
       setCurrentRound(currentRound + 1);
       const nextLevel = levels[nextRoundNumber - 1];
       if(nextLevel) {
         setCurrentLevel(nextLevel);
       }
 
+      // resets marker positions and score values
       setMarkerHasBeenPlaced(false);
       setMarkerPosition(null);
       setCorrectLocation(null);
@@ -199,8 +209,6 @@ export const GameProvider = ({
       setScoreAwarded(null);
     }
   };
-
-  const [leaderboardEntryId, setLeaderboardEntryId] = useState<string | null>(null);
 
   useEffect(() => {
     if (leaderboardEntryId) {
@@ -215,34 +223,6 @@ export const GameProvider = ({
       setIsLoading(false);
     }
   }, [ids, currentLevelId, imageSrc]);
-
-  if (isLoading) {
-    return (
-      <GameContext.Provider value={{
-        levels,
-        currentRound,
-        score,
-        currentLevelId,
-        currentImageSrcUrl,
-        markerHasBeenPlaced,
-        setMarkerHasBeenPlaced,
-        isSubmittingGuess,
-        setIsSubmittingGuess,
-        submitGuess,
-        markerPosition,
-        setMarkerPosition,
-        correctLocation,
-        setCorrectLocation,
-        nextRound,
-        scoreAwarded,
-        distanceFromTarget,
-        isLoading,
-        isModalVisible
-      }}>
-        {children}
-      </GameContext.Provider>
-    );
-  }
 
   return (
     <GameContext.Provider value={{
