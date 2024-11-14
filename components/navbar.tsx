@@ -64,12 +64,12 @@ export const Navbar = () => {
                 )}
           {!isLoading && !isAuthenticated && (
             <div className="ml-auto space-x-2">
-              <SignInButton mode="modal">
+              <SignInButton mode="modal" fallbackRedirectUrl={window.location.href}>
                 <Button variant="ghost" size="sm">
                   Login
                 </Button>
               </SignInButton>
-              <SignUpButton mode="modal">
+              <SignUpButton mode="modal" fallbackRedirectUrl={window.location.href}>
                 <Button variant="default" size="sm">
                   Sign Up
                 </Button>
@@ -160,7 +160,7 @@ export const Navbar = () => {
                             )}
                             <MenubarSeparator />
                             <MenubarItem className="cursor-pointer" onClick={() => {
-                              signOut({ redirectUrl: '/' });
+                              signOut({ redirectUrl: window.location.href });
                             }}><LogOut className="h-4 w-4 mr-2" />Logout</MenubarItem>
                           </MenubarContent>
                         </MenubarMenu>
