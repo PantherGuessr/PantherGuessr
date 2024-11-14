@@ -84,7 +84,9 @@ export default defineSchema({
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
-  }),
+  })
+    .index("byUserClerkId", ["userClerkId"])
+    .index("byGame", ["game"]),
 
   profileTaglines: defineTable({
     tagline: v.string()
