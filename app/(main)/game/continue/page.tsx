@@ -21,6 +21,9 @@ const GameContinuePage = () => {
   const { user } = useUser();
   const isMobile = useMediaQuery("(max-width: 600px)");
   const [gameIdAsId, setGameIdAsId] = useState<Id<"games"> | null>(null);
+  const [startingRound, setStartingRound] = useState<number | null>(null);
+  const [startingScores, setStartingScores] = useState<number[] | null>(null);
+  const [startingDistances, setStartingDistances] = useState<number[] | null>(null);
 
   const getOngoingGame = useQuery(api.continuegame.getOngoingGameFromUser, 
     isAuthenticated && !isLoading ? { userClerkId: user?.id ?? "" } : "skip"
@@ -32,6 +35,9 @@ const GameContinuePage = () => {
         router.push('/game');
       } else if (getOngoingGame) {
         setGameIdAsId(getOngoingGame.game as Id<"games">);
+        setStartingRound(Number(getOngoingGame.currentRound));
+        setStartingScores(getOngoingGame.scores?.map(score => Number(score)) ?? []);
+        setStartingDistances(getOngoingGame.distances?.map(distance => Number(distance)) ?? []);
       }
     }
   }, [getOngoingGame, isAuthenticated, isLoading, router]);
@@ -39,7 +45,7 @@ const GameContinuePage = () => {
   return (
     <>
       {isAuthenticated && !isLoading && gameIdAsId !== null && (
-        <GameProvider gameId={gameIdAsId}>
+        <GameProvider gameId={gameIdAsId} startingRound={startingRound} startingScores={startingScores} startingDistances={startingDistances}>
           <GameContent isMobile={isMobile} />
         </GameProvider>
       )}

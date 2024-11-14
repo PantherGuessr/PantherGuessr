@@ -84,6 +84,8 @@ export default defineSchema({
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
+    scores: v.optional(v.array(v.int64())),
+    distances: v.optional(v.array(v.int64()))
   })
     .index("byUserClerkId", ["userClerkId"])
     .index("byGame", ["game"]),

@@ -1,7 +1,6 @@
 import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
-import { format, addDays } from 'date-fns';
 
 /**
  * Creates a new save game entry in the ongoingGames table.
@@ -60,6 +59,73 @@ export const updateOngoingGame = mutation({
   }
 });
 
+export const updateOngoingGameOrCreate = mutation({
+  args: {
+    gameId: v.id("games"),
+    userClerkId: v.string(),
+    currentRound: v.int64(),
+    timeLeftInRound: v.optional(v.int64()),
+    totalTimeTaken: v.int64(),
+    scores: v.optional(v.array(v.int64())),
+    distances: v.optional(v.array(v.int64())),
+  },
+  handler: async (ctx, args) => {
+    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances } = args;
+    const existingGame = await ctx.db.query("ongoingGames").withIndex("byUserClerkId").filter(q => q.eq(q.field("userClerkId"), userClerkId)).first();
+    if (existingGame) {
+      await ctx.db.patch(existingGame._id, {
+        game: gameId,
+        currentRound,
+        timeLeftInRound,
+        totalTimeTaken,
+        scores,
+        distances,
+      });
+    } else {
+      await ctx.db.insert("ongoingGames", {
+        game: gameId,
+        userClerkId,
+        currentRound,
+        timeLeftInRound,
+        totalTimeTaken,
+        scores,
+        distances,
+      });
+    }
+  }
+});
+
+/**
+ * Deletes an ongoing game entry.
+ * Used when a user completes a game to clean up their save data.
+ * 
+ * @param gameId - ID of the game to delete the ongoing game for
+ * @param userClerkId - Clerk ID of the user to delete the ongoing game for
+ */
+export const deleteOngoingGame = mutation({
+  args: {
+    gameId: v.id("games"),
+    userClerkId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { gameId, userClerkId } = args;
+    // find the ongoing game with the given gameId and userClerkId
+    const ongoingGame = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byGame")
+      .filter((q) => 
+        q.and(
+          q.eq(q.field("game"), gameId),
+          q.eq(q.field("userClerkId"), userClerkId)
+        )
+      )
+      .first();
+    if (ongoingGame) {
+      await ctx.db.delete(ongoingGame._id);
+    }
+  }
+});
+
 /**
  * Gets the most recent ongoing game for a user if one exists.
  * Used to check if a user has a game in progress that they can resume.
@@ -75,22 +141,6 @@ export const getOngoingGameFromUser = query({
     const { userClerkId } = args;
     const ongoingGame = await ctx.db.query("ongoingGames").withIndex("byUserClerkId").filter(q => q.eq(q.field("userClerkId"), userClerkId)).first();
     return ongoingGame;
-  }
-});
-
-/**
- * Deletes an ongoing game entry.
- * Used when a user completes a game to clean up their save data.
- * 
- * @param ongoingGameId - ID of the ongoing game entry to delete
- */
-export const deleteOngoingGame = mutation({
-  args: {
-    ongoingGameId: v.id("ongoingGames"),
-  },
-  handler: async (ctx, args) => {
-    const { ongoingGameId } = args;
-    await ctx.db.delete(ongoingGameId);
   }
 });
 
