@@ -1,6 +1,7 @@
 import { internalMutation, mutation, query, QueryCtx } from "./_generated/server";
 import { UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
+import { Id } from "./_generated/dataModel";
 
 /**
  * Query to get the current user.
@@ -153,6 +154,50 @@ export const hasRole = query({
     }
 
     return user.roles?.includes(args.role);
+  }
+});
+
+/**
+ * Query to check if a user has a specific achievement.
+ *
+ * @param args - The arguments for the query.
+ * @param args.name - The name of the achievement to check.
+ * @param args.clerkId - The Clerk ID of the user.
+ * @returns A boolean indicating whether the user has the specified achievement.
+ *
+ * @example
+ * const hasAchieved = await hasAchievement({ name: 'First Win', clerkId: 'user_123' });
+ * console.log(hasAchieved); // true or false
+ */
+export const hasAchievement = query({
+  args: {
+    name: v.string(),
+    clerkId: v.string()
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
+
+    if(!user) {
+      return false;
+    }
+
+    for (const achievementId of user.achievements || []) {
+      const achievement = await achievementById(ctx, achievementId);
+      if (achievement?.name === args.name) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+});
+
+export const getAchievementByName = query({
+  args: {
+    name: v.string(),
+  },
+  async handler(ctx, args) {
+    return await achievementByName(ctx, args.name);
   }
 });
 
@@ -385,5 +430,33 @@ async function userByUsername(ctx: QueryCtx, username: string) {
   return await ctx.db
     .query("users")
     .withIndex("byUsername", (q) => q.eq("username", username))
+    .unique();
+}
+
+/**
+ * Retrieves an achievement by its id.
+ *
+ * @param ctx - The query context used to interact with the database.
+ * @param id - The id of the achievement to retrieve.
+ * @returns A promise that resolves to the unique achievement with the specified id.
+ */
+async function achievementById(ctx: QueryCtx, id: Id<"achievements">) {
+  return await ctx.db
+    .query("achievements")
+    .withIndex("by_id", (q) => q.eq("_id", id))
+    .unique();
+}
+
+/**
+ * Retrieves an achievement by its name.
+ *
+ * @param ctx - The query context used to interact with the database.
+ * @param name - The name of the achievement to retrieve.
+ * @returns A promise that resolves to the unique achievement with the specified name.
+ */
+async function achievementByName(ctx: QueryCtx, name: string) {
+  return await ctx.db
+    .query("achievements")
+    .withIndex("byName", (q) => q.eq("name", name))
     .unique();
 }

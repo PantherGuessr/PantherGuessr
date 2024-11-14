@@ -13,7 +13,7 @@ export default defineSchema({
     level: v.int64(),
     currentXP: v.int64(),
     roles: v.optional(v.array(v.string())),
-    achievements: v.optional(v.array(v.string())),
+    achievements: v.optional(v.array(v.id("achievements"))),
     picture: v.string(),
   })
     .index("byClerkId", ["clerkId"])
@@ -101,4 +101,5 @@ export default defineSchema({
     isEnabled: v.boolean(),
     canUnlock: v.boolean()
   })
+    .index("byName", ["name"])
 });
