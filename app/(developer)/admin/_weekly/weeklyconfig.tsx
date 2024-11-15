@@ -256,6 +256,8 @@ const WeeklyChallengeConfig = () => {
 
   return (
     <>
+      <p className="text-xl"></p>
+      <p className="text-xl"></p>
       <DataTable columns={columns} data={tableData || []} />
       <Dialog open={levelUpdaterDialogOpen} onOpenChange={(open) => {
         if (!open) {

@@ -1,7 +1,6 @@
 import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
-import { format, addDays } from 'date-fns';
 
 /**
  * Retrieves the weekly challenge that is currently active
@@ -10,13 +9,12 @@ import { format, addDays } from 'date-fns';
 export const getWeeklyChallenge = query({
   handler: async (ctx) => {
     const date = new Date();
-    const today = date.toISOString().split("T")[0];
+    const today = date.getTime();
     const weeklyChallenges = await ctx.db
       .query("weeklyChallenges")
-      .filter(q => q.and(
-        q.lte(q.field("startDate"), today),
-        q.gte(q.field("endDate"), today)
-      ))
+      .filter(q => 
+        q.gte(q.field("endDate"), BigInt(today))
+      )
       .collect();
 
     return weeklyChallenges;
@@ -29,8 +27,8 @@ export const getWeeklyChallenge = query({
  */
 export const makeWeeklyChallenge = mutation({
   handler: async (ctx) => {
-    const today = format(new Date(), 'yyyy-MM-dd');
-    const endDate = format(addDays(new Date(), 6), 'yyyy-MM-dd');
+    const today = new Date().getTime();
+    const endDate = new Date(today + 6 * 24 * 60 * 60 * 1000).getTime();
     const levels = await ctx.db.query("levels").collect();
     const randomLevels = [];
     const randomIndices: number[] = [];
@@ -46,8 +44,8 @@ export const makeWeeklyChallenge = mutation({
     }
 
     await ctx.db.insert("weeklyChallenges", {
-      startDate: today,
-      endDate: endDate,
+      startDate: BigInt(today),
+      endDate: BigInt(endDate),
       round_1: randomLevels[0],
       round_2: randomLevels[1],
       round_3: randomLevels[2],
@@ -92,15 +90,13 @@ export const getLevelsFromWeeklyChallenge = query({
  */
 export const getPopulatedLevelsFromWeeklyChallenge = query({
   handler: async (ctx) => {
-    const today = format(new Date(), 'yyyy-MM-dd');
-    const endDate = format(addDays(new Date(), 6), 'yyyy-MM-dd');
+    const today = new Date().getTime();
     const weeklyChallenges = await ctx.db
       .query("weeklyChallenges")
-      .filter(q => q.and(
-        q.lte(q.field("startDate"), today),
-        q.lte(q.field("endDate"), endDate)
-      ))
+      .filter(q => q.gte(q.field("endDate"), BigInt(today)))
       .collect();
+
+    console.log(weeklyChallenges);
 
     if (weeklyChallenges.length === 0) {
       return null;

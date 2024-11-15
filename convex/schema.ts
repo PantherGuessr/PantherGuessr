@@ -50,8 +50,8 @@ export default defineSchema({
   }),
 
   weeklyChallenges: defineTable({
-    startDate: v.string(),
-    endDate: v.string(),
+    startDate: v.int64(),
+    endDate: v.int64(),
     round_1: v.id("levels"),
     round_2: v.id("levels"),
     round_3: v.id("levels"),
