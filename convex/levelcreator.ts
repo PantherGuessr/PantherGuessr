@@ -2,13 +2,22 @@ import { v } from "convex/values";
 
 import { mutation } from "./_generated/server";
 
-// creates an image upload url
+/**
+ * Generates an upload URL for a new image
+ * @returns The URL of the image storage
+ */
 export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
 });
 
-// writes a new level to the database
-
+/**
+ * Creates a new level with an image storage ID
+ * @param args.storageId - The ID of the image storage
+ * @param args.description - The description of the level
+ * @param args.latitude - The latitude of the level
+ * @param args.longitude - The longitude of the level
+ * @param args.authorUsername - The username of the author
+ */
 export const createLevelWithImageStorageId = mutation({
   args: { storageId: v.id("_storage"), description: v.string(), latitude: v.float64(), longitude: v.float64(), authorUsername: v.string() },
   handler: async (ctx, args) => {
