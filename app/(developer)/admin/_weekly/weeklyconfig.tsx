@@ -43,6 +43,8 @@ const WeeklyChallengeConfig = () => {
   const [levelUpdaterInput, setLevelUpdaterInput] = useState("");
   const [levelUpdaterDialogOpen, setLevelUpdaterDialogOpen] = useState<boolean>(false);
   const [roundToBeUpdated, setRoundToBeUpdated] = useState<number | null>(null);
+  const [weeklyChallengeStartDate, setWeeklyChallengeStartDate] = useState<string>("");
+  const [weeklyChallengeEndDate, setWeeklyChallengeEndDate] = useState<string>("");
 
   // fetch weekly challenge data
   const weeklyChallenge = useWeeklyChallenge();
@@ -56,6 +58,8 @@ const WeeklyChallengeConfig = () => {
   // memoize table data
   const tableData = useMemo(() => {
     if (weeklyChallenge) {
+      setWeeklyChallengeStartDate(new Date(Number(weeklyChallenge.startDate)).toLocaleDateString());
+      setWeeklyChallengeEndDate(new Date(Number(weeklyChallenge.endDate)).toLocaleDateString());
       return [
         weeklyChallenge.round_1,
         weeklyChallenge.round_2,
@@ -256,8 +260,7 @@ const WeeklyChallengeConfig = () => {
 
   return (
     <>
-      <p className="text-xl"></p>
-      <p className="text-xl"></p>
+      <p className="text-lg text-left justify-start w-full px-2 mb-1"><span className="font-bold">{weeklyChallengeStartDate}</span> - <span className="font-bold">{weeklyChallengeEndDate}</span></p>
       <DataTable columns={columns} data={tableData || []} />
       <Dialog open={levelUpdaterDialogOpen} onOpenChange={(open) => {
         if (!open) {
