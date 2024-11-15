@@ -3,7 +3,10 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { format, addDays } from 'date-fns';
 
-// attempts to get the weekly challenge where today is between the start and end date of the weekly challenge
+/**
+ * Retrieves the weekly challenge that is currently active
+ * @returns The weekly challenge that is currently active
+ */
 export const getWeeklyChallenge = query({
   handler: async (ctx) => {
     const date = new Date();
@@ -20,7 +23,10 @@ export const getWeeklyChallenge = query({
   }
 });
 
-// makes the weekly challenge for the current week by picking 5 random levels from the levels table
+/**
+ * Creates a new weekly challenge by selecting 5 random levels from the levels table
+ * @returns The mutation promise of the new weekly challenge
+ */
 export const makeWeeklyChallenge = mutation({
   handler: async (ctx) => {
     const today = format(new Date(), 'yyyy-MM-dd');
@@ -52,7 +58,15 @@ export const makeWeeklyChallenge = mutation({
   }
 });
 
-// gets weekly challenge with levels
+/**
+ * Retrieves the levels from a weekly challenge
+ * @param args.round1 - The ID of the first round level
+ * @param args.round2 - The ID of the second round level
+ * @param args.round3 - The ID of the third round level
+ * @param args.round4 - The ID of the fourth round level
+ * @param args.round5 - The ID of the fifth round level
+ * @returns - The levels from the weekly challenge
+ */
 export const getLevelsFromWeeklyChallenge = query({
   args: { round1: v.id("levels"), round2: v.id("levels"), round3: v.id("levels"), round4: v.id("levels"), round5: v.id("levels") },
   handler: async (ctx, args) => {
@@ -72,7 +86,10 @@ export const getLevelsFromWeeklyChallenge = query({
   }
 });
 
-// gets weekly challenge with populated levels
+/**
+ * Retrieves the weekly challenge with populated levels
+ * @returns The weekly challenge with populated levels
+ */
 export const getPopulatedLevelsFromWeeklyChallenge = query({
   handler: async (ctx) => {
     const today = format(new Date(), 'yyyy-MM-dd');
@@ -110,7 +127,12 @@ export const getPopulatedLevelsFromWeeklyChallenge = query({
   }
 });
 
-// updates a specific weekly challenge's specific round with a new level ID
+/**
+ * Updates a specific weekly challenge's specific round with a new level ID
+ * @param args.weeklyChallengeId - The ID of the weekly challenge
+ * @param args.roundNumber - The number of the round to update
+ * @param args.levelId - The ID of the new level
+ */
 export const updateWeeklyChallengeRound = mutation({
   args: { weeklyChallengeId: v.id("weeklyChallenges"), roundNumber: v.int64() , levelId: v.id("levels") },
   handler: async (ctx, args) => {

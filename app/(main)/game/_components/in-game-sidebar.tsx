@@ -37,6 +37,10 @@ const InGameSidebar = () => {
     isLoading
   } = useGame()!;
     
+  /**
+   * Handles submitting a guess for the current round
+   * Only submits if a marker has been placed and there is a valid marker position
+   */
   const handleSubmittingGuess = () => {
     if(!markerHasBeenPlaced || !markerPosition) return;
     
@@ -44,10 +48,17 @@ const InGameSidebar = () => {
     submitGuess(lat, lng);
   };
 
+  /**
+   * Handles advancing to the next round
+   * Calls the nextRound function from GameContext
+   */
   const handleNextRound = () => {
     nextRound();
   };
-    
+
+  /**
+   * Handles displaying the magnifier when hovering over the image
+   */
   const handleMouseEnter = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     if (isResizingRef.current) return;
 
@@ -62,6 +73,9 @@ const InGameSidebar = () => {
     event.currentTarget.classList.add("hide-cursor");
   };
 
+  /**
+   * Handles moving the magnifier when moving the mouse while hovering over the image
+   */
   const handleMouseMoveMagnifier = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     if (isResizingRef.current) return;
     
@@ -105,6 +119,9 @@ const InGameSidebar = () => {
     }
   };
 
+  /**
+   * Handles hiding the magnifier when the mouse leaves the image
+   */
   const handleMouseLeave = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     const magnifier = magnifierRef.current;
     if (magnifier) {
@@ -114,6 +131,9 @@ const InGameSidebar = () => {
     event.currentTarget.classList.remove("hide-cursor");
   };
 
+  /**
+   * Handles starting the resizing of the sidebar when clicking on the right side of the sidebar
+   */
   const handleMouseDown = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -125,6 +145,9 @@ const InGameSidebar = () => {
     document.addEventListener("mouseup", handleMouseUp);
   };
 
+  /**
+   * Handles resizing the sidebar when clicking and dragging on the right side of the sidebar
+   */
   const handleMouseMove = (event: MouseEvent) => {
     if(!isResizingRef.current) return;
     let newWidth = event.clientX;
@@ -139,6 +162,9 @@ const InGameSidebar = () => {
     }
   };
 
+  /**
+   * Handles stopping the resizing of the sidebar when releasing the mouse button
+   */
   const handleMouseUp = () => {
     isResizingRef.current = false;
     document.removeEventListener("mousemove", handleMouseMove);
