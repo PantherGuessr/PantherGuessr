@@ -65,6 +65,7 @@ export const makeWeeklyChallenge = mutation({
  * @param args.round3 - The ID of the third round level
  * @param args.round4 - The ID of the fourth round level
  * @param args.round5 - The ID of the fifth round level
+ * @returns - The levels from the weekly challenge
  */
 export const getLevelsFromWeeklyChallenge = query({
   args: { round1: v.id("levels"), round2: v.id("levels"), round3: v.id("levels"), round4: v.id("levels"), round5: v.id("levels") },
