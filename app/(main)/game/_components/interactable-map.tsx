@@ -28,6 +28,9 @@ const InteractableMap = () => {
     iconAnchor: [24, 48],
   });
 
+  /**
+   * Handles placing the marker on the map when the user clicks on the map
+   */
   function LocationMarker() {
     useMapEvents({
       click(e) {
@@ -40,12 +43,18 @@ const InteractableMap = () => {
       }
     });
 
+    /**
+     * Resets the local marker position if the marker has not been placed
+     */
     useEffect(() => {
       if(!markerHasBeenPlaced) {
         setLocalMarkerPosition(null);
       }
     });
 
+    /**
+     * Renders the marker on the map if the local marker position is not null
+     */
     return localMarkerPosition === null ? null : (
       <>
         <Marker icon={pantherGuessrMarkerIcon} position={localMarkerPosition} />
@@ -54,6 +63,9 @@ const InteractableMap = () => {
     );
   }
 
+  /**
+   * Centers the map on the line between the local marker position and the correct location
+   */
   function CenterMapOnLine({ localMarkerPosition, correctLocation }: { localMarkerPosition: LatLng | null, correctLocation: LatLng }) {
     const map = useMap();
     

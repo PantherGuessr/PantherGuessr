@@ -25,6 +25,9 @@ const GameContinuePage = () => {
   const [startingScores, setStartingScores] = useState<number[] | null>(null);
   const [startingDistances, setStartingDistances] = useState<number[] | null>(null);
 
+  /**
+   * Attempts to fetch the ongoing game for the user
+   */
   const getOngoingGame = useQuery(api.continuegame.getOngoingGameFromUser, 
     isAuthenticated && !isLoading ? { userClerkId: user?.id ?? "" } : "skip"
   );
@@ -32,7 +35,7 @@ const GameContinuePage = () => {
   useEffect(() => {
     if (isAuthenticated && !isLoading) {
       if (getOngoingGame === null) {
-        router.push('/game');
+        router.push('/game'); // If there is no ongoing game, redirect to make a new one.
       } else if (getOngoingGame) {
         setGameIdAsId(getOngoingGame.game as Id<"games">);
         setStartingRound(Number(getOngoingGame.currentRound));

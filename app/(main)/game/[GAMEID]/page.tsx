@@ -14,6 +14,10 @@ type Props = {
 }
 
 const GameIdPage = ({ params }: Props) => {
+  /**
+   * Sets the game ID based on the URL parameter
+   * Passes in the game ID to the GameProvider
+   */
   const gameIdAsId = params.GAMEID as Id<"games">;
   const isMobile = useMediaQuery("(max-width: 600px)");
 
