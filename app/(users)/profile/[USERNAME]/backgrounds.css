@@ -74,14 +74,20 @@
     filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#00DCDC", endColorstr="#DC13DC", GradientType=1 );
 }
 
-.bg-dylan-ravel-image {
-    background: url('/profile-banner-images/dylanravel.jpeg');
+.bg-boulder-colorado-image {
+    background: url('/profile-banner-images/BoulderCO.jpeg');
     background-size: cover;
     background-position: center;
 }
 
 .bg-planepic-image {
     background: url('/profile-banner-images/planepic.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.bg-water-gif-image {
+    background: url('/profile-banner-images/Water.gif');
     background-size: cover;
     background-position: center;
 }
