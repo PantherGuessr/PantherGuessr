@@ -10,11 +10,10 @@ const font = Poppins({
 });
 
 interface LogoProps {
-    clickable?: boolean;
-    href?: string;
+  href?: string;
 }
 
-export const Logo = ({ clickable, href }: LogoProps) => {
+export const Logo = ({ href }: LogoProps) => {
   const logoContent = (
     <div className="flex items-center gap-x-2">
       <Image 
@@ -35,7 +34,7 @@ export const Logo = ({ clickable, href }: LogoProps) => {
     </div>
   );
 
-  return clickable && href ? (
+  return href ? (
     <Link href={href}>
       {logoContent}
     </Link>
