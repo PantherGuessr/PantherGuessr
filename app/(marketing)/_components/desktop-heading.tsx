@@ -33,7 +33,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
 
   const handleGoToUserProfile = () => {
     window.location.href="/profile/" + username;
-  }
+  };
 
   const hasOngoingGame = window.localStorage.getItem("hasOngoingGame") === "true";
 
