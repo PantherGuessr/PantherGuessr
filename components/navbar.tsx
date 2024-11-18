@@ -15,11 +15,12 @@ import Image from "next/image";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
-import { Copy, LogOut, Settings, Shield, UserRound, UserRoundSearch, Wrench } from "lucide-react";
+import { Copy, LogOut, Settings, Shield, User, UserRound, UserRoundSearch, Wrench } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Toaster } from "./ui/toaster";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -63,18 +64,41 @@ export const Navbar = () => {
                   </div>
                 )}
           {!isLoading && !isAuthenticated && (
-            <div className="ml-auto space-x-2">
-              <SignInButton mode="modal" fallbackRedirectUrl={window.location.href}>
-                <Button variant="ghost" size="sm">
-                  Login
-                </Button>
-              </SignInButton>
-              <SignUpButton mode="modal" fallbackRedirectUrl={window.location.href}>
-                <Button variant="default" size="sm">
-                  Sign Up
-                </Button>
-              </SignUpButton>
-            </div>
+            <>
+              <div className="hidden sm:block ml-auto space-x-2">
+                <SignInButton mode="modal" fallbackRedirectUrl={window.location.href}>
+                  <Button variant="ghost" size="sm">
+                    Login
+                  </Button>
+                </SignInButton>
+                <SignUpButton mode="modal" fallbackRedirectUrl={window.location.href}>
+                  <Button variant="default" size="sm">
+                    Sign Up
+                  </Button>
+                </SignUpButton>
+              </div>
+              <div className="block sm:hidden text-muted-foreground">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <User />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <SignInButton mode="modal" fallbackRedirectUrl={window.location.href}>
+                      <DropdownMenuItem className="cursor-pointer">
+                        Login
+                      </DropdownMenuItem>
+                    </SignInButton>
+                    <SignUpButton mode="modal" fallbackRedirectUrl={window.location.href}>
+                      <DropdownMenuItem className="cursor-pointer">
+                        Sign Up
+                      </DropdownMenuItem>
+                    </SignUpButton>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </>
           )}
           {
             isAuthenticated 
@@ -124,7 +148,7 @@ export const Navbar = () => {
                               </Avatar>
                             </div>
                           </MenubarTrigger>
-                          <MenubarContent>
+                          <MenubarContent align="end">
                             <MenubarItem className="cursor-pointer" onClick={() => {
                               navigator.clipboard.writeText(user!.username);
                               toast({
