@@ -9,11 +9,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
+import "../../(users)/profile/[USERNAME]/backgrounds.css";
+import "./heading.css";
 
 interface DesktopHeadingProps {
     username: string;
     picture: string;
     tagline: string;
+    background: string;
     joinDate: number;
     isChapmanStudent: boolean;
     isDeveloperRole: boolean;
@@ -21,12 +24,16 @@ interface DesktopHeadingProps {
     isFriendRole: boolean;
 }
 
-const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagline, joinDate, isChapmanStudent, isDeveloperRole, isModeratorRole, isFriendRole}) => {
+const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagline, background, joinDate, isChapmanStudent, isDeveloperRole, isModeratorRole, isFriendRole}) => {
   const [hoveredLeftMain, setHoveredLeftMain] = useState(false);
   const [hoveredCenterMain, setHoveredCenterMain] = useState(false);
   const [hoveredRightMain, setHoveredRightMain] = useState(false);
 
   const [welcomeMessage, setWelcomeMessage] = useState('');
+
+  const handleGoToUserProfile = () => {
+    window.location.href="/profile/" + username;
+  }
 
   const hasOngoingGame = window.localStorage.getItem("hasOngoingGame") === "true";
 
@@ -44,16 +51,16 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
         )}
       onMouseEnter={() => setHoveredLeftMain(true)} onMouseLeave={() => setHoveredLeftMain(false)}>
         <div className="flex flex-col justify-center items-center">
-          <div className="flex flex-col transition-all justify-center items-center drop-shadow-lg rounded-lg bg-gradient-to-b from-transparent to-primary/50 mb-6 hover:scale-105 cursor-default">
-            <Image src="/profile-banner-images/chapmanpantherwaving.gif"
-              className="rounded-lg transition-all border-primary border-4"
-              alt="Chapman Panther Waving" width={400} height={225}
-              unoptimized
+          <div className={cn("flex flex-col transition-all justify-center align-center items-center drop-shadow-lg rounded-lg mb-6 hover:scale-105 cursor-default w-full h-75 border-4 border-primary", background)}>
+            <Image src={picture}
+              className="rounded-full transition-all border-primary border-4 inset-2 hover:scale-105 my-10 drop-shadow-md cursor-pointer"
+              alt="Chapman Panther Waving" width={100} height={100}
+              onClick={handleGoToUserProfile}
             />
           </div>
           <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold hover:scale-105 transition-all cursor-default">
             Welcome back, {" "}
-            <HoverCard openDelay={0} closeDelay={50}>
+            <HoverCard openDelay={0} closeDelay={25}>
               <HoverCardTrigger asChild>
                 <Link href={"/profile/" + username}>
                   <span className="underline">{username}</span>
@@ -223,14 +230,16 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
       onMouseEnter={() => setHoveredLeftMain(true)} onMouseLeave={() => setHoveredLeftMain(false)}
       >
         <div className="flex flex-col justify-center items-center">
-          <div className="flex flex-col transition-all justify-center items-center drop-shadow-lg rounded-lg bg-gradient-to-b from-transparent to-primary/50 mb-6 cursor-default hover:scale-105">
-            <Image src="/profile-banner-images/chapmanpantherwaving.gif"
-              className="rounded-lg transition-all border-primary border-4"
-              alt="Chapman Panther Waving" width={400} height={400} />
+          <div className={cn("flex flex-col transition-all justify-center align-center items-center drop-shadow-lg rounded-lg mb-6 hover:scale-105 cursor-default w-full h-75 border-4 border-primary", background)}>
+            <Image src={picture}
+              className="rounded-full transition-all border-primary border-4 inset-2 hover:scale-105 my-10 drop-shadow-md cursor-pointer"
+              alt="Chapman Panther Waving" width={100} height={100}
+              onClick={handleGoToUserProfile}
+            />
           </div>
           <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold cursor-default hover:scale-105 transition-all">
             Welcome back, {" "}
-            <HoverCard openDelay={0} closeDelay={50}>
+            <HoverCard openDelay={0} closeDelay={25}>
               <HoverCardTrigger asChild>
                 <Link href={"/profile/" + username}>
                   <span className="underline">{username}</span>
@@ -284,30 +293,45 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
       onMouseEnter={() => setHoveredRightMain(true)} onMouseLeave={() => setHoveredRightMain(false)}
       >
         <ul className={
-          cn("grid grid-rows-8 p-2 grid-flow-col gap-2 w-full duration-150 transition-all drop-shadow-lg")
+          cn("grid grid-rows-8 p-2 grid-flow-row gap-2 w-full duration-150 transition-all drop-shadow-lg")
         }>
-          <li className="row-span-2 w-full">
-            <Link href="/play">
-              <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                Weekly Challenge
-              </div>
-            </Link>
-          </li>
-          <li className="row-span-2 w-full">
-            <Link href="/game">
-              <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                Singleplayer
-              </div>
-            </Link>
-          </li>
-          <li className="row-span-2 w-full">
+          {hasOngoingGame ? (
+            <>
+              <li className="row-span-2 col-span-1">
+                <Link href="/game/continue">
+                  <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-5 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">Continue</div>
+                </Link>
+              </li>
+              <li className="row-span-2 col-span-1">
+                <Link href="/game">
+                  <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">New</div>
+                </Link>
+              </li>
+            </>
+          ) : (
+            <li className="row-span-2 col-span-2">
+              <Link href="/game">
+                <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                  Singleplayer
+                </div>
+              </Link>
+            </li>
+          )}
+          <li className="row-span-2 col-span-2">
             <Link href="/play">
               <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                 Multiplayer
               </div>
             </Link>
           </li>
-          <li className="row-span-2 w-full">
+          <li className="row-span-2 col-span-2">
+            <Link href="/play">
+              <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                Weekly Challenge
+              </div>
+            </Link>
+          </li>
+          <li className="row-span-2 col-span-2">
             <Link href="/play">
               <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-secondary rounded-md">
                 All Gamemodes

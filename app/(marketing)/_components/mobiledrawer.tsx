@@ -9,6 +9,8 @@ import "./header-animation.css";
 
 const MobileDrawer = () => {
 
+  const hasOngoingGame = window.localStorage.getItem("hasOngoingGame") === "true";
+
   return (
 
     <Sheet>
@@ -22,35 +24,68 @@ const MobileDrawer = () => {
           <SheetTitle className="text-2xl">Gamemode Selection</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-y-4 pt-4">
-          <Link href="/play">
-            <Card className="bg-primary text-primary-foreground">
-              <CardContent className="p-4">
+
+          {hasOngoingGame ? (
+            <>
+              <Card className="bg-primary text-primary-foreground cursor-pointer">
+                <CardContent className="p-4" onClick={() => {
+                  document.body.classList.add("animate-body-opacity-scale");
+                  setTimeout(() => {
+                    window.location.href="/game/continue";
+                  }, 800);
+                }}>
+                  <div className="flex flex-col gap-x-2 align-center text-center justify-center">
+                    <h1 className="text-xl font-bold">Continue Game</h1>
+                    <p className="italic text-sm">Pick up where you left off!</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-primary text-primary-foreground cursor-pointer">
+                <CardContent className="p-4" onClick={() => {
+                  document.body.classList.add("animate-body-opacity-scale");
+                  setTimeout(() => {
+                    window.location.href="/game";
+                  }, 800);
+                }}>
+                  <div className="flex flex-col gap-x-2 align-center text-center justify-center">
+                    <h1 className="text-xl font-bold">New Game</h1>
+                    <p className="italic text-sm">Start a new classic PantherGuessr game</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <Card className="bg-primary text-primary-foreground cursor-pointer">
+              <CardContent className="p-4" onClick={() => {
+                document.body.classList.add("animate-body-opacity-scale");
+                setTimeout(() => {
+                  window.location.href="/game";
+                }, 800);
+              }}>
                 <div className="flex flex-col gap-x-2 align-center text-center justify-center">
-                  <h1 className="text-xl font-bold">Weekly Challenge</h1>
-                  <p className="italic text-sm">Compete in the weekly challenge</p>
+                  <h1 className="text-xl font-bold">Singleplayer</h1>
+                  <p className="italic text-sm">The classic way to play PantherGuessr</p>
                 </div>
               </CardContent>
             </Card>
-          </Link>
-          <Card className="bg-primary text-primary-foreground">
-            <CardContent className="p-4" onClick={() => {
-              document.body.classList.add("animate-body-opacity-scale");
-              setTimeout(() => {
-                window.location.href="/game";
-              }, 800);
-            }}>
-              <div className="flex flex-col gap-x-2 align-center text-center justify-center">
-                <h1 className="text-xl font-bold">Singleplayer</h1>
-                <p className="italic text-sm">The classic way to play PantherGuessr</p>
-              </div>
-            </CardContent>
-          </Card>
+          )}
+          {/* <!-- Multiplayer link -->
           <Link href="/play">
             <Card className="bg-primary text-primary-foreground">
               <CardContent className="p-4">
                 <div className="flex flex-col gap-x-2 align-center text-center justify-center">
                   <h1 className="text-xl font-bold">Multiplayer</h1>
                   <p className="italic text-sm">Play with friends!</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link> */}
+          <Link href="/play">
+            <Card className="bg-primary text-primary-foreground">
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-x-2 align-center text-center justify-center">
+                  <h1 className="text-xl font-bold">Weekly Challenge</h1>
+                  <p className="italic text-sm">Compete in the weekly challenge</p>
                 </div>
               </CardContent>
             </Card>

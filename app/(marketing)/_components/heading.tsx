@@ -16,6 +16,7 @@ import { api } from "@/convex/_generated/api";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { useRoleCheck } from "@/hooks/use-role-check";
+import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
 
 
 export const Heading = () => {
@@ -27,6 +28,7 @@ export const Heading = () => {
   const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
   const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
   const { result: profileTagline } = useGetSelectedTagline(user?.clerkId);
+  const { result: profileBackground, isLoading: profileBackgroundLoading } = useGetSelectedBackground(user?.clerkId);
 
   const [welcomeMessage, setWelcomeMessage] = useState('');
 
@@ -60,6 +62,7 @@ export const Heading = () => {
                 && !developerRoleLoading
                 && !moderatorRoleLoading
                 && !friendRoleLoading
+                && !profileBackgroundLoading
                 && (
                   <>
                     {isDesktop ?
@@ -68,6 +71,7 @@ export const Heading = () => {
                           username={user.username || "Guest"}
                           picture={clerkUser.user.imageUrl}
                           tagline={profileTagline.tagline}
+                          background={profileBackground!.backgroundCSS}
                           joinDate={user._creationTime}
                           isChapmanStudent={isChapmanStudent ?? false}
                           isDeveloperRole={isDeveloperRole ?? false}
