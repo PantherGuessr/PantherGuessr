@@ -48,7 +48,7 @@ export const Navbar = () => {
         scrolled && "backdrop-blur-sm border-b-2 border-[#450b0b4c] shadow-md"
       )}>
         <div className="justify-between flex items-center gap-x-2 w-full">
-          <div className="mr-2"><Logo clickable={true} href="/" /></div>
+          <div className="mr-2"><Logo href="/" /></div>
           {
             isLoading
                     || developerRoleLoading
