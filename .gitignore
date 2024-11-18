@@ -6,10 +6,6 @@
 .pnp.js
 .yarn/install-state.gz
 
-# vscode
-.vscode
-.vscode/settings.json
-
 # daniel's script to run
 drun.sh
 
