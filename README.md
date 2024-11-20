@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/DylanDevelops/SimpleShapesLibrary">
+  <a href="https://github.com/PantherGuessr/PantherGuessr">
       <h1 align="center">PantherGuessr</h1>
   </a>
 </p>
