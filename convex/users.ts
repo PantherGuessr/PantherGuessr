@@ -128,6 +128,64 @@ export const getUserByUsername = query({
 });
 
 /**
+ * Awards experience points (XP) to a user and updates their level accordingly.
+ * 
+ * @param args - The arguments for the mutation.
+ * @param args.username - The username of the user to award XP to.
+ * @param args.earnedXP - The amount of XP earned by the user.
+ * 
+ * @throws {Error} If the user is not found.
+ * 
+ * @remarks
+ * This function calculates the new XP and level for the user based on the earned XP.
+ * The XP required for each level doubles with each level up to a maximum level.
+ * The user's level and current XP are updated in the database.
+ * 
+ * @example
+ * ```typescript
+ * await awardUserXP({ username: "john_doe", earnedXP: 150 });
+ * ```
+ */
+export const awardUserXP = internalMutation({
+  args: {
+    username: v.string(),
+    earnedXP: v.number(),
+  },
+  async handler(ctx, args) {
+    // Retrieve the user by their username
+    const user = await userByUsername(ctx, args.username);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Define the maximum level for exponential growth and base XP required for the first level
+    const maxLevelForExponentialGrowth = 10;
+    const baseXP = 100;
+    
+    // Add the earned XP to the user's current XP
+    let currentXP = user.currentXP + BigInt(args.earnedXP);
+    let level = user.level;
+
+    // Loop to calculate the new level and remaining XP
+    while (true) {
+      // Determine the XP required for the next level
+      const xpForNextLevel = level < maxLevelForExponentialGrowth ? BigInt(baseXP * Math.pow(2, Number(level) - 1)) : BigInt(baseXP * Math.pow(2, maxLevelForExponentialGrowth - 1));
+      
+      // Check if the user has enough XP to level up
+      if (currentXP >= xpForNextLevel) {
+        currentXP -= xpForNextLevel; // Subtract the XP required for the next level
+        level += 1n; // Increment the user's level
+      } else {
+        break; // Exit the loop if the user does not have enough XP to level up
+      }
+    }
+
+    // Update the user's level and current XP in the database
+    await ctx.db.patch(user._id, { level, currentXP });
+  }
+});
+
+/**
  * Query to check if a user has a specific role.
  *
  * @param {Object} args - The arguments object.
