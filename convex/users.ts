@@ -158,9 +158,9 @@ export const awardUserXP = internalMutation({
       throw new Error("User not found");
     }
 
-    // Define the maximum level for exponential growth and base XP required for the first level
-    const maxLevelForExponentialGrowth = 10;
-    const baseXP = 100;
+    // Define the XP required for each level
+    const xpForLevels = [25, 50, 75, 100];
+    const xpForMaxLevel = 100;
     
     // Add the earned XP to the user's current XP
     let currentXP = user.currentXP + BigInt(args.earnedXP);
@@ -169,7 +169,7 @@ export const awardUserXP = internalMutation({
     // Loop to calculate the new level and remaining XP
     while (true) {
       // Determine the XP required for the next level
-      const xpForNextLevel = level < maxLevelForExponentialGrowth ? BigInt(baseXP * Math.pow(2, Number(level) - 1)) : BigInt(baseXP * Math.pow(2, maxLevelForExponentialGrowth - 1));
+      const xpForNextLevel = level < BigInt(xpForLevels.length + 1) ? BigInt(xpForLevels[Number(level) - 1]) : BigInt(xpForMaxLevel);
       
       // Check if the user has enough XP to level up
       if (currentXP >= xpForNextLevel) {
@@ -179,6 +179,8 @@ export const awardUserXP = internalMutation({
         break; // Exit the loop if the user does not have enough XP to level up
       }
     }
+
+    console.log(`Awarded @${args.username} ${args.earnedXP} XP`);
 
     // Update the user's level and current XP in the database
     await ctx.db.patch(user._id, { level, currentXP });

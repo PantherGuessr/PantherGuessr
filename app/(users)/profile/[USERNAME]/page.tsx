@@ -9,7 +9,6 @@ import { Check, ChevronsUpDown, Loader2, PenLine, Save, SquarePen, UserSearch, X
 import "./backgrounds.css";
 import Image from "next/image";
 import Link from "next/link";
-import { Progress } from "@/components/ui/progress";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -27,6 +26,7 @@ import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Achievement from "./_components/Achievement";
 import { useAchievementCheck } from "@/hooks/userProfiles/use-get-unlocked-achievements";
+import { LevelProgress } from "./_components/LevelProgress";
 
 type Props = {
     params: { USERNAME: string }
@@ -81,8 +81,6 @@ const ProfilePage = ({ params }: Props) => {
 
   // page reloading effect that is just a CSS class change
   const [taglineReloadingEffect, setTaglineReloadingEffect] = useState(false);
-
-  
 
   // recalculate the width of the input based on the username length
   useEffect(() => {
@@ -158,6 +156,12 @@ const ProfilePage = ({ params }: Props) => {
 
   // checks if the current user is the same as the user being viewed
   const isCurrentUser = clerkUser.user?.id === user.clerkId;
+
+  // Determine the XP required for the next level
+  // !!! MAKE SURE THAT THIS MATCHES WHAT IS ON THE BACKEND
+  const xpForLevels = [25, 50, 75, 100];
+  const xpForMaxLevel = 100;
+  const xpForNextLevel = user.level < xpForLevels.length + 1 ? xpForLevels[Number(user.level) - 1] : xpForMaxLevel;
 
   return (
     <>
@@ -398,9 +402,9 @@ const ProfilePage = ({ params }: Props) => {
                   <div className="flex flex-col w-full">
                     <div className="flex flex-row justify-between w-full">
                       <p className="text-md font-bold mr-4">Level {Number(user.level)}</p>
-                      <p className="text-md text-muted-foreground font-bold">{Number(user.currentXP)}/{100} XP</p>
+                      <p className="text-md text-muted-foreground font-bold">{Number(user.currentXP)}/{xpForNextLevel || 0} XP</p>
                     </div>
-                    <Progress className="w-full lg:w-64 mt-1" value={Number(user.currentXP)} />
+                    <LevelProgress className="w-full lg:w-64 mt-1" value={Number(user.currentXP)} max={xpForNextLevel} />
                   </div>
                   <div className="flex flex-col w-full items-start">
                     <p className="text-md font-bold mr-4">Unlocked Achievements</p>
