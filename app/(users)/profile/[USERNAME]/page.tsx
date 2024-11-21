@@ -44,6 +44,7 @@ const ProfilePage = ({ params }: Props) => {
   const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
+  const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
   const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
   const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
   const { result: unlockedProfileTaglines, isLoading: unlockedProfileTaglinesLoading } = useGetUnlockedTaglines();
@@ -115,6 +116,7 @@ const ProfilePage = ({ params }: Props) => {
     user === undefined
         || isChapmanStudentLoading
         || developerRoleLoading
+        || topPlayerIsLoading
         || moderatorRoleLoading
         || friendRoleLoading
         || unlockedProfileTaglinesLoading
@@ -286,6 +288,20 @@ const ProfilePage = ({ params }: Props) => {
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
+                        )}
+                        {isTopPlayer && (
+                          (
+                            <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Image draggable={false} className="select-none cursor-default" src="/badges/top_player_badge.svg" width="25" height="25" alt="Top Ranked Player Badge" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="text-sm p-1"> Top Ranked Player </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )
                         )}
                         {isFriendRole && (
                           <TooltipProvider delayDuration={0} skipDelayDuration={0}>

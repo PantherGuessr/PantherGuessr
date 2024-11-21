@@ -30,6 +30,7 @@ export const Navbar = () => {
   const { signOut, openUserProfile } = useClerk();
 
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer");
+  const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
   const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator");
   const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend");
   const {result: isChapmanStudent, isLoading: chapmanRoleLoading } = useHasChapmanEmail();
@@ -53,6 +54,7 @@ export const Navbar = () => {
           {
             isLoading
                     || developerRoleLoading
+                    || topPlayerIsLoading
                     || moderatorRoleLoading
                     || friendRoleLoading
                     || chapmanRoleLoading
@@ -128,6 +130,11 @@ export const Navbar = () => {
                                 { /* user has the friend role */
                                   isFriendRole && (
                                     <Image draggable={false} className="select-none" src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
+                                  )}
+
+                                { /* if user is top player */
+                                  isTopPlayer && (
+                                    <Image draggable={false} className="select-none" src="/badges/top_player_badge.svg" width="25" height="25" alt="Top Ranked Player Badge" />
                                   )}
 
                                 { /* if user is an admin then display shield */
