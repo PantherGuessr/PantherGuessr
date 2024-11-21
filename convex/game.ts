@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 // Gets the number of random Levels from the database
 // export const getRandomLevels = query({
@@ -141,6 +142,25 @@ export const addLeaderboardEntryToGame = mutation({
     totalTimeTaken: v.int64()
   },
   handler: async (ctx, args) => {
+    const newXP = getTotalEarnedXP(
+      [
+        args.round_1,
+        args.round_2,
+        args.round_3,
+        args.round_4,
+        args.round_5
+      ],
+      [
+        args.round_1_distance,
+        args.round_2_distance,
+        args.round_3_distance,
+        args.round_4_distance,
+        args.round_5_distance
+      ]
+    );
+
+    await ctx.runMutation(internal.users.awardUserXP, { username: args.username, earnedXP: newXP });
+
     // make leaderboard entry
     const leaderboardEntry = await ctx.db.insert("leaderboardEntries", {
       game: args.gameId,
@@ -155,7 +175,8 @@ export const addLeaderboardEntryToGame = mutation({
       round_4_distance: args.round_4_distance,
       round_5: args.round_5,
       round_5_distance: args.round_5_distance,
-      totalTimeTaken: args.totalTimeTaken
+      totalTimeTaken: args.totalTimeTaken,
+      xpGained: newXP
     });
 
     // get game by ID
@@ -312,3 +333,49 @@ export const updateTimesPlayed = mutation({
 
   }
 });
+
+/**
+ * Calculates the total earned experience points (XP) based on the points and distances provided.
+ *
+ * @param {bigint[]} allPoints - An array of points earned in each game.
+ * @param {bigint[]} allDistances - An array of distances for each game.
+ * @returns {number} The total earned XP.
+ *
+ * @remarks
+ * - Adds a base score of 10 XP for playing a game.
+ * - Add 10 XP if it is the first game of the day.
+ * - For every 25 points earned, 1 XP is awarded.
+ * - For every "Spot On" game (distance <= 20), an additional 5 XP bonus is awarded.
+ * - If every round was "Spot On", the total XP is doubled.
+ */
+function getTotalEarnedXP(allPoints: bigint[], allDistances: bigint[]): number {
+  let earnedXP = 0;
+  
+  // TODO: Add 10xp if first game of the day
+  
+  // * Add score for playing a game
+  earnedXP += 10;
+  
+  // * For every 25 points you get 1xp
+  let totalPointsEarned = 0;
+  for(let i = 0; i < allPoints.length; ++i) {
+    totalPointsEarned += Number(allPoints[i]);
+  }
+  earnedXP += Math.floor(totalPointsEarned / 25);
+
+  // * For every "Spot On" (distance away <= 20) add 5xp bonus
+  let numberOfSpotOnGames = 0;
+  for(let i = 0; i < allDistances.length; ++i) {
+    if(allDistances[i] <= 20) {
+      earnedXP += 5;
+      numberOfSpotOnGames++;
+    }
+  }
+
+  // * If every round was spot on, double their score
+  if(numberOfSpotOnGames == allPoints.length) {
+    earnedXP *= 2;
+  }
+
+  return earnedXP;
+}

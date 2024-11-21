@@ -76,6 +76,7 @@ export default defineSchema({
     round_5: v.int64(),
     round_5_distance: v.int64(),
     totalTimeTaken: v.int64(),
+    xpGained: v.number(),
   }),
 
   ongoingGames: defineTable({
