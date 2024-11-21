@@ -166,8 +166,10 @@ export const awardUserXP = internalMutation({
     let currentXP = user.currentXP + BigInt(args.earnedXP);
     let level = user.level;
 
+    let canLevelUp = true;
+
     // Loop to calculate the new level and remaining XP
-    while (true) {
+    do {
       // Determine the XP required for the next level
       const xpForNextLevel = level < BigInt(xpForLevels.length + 1) ? BigInt(xpForLevels[Number(level) - 1]) : BigInt(xpForMaxLevel);
       
@@ -176,9 +178,9 @@ export const awardUserXP = internalMutation({
         currentXP -= xpForNextLevel; // Subtract the XP required for the next level
         level += 1n; // Increment the user's level
       } else {
-        break; // Exit the loop if the user does not have enough XP to level up
+        canLevelUp = false; // Exit the loop if the user does not have enough XP to level up
       }
-    }
+    } while (canLevelUp);
 
     console.log(`Awarded @${args.username} ${args.earnedXP} XP`);
 
