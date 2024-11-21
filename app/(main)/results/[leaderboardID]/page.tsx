@@ -19,9 +19,7 @@ type Props = {
     params: { leaderboardID: Id<"leaderboardEntries"> }
 }
 
-
 const ResultPage = ({ params }: Props) => {
-
   const leaderboardId = params.leaderboardID as Id<"leaderboardEntries">;
   const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardId });
   const [distances, setDistances] = useState<number[]>([]);
@@ -155,6 +153,12 @@ const ResultPage = ({ params }: Props) => {
                 <div className="flex flex-row justify-between">
                   <h2 className="font-bold">Final Score</h2>
                   <p className="bg-primary text-primary-foreground px-2">{finalScore}</p>
+                </div>
+              </div>
+              <div className="p-2">
+                <div className="flex flex-row justify-between">
+                  <h2 className="font-bold">XP Awarded</h2>
+                  <p className="bg-primary text-primary-foreground px-2">{leaderboardEntry?.xpGained || 0}</p>
                 </div>
               </div>
               <Separator />
