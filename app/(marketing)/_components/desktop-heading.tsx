@@ -22,9 +22,10 @@ interface DesktopHeadingProps {
     isDeveloperRole: boolean;
     isModeratorRole: boolean;
     isFriendRole: boolean;
+    isTopPlayer: boolean;
 }
 
-const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagline, background, joinDate, isChapmanStudent, isDeveloperRole, isModeratorRole, isFriendRole}) => {
+const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagline, background, joinDate, isChapmanStudent, isDeveloperRole, isModeratorRole, isFriendRole, isTopPlayer}) => {
   const [hoveredLeftMain, setHoveredLeftMain] = useState(false);
   const [hoveredCenterMain, setHoveredCenterMain] = useState(false);
   const [hoveredRightMain, setHoveredRightMain] = useState(false);
@@ -82,6 +83,9 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
                           )}
                           {isModeratorRole && (
                             <Image draggable={false} className="select-none cursor-default" src="/badges/moderator_badge.svg" width="15" height="15" alt="Moderator Badge" />
+                          )}
+                          {isTopPlayer && (
+                            <Image draggable={false} className="select-none cursor-default" src="/badges/top_player_badge.svg" width="15" height="15" alt="Top Ranked Player Badge" />
                           )}
                           {isFriendRole && (
                             <Image draggable={false} className="select-none cursor-default" src="/badges/friend_badge.svg" alt="Friend Badge" width="15" height="15" />
@@ -261,6 +265,9 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
                           )}
                           {isModeratorRole && (
                             <Image draggable={false} className="select-none cursor-default" src="/badges/moderator_badge.svg" width="15" height="15" alt="Moderator Badge" />
+                          )}
+                          {isTopPlayer && (
+                            <Image draggable={false} className="select-none cursor-default" src="/badges/top_player_badge.svg" width="15" height="15" alt="Top Ranked Player Badge" />
                           )}
                           {isFriendRole && (
                             <Image draggable={false} className="select-none cursor-default" src="/badges/friend_badge.svg" alt="Friend Badge" width="15" height="15" />

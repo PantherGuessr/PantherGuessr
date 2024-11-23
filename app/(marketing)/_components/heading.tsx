@@ -25,6 +25,7 @@ export const Heading = () => {
   const user = useQuery(api.users.getUserByUsername, { username: clerkUser.user?.username ?? "" });
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
+  const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
   const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
   const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
   const { result: profileTagline } = useGetSelectedTagline(user?.clerkId);
@@ -61,6 +62,7 @@ export const Heading = () => {
                 && !isChapmanStudentLoading
                 && !developerRoleLoading
                 && !moderatorRoleLoading
+                && !topPlayerIsLoading
                 && !friendRoleLoading
                 && !profileBackgroundLoading
                 && (
@@ -77,6 +79,7 @@ export const Heading = () => {
                           isDeveloperRole={isDeveloperRole ?? false}
                           isModeratorRole={isModeratorRole ?? false}
                           isFriendRole={isFriendRole ?? false}
+                          isTopPlayer={isTopPlayer ?? false}
                         />
                       ) : (
                         <>
