@@ -442,6 +442,13 @@ export const updateSelectedBackground = mutation({
   }
 });
 
+export const getListOfProfiles = query({
+  args: {},
+  async handler(ctx) {
+    return await ctx.db.query("users").collect();
+  }
+});
+
 /**
  * Retrieves the current user record or throws an error if the user is not found.
  *
