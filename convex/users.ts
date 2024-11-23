@@ -443,6 +443,35 @@ export const updateSelectedBackground = mutation({
 });
 
 /**
+ * Retrieves the last N played games for a user based on their Clerk ID.
+ * 
+ * @param {Object} args - The arguments object.
+ * @param {string} args.clerkId - The Clerk ID of the user.
+ * @param {number} args.n - The number of games to retrieve.
+ * @returns {Promise<Array<Object>|null>} - A promise that resolves to an array of the last N played games or null if the user is not found.
+ */
+export const getLastNPlayedGames = query({
+  args: {
+    clerkId: v.string(),
+    n: v.number()
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
+
+    if(!user) {
+      return null;
+    }
+
+    const leaderboardEntriesList = await ctx.db.query("leaderboardEntries")
+      .withIndex("byUserId", (q) => q.eq("userId", user._id))
+      .order("desc")
+      .take(args.n);
+
+    return leaderboardEntriesList;
+  }
+});
+
+/**
  * Retrieves the current user record or throws an error if the user is not found.
  *
  * @param ctx - The context for the query.
