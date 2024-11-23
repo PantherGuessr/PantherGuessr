@@ -23,7 +23,11 @@ const ProfileSearchPage = () => {
   const handleSubmit = () => {
 
     if (filteredUsernames.length > 0) {
-      router.push(`/profile/${filteredUsernames[0].username}`);
+      router.push(`/profile/${filteredUsernames[selectedIndex].username}`);
+      return;
+    }
+    else if (suggestedUsernames.length > 0) {
+      router.push(`/profile/${suggestedUsernames[selectedIndex].username}`);
       return;
     }
 
