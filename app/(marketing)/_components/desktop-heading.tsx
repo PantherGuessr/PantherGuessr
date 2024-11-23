@@ -52,10 +52,10 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
         )}
       onMouseEnter={() => setHoveredLeftMain(true)} onMouseLeave={() => setHoveredLeftMain(false)}>
         <div className="flex flex-col justify-center items-center">
-          <div className={cn("flex flex-col transition-all justify-center align-center items-center drop-shadow-lg rounded-lg mb-6 hover:scale-105 cursor-default w-full h-75 border-4 border-primary", background)}>
+          <div className={cn("flex flex-col transition-all justify-center align-center items-center drop-shadow-lg rounded-lg mb-6 hover:scale-105 cursor-default w-full border-4 border-primary aspect-video", background)}>
             <Image src={picture}
               className="rounded-full transition-all border-primary border-4 inset-2 hover:scale-105 my-10 drop-shadow-md cursor-pointer"
-              alt="Chapman Panther Waving" width={100} height={100}
+              alt="Profile Picture" width={100} height={100}
               onClick={handleGoToUserProfile}
             />
           </div>
