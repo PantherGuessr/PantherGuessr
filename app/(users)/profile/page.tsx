@@ -118,7 +118,7 @@ const ProfileSearchPage = () => {
               <Button onClick={handleSubmit} disabled={!searchedUsername} size="icon" className="h-8 mt-0" type="submit"><Search className="h-4 w-4" /></Button>
             </div>
             {filteredUsernames.length > 0 && (
-              <div className="flex flex-col gap-y-2 mt-2 max-h-60 overflow-y-scroll">
+              <div className="flex flex-col gap-y-2 mt-2 max-h-60 overflow-y-auto">
                 {filteredUsernames.map((user, index) => (
                   <>
                     <Separator className="" />
@@ -134,7 +134,7 @@ const ProfileSearchPage = () => {
               </div>
             )}
             {!filteredUsernames || filteredUsernames.length === 0 && suggestedUsernames.length > 0 && (
-              <div className="flex flex-col gap-y-2 mt-2 max-h-60 overflow-y-scroll">
+              <div className="flex flex-col gap-y-2 mt-2 max-h-60 overflow-y-auto">
                 <div className="text-left py-1 pl-2 text-sm italic">No results found. Did you mean...</div>
                 {suggestedUsernames.map((user, index) => (
                   <>
