@@ -66,6 +66,7 @@ To run this project, you will need to add the following environment variables to
 1. `CONVEX_DEPLOYMENT`
 2. `NEXT_PUBLIC_CONVEX_URL`
 3. `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+4. `CLERK_WEBHOOK_SECRET`
 
 ## Contributing
 
