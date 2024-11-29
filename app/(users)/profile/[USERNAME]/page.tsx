@@ -27,6 +27,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Achievement from "./_components/Achievement";
 import { useAchievementCheck } from "@/hooks/userProfiles/use-get-unlocked-achievements";
 import { LevelProgress } from "./_components/LevelProgress";
+import GameHistory from "./_components/GameHistory";
+import { useGetRecentGames } from "@/hooks/userProfiles/use-get-recent-games";
 
 type Props = {
     params: { USERNAME: string }
@@ -80,6 +82,9 @@ const ProfilePage = ({ params }: Props) => {
   const [backgroundCSSValue, setBackgroundCSSValue] = useState<string | undefined>(profileBackground?.backgroundCSS);
   const [backgroundIdForUpdate, setBackgroundIdForUpdate] = useState(profileBackground?._id);
 
+  // recent games
+  const { result: recentGames, isLoading: recentGamesLoading } = useGetRecentGames(user?.clerkId);
+
   // page reloading effect that is just a CSS class change
   const [taglineReloadingEffect, setTaglineReloadingEffect] = useState(false);
 
@@ -129,6 +134,7 @@ const ProfilePage = ({ params }: Props) => {
         || isOnFireLoading
         || isSnipedLoading
         || isPhotoScoutLoading
+        || recentGamesLoading
   ) {
     return (
       <div className="min-h-full flex flex-col">
@@ -186,7 +192,7 @@ const ProfilePage = ({ params }: Props) => {
                         <CardDescription>Select a new background for your profile</CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <div className="grid grid-cols-2 md:grid-cols-3 grid-flow-row gap-4 max-h-24 md:max-h-48 overflow-scroll">
+                        <div className="grid grid-cols-2 md:grid-cols-3 grid-flow-row gap-4 max-h-24 md:max-h-48 overflow-y-scroll">
                           {unlockedProfileBackgrounds?.map((background) => (
                             <div key={background?._id} className={cn("flex items-center justify-center h-20 w-32 rounded-md cursor-pointer bg-gradient-red-purple"
                               , background?.backgroundCSS
@@ -414,7 +420,7 @@ const ProfilePage = ({ params }: Props) => {
                     <p className="text-md md:pl-4 font-bold text-muted-foreground/60 italic">Guessr since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
                   </div>
                 </div>
-                <div className="flex flex-col w-full md:w-auto space-y-10 items-start pt-4">
+                <div className="flex flex-col w-full md:w-auto space-y-10 items-start pt-4 pl-4">
                   <div className="flex flex-col w-full">
                     <div className="flex flex-row justify-between w-full">
                       <p className="text-md font-bold mr-4">Level {Number(user.level)}</p>
@@ -458,6 +464,9 @@ const ProfilePage = ({ params }: Props) => {
                     )}
                   </div>
                 </div>
+              </div>
+              <div className="flex w-full flex-col md:items-start items-center justify-between px-4 md:px-10 lg:px-20">
+                <GameHistory isCurrentUser={isCurrentUser} recentGames={recentGames} />
               </div>
             </div>
           </div>

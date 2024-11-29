@@ -86,6 +86,9 @@ export const GameProvider = ({
   const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
   const checkGuess = useMutation(api.game.checkGuess);
 
+  // user
+  const currentUser = useQuery(api.users.current);
+
   // analytics
   const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
   const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
@@ -180,6 +183,7 @@ export const GameProvider = ({
       addLeaderboardEntryToGame({
         gameId: game!._id,
         username: username,
+        userId: currentUser!._id,
         round_1: BigInt(allScores[0]),
         round_1_distance: BigInt(allDistances[0]),
         round_2: BigInt(allScores[1]),

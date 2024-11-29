@@ -129,6 +129,7 @@ export const addLeaderboardEntryToGame = mutation({
   args: {
     gameId: v.id("games"),
     username: v.string(),
+    userId: v.id("users"),
     round_1: v.int64(),
     round_1_distance: v.int64(),
     round_2: v.int64(),
@@ -165,6 +166,7 @@ export const addLeaderboardEntryToGame = mutation({
     const leaderboardEntry = await ctx.db.insert("leaderboardEntries", {
       game: args.gameId,
       username: args.username,
+      userId: args.userId,
       round_1: args.round_1,
       round_1_distance: args.round_1_distance,
       round_2: args.round_2,
