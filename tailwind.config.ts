@@ -62,6 +62,9 @@ const config: Config = {
       screens: {
         'xs': '480px',
       },
+      textShadow: {
+        'stroke': '1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000',
+      }
   	},
   },
   // eslint-disable-next-line @typescript-eslint/no-require-imports
