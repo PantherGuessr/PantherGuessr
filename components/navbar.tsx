@@ -21,6 +21,7 @@ import { Toaster } from "./ui/toaster";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import StreakBadge from "./streak-badge";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -121,6 +122,7 @@ export const Navbar = () => {
                         <MenubarMenu>
                           <MenubarTrigger className="bg-transparent outline-none hover:bg-accent focus:bg-accent cursor-pointer">
                             <div className="flex justify-end justify-items-end items-center">
+                              <StreakBadge streak={Number(user.currentStreak)} />
                               <div className="hidden xs:flex items-center gap-x-2 mr-2">
                                 { /* email ends in @chapman.edu */
                                   isChapmanStudent && (
@@ -147,7 +149,6 @@ export const Navbar = () => {
                                     <Image draggable={false} className="select-none" src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
                                   )}
                               </div>
-                              { /* Toast to copy username to clipboard */}
                               <p className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
                               <Avatar className="w-[25px] h-[25px] overflow-hidden">
                                 <AvatarFallback>{user?.username[0].toUpperCase()}</AvatarFallback>

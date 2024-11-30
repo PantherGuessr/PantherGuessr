@@ -88,6 +88,7 @@ export const GameProvider = ({
 
   // user
   const currentUser = useQuery(api.users.current);
+  const updateStreak = useMutation(api.users.updateStreak);
 
   // analytics
   const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
@@ -179,6 +180,9 @@ export const GameProvider = ({
 
       // gets username for leaderboard entry
       const username = user.user?.username ? user.user.username : "Anonymous";
+
+      // !!! it may be a bad idea to assume this is never null but, ya know, YOLO! - Dylan
+      updateStreak({ clerkId: currentUser!.clerkId });
 
       addLeaderboardEntryToGame({
         gameId: game!._id,

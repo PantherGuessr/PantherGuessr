@@ -6,15 +6,17 @@ export default defineSchema({
     clerkId: v.string(),
     username: v.string(),
     emails: v.array(v.string()),
+    level: v.int64(),
+    currentXP: v.int64(),
+    currentStreak: v.int64(),
+    lastPlayedTimestamp: v.optional(v.number()),
+    roles: v.optional(v.array(v.string())),
+    achievements: v.optional(v.array(v.id("achievements"))),
+    picture: v.string(),
     profileTagline: v.id("profileTaglines"),
     profileBackground: v.id("profileBackgrounds"),
     unlockedProfileTaglines: v.array(v.id("profileTaglines")),
     unlockedProfileBackgrounds: v.array(v.id("profileBackgrounds")),
-    level: v.int64(),
-    currentXP: v.int64(),
-    roles: v.optional(v.array(v.string())),
-    achievements: v.optional(v.array(v.id("achievements"))),
-    picture: v.string(),
   })
     .index("byClerkId", ["clerkId"])
     .index("byUsername", ["username"])
