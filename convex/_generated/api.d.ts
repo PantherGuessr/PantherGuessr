@@ -17,6 +17,7 @@ import type {
 } from "convex/server";
 import type * as admin from "../admin.js";
 import type * as continuegame from "../continuegame.js";
+import type * as crons from "../crons.js";
 import type * as game from "../game.js";
 import type * as gamestats from "../gamestats.js";
 import type * as http from "../http.js";
@@ -35,6 +36,7 @@ import type * as weeklychallenge from "../weeklychallenge.js";
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   continuegame: typeof continuegame;
+  crons: typeof crons;
   game: typeof game;
   gamestats: typeof gamestats;
   http: typeof http;
