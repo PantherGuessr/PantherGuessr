@@ -75,12 +75,14 @@ export const GameProvider = ({
         window.history.pushState(null, '', `/game/${game._id}`); // pushes game id URL if not continuing game
       }
       else {
+        setScore(startingScores?.reduce((a, b) => a + b, 0) ?? 0); // sets score to sum of starting scores if continuing game
         window.history.pushState(null, '', `/game/continue`); // pushes continue URL if continuing game
+        console.log(startingScores);
       }
       return [game.round_1, game.round_2, game.round_3, game.round_4, game.round_5]; // returns all levels for the game
     }
     return [];
-  }, [game, startingRound]);
+  }, [game, startingRound, startingScores]);
 
   // image sources and check guess query/mutations
   const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
@@ -163,26 +165,9 @@ export const GameProvider = ({
     window.localStorage.setItem("hasOngoingGame", "true");
 
     if(nextRoundNumber > levels.length) {
-      // adds loading states
-      setIsLoading(true);
-      setIsModalVisible(true);
-
-      // incrementing daily and monthly statistics
-      incrementDailyGameStats();
-      incrementMonthlyGameStats();
-
-      // deletes ongoing game and removes it from local storage
-      window.localStorage.removeItem("hasOngoingGame");
-      deleteOngoingGame({
-        gameId: game!._id,
-        userClerkId: user?.user?.id ?? ""
-      });
 
       // gets username for leaderboard entry
       const username = user.user?.username ? user.user.username : "Anonymous";
-
-      // !!! it may be a bad idea to assume this is never null but, ya know, YOLO! - Dylan
-      updateStreak({ clerkId: currentUser!.clerkId });
 
       addLeaderboardEntryToGame({
         gameId: game!._id,
@@ -202,6 +187,24 @@ export const GameProvider = ({
       }).then(leaderboardEntry => {
         setLeaderboardEntryId(leaderboardEntry);
       });
+
+      // adds loading states
+      setIsLoading(true);
+      setIsModalVisible(true);
+
+      // incrementing daily and monthly statistics
+      incrementDailyGameStats();
+      incrementMonthlyGameStats();
+
+      // deletes ongoing game and removes it from local storage
+      window.localStorage.removeItem("hasOngoingGame");
+      deleteOngoingGame({
+        gameId: game!._id,
+        userClerkId: user?.user?.id ?? ""
+      });
+
+      // !!! it may be a bad idea to assume this is never null but, ya know, YOLO! - Dylan
+      updateStreak({ clerkId: currentUser!.clerkId });
     } else {
       // updates the current round to the next round and updates the level
       setCurrentRound(currentRound + 1);

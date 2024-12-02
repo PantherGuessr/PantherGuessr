@@ -186,9 +186,17 @@ export const addLeaderboardEntryToGame = mutation({
 
     // add leaderboard entry to game with existing entries
     if (game) {
-      await ctx.db.patch(args.gameId, {
-        leaderboard: [...(game?.leaderboard ?? []), leaderboardEntry]
-      });
+      if (!game.firstPlayedByClerkId) {
+        await ctx.db.patch(args.gameId, {
+          firstPlayedByClerkId: args.userId,
+          leaderboard: [...(game?.leaderboard ?? []), leaderboardEntry]
+        });
+      }
+      else {
+        await ctx.db.patch(args.gameId, {
+          leaderboard: [...(game?.leaderboard ?? []), leaderboardEntry]
+        });
+      }
     }
     else {
       return null;
