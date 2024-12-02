@@ -5,7 +5,7 @@ const crons = cronJobs();
 
 crons.daily(
   "Reset inactive streaks",
-  { hourUTC: 0, minuteUTC: 0 },
+  { hourUTC: 8, minuteUTC: 0 }, // 12:00am PST
   internal.users.resetInactiveStreaks
 );
 
