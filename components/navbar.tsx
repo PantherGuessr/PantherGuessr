@@ -171,6 +171,10 @@ export const Navbar = () => {
                             </MenubarItem>
                             <MenubarSeparator />
                             <MenubarItem className="cursor-pointer" onClick={() => {
+                              openUserProfile();
+                            }}><Settings className="h-4 w-4 mr-2" /> Account Settings</MenubarItem>
+                            <MenubarSeparator />
+                            <MenubarItem className="cursor-pointer" onClick={() => {
                               navigator.clipboard.writeText(user!.username);
                               toast({
                                 description: `"${user!.username}" has been copied to clipboard!`,
@@ -179,13 +183,6 @@ export const Navbar = () => {
                             <MenubarItem className="cursor-pointer" onClick={() => {
                               router.push('/profile');
                             }}><UserRoundSearch className="h-4 w-4 mr-2" /> Search Profiles</MenubarItem>
-                            <MenubarSeparator />
-                            <MenubarItem className="cursor-pointer" onClick={() => {
-                              router.push(`/profile/${user!.username}`);
-                            }}><UserRound className="h-4 w-4 mr-2" /> My Profile</MenubarItem>
-                            <MenubarItem className="cursor-pointer" onClick={() => {
-                              openUserProfile();
-                            }}><Settings className="h-4 w-4 mr-2" /> Account Settings</MenubarItem>
 
                             {(isDeveloperRole || isModeratorRole) && (
                               <MenubarSeparator />
