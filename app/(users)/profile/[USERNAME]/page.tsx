@@ -435,42 +435,67 @@ const ProfilePage = ({ params }: Props) => {
                 <div className="flex flex-col w-full md:w-auto space-y-10 items-start pt-4 pl-4">
                   <div className="flex flex-col w-full">
                     <div className="flex flex-row space-x-4 justify-center md:justify-end w-full">
-                      <Button size="icon"
-                        onClick={() => alert("FRIEND REQUESTS COMING SOON")}
-                      >
-                        <UserPlus className="h-4 w-4" />
-                      </Button>
-                      <Button size="icon" onClick={() => {
-                        navigator.clipboard.writeText(window.location.href);
-                        toast({
-                          description: `@${user!.username} profile URL has been copied to clipboard!`,
-                        });
-                      }}>
-                        <Share className="h-4 w-4" />
-                      </Button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button size="icon"
+                              onClick={() => alert("FRIEND REQUESTS COMING SOON")}
+                            >
+                              <UserPlus className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Send a friend request</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button size="icon" onClick={() => {
+                              navigator.clipboard.writeText(window.location.href);
+                              toast({
+                                description: `@${user!.username} profile URL has been copied to clipboard!`,
+                              });
+                            }}>
+                              <Share className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent align="center">
+                            <p>Share this profile</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="destructive" size="icon">
-                            <Flag className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="destructive" size="icon">
+                                  <Flag className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Report this user</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>
-                              Report @{user.username} to PantherGuessr staff?
+        Report @{user.username} to PantherGuessr staff?
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you would like to submit a report about this user? This action cannot be undone.
+        Are you sure you would like to submit a report about this user? This action cannot be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>
-                              Cancel
+        Cancel
                             </AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleReportSubmission()}
-                            >
-                              Report @{user.username}
+                            <AlertDialogAction onClick={() => handleReportSubmission()}>
+        Report @{user.username}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
