@@ -110,5 +110,14 @@ export default defineSchema({
     isEnabled: v.boolean(),
     canUnlock: v.boolean()
   })
-    .index("byName", ["name"])
+    .index("byName", ["name"]),
+
+  userReports: defineTable({
+    reportedUser: v.id("users"),
+    reporter: v.id("users"),
+    reportReason: v.string(),
+    reporterMessage: v.optional(v.string()),
+    hasBeenResolved: v.boolean(),
+    moderatorMessage: v.optional(v.string())
+  })
 });
