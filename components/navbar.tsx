@@ -15,19 +15,21 @@ import Image from "next/image";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
-import { Copy, LogOut, Settings, Shield, User, UserRound, UserRoundSearch, Wrench } from "lucide-react";
+import { Copy, LogOut, Settings, Shield, User, UserRoundSearch, Wrench } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Toaster } from "./ui/toaster";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import StreakBadge from "./streak-badge";
+import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
 
 export const Navbar = () => {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useConvexAuth();
   const clerkUser = useUser();
   const user = useQuery(api.users.getUserByUsername, { username: clerkUser.user?.username ?? "" });
+  const { isLoading: isProfileTaglineLoading, result: profileTagline } = useGetSelectedTagline(user?.clerkId);
   const { signOut, openUserProfile } = useClerk();
 
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer");
@@ -59,7 +61,8 @@ export const Navbar = () => {
                     || moderatorRoleLoading
                     || friendRoleLoading
                     || chapmanRoleLoading
-                    || isUserLoading &&
+                    || isUserLoading
+                    || isProfileTaglineLoading &&
                 (
                   <div className="flex justify-end justify-items-end items-center">
                     <Skeleton className="h-6 w-[120px] mr-1" />
@@ -123,32 +126,6 @@ export const Navbar = () => {
                           <MenubarTrigger className="bg-transparent outline-none hover:bg-accent focus:bg-accent cursor-pointer">
                             <div className="flex justify-end justify-items-end items-center">
                               <StreakBadge streak={Number(user.currentStreak)} />
-                              <div className="hidden xs:flex items-center gap-x-2 mr-2">
-                                { /* email ends in @chapman.edu */
-                                  isChapmanStudent && (
-                                    <Image draggable={false} className="select-none" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="25" height="25" />
-                                  )}
-
-                                { /* user has the friend role */
-                                  isFriendRole && (
-                                    <Image draggable={false} className="select-none" src="/badges/friend_badge.svg" alt="Friend Badge" width="25" height="25" />
-                                  )}
-
-                                { /* if user is top player */
-                                  isTopPlayer && (
-                                    <Image draggable={false} className="select-none" src="/badges/top_player_badge.svg" width="25" height="25" alt="Top Ranked Player Badge" />
-                                  )}
-
-                                { /* if user is an admin then display shield */
-                                  isModeratorRole && (
-                                    <Image draggable={false} className="select-none" src="/badges/moderator_badge.svg" width="25" height="25" alt="Developer Badge" />
-                                  )}
-
-                                { /* if user is an admin then display shield */
-                                  isDeveloperRole && (
-                                    <Image draggable={false} className="select-none" src="/badges/developer_badge.svg" width="25" height="25" alt="Developer Badge" />
-                                  )}
-                              </div>
                               <p className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
                               <Avatar className="w-[25px] h-[25px] overflow-hidden">
                                 <AvatarFallback>{user?.username[0].toUpperCase()}</AvatarFallback>
@@ -158,6 +135,46 @@ export const Navbar = () => {
                           </MenubarTrigger>
                           <MenubarContent align="end">
                             <MenubarItem className="cursor-pointer" onClick={() => {
+                              router.push(`/profile/${user!.username}`);
+                            }}>
+                              <div className="flex space-x-3">
+                                <Avatar>
+                                  <AvatarImage src={user.picture} />
+                                  <AvatarFallback>{user.username.toUpperCase()}</AvatarFallback>
+                                </Avatar>
+                                <div className="space-y-1 text-left">
+                                  <div className="flex md:flex-row flex-col md:items-start">
+                                    <div className="flex flex-row">
+                                      <h4 className="text-sm font-semibold">@{user.username}</h4>
+                                      <div className="flex flex-row items-center gap-x-2 pl-2">
+                                        {isDeveloperRole && (
+                                          <Image draggable={false} className="select-none" src="/badges/developer_badge.svg" width="15" height="15" alt="Developer Badge" />
+                                        )}
+                                        {isModeratorRole && (
+                                          <Image draggable={false} className="select-none" src="/badges/moderator_badge.svg" width="15" height="15" alt="Moderator Badge" />
+                                        )}
+                                        {isTopPlayer && (
+                                          <Image draggable={false} className="select-none" src="/badges/top_player_badge.svg" width="15" height="15" alt="Top Ranked Player Badge" />
+                                        )}
+                                        {isFriendRole && (
+                                          <Image draggable={false} className="select-none" src="/badges/friend_badge.svg" alt="Friend Badge" width="15" height="15" />
+                                        )}
+                                        {isChapmanStudent && (
+                                          <Image draggable={false} className="select-none" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="15" height="15" />
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground font-semibold italic">{profileTagline?.tagline}</p>
+                                </div>
+                              </div>
+                            </MenubarItem>
+                            <MenubarSeparator />
+                            <MenubarItem className="cursor-pointer" onClick={() => {
+                              openUserProfile();
+                            }}><Settings className="h-4 w-4 mr-2" /> Account Settings</MenubarItem>
+                            <MenubarSeparator />
+                            <MenubarItem className="cursor-pointer" onClick={() => {
                               navigator.clipboard.writeText(user!.username);
                               toast({
                                 description: `"${user!.username}" has been copied to clipboard!`,
@@ -166,13 +183,6 @@ export const Navbar = () => {
                             <MenubarItem className="cursor-pointer" onClick={() => {
                               router.push('/profile');
                             }}><UserRoundSearch className="h-4 w-4 mr-2" /> Search Profiles</MenubarItem>
-                            <MenubarSeparator />
-                            <MenubarItem className="cursor-pointer" onClick={() => {
-                              router.push(`/profile/${user!.username}`);
-                            }}><UserRound className="h-4 w-4 mr-2" /> My Profile</MenubarItem>
-                            <MenubarItem className="cursor-pointer" onClick={() => {
-                              openUserProfile();
-                            }}><Settings className="h-4 w-4 mr-2" /> Account Settings</MenubarItem>
 
                             {(isDeveloperRole || isModeratorRole) && (
                               <MenubarSeparator />
