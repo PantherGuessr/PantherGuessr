@@ -15,7 +15,7 @@ import Image from "next/image";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
-import { Copy, LogOut, Settings, Shield, User, UserRound, UserRoundSearch, Wrench } from "lucide-react";
+import { Copy, LogOut, Settings, Shield, User, UserRoundSearch, Wrench } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Toaster } from "./ui/toaster";
 import { useRouter } from "next/navigation";
