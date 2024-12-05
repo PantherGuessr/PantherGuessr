@@ -15,6 +15,10 @@ const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => 
 
   const badgeStyle = isStreakActive() ? 'filter-none' : 'filter grayscale animate-pulse';
 
+  if(streak === 0) {
+    return;
+  }
+
   return ( 
     <div className={cn("hidden xs:flex items-center gap-x-2 mr-1 relative",
       badgeStyle
