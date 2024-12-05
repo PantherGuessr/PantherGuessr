@@ -6,7 +6,7 @@ interface StreakBadgeProps {
 
 const StreakBadge: React.FC<StreakBadgeProps> = ({ streak }) => {
   return ( 
-    <div className="hidden xs:flex items-center gap-x-2 mr-2 relative">
+    <div className="hidden xs:flex items-center gap-x-2 mr-1 relative">
       <Image
         draggable={false} className="select-none"
         src="/badges/streak_badge.svg"
