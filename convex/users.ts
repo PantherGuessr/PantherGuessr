@@ -554,6 +554,65 @@ export const resetInactiveStreaks = internalMutation({
 });
 
 /**
+ * Mutation to report a user.
+ * 
+ * @param {string} args.offenderClerkId - The Clerk ID of the user being reported.
+ * @param {string} args.reportReason - The reason for reporting the user.
+ * @param {string} args.reporterMessage - Additional message from the reporter.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the report is successfully created.
+ * 
+ * @async
+ * @function
+ * @name reportUser
+ * 
+ * @example
+ * ```typescript
+ * await reportUser({
+ *   offenderClerkId: "offender123",
+ *   reportReason: "Inappropriate behavior",
+ *   reporterMessage: "User was spamming in the chat."
+ * });
+ * ```
+ */
+export const reportUser = mutation({
+  args: {
+    offenderClerkId: v.string(),
+    reportReason: v.string(),
+    reporterMessage: v.string()
+  },
+  async handler(ctx, args) {
+    const reportUser = await getCurrentUser(ctx);
+    const offenderUser = await userByClerkId(ctx, args.offenderClerkId);
+
+    if(!reportUser || !offenderUser) {
+      return;
+    }
+
+    const timeFrame = 1 * 60 * 60 * 1000; // 1 hour
+
+    // Fetch the reports made by the user within the time frame
+    const recentReports = await ctx.db.query("userReports")
+      .filter(q => q.eq(q.field("reporter"), reportUser._id))
+      .filter(q => q.gt(q.field("_creationTime"), Date.now() - timeFrame))
+      .filter(q => q.eq(q.field("hasBeenResolved"), false))
+      .collect();
+
+    if(recentReports.length > 0) {
+      return;
+    }
+
+    await ctx.db.insert("userReports", {
+      reportedUser: offenderUser!._id,
+      reporter: reportUser!._id,
+      reportReason: args.reportReason,
+      reporterMessage: args.reporterMessage,
+      hasBeenResolved: false
+    });
+  }
+});
+
+/**
  * Retrieves the current user record or throws an error if the user is not found.
  *
  * @param ctx - The context for the query.
