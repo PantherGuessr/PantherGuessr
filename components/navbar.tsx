@@ -23,6 +23,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import StreakBadge from "./streak-badge";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
+import LevelBadge from "./level-badge";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -126,6 +127,7 @@ export const Navbar = () => {
                           <MenubarTrigger className="bg-transparent outline-none hover:bg-accent focus:bg-accent cursor-pointer">
                             <div className="flex justify-end justify-items-end items-center">
                               <StreakBadge streak={Number(user.currentStreak)} />
+                              <LevelBadge level={Number(user.level)} />
                               <p className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
                               <Avatar className="w-[25px] h-[25px] overflow-hidden">
                                 <AvatarFallback>{user?.username[0].toUpperCase()}</AvatarFallback>
