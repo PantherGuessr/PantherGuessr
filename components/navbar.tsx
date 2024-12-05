@@ -126,7 +126,9 @@ export const Navbar = () => {
                         <MenubarMenu>
                           <MenubarTrigger className="bg-transparent outline-none hover:bg-accent focus:bg-accent cursor-pointer">
                             <div className="flex justify-end justify-items-end items-center">
-                              <StreakBadge streak={Number(user.currentStreak)} />
+                              <StreakBadge 
+                                streak={Number(user.currentStreak)} 
+                                lastPlayedTime={Number(user.lastPlayedTimestamp)} />
                               <LevelBadge level={Number(user.level)} />
                               <p className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
                               <Avatar className="w-[25px] h-[25px] overflow-hidden">
