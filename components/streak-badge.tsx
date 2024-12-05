@@ -1,12 +1,24 @@
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 interface StreakBadgeProps {
   streak: number;
+  lastPlayedTime: number;
 }
 
-const StreakBadge: React.FC<StreakBadgeProps> = ({ streak }) => {
+const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => {
+
+  // If the user has not played in more than 24 hours, the streak badge will be greyed out and pulse
+  function isStreakActive() {
+    return (Date.now() - lastPlayedTime) < 86400000;
+  }
+
+  const badgeStyle = isStreakActive() ? 'filter-none' : 'filter grayscale animate-pulse';
+
   return ( 
-    <div className="hidden xs:flex items-center gap-x-2 mr-1 relative">
+    <div className={cn("hidden xs:flex items-center gap-x-2 mr-1 relative",
+      badgeStyle
+    )}>
       <Image
         draggable={false} className="select-none"
         src="/badges/streak_badge.svg"
