@@ -487,8 +487,9 @@ export const getLastNPlayedGames = query({
  * @returns {Promise<bigint>} The updated streak value.
  * @throws {Error} If the user could not be found.
  *
- * This mutation checks if the user has played today. If the user has played within the last full day,
- * it increments their streak. If more than a full day has passed since the last play, it resets the streak to 1.
+ * This mutation checks the user's last play timestamp and updates their streak accordingly.
+ * If the user played within the last full day (PST), the streak is incremented.
+ * If more than a full day has passed since the last play, the streak is reset to 1.
  * The updated streak and the current timestamp are then saved to the database.
  */
 export const updateStreak = mutation({
@@ -503,17 +504,19 @@ export const updateStreak = mutation({
     }
 
     const now = new Date();
+    const nowPST = new Date(now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
     const lastPlay = user.lastPlayedTimestamp ? new Date(user.lastPlayedTimestamp) : new Date(0);
+    const lastPlayPST = new Date(lastPlay.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
 
-    // Reset time part of the dates to midnight
-    const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const lastPlayMidnight = new Date(lastPlay.getFullYear(), lastPlay.getMonth(), lastPlay.getDate());
+    // Reset time part of the dates to midnight PST
+    const nowMidnightPST = new Date(nowPST.getFullYear(), nowPST.getMonth(), nowPST.getDate());
+    const lastPlayMidnightPST = new Date(lastPlayPST.getFullYear(), lastPlayPST.getMonth(), lastPlayPST.getDate());
 
     let newStreak = user.currentStreak ?? 0n;
 
     // Check if the user has already played today
-    if (nowMidnight.getTime() !== lastPlayMidnight.getTime()) {
-      const timeSinceLastPlay = nowMidnight.getTime() - lastPlayMidnight.getTime();
+    if (nowMidnightPST.getTime() !== lastPlayMidnightPST.getTime()) {
+      const timeSinceLastPlay = nowMidnightPST.getTime() - lastPlayMidnightPST.getTime();
       if (timeSinceLastPlay <= 24 * 60 * 60 * 1000) {
         // Played within the next full day, increment streak
         newStreak += 1n;
@@ -531,19 +534,23 @@ export const updateStreak = mutation({
 
 /**
  * Resets the current streaks of users who have been inactive for more than 24 hours.
- *
- * This function queries the database for users whose `lastPlayedTimestamp` is older than
- * midnight of the current day minus 24 hours. For each inactive user found, it resets their
- * `currentStreak` to 0 and sets their `lastPlayedTimestamp` to `undefined`.
- *
- * @returns {Promise<string>} A message indicating the number of users whose streaks were cleared.
+ * 
+ * This function calculates the current time in the PST timezone and determines the 
+ * midnight timestamp of the current day in PST. It then queries the database for users 
+ * whose `lastPlayedTimestamp` is earlier than 24 hours before the current midnight PST.
+ * For each inactive user found, it resets their `currentStreak` to 0 and sets their 
+ * `lastPlayedTimestamp` to undefined.
+ * 
+ * @param ctx - The context object containing the database connection and other utilities.
+ * @returns A message indicating the number of users whose streaks were cleared.
  */
 export const resetInactiveStreaks = internalMutation({
   async handler(ctx) {
     const now = new Date();
-    const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const nowPST = new Date(now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+    const nowMidnightPST = new Date(nowPST.getFullYear(), nowPST.getMonth(), nowPST.getDate()).getTime();
 
-    const inactiveUsers = await ctx.db.query("users").filter(q => q.lt(q.field("lastPlayedTimestamp"), nowMidnight - 24 * 60 * 60 * 1000)).collect();
+    const inactiveUsers = await ctx.db.query("users").filter(q => q.lt(q.field("lastPlayedTimestamp"), nowMidnightPST - 24 * 60 * 60 * 1000)).collect();
 
     for (const user of inactiveUsers) {
       await ctx.db.patch(user._id, { currentStreak: 0n, lastPlayedTimestamp: undefined });
