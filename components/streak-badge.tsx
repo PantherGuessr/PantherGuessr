@@ -8,15 +8,22 @@ interface StreakBadgeProps {
 
 const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => {
 
-  // If the user has not played in more than 24 hours, the streak badge will be greyed out and pulse
+  // If the user has not played today, the streak badge will be greyed out and pulse
   function isStreakActive() {
-    return (Date.now() - lastPlayedTime) < 86400000;
+    const now = new Date();
+    const lastPlayedDate = new Date(lastPlayedTime);
+
+    // Reset time part of the dates to midnight
+    const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const lastPlayedMidnight = new Date(lastPlayedDate.getFullYear(), lastPlayedDate.getMonth(), lastPlayedDate.getDate()).getTime();
+
+    return nowMidnight === lastPlayedMidnight;
   }
 
   const badgeStyle = isStreakActive() ? 'filter-none' : 'filter grayscale animate-pulse';
 
-  if(streak === 0) {
-    return;
+  if (streak === 0) {
+    return null;
   }
 
   return ( 

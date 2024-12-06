@@ -480,19 +480,15 @@ export const getLastNPlayedGames = query({
 });
 
 /**
- * Mutation to update the user's streak based on their last play timestamp.
+ * Updates the user's streak based on their last play timestamp.
  *
- * @param {Object} args - The arguments object.
+ * @mutation
  * @param {string} args.clerkId - The Clerk ID of the user.
  * @returns {Promise<bigint>} The updated streak value.
- *
  * @throws {Error} If the user could not be found.
  *
- * The function checks the time since the user's last play:
- * - If the user has not played today and the last play was within 48 hours, the streak is incremented.
- * - If the user has not played today and the last play was more than 48 hours ago, the streak is reset to 1.
- * - If the user has already played today, the streak remains unchanged.
- *
+ * This mutation checks if the user has played today. If the user has played within the last full day,
+ * it increments their streak. If more than a full day has passed since the last play, it resets the streak to 1.
  * The updated streak and the current timestamp are then saved to the database.
  */
 export const updateStreak = mutation({
@@ -508,17 +504,21 @@ export const updateStreak = mutation({
 
     const now = new Date();
     const lastPlay = user.lastPlayedTimestamp ? new Date(user.lastPlayedTimestamp) : new Date(0);
-    const timeSinceLastPlay = now.getTime() - lastPlay.getTime();
+
+    // Reset time part of the dates to midnight
+    const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const lastPlayMidnight = new Date(lastPlay.getFullYear(), lastPlay.getMonth(), lastPlay.getDate());
 
     let newStreak = user.currentStreak ?? 0n;
 
     // Check if the user has already played today
-    if (now.toDateString() !== lastPlay.toDateString()) {
-      if (timeSinceLastPlay < 48 * 60 * 60 * 1000) {
-        // Less than 48 hours, increment streak
+    if (nowMidnight.getTime() !== lastPlayMidnight.getTime()) {
+      const timeSinceLastPlay = nowMidnight.getTime() - lastPlayMidnight.getTime();
+      if (timeSinceLastPlay <= 24 * 60 * 60 * 1000) {
+        // Played within the next full day, increment streak
         newStreak += 1n;
       } else {
-        // More than 48 hours, reset streak
+        // More than a full day, reset streak
         newStreak = 1n;
       }
     }
@@ -530,20 +530,20 @@ export const updateStreak = mutation({
 });
 
 /**
- * Resets the current streak of users who have been inactive for more than 24 hours.
- * 
- * This function queries the database for users whose `lastPlayedTimestamp` is older than 24 hours.
- * For each inactive user found, it sets their `currentStreak` to 0.
- * 
- * @param ctx - The context object containing the database instance.
- * 
- * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+ * Resets the current streaks of users who have been inactive for more than 24 hours.
+ *
+ * This function queries the database for users whose `lastPlayedTimestamp` is older than
+ * midnight of the current day minus 24 hours. For each inactive user found, it resets their
+ * `currentStreak` to 0 and sets their `lastPlayedTimestamp` to `undefined`.
+ *
+ * @returns {Promise<string>} A message indicating the number of users whose streaks were cleared.
  */
 export const resetInactiveStreaks = internalMutation({
   async handler(ctx) {
-    const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
+    const now = new Date();
+    const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
-    const inactiveUsers = await ctx.db.query("users").filter(q => q.lt(q.field("lastPlayedTimestamp"), twentyFourHoursAgo)).collect();
+    const inactiveUsers = await ctx.db.query("users").filter(q => q.lt(q.field("lastPlayedTimestamp"), nowMidnight - 24 * 60 * 60 * 1000)).collect();
 
     for (const user of inactiveUsers) {
       await ctx.db.patch(user._id, { currentStreak: 0n, lastPlayedTimestamp: undefined });
