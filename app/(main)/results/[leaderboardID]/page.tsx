@@ -11,7 +11,6 @@ import Link from "next/link";
 import html2canvas from 'html2canvas';
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 
