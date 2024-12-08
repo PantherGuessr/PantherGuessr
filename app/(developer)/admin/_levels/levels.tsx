@@ -26,7 +26,7 @@ type Level = {
     longitude: number;
     imageId: string;
     timesPlayed: bigint;
-    tags: string[];
+    tags?: string[];
 };
 
 
