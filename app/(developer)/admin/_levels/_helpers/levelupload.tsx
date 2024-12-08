@@ -9,7 +9,15 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import convert from "heic-convert";
 import imageCompression from 'browser-image-compression';
-import { LoaderCircle, Plus } from "lucide-react";
+import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
+import { MultiSelect } from "@/components/ui/multi-select";
+
+const tagsList = [
+  { value: "Standard", label: "Standard", icon: University },
+  { value: "Off Campus", label: "Off Campus", icon: CarFront },
+  { value: "Orange Circle", label: "Orange Circle", icon: Store },
+  { value: "Residence Areas", label: "Residence Areas", icon: House },
+];
 
 const LevelUpload = () => {
 
@@ -17,6 +25,7 @@ const LevelUpload = () => {
   const imageInput = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [description, setDescription] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
   const [levelCreatorDialogOpen, setLevelCreatorDialogOpen] = useState(false);
@@ -71,7 +80,7 @@ const LevelUpload = () => {
 
       // image compression options regardless of conversion
       const imageCompressionOptions = {
-        maxSizeMB: 1.50,
+        maxSizeMB: 1.00,
         maxWidthOrHeight: 1920,
         useWebWorker: true,
       };
@@ -95,16 +104,18 @@ const LevelUpload = () => {
         description: description.value, 
         latitude: markerPosition.lat, 
         longitude: markerPosition.lng,
-        authorUsername: "dtsivkovski"
+        authorUsername: "developer",
+        tags: selectedTags
       });
 
       // reset form and close dialog
       setSelectedImage(null);
-            imageInput.current!.value = "";
-            setDescription("");
-            setSubmitButtonDisabled(false);
-            setLevelCreatorDialogOpen(false);
-            setIsSubmitting(false);
+      imageInput.current!.value = "";
+      setDescription("");
+      setSelectedTags([]);
+      setSubmitButtonDisabled(false);
+      setLevelCreatorDialogOpen(false);
+      setIsSubmitting(false);
     }
         
   }
@@ -142,6 +153,18 @@ const LevelUpload = () => {
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 placeholder="Description"/>
+            </div>
+            <div className="grid w-full items-center gap-1.5 py-2">
+              <Label htmlFor="tags">Tags</Label>
+              <MultiSelect
+                options={tagsList}
+                onValueChange={setSelectedTags}
+                defaultValue={selectedTags}
+                placeholder="Select tags"
+                variant="inverted"
+                animation={0}
+                maxCount={3}
+              />
             </div>
             <div className="flex w-full h-80 grow py-2">
               <UploadMap />
