@@ -174,7 +174,7 @@ const Levels = () => {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Author
+            Tags
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
