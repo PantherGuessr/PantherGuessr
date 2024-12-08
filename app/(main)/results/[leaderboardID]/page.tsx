@@ -11,16 +11,15 @@ import Link from "next/link";
 import html2canvas from 'html2canvas';
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 
 type Props = {
-    params: { leaderboardID: Id<"leaderboardEntries"> }
+    params: { leaderboardID: string }
 }
 
 const ResultPage = ({ params }: Props) => {
-  const leaderboardId = params.leaderboardID as Id<"leaderboardEntries">;
+  const leaderboardId = params.leaderboardID;
   const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardId });
   const [distances, setDistances] = useState<number[]>([]);
   const [scores, setScores] = useState<number[]>([]);
@@ -96,12 +95,26 @@ const ResultPage = ({ params }: Props) => {
     }
   };
 
-  while(leaderboardEntry === undefined) {
+  if (leaderboardEntry === undefined) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
           <Loader2 className="h-20 w-20 animate-spin" />
         </div>
+      </div>
+    );
+  }
+
+  if (leaderboardEntry === null) {
+    return (
+      <div className="min-h-full flex flex-col items-center justify-center text-center px-6 pb-10">
+        <h1 className="text-2xl font-bold">Invalid or Expired Results ID</h1>
+        <p>Please check the URL or go back to the main menu.</p>
+        <Link href="/">
+          <Button variant="default" className="mt-4">
+            <Home className="mr-2 w-4 h-4" /> Go To Home Page
+          </Button>
+        </Link>
       </div>
     );
   }

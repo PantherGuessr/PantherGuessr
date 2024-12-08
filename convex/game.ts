@@ -2,6 +2,7 @@ import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 
 // Gets the number of random Levels from the database
 // export const getRandomLevels = query({
@@ -205,10 +206,18 @@ export const addLeaderboardEntryToGame = mutation({
  * @returns The leaderboard entry
  */
 export const getPersonalLeaderboardEntryById = query({
-  args: { id: v.id("leaderboardEntries") },
-  handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
-  }
+  args: { id: v.string() },
+  handler: async (ctx, { id }) => {
+    try {
+      const docId = id as Id<"leaderboardEntries">;
+      const doc = await ctx.db.get(docId);
+      return doc || null; // If doc doesn't exist, doc is null
+    } catch (error) {
+      console.log(error);
+      // If decoding fails (invalid ID format), return null
+      return null;
+    }
+  },
 });
 
 /**
