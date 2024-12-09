@@ -11,6 +11,7 @@ import convert from "heic-convert";
 import imageCompression from 'browser-image-compression';
 import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
 import { MultiSelect } from "@/components/ui/multi-select";
+import { useUser } from "@clerk/nextjs";
 
 const tagsList = [
   { value: "Standard", label: "Standard", icon: University },
@@ -20,6 +21,8 @@ const tagsList = [
 ];
 
 const LevelUpload = () => {
+
+  const user = useUser();
 
   const { localMarkerPosition } = useMarker();
   const imageInput = useRef<HTMLInputElement>(null);
@@ -54,6 +57,10 @@ const LevelUpload = () => {
     else {
       setIsSubmitting(true);
       setSubmitButtonDisabled(true);
+
+      // get authenticated user's username
+      const username = user.user?.username || "admin";
+
       // create buffers for HEIC to JPEG conversion
       const imageBuffer = await selectedImage.arrayBuffer();
       let convertedBuffer: ArrayBuffer | undefined;
@@ -104,7 +111,7 @@ const LevelUpload = () => {
         description: description.value, 
         latitude: markerPosition.lat, 
         longitude: markerPosition.lng,
-        authorUsername: "developer",
+        authorUsername: username,
         tags: selectedTags
       });
 
