@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
-import { Check, ChevronsUpDown, Flag, Loader2, PenLine, Save, Share, SquarePen, UserPlus, UserSearch, X } from "lucide-react";
+import { Check, ChevronsUpDown, Flag, Loader2, Save, Share, SquarePen, UserPlus, UserSearch, X } from "lucide-react";
 import "./backgrounds.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
@@ -32,6 +31,7 @@ import { useGetRecentGames } from "@/hooks/userProfiles/use-get-recent-games";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/hooks/use-toast";
+import ProfileBackground from "./_components/ProfileBackground";
 
 type Props = {
     params: { USERNAME: string }
@@ -190,50 +190,18 @@ const ProfilePage = ({ params }: Props) => {
           <div className={
             cn("h-full flex flex-col")
           }>
-            <div className={
-              cn("flex w-full h-96",
-                backgroundCSSValue ?? "bg-gradient-red-purple"
-              )
-            }>
-              <div className="flex h-full w-full bg-gradient-to-b from-background to-transparent justify-center items-center md:justify-end md:items-end p-6">
-                {isCurrentUser && (isEditingBackground ? (
-                  <>
-                    <Card className="translate-y-[-2em] md:translate-y-0">
-                      <CardHeader>
-                        <CardTitle>Background</CardTitle>
-                        <CardDescription>Select a new background for your profile</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-2 md:grid-cols-3 grid-flow-row gap-4 max-h-24 md:max-h-48 overflow-y-scroll">
-                          {unlockedProfileBackgrounds?.map((background) => (
-                            <div key={background?._id} className={cn("flex items-center justify-center h-20 w-32 rounded-md cursor-pointer bg-gradient-red-purple"
-                              , background?.backgroundCSS
-                            )
-                            } onClick={() => {
-                              setBackgroundCSSValue(background?.backgroundCSS);
-                              setBackgroundIdForUpdate(background!._id);
-                              updateSelectedBackground({
-                                clerkId: user.clerkId,
-                                backgroundId: background!._id
-                              });
-                              setIsEditingBackground(false);
-                            }}>{background?._id == backgroundIdForUpdate && (
-                                <p className="text-white text-sm">Selected</p>
-                              )}</div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-full h-full flex justify-end items-end">
-                      <Button onClick={() => setIsEditingBackground(true)} className="h-10 w-10 p-0" variant="secondary"><PenLine className="h-4 w-4" /></Button>
-                    </div>
-                  </>
-                ))}
-              </div>
-            </div>
+            <ProfileBackground
+              backgroundCSSValue={backgroundCSSValue}
+              isCurrentUser={isCurrentUser}
+              isEditingBackground={isEditingBackground}
+              setIsEditingBackground={setIsEditingBackground}
+              unlockedProfileBackgrounds={unlockedProfileBackgrounds}
+              userClerkId={user.clerkId}
+              setBackgroundCSSValue={setBackgroundCSSValue}
+              setBackgroundIdForUpdate={setBackgroundIdForUpdate}
+              backgroundIdForUpdate={backgroundIdForUpdate}
+              updateSelectedBackground={updateSelectedBackground}
+            />
             <div className="flex flex-col items-center justify-center text-center gap-y-2 flex-1 px-6 pb-4 bg-background">
               <div className="flex w-full md:flex-row flex-col md:items-start items-center justify-between px-4 md:px-10 lg:px-20">
                 <div className="flex md:flex-row flex-col items-center md:items-start md:pt-4">
