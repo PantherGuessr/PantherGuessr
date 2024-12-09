@@ -137,7 +137,7 @@ const LevelUpload = () => {
           </DialogHeader>
           <div className="flex flex-col items-center">
             <div className="grid w-full items-center gap-1.5 py-2">
-              <Label htmlFor="picture">Picture</Label>
+              <Label htmlFor="picture">Picture <span className="font-bold text-red-500">*</span></Label>
               <Input 
                 id="picture" 
                 type="file" 
@@ -146,7 +146,7 @@ const LevelUpload = () => {
                 onChange={(event) => setSelectedImage(event.target.files![0])}/>
             </div>
             <div className="grid w-full items-center gap-1.5 py-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">Description <span className="font-bold text-red-500">*</span></Label>
               <Input 
                 id="description" 
                 type="text" 
