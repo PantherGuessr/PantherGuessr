@@ -26,6 +26,7 @@ type Level = {
     longitude: number;
     imageId: string;
     timesPlayed: bigint;
+    tags?: string[];
 };
 
 
@@ -166,18 +167,21 @@ const Levels = () => {
       },
     },
     {
-      accessorKey: "authorUsername",
+      accessorKey: "tags",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Author
+            Tags
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
       },
+      cell: (cell) => {
+        return cell.row.original.tags ? cell.row.original.tags.join(", ") : "";
+      }
     },
     {
       accessorKey: "timesPlayed",

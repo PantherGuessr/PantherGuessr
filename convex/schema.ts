@@ -28,7 +28,8 @@ export default defineSchema({
     longitude: v.float64(),
     imageId: v.id("_storage"),
     timesPlayed: v.int64(),
-    authorUsername: v.optional(v.string())
+    authorUsername: v.optional(v.string()),
+    tags: v.optional(v.array(v.string())),
   }),
 
   gameStats: defineTable({
