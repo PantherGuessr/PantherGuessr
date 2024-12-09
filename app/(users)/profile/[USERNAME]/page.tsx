@@ -23,7 +23,6 @@ import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tag
 import { useGetUnlockedBackgrounds } from "@/hooks/userProfiles/use-get-unlocked-backgrounds";
 import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Achievement from "./_components/Achievement";
 import { useAchievementCheck } from "@/hooks/userProfiles/use-get-unlocked-achievements";
 import { LevelProgress } from "./_components/LevelProgress";
 import GameHistory from "./_components/GameHistory";
@@ -32,6 +31,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Toaster } from "@/components/ui/toaster";
 import { toast } from "@/hooks/use-toast";
 import ProfileBackground from "./_components/ProfileBackground";
+import ProfileAchievements from "./_components/ProfileAchievements";
 
 type Props = {
     params: { USERNAME: string }
@@ -203,9 +203,9 @@ const ProfilePage = ({ params }: Props) => {
               updateSelectedBackground={updateSelectedBackground}
             />
             <div className="flex flex-col items-center justify-center text-center gap-y-2 flex-1 px-6 pb-4 bg-background">
-              <div className="flex w-full md:flex-row flex-col md:items-start items-center justify-between px-4 md:px-10 lg:px-20">
-                <div className="flex md:flex-row flex-col items-center md:items-start md:pt-4">
-                  <Avatar className="flex-col translate-y-[-5em] w-[200px] h-[200px] mb-[-5em] md:mb-0 border-8 border-background overflow-hidden">
+              <div className="flex w-full lg:flex-row flex-col lg:items-start items-center justify-between px-4 lg:px-10 xl:px-20">
+                <div className="flex lg:flex-row flex-col items-center lg:items-start lg:pt-4">
+                  <Avatar className="flex-col translate-y-[-5em] w-[200px] h-[200px] mb-[-5em] lg:mb-0 border-8 border-background overflow-hidden">
                     <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
                     <AvatarImage src={user.picture} alt={`${user.username}'s Profile Picture`} className="object-cover" />
                   </Avatar>
@@ -387,22 +387,22 @@ const ProfilePage = ({ params }: Props) => {
                         </>
                       ) : (   
                         <> 
-                          <p className="text-md md:pl-4 font-bold text-muted-foreground italic cursor-default">{profileTagline?.tagline}</p>
+                          <p className="text-md lg:pl-4 font-bold text-muted-foreground italic cursor-default">{profileTagline?.tagline}</p>
                           <SquarePen className="h-4 w-4 ml-1 cursor-pointer" onClick={() => {
                             setTaglineForUpdate(profileTagline?.tagline);
                             setIsEditingTagline(true);
                           }} />
                         </>  
                       )): (
-                        <p className="text-md md:pl-4 font-bold text-muted-foreground italic">{profileTagline?.tagline}</p>
+                        <p className="text-md lg:pl-4 font-bold text-muted-foreground italic">{profileTagline?.tagline}</p>
                       )}
                     </div>
-                    <p className="text-md md:pl-4 font-bold text-muted-foreground/60 italic">Guessr since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+                    <p className="text-md lg:pl-4 font-bold text-muted-foreground/60 italic">Guessr since {new Date(user._creationTime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
                   </div>
                 </div>
-                <div className="flex flex-col w-full md:w-auto space-y-10 items-start pt-4 pl-4">
+                <div className="flex flex-col w-full lg:w-auto space-y-10 items-start pt-4 pl-4">
                   <div className="flex flex-col w-full">
-                    <div className="flex flex-row space-x-4 justify-center md:justify-end w-full">
+                    <div className="flex flex-row space-x-4 justify-center lg:justify-end w-full">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -477,41 +477,21 @@ const ProfilePage = ({ params }: Props) => {
                     </div>
                     <LevelProgress className="w-full lg:w-64 mt-1" value={Number(user.currentXP)} max={xpForNextLevel} />
                   </div>
-                  <div className="flex flex-col w-full items-start">
-                    <p className="text-md font-bold mr-4">Unlocked Achievements</p>
-                    {(hasEarlyAdopter || hasFirstSteps || hasMapMaster || hasOnFire || hasSniped || hasPhotoScout) ? (
-                      <>
-                        <div className="grid grid-cols-6 md:sm:grid-cols-3 gap-2 w-full md:w-auto">
-
-                          {hasEarlyAdopter && (
-                            <Achievement name="Early Adopter" description={earlyAdopterDescription!} imageSrc="/achievements/early_adopter_achievement.svg" />
-                          )}
-
-                          {hasFirstSteps && (
-                            <Achievement name="First Steps" description={firstStepsDescription!} imageSrc="/achievements/first_steps_achievement.svg" />
-                          )}
-
-                          {hasMapMaster && (
-                            <Achievement name="Map Master" description={mapMasterDescription!} imageSrc="/achievements/map_master_achievement.svg" />
-                          )}
-
-                          {hasOnFire && (
-                            <Achievement name="On Fire" description={onFireDescription!} imageSrc="/achievements/on_fire_achievement.svg" />
-                          )}
-
-                          {hasSniped && (
-                            <Achievement name="Sniped" description={snipedDescription!} imageSrc="/achievements/perfect_game_achievement.svg" />
-                          )}
-
-                          {hasPhotoScout && (
-                            <Achievement name="Photo Scout" description={photoScoutDescription!} imageSrc="/achievements/photo_scout_achievement.svg" />
-                          )}
-                        </div>
-                      </>
-                    ): (
-                      <p className="font-bold text-muted-foreground/60 italic">None</p>
-                    )}
-                  </div>
+                  <ProfileAchievements
+                    hasEarlyAdopter={hasEarlyAdopter}
+                    earlyAdopterDescription={earlyAdopterDescription}
+                    hasFirstSteps={hasFirstSteps}
+                    firstStepsDescription={firstStepsDescription}
+                    hasMapMaster={hasMapMaster}
+                    mapMasterDescription={mapMasterDescription}
+                    hasOnFire={hasOnFire}
+                    onFireDescription={onFireDescription}
+                    hasSniped={hasSniped}
+                    snipedDescription={snipedDescription}
+                    hasPhotoScout={hasPhotoScout}
+                    photoScoutDescription={photoScoutDescription}
+                  />
+                  
                 </div>
               </div>
               <div className="flex w-full flex-col md:items-start items-center justify-between px-4 md:px-10 lg:px-20">
