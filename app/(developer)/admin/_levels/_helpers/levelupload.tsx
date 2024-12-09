@@ -59,7 +59,7 @@ const LevelUpload = () => {
       setSubmitButtonDisabled(true);
 
       // get authenticated user's username
-      const username = user.user?.username || "admin";
+      const username = user.user?.username || "developer";
 
       // create buffers for HEIC to JPEG conversion
       const imageBuffer = await selectedImage.arrayBuffer();
