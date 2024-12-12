@@ -73,7 +73,6 @@ export const GameProvider = ({
   const ids = useMemo(() => 
   {
     if (gameData) {
-      console.log("Game data:", gameData);
       return [
         gameData.gameContent.round_1,
         gameData.gameContent.round_2,
