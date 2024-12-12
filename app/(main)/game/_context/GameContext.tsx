@@ -221,7 +221,7 @@ export const GameProvider = ({
 
   useEffect(() => {
     if (leaderboardEntryId) {
-      router.push(`/results/${leaderboardEntryId}`);
+      router.push(`/results/${leaderboardEntryId}?fromGame=true`);
     }
   }, [leaderboardEntryId, router]);
 
