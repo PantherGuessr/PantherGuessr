@@ -105,7 +105,7 @@ export const clearOldGames = internalMutation({
     const oldtime = time - monthInMs;
     const games = await ctx.db.query("games").filter(
       q => q.lt(q.field("_creationTime"), oldtime)
-    ).collect()
+    ).collect();
 
     // iterate through all games
     for (const game of games) {
