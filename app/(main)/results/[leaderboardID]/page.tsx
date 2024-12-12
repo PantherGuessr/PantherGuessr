@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Separator } from "@/components/ui/separator";
 import { Download, Home, Loader2, Share } from "lucide-react";
 import Link from "next/link";
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { api } from "@/convex/_generated/api";
@@ -178,7 +178,7 @@ const ResultPage = ({ params }: Props) => {
               <div className="flex flex-col space-y-4">
                 <div className="p-2">
                   <div className="flex flex-row justify-center">
-                    <Logo />
+                    <Logo as_png={true} />
                   </div>
                 </div>
               </div>
