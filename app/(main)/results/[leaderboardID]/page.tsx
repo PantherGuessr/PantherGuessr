@@ -202,7 +202,7 @@ const ResultPage = ({ params }: Props) => {
           </Link>
           {isFromGame && (
             <Link href="/game">
-              <Button variant="default"><Gamepad2 className="h-4 w-4 mr-2" />Play Again</Button>
+              <Button variant="default"><Gamepad2 className="h-4 w-4 mr-2" />New Game</Button>
             </Link>
           )}
           {/* <Button onClick={() => handleShareClick("Instagram")} variant="outline" size="icon"><Instagram className="h-4 w-4" /></Button>
