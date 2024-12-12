@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Download, Gamepad2, Home, Loader2, Share } from "lucide-react";
+import { ArrowRight, Download, Gamepad2, Home, Loader2, Share } from "lucide-react";
 import Link from "next/link";
 import html2canvas from 'html2canvas-pro';
 import { useEffect, useRef, useState } from "react";
@@ -146,7 +146,12 @@ const ResultPage = ({ params }: Props) => {
                     {oldLevel === newLevel ? (
                       <p>{oldLevel}</p>
                     ) : (
-                      <p><span className="text-muted-foreground">{oldLevel}...</span>{newLevel}</p>
+                      <p className="flex flex-row justify-center items-center">
+                        <span className="text-muted-foreground flex items-center">
+                          {oldLevel} <ArrowRight className="flex w-4 h-4 mx-1" />
+                        </span>
+                        {newLevel}
+                      </p>
                     )}
                   </div>
                 </div>
