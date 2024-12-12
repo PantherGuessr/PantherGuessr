@@ -40,9 +40,18 @@ import { Id } from "./_generated/dataModel";
  * @returns The game document if found, null otherwise
  */
 export const getExistingGame = query({
-  args: { gameId: v.id("games") },
+  args: { gameId: v.string() },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.gameId);
+    try {
+      const docId = args.gameId as Id<"games">;
+      const doc = await ctx.db.get(docId);
+      return doc || null; // If doc doesn't exist, doc is null
+    }
+    catch (error) {
+      console.log(error);
+      // If decoding fails (invalid ID format), return null
+      return null;
+    }
   }
 });
 
