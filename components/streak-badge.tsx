@@ -13,7 +13,7 @@ const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => 
 
   useEffect(() => {
     // update streak badge width based on text width
-    const textWidth = streak.toString().length * 6 + 10;
+    const textWidth = streak.toString().length * 5 + 20;
     setStreakBadgeWidth(textWidth);
   }, [streak]);
 
@@ -37,7 +37,7 @@ const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => 
 
   return ( 
     <div 
-      className={cn("hidden xs:flex xs:justify-center items-center gap-x-2 mr-1 relative",
+      className={cn("hidden xs:flex xs:justify-center items-center gap-x-2 relative",
         badgeStyle
       )}
       style={{ width: streakBadgeWidth }}

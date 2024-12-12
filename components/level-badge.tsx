@@ -10,7 +10,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({ level }) => {
   const [levelBadgeWidth, setLevelBadgeWidth] = useState(0);
 
   useEffect(()=> {
-    const textWidth = level.toString().length * 6 + 10;
+    const textWidth = level.toString().length * 5 + 20;
     setLevelBadgeWidth(textWidth);
   }, [level]);
 
