@@ -24,7 +24,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import StreakBadge from "./streak-badge";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
 import LevelBadge from "./level-badge";
-import { Badge } from "./ui/badge";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -57,7 +56,6 @@ export const Navbar = () => {
         <div className="justify-between flex items-center gap-x-2 w-full">
           <div className="flex flex-row mr-2 items-center">
             <Logo href="/" />
-            <Badge className="h-8 ml-1 bg-red-800 hover:bg-red-900 text-white cursor-default" >Alpha</Badge>
           </div>
           {
             isLoading
