@@ -170,7 +170,6 @@ export const GameProvider = ({
       scores: allScores.map(score => BigInt(score)),
       distances: allDistances.map(distance => BigInt(distance))
     });
-    window.localStorage.setItem("hasOngoingGame", "true");
 
     if(nextRoundNumber > levels.length) {
       // adds loading states
@@ -182,7 +181,6 @@ export const GameProvider = ({
       incrementMonthlyGameStats();
 
       // deletes ongoing game and removes it from local storage
-      window.localStorage.removeItem("hasOngoingGame");
       await deleteOngoingGame({
         gameId: gameData!.gameContent!._id,
         userClerkId: user?.user?.id ?? ""

@@ -7,9 +7,13 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import "./header-animation.css";
 
-const MobileDrawer = () => {
+interface MobileDrawerProps {
+  hasOngoingGame: boolean;
+}
 
-  const hasOngoingGame = window.localStorage.getItem("hasOngoingGame") === "true";
+const MobileDrawer = ({
+  hasOngoingGame
+}: MobileDrawerProps) => {
 
   return (
 

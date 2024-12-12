@@ -107,7 +107,9 @@ export const Heading = () => {
                             </h1>
                           </div>
                           <div className="flex justify-center items-center px-8 animate-fly-in-from-top-delay-1000ms">
-                            <MobileDrawer />
+                            <MobileDrawer
+                              hasOngoingGame={hasOngoingGame ?? false}
+                            />
                           </div>
                         </>
                       )}
