@@ -6,19 +6,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Download, Home, Loader2, Share } from "lucide-react";
+import { Download, Gamepad2, Home, Loader2, Share } from "lucide-react";
 import Link from "next/link";
 import html2canvas from 'html2canvas-pro';
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
+import { useSearchParams } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 type Props = {
-    params: { leaderboardID: string }
+    params: { 
+      leaderboardID: string
+     }
 }
 
 const ResultPage = ({ params }: Props) => {
+  const searchParams = useSearchParams();
+
+  const isFromGame = searchParams.get("fromGame") === "true" ? true : false;
+
   const leaderboardId = params.leaderboardID;
   const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardId });
   const [distances, setDistances] = useState<number[]>([]);
@@ -175,14 +183,21 @@ const ResultPage = ({ params }: Props) => {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-between w-[350px]">
+        <div className={cn("flex justify-between w-[350px]",
+          isFromGame ? "flex-row" : "flex-row-reverse"
+        )}>
+          <Button onClick={() => handleShareClick("Share")} variant="outline" size="icon"><Share className="h-4 w-4" /></Button>
           <Link href="/">
-            <Button variant="default"><Home className="h-4 w-4 mr-2" /> Main Menu</Button>
+            <Button variant={isFromGame ? "outline" : "default"}><Home className="h-4 w-4 mr-2" /> Main Menu</Button>
           </Link>
+          {isFromGame && (
+            <Link href="/game">
+              <Button variant="default"><Gamepad2 className="h-4 w-4 mr-2" />New Game</Button>
+            </Link>
+          )}
           {/* <Button onClick={() => handleShareClick("Instagram")} variant="outline" size="icon"><Instagram className="h-4 w-4" /></Button>
                     <Button onClick={() => handleShareClick("Facebook")} variant="outline" size="icon"><Facebook className="h-4 w-4" /></Button>
                     <Button onClick={() => handleShareClick("Slack")} variant="outline" size="icon"><Slack className="h-4 w-4" /></Button> */}
-          <Button onClick={() => handleShareClick("Share")} variant="outline" size="icon"><Share className="h-4 w-4" /></Button>
         </div>
       </div>
       <Footer />
