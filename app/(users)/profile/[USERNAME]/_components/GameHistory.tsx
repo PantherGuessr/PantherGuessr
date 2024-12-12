@@ -67,7 +67,7 @@ const GameHistory = ({recentGames, isCurrentUser} : GameHistoryProps) => {
                   <TableHead>Type</TableHead>
                   <TableHead>Score</TableHead>
                   <TableHead className="hidden md:table-cell">XP Earned</TableHead>
-                  <TableHead>Played</TableHead>
+                  <TableHead className="hidden sm:table-cell">Played</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -77,7 +77,7 @@ const GameHistory = ({recentGames, isCurrentUser} : GameHistoryProps) => {
                     <TableCell className="text-start font-bold">Singleplayer {/* TODO: Implement game type recognition */}</TableCell>
                     <TableCell className="text-start">{calculateGameTotalScore(game)}</TableCell>
                     <TableCell className="text-start hidden md:table-cell">{game.xpGained}</TableCell>
-                    <TableCell className="text-start">{calculateTimeSince(game._creationTime)}</TableCell>
+                    <TableCell className="text-start hidden sm:table-cell">{calculateTimeSince(game._creationTime)}</TableCell>
                     <TableCell><Button onClick={() => handleLeaderboardRedirect(game._id)}><ReceiptText /></Button></TableCell>
                   </TableRow>
                 ))}

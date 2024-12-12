@@ -431,7 +431,7 @@ const ProfilePage = ({ params }: Props) => {
                 </div>
               </div>
               {!isLargerScreen && (
-                <div className="flex w-full flex-col md:items-start items-center justify-between px-4 md:px-10 lg:px-20">
+                <div className="flex w-full flex-col md:items-start items-center justify-between px-4 lg:px-20">
                   <GameHistory isCurrentUser={isCurrentUser} recentGames={recentGames} />
                 </div>
               )}
