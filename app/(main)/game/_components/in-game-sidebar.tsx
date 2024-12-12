@@ -223,7 +223,7 @@ const InGameSidebar = () => {
             <>
               <div className="text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center mx-2 w-full rounded-md gap-x-2">
                 <Hash />
-                <p className="pr-1">{(currentRound <= 5) ? currentRound : 5}/{levels.length}</p>
+                <p className="pr-1">{(currentRound <= 5) ? currentRound : levels.length}/{levels.length}</p>
               </div>
               <div className="text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center w-full rounded-md gap-x-2">
                 <Medal />
@@ -261,7 +261,7 @@ const InGameSidebar = () => {
                 ) : (
                   <>
                     <Hash />
-                    <p>{(currentRound <= 5) ? currentRound : 5}/{levels.length}</p>
+                    <p>{(currentRound <= 5) ? currentRound : levels.length}/{levels.length}</p>
                   </>
                 )}
               </div>
