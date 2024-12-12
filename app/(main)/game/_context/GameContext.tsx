@@ -118,6 +118,7 @@ export const GameProvider = ({
       setAllDistances(gameData.startingDistances);
       setAllScores(gameData.startingScores);
       setCurrentRound(gameData.startingRound);
+      setScore(gameData.startingScores.reduce((acc, score) => acc + score, 0));
     }
   }, [gameData]);
 
@@ -143,7 +144,6 @@ export const GameProvider = ({
       // checks the guess and updates the scores, correct values, distances, and scores arrays
       const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
 
-      setScore(prevScore => prevScore + result.score);
       setCorrectLocation(new LatLng(result.correctLat, result.correctLng));
 
       setDistanceFromTarget(result.distanceAway);
@@ -151,6 +151,7 @@ export const GameProvider = ({
           
       setAllDistances(prevDistances => [...prevDistances, result.distanceAway]);
       setAllScores(prevScores => [...prevScores, result.score]);
+      setScore(allScores.reduce((acc, score) => acc + score, 0) + result.score);
     } catch (error) {
       console.error("Error submitting guess:", error);
     } finally {
