@@ -162,7 +162,7 @@ export const clearUnplayedGames = internalMutation({
 
     return `Deleted ${games.length} unplayed games older than ${days} days`;
   }
-})
+});
 
 
 /**
