@@ -105,7 +105,7 @@ export const clearOldGames = internalMutation({
     const oldtime = time - monthInMs;
     const games = await ctx.db.query("games").filter(
       q => q.lt(q.field("_creationTime"), oldtime)
-    ).collect()
+    ).collect();
 
     // iterate through all games
     for (const game of games) {
@@ -125,14 +125,14 @@ export const clearOldGames = internalMutation({
             await ctx.db.delete(ongoingGame._id);
           }
         }
-      )
+      );
       // delete game
       await ctx.db.delete(game._id);
 
       return `Deleted ${games.length} games`;
     }
   }
-})
+});
 
 export const clearUnplayedGames = internalMutation({
   async handler(ctx) {
@@ -162,7 +162,7 @@ export const clearUnplayedGames = internalMutation({
 
     return `Deleted ${games.length} unplayed games older than ${days} days`;
   }
-})
+});
 
 
 /**
