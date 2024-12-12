@@ -68,6 +68,8 @@ export default defineSchema({
   leaderboardEntries: defineTable({
     game: v.union(v.id("games"), v.id("weeklyChallenges")),
     username: v.string(),
+    oldLevel: v.int64(),
+    newLevel: v.int64(),
     userId: v.id("users"),
     round_1: v.int64(),
     round_1_distance: v.int64(),

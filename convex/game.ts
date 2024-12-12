@@ -46,7 +46,6 @@ export const getExistingGame = query({
   }
 });
 
-
 /**
  * Creates a new game with 5 randomly selected levels.
  * 
@@ -161,12 +160,14 @@ export const addLeaderboardEntryToGame = mutation({
       ]
     );
 
-    await ctx.runMutation(internal.users.awardUserXP, { username: args.username, earnedXP: newXP });
+    const xpResult: { newLevel: bigint, oldLevel: bigint } = await ctx.runMutation(internal.users.awardUserXP, { username: args.username, earnedXP: newXP });
 
     // make leaderboard entry
     const leaderboardEntry = await ctx.db.insert("leaderboardEntries", {
       game: args.gameId,
       username: args.username,
+      oldLevel: xpResult.oldLevel,
+      newLevel: xpResult.newLevel,
       userId: args.userId,
       round_1: args.round_1,
       round_1_distance: args.round_1_distance,

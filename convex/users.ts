@@ -166,6 +166,7 @@ export const awardUserXP = internalMutation({
     // Add the earned XP to the user's current XP
     let currentXP = user.currentXP + BigInt(args.earnedXP);
     let level = user.level;
+    const oldLevel = level;
 
     let canLevelUp = true;
 
@@ -187,6 +188,11 @@ export const awardUserXP = internalMutation({
 
     // Update the user's level and current XP in the database
     await ctx.db.patch(user._id, { level, currentXP });
+
+    return {
+      oldLevel,
+      newLevel: level,
+    };
   }
 });
 

@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 type Props = {
     params: { 
       leaderboardID: string
-     }
+    }
 }
 
 const ResultPage = ({ params }: Props) => {
@@ -33,6 +33,8 @@ const ResultPage = ({ params }: Props) => {
   const [scores, setScores] = useState<number[]>([]);
   const [finalScore, setFinalScore] = useState<number>(0);
   const [username, setUsername] = useState<string>("");
+  const [oldLevel, setOldLevel] = useState<number>(0);
+  const [newLevel, setNewLevel] = useState<number>(0);
 
   useEffect(() => {
     if(leaderboardEntry) {
@@ -41,6 +43,8 @@ const ResultPage = ({ params }: Props) => {
       const totalScore = Number(leaderboardEntry.round_1) + Number(leaderboardEntry.round_2) + Number(leaderboardEntry.round_3) + Number(leaderboardEntry.round_4) + Number(leaderboardEntry.round_5);
       setFinalScore(totalScore);
       setUsername(leaderboardEntry.username);
+      setOldLevel(Number(leaderboardEntry.oldLevel));
+      setNewLevel(Number(leaderboardEntry.newLevel));
     }
   }, [leaderboardEntry]);
 
@@ -139,7 +143,11 @@ const ResultPage = ({ params }: Props) => {
                   </div>
                   <div className="flex flex-row justify-between">
                     <h2>Level:</h2>
-                    <p>{0}</p>
+                    {oldLevel === newLevel ? (
+                      <p>{oldLevel}</p>
+                    ) : (
+                      <p><span className="text-muted-foreground">{oldLevel}...</span>{newLevel}</p>
+                    )}
                   </div>
                 </div>
               </div>
