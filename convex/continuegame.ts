@@ -81,10 +81,13 @@ export const updateOngoingGameOrCreate = mutation({
   },
   handler: async (ctx, args) => {
     const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances } = args;
-    const existingGame = await ctx.db.query("ongoingGames").withIndex("byUserClerkId").filter(q => q.eq(q.field("userClerkId"), userClerkId)).first();
+    const existingGame = await ctx.db.query("ongoingGames").withIndex("byUserClerkIdGame", (q) =>
+      q.eq("userClerkId", userClerkId)
+    ).first();
     if (existingGame) {
       await ctx.db.patch(existingGame._id, {
         game: gameId,
+        userClerkId,
         currentRound,
         timeLeftInRound,
         totalTimeTaken,
@@ -122,12 +125,8 @@ export const deleteOngoingGame = mutation({
     // find the ongoing game with the given gameId and userClerkId
     const ongoingGame = await ctx.db
       .query("ongoingGames")
-      .withIndex("byGame")
-      .filter((q) => 
-        q.and(
-          q.eq(q.field("game"), gameId),
-          q.eq(q.field("userClerkId"), userClerkId)
-        )
+      .withIndex("byUserClerkIdGame", (q) =>
+        q.eq("userClerkId", userClerkId).eq("game", gameId)
       )
       .first();
     if (ongoingGame) {
