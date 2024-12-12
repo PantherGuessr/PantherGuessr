@@ -11,15 +11,16 @@ const font = Poppins({
 
 interface LogoProps {
   href?: string;
+  as_png?: boolean;
   badge?: boolean;
 }
 
-export const Logo = ({ href, badge=true }: LogoProps) => {
+export const Logo = ({ href, as_png, badge=true }: LogoProps) => {
   const logoContent = (
     <div className="flex items-center gap-x-2">
       <Image
         draggable={false}
-        src="/logo.svg"
+        src={as_png ? "/logo.png" : "/logo.svg"}
         height="40"
         width="40"
         alt="Logo"
@@ -27,7 +28,7 @@ export const Logo = ({ href, badge=true }: LogoProps) => {
       />
       <Image
         draggable={false}
-        src="/logo-dark.svg"
+        src={as_png ? "/logo-dark.png" : "/logo-dark.svg"}
         height="40"
         width="40"
         alt="Logo"
