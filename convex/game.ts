@@ -125,7 +125,7 @@ export const clearOldGames = internalMutation({
             await ctx.db.delete(ongoingGame._id);
           }
         }
-      )
+      );
       // delete game
       await ctx.db.delete(game._id);
 
