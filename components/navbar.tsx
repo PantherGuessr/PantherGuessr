@@ -57,7 +57,7 @@ export const Navbar = () => {
         <div className="justify-between flex items-center gap-x-2 w-full">
           <div className="flex flex-row mr-2 items-center">
             <Logo href="/" />
-            <Badge className="h-8 ml-1 bg-red-800 text-white" >Alpha</Badge>
+            <Badge className="h-8 ml-1 bg-red-800 hover:bg-red-900 text-white cursor-default" >Alpha</Badge>
           </div>
           {
             isLoading
