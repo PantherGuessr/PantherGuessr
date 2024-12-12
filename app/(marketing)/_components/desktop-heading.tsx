@@ -23,9 +23,10 @@ interface DesktopHeadingProps {
     isModeratorRole: boolean;
     isFriendRole: boolean;
     isTopPlayer: boolean;
+    hasOngoingGame: boolean;
 }
 
-const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagline, background, joinDate, isChapmanStudent, isDeveloperRole, isModeratorRole, isFriendRole, isTopPlayer}) => {
+const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagline, background, joinDate, isChapmanStudent, isDeveloperRole, isModeratorRole, isFriendRole, isTopPlayer, hasOngoingGame}) => {
   const [hoveredLeftMain, setHoveredLeftMain] = useState(false);
   const [hoveredCenterMain, setHoveredCenterMain] = useState(false);
   const [hoveredRightMain, setHoveredRightMain] = useState(false);
@@ -35,8 +36,6 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
   const handleGoToUserProfile = () => {
     window.location.href="/profile/" + username;
   };
-
-  const hasOngoingGame = window.localStorage.getItem("hasOngoingGame") === "true";
 
   useEffect(() => {
     setWelcomeMessage(WelcomeMessage());

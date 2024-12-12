@@ -203,8 +203,8 @@ export const hasOngoingGame = query({
     clerkId: v.string()
   },
   async handler(ctx, args) {
-    const ongoingGame = await ctx.db.query("ongoingGames").filter(
-      q => q.eq("userClerkId", args.clerkId)
+    const ongoingGame = await ctx.db.query("ongoingGames").withIndex("byUserClerkIdGame", (q) =>
+      q.eq("userClerkId", args.clerkId)
     ).first();
 
     return ongoingGame !== null;
