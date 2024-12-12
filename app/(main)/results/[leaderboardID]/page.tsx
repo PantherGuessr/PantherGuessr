@@ -15,11 +15,14 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 
 type Props = {
-    params: { leaderboardID: string }
+    params: { 
+      leaderboardID: string
+     }
 }
 
 const ResultPage = ({ params }: Props) => {
   const leaderboardId = params.leaderboardID;
+  const [isFromGame, setIsFromGame] = useState(false);
   const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardId });
   const [distances, setDistances] = useState<number[]>([]);
   const [scores, setScores] = useState<number[]>([]);
@@ -189,6 +192,11 @@ const ResultPage = ({ params }: Props) => {
           <Link href="/">
             <Button variant="default"><Home className="h-4 w-4 mr-2" /> Main Menu</Button>
           </Link>
+          {isFromGame && (
+            <Link href="/game">
+              <Button variant="default">Play Again</Button>
+            </Link>
+          )}
           {/* <Button onClick={() => handleShareClick("Instagram")} variant="outline" size="icon"><Instagram className="h-4 w-4" /></Button>
                     <Button onClick={() => handleShareClick("Facebook")} variant="outline" size="icon"><Facebook className="h-4 w-4" /></Button>
                     <Button onClick={() => handleShareClick("Slack")} variant="outline" size="icon"><Slack className="h-4 w-4" /></Button> */}
