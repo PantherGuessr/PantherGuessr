@@ -41,46 +41,36 @@ const ResultPage = ({ params }: Props) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleShareClick = async (platform: string) => {
-    if (platform === "Instagram" || platform === "Facebook" || platform === "Slack") {
-      const canvas = await html2canvas(cardRef.current!, {
-        useCORS: true,
-        scale: 2,
-        logging: true,
-        width: cardRef.current!.scrollWidth,
-        height: cardRef.current!.scrollHeight + 10
-      });
-      const imageSrc = canvas.toDataURL("image/png");
+    const canvas = await html2canvas(cardRef.current!, {
+      useCORS: true,
+      scale: 2,
+      logging: true,
+      width: cardRef.current!.scrollWidth,
+      height: cardRef.current!.scrollHeight + 10,
+      backgroundColor: null
+    });
+    const imageSrc = canvas.toDataURL("image/png");
 
-      let shareUrl = "";
-      const text = `Check out my game results! Final Score: ${finalScore}`;
+    let shareUrl = "";
+    const text = `Check out my game results! Final Score: ${finalScore}`;
 
-      if (platform === "Facebook") {
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(imageSrc)}&quote=${encodeURIComponent(text)}`;
-      } else if (platform === "Instagram") {
-        alert("Instagram sharing is not supported directly. Please download the image and share it manually.");
-        return;
-      } else if (platform === "Slack") {
-        shareUrl = `https://slack.com/share?text=${encodeURIComponent(text)}&url=${encodeURIComponent(imageSrc)}`;
-      }
-
+    if (platform === "Facebook") {
+      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(imageSrc)}&quote=${encodeURIComponent(text)}`;
+      window.open(shareUrl, "_blank");
+    } else if (platform === "Instagram") {
+      alert("Instagram sharing is not supported directly. Please download the image and share it manually.");
+      window.open(shareUrl, "_blank");
+      return;
+    } else if (platform === "Slack") {
+      shareUrl = `https://slack.com/share?text=${encodeURIComponent(text)}&url=${encodeURIComponent(imageSrc)}`;
       window.open(shareUrl, "_blank");
     } else {
-      if (cardRef.current) {
-        const canvas = await html2canvas(cardRef.current, {
-          useCORS: true,
-          scale: 2,
-          logging: true,
-          width: cardRef.current.scrollWidth,
-          height: cardRef.current.scrollHeight + 10
-        });
-        const imageSrc = canvas.toDataURL("image/png");
-        setDialogContent({
-          title: `Share on ${platform}`,
-          description: `Sharing on ${platform} is coming soon!`,
-          imageSrc: imageSrc
-        });
-        setIsDialogOpen(true);
-      }
+      setDialogContent({
+        title: `Share on ${platform}`,
+        description: `Sharing on ${platform} is coming soon!`,
+        imageSrc: imageSrc
+      });
+      setIsDialogOpen(true);
     }
   };
 
@@ -122,7 +112,7 @@ const ResultPage = ({ params }: Props) => {
   return (
     <div className="min-h-full flex flex-col">
       <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-        <div ref={cardRef}>
+        <div ref={cardRef} className="bg-transparent">
           <Card className="w-[350px] shadow-xl">
             <CardHeader className="mt-4">
               <CardTitle>Game Results</CardTitle>
