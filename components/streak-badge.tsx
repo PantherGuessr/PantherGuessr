@@ -13,8 +13,8 @@ const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => 
 
   useEffect(() => {
     // update streak badge width based on text width
-    const textWidth = streak.toString().length * 5 + 20;
-    setStreakBadgeWidth(textWidth);
+    const textWidth = streak.toString().length * 8;
+    setStreakBadgeWidth(textWidth > 25 ? textWidth : 25);
   }, [streak]);
 
   // If the user has not played today, the streak badge will be greyed out and pulse
@@ -37,7 +37,7 @@ const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => 
 
   return ( 
     <div 
-      className={cn("hidden xs:flex xs:justify-center items-center gap-x-2 relative",
+      className={cn("hidden xs:flex xs:justify-center items-center mr-1 relative",
         badgeStyle
       )}
       style={{ width: streakBadgeWidth }}
@@ -50,7 +50,7 @@ const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => 
         height="25" 
       />
       <p
-        className="absolute top-1/2 left-1/2 transform -translate-x-[50%] -translate-y-[45%] text-white rounded-full px-1 text-sm font-bold drop-shadow-md"
+        className="absolute top-1/2 left-1/2 transform -translate-x-[51%] -translate-y-[45%] text-white rounded-full text-sm font-bold drop-shadow-md"
         style={{ textShadow: '1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000' }}>
         {streak}
       </p>

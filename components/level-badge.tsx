@@ -10,8 +10,8 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({ level }) => {
   const [levelBadgeWidth, setLevelBadgeWidth] = useState(0);
 
   useEffect(()=> {
-    const textWidth = level.toString().length * 5 + 20;
-    setLevelBadgeWidth(textWidth);
+    const textWidth = level.toString().length * 8;
+    setLevelBadgeWidth((textWidth > 25 ? textWidth : 25));
   }, [level]);
 
   return ( 
@@ -27,7 +27,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({ level }) => {
         height="25" 
       />
       <p
-        className="absolute top-1/2 left-1/2 transform -translate-x-[50%] -translate-y-[45%] text-white rounded-full px-1 text-sm font-bold drop-shadow-md"
+        className="absolute top-1/2 left-1/2 transform -translate-x-[53%] -translate-y-[45%] text-white rounded-full px-1 text-sm font-bold drop-shadow-md"
         style={{ textShadow: '1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000' }}>
         {level}
       </p>
