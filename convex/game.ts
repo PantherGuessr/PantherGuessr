@@ -245,6 +245,32 @@ export const getImageSrc = query({
   }
 });
 
+export const updateFirstPlayedByClerkId = mutation({
+  args: { gameId: v.id("games"), clerkId: v.string() },
+  handler: async (ctx, args) => {
+    // update only if firstPlayedByClerkId is not set
+    const game = await ctx.db.get(args.gameId);
+
+    if(!game) {
+      throw new Error("No games exist");
+    }
+
+    if(game.firstPlayedByClerkId) {
+      return { success: false };
+    }
+
+    // update
+    const newGame = {
+      ...game,
+      firstPlayedByClerkId: args.clerkId
+    };
+
+    await ctx.db.replace(args.gameId, newGame);
+
+    return { success: true };
+  }
+});
+
 /**
  * Calculates the distance between two points in feet using the Haversine formula
  * 

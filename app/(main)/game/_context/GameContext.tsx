@@ -100,6 +100,9 @@ export const GameProvider = ({
   // leaderboard
   const addLeaderboardEntryToGame = useMutation(api.game.addLeaderboardEntryToGame);
 
+  // first played by update
+  const updateFirstPlayedBy = useMutation(api.game.updateFirstPlayedByClerkId);
+
   // continue game
   const updateOngoingGameOrCreate = useMutation(api.continuegame.updateOngoingGameOrCreate);
   const deleteOngoingGame = useMutation(api.continuegame.deleteOngoingGame);
@@ -191,6 +194,8 @@ export const GameProvider = ({
 
       // !!! it may be a bad idea to assume this is never null but, ya know, YOLO! - Dylan
       updateStreak({ clerkId: currentUser!.clerkId });
+
+      updateFirstPlayedBy({clerkId: currentUser!.clerkId, gameId: gameData!.gameContent!._id});
 
       addLeaderboardEntryToGame({
         gameId: gameData!.gameContent!._id,
