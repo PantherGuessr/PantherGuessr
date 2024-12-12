@@ -39,7 +39,7 @@ const ProfileBackground = (
 ) => {
   return ( 
     <div className={
-      cn("flex w-full h-96",
+      cn("flex w-full lg:h-96 md:h-80 h-72",
         backgroundCSSValue ?? "bg-gradient-red-purple"
       )
     }>

@@ -30,10 +30,10 @@ const ProfileAchievements = ({
   photoScoutDescription
 } : ProfileAchievementProps) => {
   return ( <div className="flex flex-col w-full items-start">
-    <p className="text-md font-bold mr-4">Unlocked Achievements</p>
+    <p className="text-md font-bold">Unlocked Achievements</p>
     {(hasEarlyAdopter || hasFirstSteps || hasMapMaster || hasOnFire || hasSniped || hasPhotoScout) ? (
       <>
-        <div className="grid grid-cols-6 md:sm:grid-cols-3 gap-2 w-full md:w-auto">
+        <div className="flex justify-start gap-x-2 w-full lg:grid-flow-row lg:grid-cols-3 lg:justify-start">
 
           {hasEarlyAdopter && (
             <Achievement name="Early Adopter" description={earlyAdopterDescription!} imageSrc="/achievements/early_adopter_achievement.svg" />
