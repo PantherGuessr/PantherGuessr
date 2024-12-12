@@ -190,6 +190,20 @@ export const awardUserXP = internalMutation({
   }
 });
 
+
+export const hasOngoingGame = query({
+  args: {
+    clerkId: v.string()
+  },
+  async handler(ctx, args) {
+    const ongoingGame = await ctx.db.query("ongoingGames").filter(
+      q => q.eq("userClerkId", args.clerkId)
+    ).first();
+
+    return ongoingGame !== null;
+  }
+});
+
 /**
  * Query to check if a user has a specific role.
  *
