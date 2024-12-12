@@ -132,7 +132,7 @@ export const clearOldGames = internalMutation({
       return `Deleted ${games.length} games`;
     }
   }
-})
+});
 
 export const clearUnplayedGames = internalMutation({
   async handler(ctx) {
