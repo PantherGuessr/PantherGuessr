@@ -55,6 +55,21 @@ export const getExistingGame = query({
   }
 });
 
+export const gameExists = query({
+  args: { gameId: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const docId = args.gameId as Id<"games">;
+      const doc = await ctx.db.get(docId);
+      return doc ? true : false;
+    }
+    catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+});
+
 
 /**
  * Creates a new game with 5 randomly selected levels.

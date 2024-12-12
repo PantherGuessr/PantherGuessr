@@ -26,13 +26,14 @@ const GameIdPage = ({ params }: Props) => {
   const gameIdAsId = params.GAMEID as Id<"games">;
   const isMobile = useMediaQuery("(max-width: 600px)");
 
-  const gameData = useQuery(api.game.getExistingGame, { gameId: gameIdAsId });
+  const gameExists = useQuery(api.game.gameExists, { gameId: gameIdAsId });
 
   useEffect(() => {
-    if (!gameData) {
+    if (gameExists === false) {
       router.push("/game");
     }
-  }, [gameData, router]);
+  }, [gameExists, router]);
+
 
   return (
     <GameProvider gameId={gameIdAsId}>
