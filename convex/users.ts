@@ -190,7 +190,14 @@ export const awardUserXP = internalMutation({
   }
 });
 
-
+/**
+ * Query to check if a user has an ongoing game.
+ * 
+ * @param args - The arguments for the query.
+ * @param args.clerkId - The Clerk ID of the user.
+ * 
+ * @returns {Promise<boolean>} - A promise that resolves to `true` if the user has an ongoing game, otherwise `false`.
+ */
 export const hasOngoingGame = query({
   args: {
     clerkId: v.string()
