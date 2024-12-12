@@ -27,7 +27,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({ level }) => {
         height="25" 
       />
       <p
-        className="absolute top-1/2 left-1/2 transform -translate-x-[53%] -translate-y-[45%] text-white rounded-full px-1 text-sm font-bold drop-shadow-md"
+        className="absolute top-1/2 left-1/2 transform -translate-x-[51%] -translate-y-[45%] text-white rounded-full px-1 text-sm font-bold drop-shadow-md"
         style={{ textShadow: '1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000' }}>
         {level}
       </p>
