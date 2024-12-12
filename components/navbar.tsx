@@ -24,6 +24,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import StreakBadge from "./streak-badge";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
 import LevelBadge from "./level-badge";
+import { Badge } from "./ui/badge";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -54,7 +55,10 @@ export const Navbar = () => {
         scrolled && "backdrop-blur-sm border-b-2 border-[#450b0b4c] shadow-md"
       )}>
         <div className="justify-between flex items-center gap-x-2 w-full">
-          <div className="mr-2"><Logo href="/" /></div>
+          <div className="flex flex-row mr-2 items-center">
+            <Logo href="/" />
+            <Badge className="h-8 ml-1 bg-red-800 text-white" >Alpha</Badge>
+          </div>
           {
             isLoading
                     || developerRoleLoading
