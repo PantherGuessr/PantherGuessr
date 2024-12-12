@@ -32,9 +32,9 @@ const GameContinuePage = () => {
   }, [getOngoingGame, isAuthenticated, isLoading, router]);
 
   return (
-    <>
-      <Loader2 className="h-6 w-6 animate-spin" />
-    </>
+    <div className="flex flex-col w-full h-screen justify-center items-center">
+      <Loader2 className="h-20 w-20 animate-spin" />
+    </div>
   );
 };
 
