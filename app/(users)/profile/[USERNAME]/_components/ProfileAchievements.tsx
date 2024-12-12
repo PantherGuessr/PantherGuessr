@@ -33,7 +33,7 @@ const ProfileAchievements = ({
     <p className="text-md font-bold">Unlocked Achievements</p>
     {(hasEarlyAdopter || hasFirstSteps || hasMapMaster || hasOnFire || hasSniped || hasPhotoScout) ? (
       <>
-        <div className="flex justify-start gap-x-2 w-full lg:grid-flow-row lg:grid-cols-3 lg:justify-start">
+        <div className="flex justify-start gap-x-2 w-full lg:grid lg:grid-flow-row lg:grid-cols-3 lg:justify-start">
 
           {hasEarlyAdopter && (
             <Achievement name="Early Adopter" description={earlyAdopterDescription!} imageSrc="/achievements/early_adopter_achievement.svg" />
