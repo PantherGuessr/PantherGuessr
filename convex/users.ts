@@ -197,6 +197,27 @@ export const awardUserXP = internalMutation({
 });
 
 /**
+ * Query to check if a user has an ongoing game.
+ * 
+ * @param args - The arguments for the query.
+ * @param args.clerkId - The Clerk ID of the user.
+ * 
+ * @returns {Promise<boolean>} - A promise that resolves to `true` if the user has an ongoing game, otherwise `false`.
+ */
+export const hasOngoingGame = query({
+  args: {
+    clerkId: v.string()
+  },
+  async handler(ctx, args) {
+    const ongoingGame = await ctx.db.query("ongoingGames").withIndex("byUserClerkIdGame", (q) =>
+      q.eq("userClerkId", args.clerkId)
+    ).first();
+
+    return ongoingGame !== null;
+  }
+});
+
+/**
  * Query to check if a user has a specific role.
  *
  * @param {Object} args - The arguments object.

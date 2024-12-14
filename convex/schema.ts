@@ -95,6 +95,7 @@ export default defineSchema({
     scores: v.optional(v.array(v.int64())),
     distances: v.optional(v.array(v.int64()))
   })
+    .index("byUserClerkIdGame", ["userClerkId", "game"])
     .index("byUserClerkId", ["userClerkId"])
     .index("byGame", ["game"]),
 

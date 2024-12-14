@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { mutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 
@@ -40,9 +40,127 @@ import { Id } from "./_generated/dataModel";
  * @returns The game document if found, null otherwise
  */
 export const getExistingGame = query({
-  args: { gameId: v.id("games") },
+  args: { gameId: v.string() },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.gameId);
+    try {
+      const docId = args.gameId as Id<"games">;
+      const doc = await ctx.db.get(docId);
+      return doc || null; // If doc doesn't exist, doc is null
+    }
+    catch (error) {
+      console.log(error);
+      // If decoding fails (invalid ID format), return null
+      return null;
+    }
+  }
+});
+
+/**
+ * Query to check if a game exists in the database.
+ *
+ * @param args - The arguments for the query.
+ * @param args.gameId - The ID of the game to check.
+ * @returns A boolean indicating whether the game exists.
+ *
+ * @example
+ * const exists = await gameExists({ gameId: "some-game-id" });
+ * console.log(exists); // true or false
+ *
+ * @throws Will log an error and return false if there is an issue with the database query.
+ */
+export const gameExists = query({
+  args: { gameId: v.string() },
+  handler: async (ctx, args) => {
+    try {
+      const docId = args.gameId as Id<"games">;
+      const doc = await ctx.db.get(docId);
+      return doc ? true : false;
+    }
+    catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+});
+
+/**
+ * Mutation to clear old games from the database.
+ * 
+ * This mutation performs the following steps:
+ * 1. Calculates the current time and the time one month ago.
+ * 2. Queries the "games" collection for games older than one month.
+ * 3. Iterates through the old games and performs the following actions:
+ *    - Deletes any connected leaderboard entries.
+ *    - Deletes any connected ongoing games.
+ *    - Deletes the game itself.
+ * 
+ * @param {Object} ctx - The context object containing the database connection.
+ * @returns {Promise<string>} - A promise that resolves to a string indicating the number of deleted games.
+ */
+export const clearOldGames = internalMutation({
+  async handler(ctx) {
+    const now = new Date();
+    const time = now.getTime();
+    const monthInMs = 30 * 24 * 60 * 60 * 1000;
+    const oldtime = time - monthInMs;
+    const games = await ctx.db.query("games").filter(
+      q => q.lt(q.field("_creationTime"), oldtime)
+    ).collect();
+
+    // iterate through all games
+    for (const game of games) {
+      // get the connected leaderboard IDs, if applicable
+      const leaderboardIds = game.leaderboard ?? [];
+      for (const leaderboardId of leaderboardIds) {
+        await ctx.db.delete(leaderboardId);
+      }
+
+      // get any connected ongoing games, if applicable
+      await ctx.db.query("ongoingGames").filter(
+        q => q.eq(q.field("game"), game._id)
+      ).collect().then(
+        // delete the ongoing games
+        async (ongoingGames) => {
+          for (const ongoingGame of ongoingGames) {
+            await ctx.db.delete(ongoingGame._id);
+          }
+        }
+      );
+      // delete game
+      await ctx.db.delete(game._id);
+
+      return `Deleted ${games.length} games`;
+    }
+  }
+});
+
+export const clearUnplayedGames = internalMutation({
+  async handler(ctx) {
+    const days = 7;
+    const now = new Date();
+    const time = now.getTime();
+    const timeLimit = days * 24 * 60 * 60 * 1000; // 7 days
+    const oldTime = time - timeLimit;
+    const games = await ctx.db.query("games").filter(
+      q => q.lt(q.field("_creationTime"), oldTime)
+    ).collect();
+
+    for (const game of games) {
+      if (!game.firstPlayedByClerkId) {
+        // check if game has any ongoing games
+        const ongoingGames = await ctx.db.query("ongoingGames").filter(
+          q => q.eq(q.field("game"), game._id)
+        ).collect();
+        // delete ongoing games
+        for (const ongoingGame of ongoingGames) {
+          await ctx.db.delete(ongoingGame._id);
+        }
+        // delete game
+        await ctx.db.delete(game._id);
+      }
+    }
+
+    return `Deleted ${games.length} unplayed games older than ${days} days`;
   }
 });
 
@@ -243,6 +361,32 @@ export const getImageSrc = query({
     const imageUrl = await ctx.storage.getUrl(level.imageId);
 
     return imageUrl;
+  }
+});
+
+export const updateFirstPlayedByClerkId = mutation({
+  args: { gameId: v.id("games"), clerkId: v.string() },
+  handler: async (ctx, args) => {
+    // update only if firstPlayedByClerkId is not set
+    const game = await ctx.db.get(args.gameId);
+
+    if(!game) {
+      throw new Error("No games exist");
+    }
+
+    if(game.firstPlayedByClerkId) {
+      return { success: false };
+    }
+
+    // update
+    const newGame = {
+      ...game,
+      firstPlayedByClerkId: args.clerkId
+    };
+
+    await ctx.db.replace(args.gameId, newGame);
+
+    return { success: true };
   }
 });
 

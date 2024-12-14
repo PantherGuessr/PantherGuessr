@@ -8,6 +8,10 @@ import { useMediaQuery } from "usehooks-ts";
 import "../_components/game-animations.css";
 import { Id } from "@/convex/_generated/dataModel";
 import { Loader2 } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 type Props = {
     params: { GAMEID: string }
@@ -18,8 +22,18 @@ const GameIdPage = ({ params }: Props) => {
    * Sets the game ID based on the URL parameter
    * Passes in the game ID to the GameProvider
    */
+  const router = useRouter();
   const gameIdAsId = params.GAMEID as Id<"games">;
   const isMobile = useMediaQuery("(max-width: 600px)");
+
+  const gameExists = useQuery(api.game.gameExists, { gameId: gameIdAsId });
+
+  useEffect(() => {
+    if (gameExists === false) {
+      router.push("/game");
+    }
+  }, [gameExists, router]);
+
 
   return (
     <GameProvider gameId={gameIdAsId}>
