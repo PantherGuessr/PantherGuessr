@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { ArrowRight, Download, Gamepad2, Home, Loader2, Share } from "lucide-react";
+import { ArrowRight, Download, Gamepad2, Home, Loader2, Share, Share2 } from "lucide-react";
 import Link from "next/link";
 import html2canvas from 'html2canvas-pro';
 import { useEffect, useRef, useState } from "react";
@@ -49,10 +49,10 @@ const ResultPage = ({ params }: Props) => {
   }, [leaderboardEntry]);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogContent, setDialogContent] = useState<{ title: string; description: string; imageSrc?: string }>({ title: "", description: "" });
+  const [dialogContent, setDialogContent] = useState<{ title: string; description: string; imageSrc?: string, finalScore?: number }>({ title: "", description: "" });
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleShareClick = async (platform: string) => {
+  const handleShareClick = async () => {
     const canvas = await html2canvas(cardRef.current!, {
       useCORS: true,
       scale: 2,
@@ -63,27 +63,15 @@ const ResultPage = ({ params }: Props) => {
     });
     const imageSrc = canvas.toDataURL("image/png");
 
-    let shareUrl = "";
-    const text = `Check out my game results! Final Score: ${finalScore}`;
 
-    if (platform === "Facebook") {
-      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(imageSrc)}&quote=${encodeURIComponent(text)}`;
-      window.open(shareUrl, "_blank");
-    } else if (platform === "Instagram") {
-      alert("Instagram sharing is not supported directly. Please download the image and share it manually.");
-      window.open(shareUrl, "_blank");
-      return;
-    } else if (platform === "Slack") {
-      shareUrl = `https://slack.com/share?text=${encodeURIComponent(text)}&url=${encodeURIComponent(imageSrc)}`;
-      window.open(shareUrl, "_blank");
-    } else {
-      setDialogContent({
-        title: `Share on ${platform}`,
-        description: `Sharing on ${platform} is coming soon!`,
-        imageSrc: imageSrc
-      });
-      setIsDialogOpen(true);
-    }
+    setDialogContent({
+      title: `Share Your Results`,
+      description: `Share your game results receipt on any social platforms.`,
+      imageSrc: imageSrc,
+      finalScore: finalScore
+    });
+
+    setIsDialogOpen(true);
   };
 
   const handleDownloadClick = () => {
@@ -94,6 +82,32 @@ const ResultPage = ({ params }: Props) => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    }
+  };
+
+  const handleSocialShareClick = async () => {
+    if(dialogContent.imageSrc) {
+      const response = await fetch(dialogContent.imageSrc);
+      const imageBlob = await response.blob();
+
+      const webShareData = {
+        files: [
+          new File([imageBlob], 'game-results.png', {
+            type: imageBlob.type,
+          }),
+        ],
+        // ? Do we want the url to share the url here?
+        // url: new URL(location.pathname, location.origin).href,
+        text: `Check out my game results on PantherGuessr!\nFinal Score: ${finalScore}!`
+      };
+
+      try {
+        if(navigator.canShare(webShareData)) {
+          await navigator.share(webShareData);
+        }
+      } catch {
+        console.error("There was an error sharing game results!");
+      }
     }
   };
 
@@ -208,9 +222,6 @@ const ResultPage = ({ params }: Props) => {
               <Button variant="default"><Gamepad2 className="h-4 w-4 mr-2" />New Game</Button>
             </Link>
           )}
-          {/* <Button onClick={() => handleShareClick("Instagram")} variant="outline" size="icon"><Instagram className="h-4 w-4" /></Button>
-                    <Button onClick={() => handleShareClick("Facebook")} variant="outline" size="icon"><Facebook className="h-4 w-4" /></Button>
-                    <Button onClick={() => handleShareClick("Slack")} variant="outline" size="icon"><Slack className="h-4 w-4" /></Button> */}
         </div>
       </div>
       <Footer />
@@ -223,9 +234,12 @@ const ResultPage = ({ params }: Props) => {
           {dialogContent.imageSrc && (
             <div className="flex flex-col justify-center items-center space-y-2">
               <Image src={dialogContent.imageSrc} width={200} height={100} alt="Game Receipt" />
-              <Button className="mt-4" onClick={handleDownloadClick}>
-                <Download className="h-4 w-4 mr-2" /> Download
-              </Button>
+              <div className="space-x-2">
+                <Button size="icon" className="" onClick={handleSocialShareClick}><Share2 className="h-4 w-4" /></Button>
+                <Button className="mt-4" onClick={handleDownloadClick}>
+                  <Download className="h-4 w-4 mr-2" /> Download
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
