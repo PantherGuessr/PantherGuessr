@@ -63,7 +63,6 @@ const ResultPage = ({ params }: Props) => {
     });
     const imageSrc = canvas.toDataURL("image/png");
 
-
     setDialogContent({
       title: `Share Your Results`,
       description: `Share your game results receipt on any social platforms.`,
@@ -96,9 +95,8 @@ const ResultPage = ({ params }: Props) => {
             type: imageBlob.type,
           }),
         ],
-        // ? Do we want the url to share the url here?
-        // url: new URL(location.pathname, location.origin).href,
-        text: `Check out my game results on PantherGuessr!\nFinal Score: ${finalScore}!`
+        url: new URL(location.pathname, location.origin).href,
+        text: `Check out my game results on #PantherGuessr! My final score was ${finalScore}/1250!`
       };
 
       try {
@@ -213,7 +211,7 @@ const ResultPage = ({ params }: Props) => {
         <div className={cn("flex justify-between w-[350px]",
           isFromGame ? "flex-row" : "flex-row-reverse"
         )}>
-          <Button onClick={() => handleShareClick("Share")} variant="outline" size="icon"><Share className="h-4 w-4" /></Button>
+          <Button onClick={() => handleShareClick()} variant="outline" size="icon"><Share className="h-4 w-4" /></Button>
           <Link href="/">
             <Button variant={isFromGame ? "outline" : "default"}><Home className="h-4 w-4 mr-2" /> Main Menu</Button>
           </Link>
