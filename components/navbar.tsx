@@ -15,7 +15,7 @@ import Image from "next/image";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
-import { Copy, LogOut, Settings, Shield, User, UserRoundSearch, Wrench } from "lucide-react";
+import { Bug, Copy, LogOut, Settings, Shield, User, UserRoundSearch, Wrench } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Toaster } from "./ui/toaster";
 import { useRouter } from "next/navigation";
@@ -206,6 +206,10 @@ export const Navbar = () => {
                                 alert("Moderator page coming soon!");
                               }}><Shield className="h-4 w-4 mr-2" />Moderator Portal</MenubarItem>
                             )}
+                            <MenubarSeparator />
+                            <MenubarItem className="cursor-pointer" onClick={() => {
+                              window.open("https://github.com/PantherGuessr/PantherGuessr/issues/new/choose", "_blank");
+                            }}><Bug className="h-4 w-4 mr-2" />Report a Bug</MenubarItem>
                             <MenubarSeparator />
                             <MenubarItem className="cursor-pointer" onClick={() => {
                               signOut({ redirectUrl: window.location.href });
