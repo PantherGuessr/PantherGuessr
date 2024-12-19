@@ -14,8 +14,6 @@ import { WelcomeMessage } from "@/components/text/welcomemessage";
 import DesktopHeadingLoading from "./desktop-heading-loading";
 import { api } from "@/convex/_generated/api";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
-import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
-import { useRoleCheck } from "@/hooks/use-role-check";
 import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
 import { useHasOngoingGame } from "@/hooks/use-has-ongoing-game";
 
@@ -24,11 +22,6 @@ export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const clerkUser = useUser();
   const user = useQuery(api.users.getUserByUsername, { username: clerkUser.user?.username ?? "" });
-  const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
-  const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
-  const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
-  const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
-  const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
   const { result: profileTagline } = useGetSelectedTagline(user?.clerkId);
   const { result: profileBackground, isLoading: profileBackgroundLoading } = useGetSelectedBackground(user?.clerkId);
   const { result: hasOngoingGame, isLoading: hasOngoingGameLoading } = useHasOngoingGame(user?.clerkId);
@@ -61,11 +54,6 @@ export const Heading = () => {
                 && user
                 && clerkUser.user
                 && profileTagline
-                && !isChapmanStudentLoading
-                && !developerRoleLoading
-                && !moderatorRoleLoading
-                && !topPlayerIsLoading
-                && !friendRoleLoading
                 && !profileBackgroundLoading
                 && !hasOngoingGameLoading
                 && (
@@ -75,14 +63,7 @@ export const Heading = () => {
                         <DesktopHeading 
                           username={user.username || "Guest"}
                           picture={clerkUser.user.imageUrl}
-                          tagline={profileTagline.tagline}
                           background={profileBackground!.backgroundCSS}
-                          joinDate={user._creationTime}
-                          isChapmanStudent={isChapmanStudent ?? false}
-                          isDeveloperRole={isDeveloperRole ?? false}
-                          isModeratorRole={isModeratorRole ?? false}
-                          isFriendRole={isFriendRole ?? false}
-                          isTopPlayer={isTopPlayer ?? false}
                           hasOngoingGame={hasOngoingGame ?? false}
                         />
                       ) : (

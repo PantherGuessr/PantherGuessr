@@ -1,32 +1,24 @@
 import { WelcomeMessage } from "@/components/text/welcomemessage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { CalendarDays } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import "../../(users)/profile/[USERNAME]/backgrounds.css";
 import "./heading.css";
+import ProfileHoverCard from "@/components/profile-hover-card";
 
 interface DesktopHeadingProps {
     username: string;
     picture: string;
-    tagline: string;
     background: string;
-    joinDate: number;
-    isChapmanStudent: boolean;
-    isDeveloperRole: boolean;
-    isModeratorRole: boolean;
-    isFriendRole: boolean;
-    isTopPlayer: boolean;
     hasOngoingGame: boolean;
 }
 
-const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagline, background, joinDate, isChapmanStudent, isDeveloperRole, isModeratorRole, isFriendRole, isTopPlayer, hasOngoingGame}) => {
+const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, background, hasOngoingGame}) => {
   const [hoveredLeftMain, setHoveredLeftMain] = useState(false);
   const [hoveredCenterMain, setHoveredCenterMain] = useState(false);
   const [hoveredRightMain, setHoveredRightMain] = useState(false);
@@ -60,52 +52,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
           </div>
           <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold hover:scale-105 transition-all cursor-default">
             Welcome back, {" "}
-            <HoverCard openDelay={0} closeDelay={25}>
-              <HoverCardTrigger asChild>
-                <Link href={"/profile/" + username}>
-                  <span className="underline">{username}</span>
-                </Link>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-80 z-50">
-                <div className="flex space-x-4">
-                  <Avatar>
-                    <AvatarImage src={picture} />
-                    <AvatarFallback>{username[0].toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="space-y-1 text-left">
-                    <div className="flex md:flex-row flex-col items-center md:items-start">
-                      <div className="flex flex-row items-center">
-                        <h4 className="text-sm font-semibold">@{username}</h4>
-                        <div className="flex flex-row items-center gap-x-2 pl-2">
-                          {isDeveloperRole && (
-                            <Image draggable={false} className="select-none cursor-default" src="/badges/developer_badge.svg" width="15" height="15" alt="Developer Badge" />
-                          )}
-                          {isModeratorRole && (
-                            <Image draggable={false} className="select-none cursor-default" src="/badges/moderator_badge.svg" width="15" height="15" alt="Moderator Badge" />
-                          )}
-                          {isTopPlayer && (
-                            <Image draggable={false} className="select-none cursor-default" src="/badges/top_player_badge.svg" width="15" height="15" alt="Top Ranked Player Badge" />
-                          )}
-                          {isFriendRole && (
-                            <Image draggable={false} className="select-none cursor-default" src="/badges/friend_badge.svg" alt="Friend Badge" width="15" height="15" />
-                          )}
-                          {isChapmanStudent && (
-                            <Image draggable={false} className="select-none cursor-default" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="15" height="15" />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground italic">{tagline}</p>
-                    <div className="flex items-center pt-2">
-                      <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-                      <span className="text-xs text-muted-foreground">
-                        Joined {new Date(joinDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>.
+            <ProfileHoverCard username={username} isUnderlined={true} />.
             {" " + welcomeMessage}
           </h1>
         </div>
@@ -242,52 +189,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, tagli
           </div>
           <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold cursor-default hover:scale-105 transition-all">
             Welcome back, {" "}
-            <HoverCard openDelay={0} closeDelay={25}>
-              <HoverCardTrigger asChild>
-                <Link href={"/profile/" + username}>
-                  <span className="underline">{username}</span>
-                </Link>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-80 z-50">
-                <div className="flex space-x-4">
-                  <Avatar>
-                    <AvatarImage src={picture} />
-                    <AvatarFallback>{username[0].toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="space-y-1 text-left">
-                    <div className="flex md:flex-row flex-col items-center md:items-start">
-                      <div className="flex flex-row items-center">
-                        <h4 className="text-sm font-semibold">@{username}</h4>
-                        <div className="flex flex-row items-center gap-x-2 pl-2">
-                          {isDeveloperRole && (
-                            <Image draggable={false} className="select-none cursor-default" src="/badges/developer_badge.svg" width="15" height="15" alt="Developer Badge" />
-                          )}
-                          {isModeratorRole && (
-                            <Image draggable={false} className="select-none cursor-default" src="/badges/moderator_badge.svg" width="15" height="15" alt="Moderator Badge" />
-                          )}
-                          {isTopPlayer && (
-                            <Image draggable={false} className="select-none cursor-default" src="/badges/top_player_badge.svg" width="15" height="15" alt="Top Ranked Player Badge" />
-                          )}
-                          {isFriendRole && (
-                            <Image draggable={false} className="select-none cursor-default" src="/badges/friend_badge.svg" alt="Friend Badge" width="15" height="15" />
-                          )}
-                          {isChapmanStudent && (
-                            <Image draggable={false} className="select-none cursor-default" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="15" height="15" />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground italic">{tagline}</p>
-                    <div className="flex items-center pt-2">
-                      <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-                      <span className="text-xs text-muted-foreground">
-                        Joined {new Date(joinDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>.
+            <ProfileHoverCard username={username} isUnderlined={true} />.
             {" " + welcomeMessage}
           </h1>
         </div>
