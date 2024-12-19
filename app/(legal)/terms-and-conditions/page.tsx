@@ -10,7 +10,7 @@ const TermsAndConditionsPage = () => {
         <div className="flex flex-col items-start justify-start md:text-justify gap-y-8 md:mt-10 md:mx-40 flex-1 px-6 pb-10">
           <h1 className="text-5xl">Terms and Conditions</h1>
           <div className="space-y-4">
-            <p><span className="font-bold">Effective Date:</span> November 10th, 2024</p>
+            <p><span className="font-bold">Effective Date:</span> December 19th, 2024</p>
             <p>Welcome to PantherGuessr, designated by (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;). By using our website and services, you, (&quot;user&quot;), agree to abide by the following terms and conditions. These terms govern your access to and use of our website, including any functionality, features, and content.</p>
           </div>
 
