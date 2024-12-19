@@ -86,14 +86,18 @@ const ResultPage = ({ params }: Props) => {
 
   const handleSocialShareClick = async () => {
     if(dialogContent.imageSrc) {
-      // const imageBlob = await fetch(dialogContent.imageSrc).then(r => r.blob());
+      const imageBlob = await fetch(dialogContent.imageSrc).then(r => r.blob());
+      const filesArr = [
+        new File([imageBlob], 'game-results.png', 
+          {
+            type: 'image/png',
+            lastModified: new Date().getTime(),
+          }
+        )
+      ];
 
       const webShareData = {
-        // files: [
-        //   new File([imageBlob], 'game-results.png', {
-        //     type: imageBlob.type,
-        //   }),
-        // ],
+        files: filesArr,
         url: new URL(location.pathname, location.origin).href,
         text: `Check out my game results on #PantherGuessr! My final score was ${finalScore}/1250!`
       };
