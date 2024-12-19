@@ -1,91 +1,43 @@
-"use client";
-
 import { Footer } from "@/components/footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { GithubIcon, Globe, LinkedinIcon } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import MaintainerCard from "./_components/maintainer-card";
 
 const CreditsPage = () => {
-  const router = useRouter();
-
   return (
     <div className="min-h-full flex flex-col">
       <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-        <h1 className="text-4xl md:text-6xl justify-self-center">Credits</h1>
+        <div className="space-y-2">
+          <h1 className="text-4xl md:text-6xl justify-self-center">Credits</h1>
+          <p>Below are all the people that make PantherGuessr possible.</p>
+        </div>
+
+        <h2 className="text-xl md:text-3xl justify-self-center">Project Maintainers</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mx-auto">
-          <Card className="md:hover:scale-105 hover:bg-[rgba(35,22,22,0.07)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.03)]">
-            <CardHeader>
-              <Image className="rounded-lg mx-auto" src='/profile-pictures/dylan.jpeg' width={100} height={100} alt="Dylan" />
-              <CardTitle className="pt-2">Dylan Ravel</CardTitle>
-              <p>Developer</p>
-              <p className="font-bold cursor-pointer" onClick={() => router.push('/profile/dylan')}>@dylan</p>
-              <div className="flex justify-center space-x-2 pt-2">
-                <Link href="https://www.dylanravel.com" target="blank">
-                  <Button variant="ghost" size="icon">
-                    <Globe />
-                  </Button>
-                </Link>
-                <Link href="https://github.com/DylanDevelops" target="blank">
-                  <Button variant="ghost" size="icon">
-                    <GithubIcon />
-                  </Button>
-                </Link>
-                <Link href="https://www.linkedin.com/in/dylanravel" target="blank">
-                  <Button variant="ghost" size="icon">
-                    <LinkedinIcon />
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-          </Card>
-          <Card className="md:hover:scale-105 hover:bg-[rgba(35,22,22,0.07)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.03)]">
-            <CardHeader>
-              <Image className="rounded-lg mx-auto" src='/profile-pictures/daniel.jpeg' width={100} height={100} alt="Daniel" />
-              <CardTitle className="pt-2">Daniel Tsivkovski</CardTitle>
-              <p>Developer</p>
-              <p className="font-bold cursor-pointer" onClick={() => router.push('/profile/dan')}>@dan</p>
-              <div className="flex justify-center space-x-2 pt-2">
-                <Link href="https://tsiv.dev" target="blank">
-                  <Button variant="ghost" size="icon">
-                    <Globe />
-                  </Button>
-                </Link>
-                <Link href="https://github.com/dtsivkovski" target="blank">
-                  <Button variant="ghost" size="icon">
-                    <GithubIcon />
-                  </Button>
-                </Link>
-                <Link href="https://www.linkedin.com/in/danieltsivkovski" target="blank">
-                  <Button variant="ghost" size="icon">
-                    <LinkedinIcon />
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-          </Card>
-          <Card className="md:hover:scale-105 hover:bg-[rgba(35,22,22,0.07)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.03)]">
-            <CardHeader>
-              <Image className="rounded-lg mx-auto" src='/profile-pictures/jake.jpeg' width={100} height={100} alt="Jake" />
-              <CardTitle className="pt-2">Jake Milam</CardTitle>
-              <p>Game Design</p>
-              <p className="font-bold cursor-pointer" onClick={() => router.push('/profile/jake')}>@jake</p>
-              <div className="flex justify-center space-x-2 pt-2">
-                <Link href="https://github.com/ssparkpilot" target="blank">
-                  <Button variant="ghost" size="icon">
-                    <GithubIcon />
-                  </Button>
-                </Link>
-                <Link href="https://www.linkedin.com/in/jake-milam-125258328" target="blank">
-                  <Button variant="ghost" size="icon">
-                    <LinkedinIcon />
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-          </Card>
+          <MaintainerCard
+            profilePicture="/profile-pictures/dylan.jpeg"
+            name="Dylan Ravel"
+            role="Developer"
+            username="dylan"
+            websiteLink="https://www.dylanravel.com"
+            gitHubLink="https://www.github.com/dylandevelops"
+            linkedInLink="https://www.linkedin.com/in/dylanravel"
+          />
+          <MaintainerCard
+            profilePicture="/profile-pictures/daniel.jpeg"
+            name="Daniel Tsivkovski"
+            role="Developer"
+            username="dan"
+            websiteLink="https://tsiv.dev"
+            gitHubLink="https://github.com/dtsivkovski"
+            linkedInLink="https://www.linkedin.com/in/danieltsivkovski"
+          />
+          <MaintainerCard
+            profilePicture="/profile-pictures/jake.jpeg"
+            name="Jake Milam"
+            role="Game Design"
+            username="jake"
+            gitHubLink="https://github.com/ssparkpilot"
+            linkedInLink="https://www.linkedin.com/in/jake-milam-125258328"
+          />
         </div>
         <p>Made with ❤️ at Chapman University</p>
       </div>
