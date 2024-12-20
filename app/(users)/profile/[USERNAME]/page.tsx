@@ -32,6 +32,7 @@ import ProfileBackground from "./_components/ProfileBackground";
 import ProfileAchievements from "./_components/ProfileAchievements";
 import ProfileActions from "./_components/ProfileActions";
 import { useMediaQuery } from "usehooks-ts";
+import ProfileAdministrativeActions from "./_components/AdministrativeActions";
 
 type Props = {
     params: { USERNAME: string }
@@ -47,6 +48,7 @@ const ProfilePage = ({ params }: Props) => {
 
   const clerkUser = useUser();
   const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
+  const viewingUser = useQuery(api.users.current);
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
   const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
@@ -402,7 +404,7 @@ const ProfilePage = ({ params }: Props) => {
                 <div className="flex flex-col w-full lg:w-auto space-y-10 items-start pt-4">
                   <div className="flex flex-col w-full">
                     <ProfileActions
-                      username={user.username} 
+                      username={user.username}
                       userClerkId={user.clerkId}
                     />
                   </div>
@@ -427,7 +429,11 @@ const ProfilePage = ({ params }: Props) => {
                     hasPhotoScout={hasPhotoScout}
                     photoScoutDescription={photoScoutDescription}
                   />
-                  
+                  <ProfileAdministrativeActions
+                    viewerUserID={viewingUser?.clerkId ?? ""}
+                    isProfileDeveloper={!!isDeveloperRole}
+                    isProfileModerator={!!isModeratorRole}
+                  />
                 </div>
               </div>
               {!isLargerScreen && (
