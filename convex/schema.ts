@@ -11,6 +11,8 @@ export default defineSchema({
     currentStreak: v.int64(),
     lastPlayedTimestamp: v.optional(v.number()),
     roles: v.optional(v.array(v.string())),
+    isBanned: v.boolean(),
+    banReason: v.optional(v.string()),
     achievements: v.optional(v.array(v.id("achievements"))),
     picture: v.string(),
     profileTagline: v.id("profileTaglines"),

@@ -14,7 +14,6 @@ interface ProfileAdministrativeActionsProps {
   viewerUserID: string;
   isProfileDeveloper: boolean;
   isProfileModerator: boolean;
-  isCurrentUser: boolean;
 }
 
 const roles = [
@@ -28,7 +27,6 @@ const ProfileAdministrativeActions = ({
   viewerUserID,
   isProfileDeveloper,
   isProfileModerator,
-  isCurrentUser
 } : ProfileAdministrativeActionsProps) => {
   const profileUser = useQuery(api.users.getUserByUsername, { username: profileUsername });
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", viewerUserID);
@@ -37,12 +35,15 @@ const ProfileAdministrativeActions = ({
   // Developer/Moderator Modifier States
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Level/XP Action
-  const [levelXPModifyDialogOpen, setLevelXPModifyDialogOpen] = useState(false);
-
   // Delete User Action
   const [deleteUserDialogOpen, setDeleteUserDialogOpen] = useState(false);
   const [deleteCountdown, setDeleteCountdown] = useState(3);
+  
+  // Ban User Action
+  const [banUserDialogOpen, setBanUserDialogOpen] = useState(false);
+
+  // Level/XP Action
+  const [levelXPModifyDialogOpen, setLevelXPModifyDialogOpen] = useState(false);
   
   // Roles Action
   const [rolesModifierDialogOpen, setRolesModifierDialogOpen] = useState(false);
@@ -55,8 +56,9 @@ const ProfileAdministrativeActions = ({
   };
 
   // Backend Functions
-  const modifyLevelAndXP = useMutation(api.users.modifyLevelAndXPAdministrativeAction);
   const deleteUser = useMutation(api.users.deleteUserAdministrativeAction);
+  const banUser = useMutation(api.users.banUserAdministrativeAction);
+  const modifyLevelAndXP = useMutation(api.users.modifyLevelAndXPAdministrativeAction);
   const modifyRoles = useMutation(api.users.modifyRolesAdministrativeAction);
 
   useEffect(() => {
@@ -88,6 +90,20 @@ const ProfileAdministrativeActions = ({
     });
 
     setDeleteUserDialogOpen(false);
+    setIsSubmitting(false);
+  }
+
+  async function handleBanUser() {
+    const reason = document.getElementById("ban_reason") as HTMLInputElement;
+
+    setIsSubmitting(true);
+
+    await banUser({
+      userToBanUsername: profileUsername,
+      banReason: reason.value == "" ? undefined : reason.value
+    });
+
+    setBanUserDialogOpen(false);
     setIsSubmitting(false);
   }
   
@@ -139,7 +155,7 @@ const ProfileAdministrativeActions = ({
               {isDeveloperRole && (
                 <Dialog open={deleteUserDialogOpen} onOpenChange={setDeleteUserDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="flex w-full" variant="destructive">
+                    <Button className="flex w-full" disabled={true} variant="destructive">
                       <Trash2 className="w-4 h-4 mr-2" />Delete User
                     </Button>
                   </DialogTrigger>
@@ -177,9 +193,54 @@ const ProfileAdministrativeActions = ({
               )}
 
               {(isDeveloperRole || isModeratorRole) && (
-                <Button className="flex w-full" variant="destructive" onClick={() => {
-                  alert("Banning Users Coming Soon!");
-                }}><Gavel className="w-4 h-4 mr-2" />Ban User</Button>
+                <Dialog open={banUserDialogOpen} onOpenChange={setBanUserDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="flex w-full" variant="destructive">
+                      <Gavel className="w-4 h-4 mr-2" />Ban User
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Ban User</DialogTitle>
+                      <DialogDescription>
+                        Ban @{profileUsername} from PantherGuessr and provide an optional ban reason which the user will be able to see.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="flex flex-col gap-2">
+                        <Label htmlFor="ban_reason" className="text-left">
+                          Ban Reason
+                        </Label>
+                        <Input
+                          id="ban_reason"
+                          disabled={isSubmitting}
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      {isSubmitting ? (
+                        <Button variant="default" type="submit" disabled={true}><LoaderCircle className="animate-spin mr-2" size={24} />Banning User</Button>
+                      ) : (
+                        <>
+                          <Button
+                            variant="outline"
+                            onClick={() => setBanUserDialogOpen(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            type="submit"
+                            onClick={handleBanUser}
+                          >
+                            Ban @{profileUsername}
+                          </Button>
+                        </>
+                      )}
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               )}
 
               {isDeveloperRole && (
@@ -310,9 +371,9 @@ const ProfileAdministrativeActions = ({
               )}
             
               {(isDeveloperRole || isModeratorRole) && (
-                <Button className="flex w-full" onClick={() => {
-                  alert("Submission Reviewing Coming Soon!");
-                }}><Send className="w-4 h-4 mr-2" />Review Submissions ({0})</Button>
+                <Button className="flex w-full" disabled={true}>
+                  <Send className="w-4 h-4 mr-2" />Review Submissions ({0})
+                </Button>
               )}
             </>
           )}

@@ -435,7 +435,6 @@ const ProfilePage = ({ params }: Props) => {
                     viewerUserID={viewingUser?.clerkId ?? ""}
                     isProfileDeveloper={!!isDeveloperRole}
                     isProfileModerator={!!isModeratorRole}
-                    isCurrentUser={isCurrentUser}
                   />
                 </div>
               </div>

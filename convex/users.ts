@@ -55,6 +55,7 @@ export const upsertFromClerk = internalMutation({
         level: 1n,
         currentXP: 0n,
         currentStreak: 0n,
+        isBanned: false,
         picture: data.image_url,
         profileBackground: background!._id,
         profileTagline: tagline!._id,
@@ -657,6 +658,40 @@ export const reportUser = mutation({
 // });
 
 /**
+ * Mutation to ban a user as an administrative action.
+ * 
+ * @param args.userToBanUsername - The username of the user to be banned.
+ * @param args.banReason - The optional reason for banning the user.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the user has been banned.
+ * 
+ * The handler performs the following steps:
+ * 1. Retrieves the user to be banned by their username.
+ * 2. Retrieves the current user performing the action.
+ * 3. Checks if the current user has the role of "developer" or "moderator".
+ * 4. If the current user has the required role, updates the user to be banned with `isBanned` set to true and sets the ban reason.
+ */
+export const banUserAdministrativeAction = mutation({
+  args: {
+    userToBanUsername: v.string(),
+    banReason: v.optional(v.string()),
+  },
+  async handler(ctx, args) {
+    const userToBan = await getUserByUsername(ctx, { username: args.userToBanUsername });
+    const callUser = await getCurrentUser(ctx);
+    
+    if(userToBan && callUser) {
+      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" }) || await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" })) {
+        await ctx.db.patch(userToBan._id, {
+          isBanned: true,
+          banReason: args.banReason
+        });
+      }
+    }
+  },
+});
+
+/**
  * Mutation to modify the level and XP of a user administratively.
  *
  * @param args.userToModifyUsername - The username of the user to modify.
@@ -702,7 +737,6 @@ export const modifyLevelAndXPAdministrativeAction = mutation({
  * 
  * @param args.userToModifyUsername - The username of the user whose roles are to be modified.
  * @param args.roles - An array of roles to assign to the user.
- * 
  * 
  * @returns {Promise<void>} - A promise that resolves when the roles have been modified.
  * 
