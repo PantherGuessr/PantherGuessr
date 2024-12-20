@@ -6,7 +6,7 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { api } from "@/convex/_generated/api";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useMutation, useQuery } from "convex/react";
-import { BookHeart, Gavel, Hash, Heart, LoaderCircle, Medal, Send, Shield, Trash2, Wrench } from "lucide-react";
+import { BookHeart, Gavel, Hash, Heart, LoaderCircle, Send, Shield, ShieldX, Trash2, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface ProfileAdministrativeActionsProps {
@@ -47,13 +47,12 @@ const ProfileAdministrativeActions = ({
   // Roles Action
   const [rolesModifierDialogOpen, setRolesModifierDialogOpen] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-
   const updateSelectedRoles = () => {
     if(profileUser && profileUser.roles) {
       const userRoles = profileUser.roles.map(role => roles.find(r => r.value === role)).filter(Boolean);
       setSelectedRoles(userRoles.filter(role => role !== undefined).map(role => role.value));
     }
-  }
+  };
 
   // Backend Functions
   const modifyLevelAndXP = useMutation(api.users.modifyLevelAndXPAdministrativeAction);
@@ -123,11 +122,16 @@ const ProfileAdministrativeActions = ({
   if(isDeveloperRole || isModeratorRole) {
     return (
       <div className="flex flex-col w-full items-start space-y-1">
-        <p className="text-md font-bold">
-          {isDeveloperRole ? "Developer Actions" : isModeratorRole ? "Moderator Actions" : ""}
-        </p>
+        {!((isProfileDeveloper && (isModeratorRole && !isDeveloperRole)) || (isProfileModerator && isModeratorRole && !isDeveloperRole)) && (
+          <p className="text-md font-bold">
+            {isDeveloperRole ? "Developer Actions" : isModeratorRole ? "Moderator Actions" : ""}
+          </p>
+        )}
         {((isProfileDeveloper && (isModeratorRole && !isDeveloperRole)) || (isProfileModerator && isModeratorRole && !isDeveloperRole)) && (
-          <p className="font-bold text-muted-foreground/60 italic">Invalid Permissions</p>
+          <div className="flex flex-col items-center">
+            <ShieldX className="h-6 w-6 mb-2 text-muted-foreground/60" />
+            <p className="font-bold text-muted-foreground/60 italic">You have invalid permissions to modify this user.</p>
+          </div>
         )}
         <div className="space-y-2 flex-col w-full">
           {((isProfileDeveloper && isDeveloperRole) || (!isProfileDeveloper && !isProfileModerator && (isDeveloperRole || isModeratorRole)) || (!isProfileDeveloper && isProfileModerator && isDeveloperRole)) && (
@@ -303,12 +307,6 @@ const ProfileAdministrativeActions = ({
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-              )}
-
-              {isDeveloperRole && (
-                <Button className="flex w-full" onClick={() => {
-                  alert("Achievement Modification Coming Soon!");
-                }}><Medal className="w-4 h-4 mr-2" />Modify Achievement(s)</Button>
               )}
             
               {(isDeveloperRole || isModeratorRole) && (
