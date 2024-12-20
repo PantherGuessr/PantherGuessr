@@ -56,7 +56,7 @@ const ProfileAdministrativeActions = ({
   };
 
   // Backend Functions
-  const deleteUser = useMutation(api.users.deleteUserAdministrativeAction);
+  // const deleteUser = useMutation(api.users.deleteUserAdministrativeAction); TODO: Fix
   const banUser = useMutation(api.users.banUserAdministrativeAction);
   const modifyLevelAndXP = useMutation(api.users.modifyLevelAndXPAdministrativeAction);
   const modifyRoles = useMutation(api.users.modifyRolesAdministrativeAction);
@@ -85,9 +85,10 @@ const ProfileAdministrativeActions = ({
   async function handleDeleteUser() {
     setIsSubmitting(true);
 
-    await deleteUser({
-      userToDeleteUsername: profileUsername
-    });
+    // TODO: Fix
+    // await deleteUser({
+    //   userToDeleteUsername: profileUsername
+    // });
 
     setDeleteUserDialogOpen(false);
     setIsSubmitting(false);
