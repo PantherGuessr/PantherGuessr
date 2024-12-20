@@ -2,10 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { api } from "@/convex/_generated/api";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useMutation, useQuery } from "convex/react";
-import { BookHeart, Gavel, Hash, LoaderCircle, Medal, Send, Trash2 } from "lucide-react";
+import { BookHeart, Gavel, Hash, Heart, LoaderCircle, Medal, Send, Shield, Trash2, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface ProfileAdministrativeActionsProps {
@@ -15,6 +16,12 @@ interface ProfileAdministrativeActionsProps {
   isProfileModerator: boolean;
   isCurrentUser: boolean;
 }
+
+const roles = [
+  { value: "developer", label: "Developer", icon: Wrench },
+  { value: "moderator", label: "Moderator", icon: Shield },
+  { value: "friend", label: "Friend", icon: Heart }
+];
 
 const ProfileAdministrativeActions = ({
   profileUsername,
@@ -29,13 +36,29 @@ const ProfileAdministrativeActions = ({
   
   // Developer/Moderator Modifier States
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Level/XP Action
   const [levelXPModifyDialogOpen, setLevelXPModifyDialogOpen] = useState(false);
+
+  // Delete User Action
   const [deleteUserDialogOpen, setDeleteUserDialogOpen] = useState(false);
   const [deleteCountdown, setDeleteCountdown] = useState(3);
+  
+  // Roles Action
+  const [rolesModifierDialogOpen, setRolesModifierDialogOpen] = useState(false);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+
+  const updateSelectedRoles = () => {
+    if(profileUser && profileUser.roles) {
+      const userRoles = profileUser.roles.map(role => roles.find(r => r.value === role)).filter(Boolean);
+      setSelectedRoles(userRoles.filter(role => role !== undefined).map(role => role.value));
+    }
+  }
 
   // Backend Functions
   const modifyLevelAndXP = useMutation(api.users.modifyLevelAndXPAdministrativeAction);
   const deleteUser = useMutation(api.users.deleteUserAdministrativeAction);
+  const modifyRoles = useMutation(api.users.modifyRolesAdministrativeAction);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -65,8 +88,8 @@ const ProfileAdministrativeActions = ({
       userToDeleteUsername: profileUsername
     });
 
-    setIsSubmitting(false);
     setDeleteUserDialogOpen(false);
+    setIsSubmitting(false);
   }
   
   async function handleModifyLevelXPSubmission() {
@@ -81,8 +104,20 @@ const ProfileAdministrativeActions = ({
       newXP: BigInt(parseInt(newXP.value))
     });
 
-    setIsSubmitting(false);
     setLevelXPModifyDialogOpen(false);
+    setIsSubmitting(false);
+  }
+
+  async function handleModifyRolesSubmission() {
+    setIsSubmitting(true);
+
+    await modifyRoles({
+      userToModifyUsername: profileUsername,
+      roles: selectedRoles
+    });
+
+    setRolesModifierDialogOpen(false);
+    setIsSubmitting(false);
   }
 
   if(isDeveloperRole || isModeratorRole) {
@@ -159,7 +194,7 @@ const ProfileAdministrativeActions = ({
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="name" className="text-right">
+                        <Label htmlFor="level" className="text-right">
                           Level
                         </Label>
                         <Input
@@ -173,7 +208,7 @@ const ProfileAdministrativeActions = ({
                         />
                       </div>
                       <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="username" className="text-right">
+                        <Label htmlFor="xp" className="text-right">
                           XP
                         </Label>
                         <Input
@@ -213,9 +248,61 @@ const ProfileAdministrativeActions = ({
               )}
 
               {isDeveloperRole && (
-                <Button className="flex w-full" onClick={() => {
-                  alert("Role Modification Coming Soon!");
-                }}><BookHeart className="w-4 h-4 mr-2" />Modify Role(s)</Button>
+                <Dialog open={rolesModifierDialogOpen} onOpenChange={(isOpen) => {
+                  setRolesModifierDialogOpen(isOpen);
+                  if (isOpen) updateSelectedRoles();
+                }}>
+                  <DialogTrigger asChild>
+                    <Button className="flex w-full">
+                      <BookHeart className="w-4 h-4 mr-2" />Modify Role(s)
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Modify User Role(s)</DialogTitle>
+                      <DialogDescription>
+                        Modify the roles that @{profileUsername} has.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="flex flex-col gap-2">
+                        <Label htmlFor="roles" className="text-left">
+                        Role(s)
+                        </Label>
+                        <MultiSelect
+                          options={roles}
+                          onValueChange={setSelectedRoles}
+                          defaultValue={selectedRoles}
+                          placeholder="Select role(s)"
+                          variant="inverted"
+                          animation={0}
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      {isSubmitting ? (
+                        <Button variant="default" type="submit" disabled={true}><LoaderCircle className="animate-spin mr-2" size={24} />Submitting Changes</Button>
+                      ) : (
+                        <>
+                          <Button
+                            variant="outline"
+                            onClick={() => setRolesModifierDialogOpen(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="default"
+                            type="submit"
+                            onClick={handleModifyRolesSubmission}
+                          >
+                            Save Changes
+                          </Button>
+                        </>
+                      )}
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               )}
 
               {isDeveloperRole && (

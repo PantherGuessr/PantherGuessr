@@ -627,6 +627,36 @@ export const reportUser = mutation({
 });
 
 /**
+ * Mutation to delete a user as an administrative action.
+ *
+ * @param args.userToDeleteUsername - The username of the user to delete.
+ * @returns {Promise<void>} - A promise that resolves when the user is deleted.
+ *
+ * This mutation checks if the current user has the "developer" role before attempting to delete the specified user.
+ * If the current user has the required role, it attempts to delete the user using the Clerk API.
+ * Any errors encountered during the deletion process are logged to the console.
+ */
+// export const deleteUserAdministrativeAction = mutation({
+//   args: {
+//     userToDeleteUsername: v.string(),
+//   },
+//   async handler(ctx, args) {
+//     const userToDelete = await getUserByUsername(ctx, { username: args.userToDeleteUsername });
+//     const callUser = await getCurrentUser(ctx);
+    
+//     if(userToDelete && callUser) {
+//       if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+//         try {
+//           await clerkClient.users.deleteUser(userToDelete.clerkId);
+//         } catch (error) {
+//           console.log(error);
+//         }
+//       }
+//     }
+//   },
+// });
+
+/**
  * Mutation to modify the level and XP of a user administratively.
  *
  * @param args.userToModifyUsername - The username of the user to modify.
@@ -668,34 +698,38 @@ export const modifyLevelAndXPAdministrativeAction = mutation({
 });
 
 /**
- * Mutation to delete a user as an administrative action.
- *
- * @param args.userToDeleteUsername - The username of the user to delete.
- * @returns {Promise<void>} - A promise that resolves when the user is deleted.
- *
- * This mutation checks if the current user has the "developer" role before attempting to delete the specified user.
- * If the current user has the required role, it attempts to delete the user using the Clerk API.
- * Any errors encountered during the deletion process are logged to the console.
+ * Mutation to modify the roles of a user as an administrative action.
+ * 
+ * @param args.userToModifyUsername - The username of the user whose roles are to be modified.
+ * @param args.roles - An array of roles to assign to the user.
+ * 
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the roles have been modified.
+ * 
+ * @remarks
+ * This mutation allows a user with the "developer" role to modify the roles of another user.
+ * If the `roles` array is empty, the roles will be set to `undefined`.
+ * 
+ * @throws {Error} - If the user to modify or the calling user cannot be found.
  */
-// export const deleteUserAdministrativeAction = mutation({
-//   args: {
-//     userToDeleteUsername: v.string(),
-//   },
-//   async handler(ctx, args) {
-//     const userToDelete = await getUserByUsername(ctx, { username: args.userToDeleteUsername });
-//     const callUser = await getCurrentUser(ctx);
+export const modifyRolesAdministrativeAction = mutation({
+  args: {
+    userToModifyUsername: v.string(),
+    roles: v.array(v.string())
+  },
+  async handler(ctx, args) {
+    const userToModify = await getUserByUsername(ctx, { username: args.userToModifyUsername });
+    const callUser = await getCurrentUser(ctx);
     
-//     if(userToDelete && callUser) {
-//       if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
-//         try {
-//           await clerkClient.users.deleteUser(userToDelete.clerkId);
-//         } catch (error) {
-//           console.log(error);
-//         }
-//       }
-//     }
-//   },
-// });
+    if(userToModify && callUser) {
+      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+        await ctx.db.patch(userToModify._id, {
+          roles: args.roles.length == 0 ? undefined : args.roles
+        });
+      }
+    }
+  },
+});
 
 /**
  * Retrieves the current user record or throws an error if the user is not found.
