@@ -1,5 +1,6 @@
 import { internalMutation, mutation, query, QueryCtx } from "./_generated/server";
 import { UserJSON } from "@clerk/backend";
+// import { clerkClient } from "@clerk/nextjs/server"; // TODO: Fix
 import { v, Validator } from "convex/values";
 import { Id } from "./_generated/dataModel";
 
@@ -626,18 +627,26 @@ export const reportUser = mutation({
 });
 
 /**
- * Mutation to modify the level and XP of a user.
+ * Mutation to modify the level and XP of a user administratively.
  *
- * @param {string} args.userToModifyUsername - The username of the user to modify.
- * @param {number} args.newLevel - The new level to set for the user.
- * @param {number} args.newXP - The new XP to set for the user.
+ * @param args.userToModifyUsername - The username of the user to modify.
+ * @param args.newLevel - The new level to set for the user.
+ * @param args.newXP - The new XP to set for the user.
  *
- * @returns {Promise<void>} - A promise that resolves when the user's level and XP have been modified.
+ * @returns {Promise<void>} - A promise that resolves when the mutation is complete.
  *
- * @throws {Error} If the user to modify or the current user is not found.
- * @throws {Error} If the current user does not have the "developer" role.
+ * @throws {Error} - Throws an error if the user to modify or the calling user cannot be found.
+ *
+ * @example
+ * ```typescript
+ * await modifyLevelAndXPAdministrativeAction({
+ *   userToModifyUsername: "exampleUser",
+ *   newLevel: 10,
+ *   newXP: 75
+ * });
+ * ```
  */
-export const modifyLevelAndXP = mutation({
+export const modifyLevelAndXPAdministrativeAction = mutation({
   args: {
     userToModifyUsername: v.string(),
     newLevel: v.int64(),
@@ -657,6 +666,36 @@ export const modifyLevelAndXP = mutation({
     }
   },
 });
+
+/**
+ * Mutation to delete a user as an administrative action.
+ *
+ * @param args.userToDeleteUsername - The username of the user to delete.
+ * @returns {Promise<void>} - A promise that resolves when the user is deleted.
+ *
+ * This mutation checks if the current user has the "developer" role before attempting to delete the specified user.
+ * If the current user has the required role, it attempts to delete the user using the Clerk API.
+ * Any errors encountered during the deletion process are logged to the console.
+ */
+// export const deleteUserAdministrativeAction = mutation({
+//   args: {
+//     userToDeleteUsername: v.string(),
+//   },
+//   async handler(ctx, args) {
+//     const userToDelete = await getUserByUsername(ctx, { username: args.userToDeleteUsername });
+//     const callUser = await getCurrentUser(ctx);
+    
+//     if(userToDelete && callUser) {
+//       if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+//         try {
+//           await clerkClient.users.deleteUser(userToDelete.clerkId);
+//         } catch (error) {
+//           console.log(error);
+//         }
+//       }
+//     }
+//   },
+// });
 
 /**
  * Retrieves the current user record or throws an error if the user is not found.
