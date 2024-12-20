@@ -406,6 +406,7 @@ const ProfilePage = ({ params }: Props) => {
                     <ProfileActions
                       username={user.username}
                       userClerkId={user.clerkId}
+                      isCurrentUser={isCurrentUser}
                     />
                   </div>
                   <div className="flex flex-col w-full">
@@ -433,6 +434,7 @@ const ProfilePage = ({ params }: Props) => {
                     viewerUserID={viewingUser?.clerkId ?? ""}
                     isProfileDeveloper={!!isDeveloperRole}
                     isProfileModerator={!!isModeratorRole}
+                    isCurrentUser={isCurrentUser}
                   />
                 </div>
               </div>

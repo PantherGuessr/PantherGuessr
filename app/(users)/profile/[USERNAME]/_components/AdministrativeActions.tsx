@@ -6,12 +6,14 @@ interface ProfileAdministrativeActionsProps {
   viewerUserID: string;
   isProfileDeveloper: boolean;
   isProfileModerator: boolean;
+  isCurrentUser: boolean;
 }
 
 const ProfileAdministrativeActions = ({
   viewerUserID,
   isProfileDeveloper,
-  isProfileModerator
+  isProfileModerator,
+  isCurrentUser
 } : ProfileAdministrativeActionsProps) => {
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", viewerUserID);
   const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", viewerUserID);
