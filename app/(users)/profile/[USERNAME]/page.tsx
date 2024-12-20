@@ -431,6 +431,7 @@ const ProfilePage = ({ params }: Props) => {
                     photoScoutDescription={photoScoutDescription}
                   />
                   <ProfileAdministrativeActions
+                    profileUsername={user.username}
                     viewerUserID={viewingUser?.clerkId ?? ""}
                     isProfileDeveloper={!!isDeveloperRole}
                     isProfileModerator={!!isModeratorRole}

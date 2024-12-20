@@ -626,6 +626,39 @@ export const reportUser = mutation({
 });
 
 /**
+ * Mutation to modify the level and XP of a user.
+ *
+ * @param {string} args.userToModifyUsername - The username of the user to modify.
+ * @param {number} args.newLevel - The new level to set for the user.
+ * @param {number} args.newXP - The new XP to set for the user.
+ *
+ * @returns {Promise<void>} - A promise that resolves when the user's level and XP have been modified.
+ *
+ * @throws {Error} If the user to modify or the current user is not found.
+ * @throws {Error} If the current user does not have the "developer" role.
+ */
+export const modifyLevelAndXP = mutation({
+  args: {
+    userToModifyUsername: v.string(),
+    newLevel: v.int64(),
+    newXP: v.int64(),
+  },
+  async handler(ctx, args) {
+    const userToModify = await getUserByUsername(ctx, { username: args.userToModifyUsername });
+    const callUser = await getCurrentUser(ctx);
+    
+    if(userToModify && callUser) {
+      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+        await ctx.db.patch(userToModify._id, {
+          level: args.newLevel,
+          currentXP: args.newXP
+        });
+      }
+    }
+  },
+});
+
+/**
  * Retrieves the current user record or throws an error if the user is not found.
  *
  * @param ctx - The context for the query.
