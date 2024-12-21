@@ -1,8 +1,8 @@
-import { internalMutation, mutation, query, QueryCtx } from "./_generated/server";
-import { UserJSON } from "@clerk/backend";
-// import { clerkClient } from "@clerk/nextjs/server"; // TODO: Fix
+import { internalAction, internalMutation, mutation, query, QueryCtx } from "./_generated/server";
+import { createClerkClient, UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
 import { Id } from "./_generated/dataModel";
+import { internal } from "./_generated/api";
 
 /**
  * Query to get the current user.
@@ -77,14 +77,10 @@ export const upsertFromClerk = internalMutation({
   },
 });
 
-
 /**
  * Deletes a user from the database based on the provided Clerk user ID.
  * 
- * @param {Object} args - The arguments object.
  * @param {string} args.clerkUserId - The Clerk user ID of the user to be deleted.
- * 
- * @param {Object} ctx - The context object.
  * 
  * @returns {Promise<void>} - A promise that resolves when the user is deleted.
  * 
@@ -92,10 +88,11 @@ export const upsertFromClerk = internalMutation({
  * 
  * @example
  * ```typescript
- * await deleteFromClerk({ clerkUserId: 'clerk_user_id' });
+ * await deleteUserFromConvex
+ * ({ clerkUserId: 'clerk_user_id' });
  * ```
  */
-export const deleteFromClerk = internalMutation({
+export const deleteUserFromConvex = internalMutation({
   args: { clerkUserId: v.string() },
   async handler(ctx, { clerkUserId }) {
     const user = await userByClerkId(ctx, clerkUserId);
@@ -637,25 +634,54 @@ export const reportUser = mutation({
  * If the current user has the required role, it attempts to delete the user using the Clerk API.
  * Any errors encountered during the deletion process are logged to the console.
  */
-// export const deleteUserAdministrativeAction = mutation({
-//   args: {
-//     userToDeleteUsername: v.string(),
-//   },
-//   async handler(ctx, args) {
-//     const userToDelete = await getUserByUsername(ctx, { username: args.userToDeleteUsername });
-//     const callUser = await getCurrentUser(ctx);
+export const deleteUserAdministrativeAction = mutation({
+  args: {
+    userToDeleteUsername: v.string(),
+  },
+  async handler(ctx, args) {
+    const userToDelete = await getUserByUsername(ctx, { username: args.userToDeleteUsername });
+    const callUser = await getCurrentUser(ctx);
     
-//     if(userToDelete && callUser) {
-//       if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
-//         try {
-//           await clerkClient.users.deleteUser(userToDelete.clerkId);
-//         } catch (error) {
-//           console.log(error);
-//         }
-//       }
-//     }
-//   },
-// });
+    if(userToDelete && callUser) {
+      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+        await ctx.scheduler.runAfter(0, internal.users.deleteUserFromConvex, {
+          clerkUserId: userToDelete.clerkId
+        });
+      }
+    }
+  },
+});
+
+/**
+ * Deletes a user from Clerk using the provided Clerk user ID.
+ *
+ * @param {string} args.clerkUserId - The ID of the Clerk user to be deleted.
+ * @returns {Promise<void>} - A promise that resolves when the user is deleted.
+ *
+ * @throws {Error} - Throws an error if the user deletion fails.
+ *
+ * @example
+ * ```typescript
+ * await deleteFromClerk({ clerkUserId: "user_12345" });
+ * ```
+ */
+export const deleteFromClerkAction = internalAction({
+  args: {
+    clerkUserId: v.string()
+  },
+  async handler(ctx, args) {
+    try {
+      const clerkClient = createClerkClient({
+        publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+        secretKey: process.env.CLERK_SECRET_KEY
+      });
+      
+      await clerkClient.users.deleteUser(args.clerkUserId);
+    } catch (error) {
+      console.log("Error deleting user:", error);
+    }
+  },
+});
 
 /**
  * Mutation to ban a user as an administrative action.

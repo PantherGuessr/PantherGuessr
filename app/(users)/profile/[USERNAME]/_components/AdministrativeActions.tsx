@@ -56,7 +56,7 @@ const ProfileAdministrativeActions = ({
   };
 
   // Backend Functions
-  // const deleteUser = useMutation(api.users.deleteUserAdministrativeAction); TODO: Fix
+  const deleteUser = useMutation(api.users.deleteUserAdministrativeAction);
   const banUser = useMutation(api.users.banUserAdministrativeAction);
   const modifyLevelAndXP = useMutation(api.users.modifyLevelAndXPAdministrativeAction);
   const modifyRoles = useMutation(api.users.modifyRolesAdministrativeAction);
@@ -85,10 +85,9 @@ const ProfileAdministrativeActions = ({
   async function handleDeleteUser() {
     setIsSubmitting(true);
 
-    // TODO: Fix
-    // await deleteUser({
-    //   userToDeleteUsername: profileUsername
-    // });
+    await deleteUser({
+      userToDeleteUsername: profileUsername
+    });
 
     setDeleteUserDialogOpen(false);
     setIsSubmitting(false);
@@ -156,7 +155,7 @@ const ProfileAdministrativeActions = ({
               {isDeveloperRole && (
                 <Dialog open={deleteUserDialogOpen} onOpenChange={setDeleteUserDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="flex w-full" disabled={true} variant="destructive">
+                    <Button className="flex w-full" variant="destructive">
                       <Trash2 className="w-4 h-4 mr-2" />Delete User
                     </Button>
                   </DialogTrigger>
