@@ -644,7 +644,7 @@ export const deleteUserAdministrativeAction = mutation({
     
     if(userToDelete && callUser) {
       if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
-        await ctx.scheduler.runAfter(0, internal.users.deleteUserFromConvex, {
+        await ctx.scheduler.runAfter(0, internal.users.deleteFromClerkAction, {
           clerkUserId: userToDelete.clerkId
         });
       }
