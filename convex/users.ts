@@ -128,6 +128,35 @@ export const getUserByUsername = query({
 });
 
 /**
+ * Query to check if a user is banned based on their Clerk ID.
+ *
+ * @param {string} args.clerkId - The Clerk ID of the user to check.
+ * @returns {Promise<{ result: boolean, banReason: string | undefined }>} 
+ *          An object containing the result of whether the user is banned and the reason for the ban if applicable.
+ *
+ * @example
+ * const result = await isUserBanned({ clerkId: 'user_clerk_id' });
+ * console.log(result); // { result: true, banReason: 'Violation of terms' }
+ */
+export const isUserBanned = query({
+  args: {
+    clerkId: v.string(),
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
+
+    if(!user) {
+      return { result: false, banReason: undefined };
+    }
+    
+    return {
+      result: user.isBanned,
+      banReason: user.isBanned ? user.banReason : undefined,
+    };
+  },
+});
+
+/**
  * Awards experience points (XP) to a user and updates their level accordingly.
  * 
  * @param args - The arguments for the mutation.
@@ -732,6 +761,36 @@ export const banUserAdministrativeAction = mutation({
         await ctx.db.patch(userToBan._id, {
           isBanned: true,
           banReason: args.banReason
+        });
+      }
+    }
+  },
+});
+
+/**
+ * Unbans a user through an administrative action.
+ * 
+ * This mutation allows a user with the role of "developer" or "moderator" to unban another user.
+ * 
+ * @param {string} args.userToUnban - The username of the user to unban.
+ *  
+ * @returns {Promise<void>} - A promise that resolves when the user has been unbanned.
+ * 
+ * @throws {Error} - Throws an error if the user to unban or the current user cannot be found.
+ */
+export const unbanUserAdministrativeAction = mutation({
+  args: {
+    userToUnban: v.string(),
+  },
+  async handler(ctx, args) {
+    const userToUnban = await getUserByUsername(ctx, { username: args.userToUnban });
+    const callUser = await getCurrentUser(ctx);
+    
+    if(userToUnban && callUser) {
+      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" }) || await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" })) {
+        await ctx.db.patch(userToUnban._id, {
+          isBanned: false,
+          banReason: undefined
         });
       }
     }

@@ -4,16 +4,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { api } from "@/convex/_generated/api";
-import { useRoleCheck } from "@/hooks/use-role-check";
 import { useMutation, useQuery } from "convex/react";
 import { BookHeart, Gavel, Hash, Heart, LoaderCircle, Send, Shield, ShieldX, Trash2, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface ProfileAdministrativeActionsProps {
   profileUsername: string;
-  viewerUserID: string;
   isProfileDeveloper: boolean;
   isProfileModerator: boolean;
+  isViewerDeveloper: boolean;
+  isViewerModerator: boolean;
+  isUserBanned: boolean;
+  banReason?: string;
 }
 
 const roles = [
@@ -24,13 +26,14 @@ const roles = [
 
 const ProfileAdministrativeActions = ({
   profileUsername,
-  viewerUserID,
   isProfileDeveloper,
   isProfileModerator,
+  isViewerDeveloper,
+  isViewerModerator,
+  isUserBanned,
+  banReason
 } : ProfileAdministrativeActionsProps) => {
   const profileUser = useQuery(api.users.getUserByUsername, { username: profileUsername });
-  const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", viewerUserID);
-  const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", viewerUserID);
   
   // Developer/Moderator Modifier States
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,6 +61,7 @@ const ProfileAdministrativeActions = ({
   // Backend Functions
   const deleteUser = useMutation(api.users.deleteUserAdministrativeAction);
   const banUser = useMutation(api.users.banUserAdministrativeAction);
+  const unbanUser = useMutation(api.users.unbanUserAdministrativeAction);
   const modifyLevelAndXP = useMutation(api.users.modifyLevelAndXPAdministrativeAction);
   const modifyRoles = useMutation(api.users.modifyRolesAdministrativeAction);
 
@@ -78,7 +82,7 @@ const ProfileAdministrativeActions = ({
     return () => clearInterval(timer);
   }, [deleteUserDialogOpen]);
   
-  if(developerRoleLoading || moderatorRoleLoading || !profileUser) {
+  if(!profileUser) {
     return;
   }
 
@@ -93,15 +97,21 @@ const ProfileAdministrativeActions = ({
     setIsSubmitting(false);
   }
 
-  async function handleBanUser() {
-    const reason = document.getElementById("ban_reason") as HTMLInputElement;
-
+  async function handleToggleBanUser() {
     setIsSubmitting(true);
 
-    await banUser({
-      userToBanUsername: profileUsername,
-      banReason: reason.value == "" ? undefined : reason.value
-    });
+    if(isUserBanned) {
+      await unbanUser({
+        userToUnban: profileUsername
+      });
+    } else {
+      const reason = document.getElementById("ban_reason") as HTMLInputElement;
+
+      await banUser({
+        userToBanUsername: profileUsername,
+        banReason: reason.value == "" ? undefined : reason.value
+      });
+    }
 
     setBanUserDialogOpen(false);
     setIsSubmitting(false);
@@ -135,24 +145,24 @@ const ProfileAdministrativeActions = ({
     setIsSubmitting(false);
   }
 
-  if(isDeveloperRole || isModeratorRole) {
+  if(isViewerDeveloper || isViewerModerator) {
     return (
       <div className="flex flex-col w-full items-start space-y-1">
-        {!((isProfileDeveloper && (isModeratorRole && !isDeveloperRole)) || (isProfileModerator && isModeratorRole && !isDeveloperRole)) && (
+        {!((isProfileDeveloper && (isViewerModerator && !isViewerDeveloper)) || (isProfileModerator && isViewerModerator && !isViewerDeveloper)) && (
           <p className="text-md font-bold">
-            {isDeveloperRole ? "Developer Actions" : isModeratorRole ? "Moderator Actions" : ""}
+            {isViewerDeveloper ? "Developer Actions" : isViewerModerator ? "Moderator Actions" : ""}
           </p>
         )}
-        {((isProfileDeveloper && (isModeratorRole && !isDeveloperRole)) || (isProfileModerator && isModeratorRole && !isDeveloperRole)) && (
+        {((isProfileDeveloper && (isViewerModerator && !isViewerDeveloper)) || (isProfileModerator && isViewerModerator && !isViewerDeveloper)) && (
           <div className="flex flex-col items-center">
             <ShieldX className="h-6 w-6 mb-2 text-muted-foreground/60" />
             <p className="font-bold text-muted-foreground/60 italic">You have invalid permissions to modify this user.</p>
           </div>
         )}
         <div className="space-y-2 flex-col w-full">
-          {((isProfileDeveloper && isDeveloperRole) || (!isProfileDeveloper && !isProfileModerator && (isDeveloperRole || isModeratorRole)) || (!isProfileDeveloper && isProfileModerator && isDeveloperRole)) && (
+          {((isProfileDeveloper && isViewerDeveloper) || (!isProfileDeveloper && !isProfileModerator && (isViewerDeveloper || isViewerModerator)) || (!isProfileDeveloper && isProfileModerator && isViewerDeveloper)) && (
             <>
-              {isDeveloperRole && (
+              {isViewerDeveloper && (
                 <Dialog open={deleteUserDialogOpen} onOpenChange={setDeleteUserDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="flex w-full" variant="destructive">
@@ -192,18 +202,22 @@ const ProfileAdministrativeActions = ({
                 </Dialog>
               )}
 
-              {(isDeveloperRole || isModeratorRole) && (
+              {(isViewerDeveloper || isViewerModerator) && (
                 <Dialog open={banUserDialogOpen} onOpenChange={setBanUserDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="flex w-full" variant="destructive">
-                      <Gavel className="w-4 h-4 mr-2" />Ban User
+                      <Gavel className="w-4 h-4 mr-2" />{isUserBanned ? "Unban User" : "Ban User"}
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>Ban User</DialogTitle>
+                      <DialogTitle>{isUserBanned ? "Unban User" : "Ban User"}</DialogTitle>
                       <DialogDescription>
-                        Ban @{profileUsername} from PantherGuessr and provide an optional ban reason which the user will be able to see.
+                        {isUserBanned ? (
+                          `Unban @${profileUsername} from PantherGuessr.`
+                        ) : (
+                          `Ban @${profileUsername} from PantherGuessr and provide an optional ban reason which the user will be able to see.`
+                        )}
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -211,11 +225,20 @@ const ProfileAdministrativeActions = ({
                         <Label htmlFor="ban_reason" className="text-left">
                           Ban Reason
                         </Label>
-                        <Input
-                          id="ban_reason"
-                          disabled={isSubmitting}
-                          className="w-full"
-                        />
+                        {isUserBanned ? (
+                          <Input
+                            id="ban_reason"
+                            disabled={true}
+                            defaultValue={banReason ?? "None Provided"}
+                            className="w-full"
+                          />
+                        ) : (
+                          <Input
+                            id="ban_reason"
+                            disabled={isSubmitting}
+                            className="w-full"
+                          />
+                        )}
                       </div>
                     </div>
                     <DialogFooter>
@@ -232,9 +255,9 @@ const ProfileAdministrativeActions = ({
                           <Button
                             variant="destructive"
                             type="submit"
-                            onClick={handleBanUser}
+                            onClick={handleToggleBanUser}
                           >
-                            Ban @{profileUsername}
+                            {isUserBanned ? "Unban" : "Ban"} @{profileUsername}
                           </Button>
                         </>
                       )}
@@ -243,7 +266,7 @@ const ProfileAdministrativeActions = ({
                 </Dialog>
               )}
 
-              {isDeveloperRole && (
+              {isViewerDeveloper && (
                 <Dialog open={levelXPModifyDialogOpen} onOpenChange={setLevelXPModifyDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="flex w-full">
@@ -312,7 +335,7 @@ const ProfileAdministrativeActions = ({
                 </Dialog>
               )}
 
-              {isDeveloperRole && (
+              {isViewerDeveloper && (
                 <Dialog open={rolesModifierDialogOpen} onOpenChange={(isOpen) => {
                   setRolesModifierDialogOpen(isOpen);
                   if (isOpen) updateSelectedRoles();
@@ -370,7 +393,7 @@ const ProfileAdministrativeActions = ({
                 </Dialog>
               )}
             
-              {(isDeveloperRole || isModeratorRole) && (
+              {(isViewerDeveloper || isViewerModerator) && (
                 <Button className="flex w-full" disabled={true}>
                   <Send className="w-4 h-4 mr-2" />Review Submissions ({0})
                 </Button>
