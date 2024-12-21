@@ -25,7 +25,7 @@ http.route({
 
     case "user.deleted": {
       const clerkUserId = event.data.id!;
-      await convexToJson.runMutation(internal.users.deleteFromClerk, { clerkUserId });
+      await convexToJson.runMutation(internal.users.deleteUserFromConvex, { clerkUserId });
       break;
     }
 

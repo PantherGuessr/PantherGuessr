@@ -1,7 +1,8 @@
-import { internalMutation, mutation, query, QueryCtx } from "./_generated/server";
-import { UserJSON } from "@clerk/backend";
+import { internalAction, internalMutation, mutation, query, QueryCtx } from "./_generated/server";
+import { createClerkClient, UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
 import { Id } from "./_generated/dataModel";
+import { internal } from "./_generated/api";
 
 /**
  * Query to get the current user.
@@ -54,6 +55,7 @@ export const upsertFromClerk = internalMutation({
         level: 1n,
         currentXP: 0n,
         currentStreak: 0n,
+        isBanned: false,
         picture: data.image_url,
         profileBackground: background!._id,
         profileTagline: tagline!._id,
@@ -75,14 +77,10 @@ export const upsertFromClerk = internalMutation({
   },
 });
 
-
 /**
  * Deletes a user from the database based on the provided Clerk user ID.
  * 
- * @param {Object} args - The arguments object.
  * @param {string} args.clerkUserId - The Clerk user ID of the user to be deleted.
- * 
- * @param {Object} ctx - The context object.
  * 
  * @returns {Promise<void>} - A promise that resolves when the user is deleted.
  * 
@@ -90,10 +88,11 @@ export const upsertFromClerk = internalMutation({
  * 
  * @example
  * ```typescript
- * await deleteFromClerk({ clerkUserId: 'clerk_user_id' });
+ * await deleteUserFromConvex
+ * ({ clerkUserId: 'clerk_user_id' });
  * ```
  */
-export const deleteFromClerk = internalMutation({
+export const deleteUserFromConvex = internalMutation({
   args: { clerkUserId: v.string() },
   async handler(ctx, { clerkUserId }) {
     const user = await userByClerkId(ctx, clerkUserId);
@@ -644,6 +643,173 @@ export const reportUser = mutation({
       hasBeenResolved: false
     });
   }
+});
+
+/**
+ * Mutation to delete a user as an administrative action.
+ *
+ * @param args.userToDeleteUsername - The username of the user to delete.
+ * @returns {Promise<void>} - A promise that resolves when the user is deleted.
+ *
+ * This mutation checks if the current user has the "developer" role before attempting to delete the specified user.
+ * If the current user has the required role, it attempts to delete the user using the Clerk API.
+ * Any errors encountered during the deletion process are logged to the console.
+ */
+export const deleteUserAdministrativeAction = mutation({
+  args: {
+    userToDeleteUsername: v.string(),
+  },
+  async handler(ctx, args) {
+    const userToDelete = await getUserByUsername(ctx, { username: args.userToDeleteUsername });
+    const callUser = await getCurrentUser(ctx);
+    
+    if(userToDelete && callUser) {
+      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+        await ctx.scheduler.runAfter(0, internal.users.deleteFromClerkAction, {
+          clerkUserId: userToDelete.clerkId
+        });
+      }
+    }
+  },
+});
+
+/**
+ * Deletes a user from Clerk using the provided Clerk user ID.
+ *
+ * @param {string} args.clerkUserId - The ID of the Clerk user to be deleted.
+ * @returns {Promise<void>} - A promise that resolves when the user is deleted.
+ *
+ * @throws {Error} - Throws an error if the user deletion fails.
+ *
+ * @example
+ * ```typescript
+ * await deleteFromClerk({ clerkUserId: "user_12345" });
+ * ```
+ */
+export const deleteFromClerkAction = internalAction({
+  args: {
+    clerkUserId: v.string()
+  },
+  async handler(ctx, args) {
+    try {
+      const clerkClient = createClerkClient({
+        publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+        secretKey: process.env.CLERK_SECRET_KEY
+      });
+      
+      await clerkClient.users.deleteUser(args.clerkUserId);
+    } catch (error) {
+      console.log("Error deleting user:", error);
+    }
+  },
+});
+
+/**
+ * Mutation to ban a user as an administrative action.
+ * 
+ * @param args.userToBanUsername - The username of the user to be banned.
+ * @param args.banReason - The optional reason for banning the user.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the user has been banned.
+ * 
+ * The handler performs the following steps:
+ * 1. Retrieves the user to be banned by their username.
+ * 2. Retrieves the current user performing the action.
+ * 3. Checks if the current user has the role of "developer" or "moderator".
+ * 4. If the current user has the required role, updates the user to be banned with `isBanned` set to true and sets the ban reason.
+ */
+export const banUserAdministrativeAction = mutation({
+  args: {
+    userToBanUsername: v.string(),
+    banReason: v.optional(v.string()),
+  },
+  async handler(ctx, args) {
+    const userToBan = await getUserByUsername(ctx, { username: args.userToBanUsername });
+    const callUser = await getCurrentUser(ctx);
+    
+    if(userToBan && callUser) {
+      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" }) || await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" })) {
+        await ctx.db.patch(userToBan._id, {
+          isBanned: true,
+          banReason: args.banReason
+        });
+      }
+    }
+  },
+});
+
+/**
+ * Mutation to modify the level and XP of a user administratively.
+ *
+ * @param args.userToModifyUsername - The username of the user to modify.
+ * @param args.newLevel - The new level to set for the user.
+ * @param args.newXP - The new XP to set for the user.
+ *
+ * @returns {Promise<void>} - A promise that resolves when the mutation is complete.
+ *
+ * @throws {Error} - Throws an error if the user to modify or the calling user cannot be found.
+ *
+ * @example
+ * ```typescript
+ * await modifyLevelAndXPAdministrativeAction({
+ *   userToModifyUsername: "exampleUser",
+ *   newLevel: 10,
+ *   newXP: 75
+ * });
+ * ```
+ */
+export const modifyLevelAndXPAdministrativeAction = mutation({
+  args: {
+    userToModifyUsername: v.string(),
+    newLevel: v.int64(),
+    newXP: v.int64(),
+  },
+  async handler(ctx, args) {
+    const userToModify = await getUserByUsername(ctx, { username: args.userToModifyUsername });
+    const callUser = await getCurrentUser(ctx);
+    
+    if(userToModify && callUser) {
+      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+        await ctx.db.patch(userToModify._id, {
+          level: args.newLevel,
+          currentXP: args.newXP
+        });
+      }
+    }
+  },
+});
+
+/**
+ * Mutation to modify the roles of a user as an administrative action.
+ * 
+ * @param args.userToModifyUsername - The username of the user whose roles are to be modified.
+ * @param args.roles - An array of roles to assign to the user.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the roles have been modified.
+ * 
+ * @remarks
+ * This mutation allows a user with the "developer" role to modify the roles of another user.
+ * If the `roles` array is empty, the roles will be set to `undefined`.
+ * 
+ * @throws {Error} - If the user to modify or the calling user cannot be found.
+ */
+export const modifyRolesAdministrativeAction = mutation({
+  args: {
+    userToModifyUsername: v.string(),
+    roles: v.array(v.string())
+  },
+  async handler(ctx, args) {
+    const userToModify = await getUserByUsername(ctx, { username: args.userToModifyUsername });
+    const callUser = await getCurrentUser(ctx);
+    
+    if(userToModify && callUser) {
+      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+        await ctx.db.patch(userToModify._id, {
+          roles: args.roles.length == 0 ? undefined : args.roles
+        });
+      }
+    }
+  },
 });
 
 /**
