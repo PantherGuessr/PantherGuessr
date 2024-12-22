@@ -62,8 +62,8 @@ const ProfileHoverCard = ({
             <AvatarFallback>{username[0].toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="space-y-1 text-left">
-            <div className="flex md:flex-row flex-col items-center md:items-start">
-              <div className="flex flex-row items-center">
+            <div className="flex md:flex-row flex-col items-start">
+              <div className="flex flex-row items-left">
                 <h4 className="text-sm font-semibold">@{username}</h4>
                 <div className="flex flex-row items-center gap-x-2 pl-2">
                   {isDeveloperRole && (
