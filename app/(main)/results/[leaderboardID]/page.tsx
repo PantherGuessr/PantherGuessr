@@ -38,20 +38,14 @@ const ResultPage = ({ params }: Props) => {
   const [username, setUsername] = useState<string>("");
   const [oldLevel, setOldLevel] = useState<number>(0);
   const [newLevel, setNewLevel] = useState<number>(0);
-  const [isFromGame, setIsFromGame] = useState(false);
+  const [isFromGame, setIsFromGame] = useState<boolean>(false);
 
   const router = useRouter();
 
-
-  // gets search params fromGame and sets state, removes from URL
+  // initially set that it is from game, but do not update after that
   useEffect(() => {
-    const fromGame = searchParams.get('fromGame');
-    setIsFromGame(fromGame === 'true');
-    
-    if (fromGame === 'true') {
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.delete('fromGame');
-      window.history.replaceState({}, '', newUrl.toString());
+    if(searchParams.get('fromGame') === 'true') {
+      setIsFromGame(true);
     }
   }, [searchParams]);
 
@@ -165,7 +159,7 @@ const ResultPage = ({ params }: Props) => {
   if (isFromGame && leaderboardEntry) {
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.delete('fromGame');
-    window.history.replaceState({}, '', newUrl.pathname);
+    window.history.pushState({}, '', newUrl.toString());
   }
 
   return (
