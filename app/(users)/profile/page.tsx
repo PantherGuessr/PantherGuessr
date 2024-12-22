@@ -107,7 +107,7 @@ const ProfileSearchPage = () => {
       setSelectedIndex(0);
     }
   }, [usernames, searchedUsername, setFilteredUsernames]);
-
+  
   if (isUsernamesLoading || isBanCheckLoading) {
     return (
       <div className="min-h-full flex flex-col">
@@ -143,7 +143,10 @@ const ProfileSearchPage = () => {
                     <Separator className="" />
                     <div
                       key={user.username}
-                      onClick={() => setSearchedUsername(user.username)}
+                      onClick={() => {
+                        setSearchedUsername(user.username);
+                        router.push(`/profile/${user.username}`); // redirect
+                      }}
                       className={cn("text-left py-1 pl-2 text-sm cursor-pointer", index === selectedIndex ? "font-bold bg-secondary text-secondary-foreground rounded-md" : "")}
                     >
                       {user.username}
@@ -160,7 +163,10 @@ const ProfileSearchPage = () => {
                     <Separator className="" />
                     <div
                       key={user.username}
-                      onClick={() => setSearchedUsername(user.username)}
+                      onClick={() => {
+                        setSearchedUsername(user.username);
+                        router.push(`/profile/${user.username}`); // redirect
+                      }}
                       className={cn("text-left py-1 pl-2 text-sm cursor-pointer", index === selectedIndex ? "font-bold bg-secondary text-secondary-foreground rounded-md" : "")}
                     >
                       {user.username}
