@@ -4,21 +4,32 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useGetListOfProfiles } from "@/hooks/userProfiles/use-get-list-of-profiles";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import Levenshtein from "./helpers/levenshtein";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useBanCheck } from "@/hooks/use-ban-check";
 
 const ProfileSearchPage = () => {
+  const currentUser = useQuery(api.users.current);
+  const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
   const { result: usernames, isLoading: isUsernamesLoading } = useGetListOfProfiles();
   const [searchedUsername, setSearchedUsername] = useState("");
   const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [filteredUsernames, setFilteredUsernames] = useState<Doc<"users">[] | []>([]);
   const [suggestedUsernames, setSuggestedUsernames] = useState<Doc<"users">[] | []>([]);
+
+  useEffect(() => {
+    if(isBanned) {
+      router.push(`/profile/${currentUser?.username}`);
+    }
+  }, [currentUser?.username, isBanned, router]);
 
   const handleSubmit = () => {
 
@@ -97,10 +108,14 @@ const ProfileSearchPage = () => {
     }
   }, [usernames, searchedUsername, setFilteredUsernames]);
 
-  if (isUsernamesLoading) {
+  if (isUsernamesLoading || isBanCheckLoading) {
     return (
-      <>
-      </>
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <Loader2 className="h-20 w-20 animate-spin" />
+        </div>
+        <Footer />
+      </div>
     );
   }
 

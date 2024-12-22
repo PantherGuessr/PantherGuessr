@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
-import { Check, ChevronsUpDown, Loader2, Save, SquarePen, UserSearch, X } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, Save, SearchX, ShieldX, SquarePen, UserSearch, X } from "lucide-react";
 import "./backgrounds.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,6 +33,8 @@ import ProfileAchievements from "./_components/ProfileAchievements";
 import ProfileActions from "./_components/ProfileActions";
 import { useMediaQuery } from "usehooks-ts";
 import ProfileAdministrativeActions from "./_components/AdministrativeActions";
+import { useBanCheck } from "@/hooks/use-ban-check";
+import BanAppeal from "./_components/BanAppeal";
 
 type Props = {
     params: { USERNAME: string }
@@ -49,6 +51,9 @@ const ProfilePage = ({ params }: Props) => {
   const clerkUser = useUser();
   const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
   const viewingUser = useQuery(api.users.current);
+  const { result: isBanned, banReason, appealActive, isLoading: isBanCheckLoading } = useBanCheck(user?.clerkId);
+  const { result: isViewerDeveloperRole, isLoading: viewerDeveloperRoleLoading } = useRoleCheck("developer", viewingUser?.clerkId);
+  const { result: isViewerModeratorRole, isLoading: viewerModeratorRoleLoading } = useRoleCheck("moderator", viewingUser?.clerkId);
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
   const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
@@ -127,6 +132,9 @@ const ProfilePage = ({ params }: Props) => {
   // All the following elements need to load before
   // rendering page.
     user === undefined
+        || isBanCheckLoading
+        || viewerDeveloperRoleLoading
+        || viewerModeratorRoleLoading
         || isChapmanStudentLoading
         || developerRoleLoading
         || topPlayerIsLoading
@@ -154,11 +162,47 @@ const ProfilePage = ({ params }: Props) => {
     );
   }
 
+  if(isBanned && (user?.clerkId !== viewingUser?.clerkId) && !isViewerDeveloperRole && !isViewerModeratorRole) {
+    return (
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <ShieldX className="w-12 h-12 sm:w-24 sm:h-24" />
+          <h1 className="text-3xl sm:text-5xl font-bold">@{usernameSubPage} is suspended.</h1>
+          <Button asChild>
+            <Link href="/profile">
+              <UserSearch className="h-4 w-4 mr-2" /> Search Different User
+            </Link>
+          </Button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if(isBanned && (user?.clerkId === viewingUser?.clerkId) && !isViewerDeveloperRole && !isViewerModeratorRole) {
+    return (
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <ShieldX className="w-12 h-12 sm:w-24 sm:h-24" />
+          <h1 className="text-3xl sm:text-5xl font-bold">Your account has been suspended.</h1>
+          <p className="text-md sm:text-xl"><span className="font-semibold">Reason for Suspension:</span> {banReason ?? "None Provided"}</p>
+          <BanAppeal
+            profileUsername={user!.username}
+            banReason={banReason}
+            hasActiveAppeal={appealActive}
+          />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   if(!user) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-          <h1 className="text-3xl sm:text-5xl font-bold">@{usernameSubPage} does not exist!</h1>
+          <SearchX className="w-12 h-12 sm:w-24 sm:h-24" />
+          <h1 className="text-3xl sm:text-5xl font-bold">@{usernameSubPage} not found!</h1>
           <Button asChild>
             <Link href="/profile">
               <UserSearch className="h-4 w-4 mr-2" /> Search Different User
@@ -432,9 +476,12 @@ const ProfilePage = ({ params }: Props) => {
                   />
                   <ProfileAdministrativeActions
                     profileUsername={user.username}
-                    viewerUserID={viewingUser?.clerkId ?? ""}
                     isProfileDeveloper={!!isDeveloperRole}
                     isProfileModerator={!!isModeratorRole}
+                    isViewerDeveloper={!!isViewerDeveloperRole}
+                    isViewerModerator={!!isViewerModeratorRole}
+                    isUserBanned={!!isBanned}
+                    banReason={banReason}
                   />
                 </div>
               </div>

@@ -16,12 +16,15 @@ import { api } from "@/convex/_generated/api";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
 import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
 import { useHasOngoingGame } from "@/hooks/use-has-ongoing-game";
+import { useBanCheck } from "@/hooks/use-ban-check";
+import { useRouter } from "next/navigation";
 
 
 export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const clerkUser = useUser();
   const user = useQuery(api.users.getUserByUsername, { username: clerkUser.user?.username ?? "" });
+  const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(user?.clerkId);
   const { result: profileTagline } = useGetSelectedTagline(user?.clerkId);
   const { result: profileBackground, isLoading: profileBackgroundLoading } = useGetSelectedBackground(user?.clerkId);
   const { result: hasOngoingGame, isLoading: hasOngoingGameLoading } = useHasOngoingGame(user?.clerkId);
@@ -32,11 +35,19 @@ export const Heading = () => {
     setWelcomeMessage(WelcomeMessage());
   }, []);
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if(isBanned) {
+      router.push(`/profile/${user?.username}`);
+    }
+  }, [user?.username, isBanned, router]);
+
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   return (
     <div className="space-y-4 w-full">
-      {isLoading && (
+      {isLoading && isBanCheckLoading && (
         <>
           <div className="hidden md:flex flex-col w-full">
             <DesktopHeadingLoading />

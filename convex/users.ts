@@ -128,6 +128,36 @@ export const getUserByUsername = query({
 });
 
 /**
+ * Query to check if a user is banned.
+ *
+ * @param args.clerkId - The Clerk ID of the user to check.
+ * 
+ * @returns An object containing the ban status, ban reason, and appeal submission status.
+ * 
+ * @property {boolean} result - Indicates if the user is banned.
+ * @property {string | undefined} banReason - The reason for the ban, if any.
+ * @property {boolean} appealSubmitted - Indicates if a ban appeal has been submitted.
+ */
+export const isUserBanned = query({
+  args: {
+    clerkId: v.string(),
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
+
+    if(!user) {
+      return { result: false, banReason: undefined, appealSubmitted: false };
+    }
+    
+    return {
+      result: user.isBanned,
+      banReason: user.banReason,
+      appealSubmitted: user.banAppeal ? (await ctx.db.get(user.banAppeal) ? true : false) : false
+    };
+  },
+});
+
+/**
  * Awards experience points (XP) to a user and updates their level accordingly.
  * 
  * @param args - The arguments for the mutation.
@@ -646,6 +676,41 @@ export const reportUser = mutation({
 });
 
 /**
+ * Mutation to appeal a ban.
+ * 
+ * @param {string} args.banReason - (Optional) The reason for the ban.
+ * @param {string} args.appealMessage - The message for the appeal.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the appeal has been inserted into the database.
+ * 
+ * @async
+ */
+export const appealBan = mutation({
+  args: {
+    banReason: v.optional(v.string()),
+    appealMessage: v.string(),
+  },
+  async handler(ctx, args) {
+    const user = await getCurrentUser(ctx);
+
+    if(!user) {
+      return;
+    }
+
+    const appeal = await ctx.db.insert("banAppeals", {
+      user: user._id,
+      banReason: args.banReason,
+      appealMessage: args.appealMessage,
+      hasBeenResolved: false
+    });
+
+    await ctx.db.patch(user._id, {
+      banAppeal: appeal
+    });
+  },
+});
+
+/**
  * Mutation to delete a user as an administrative action.
  *
  * @param args.userToDeleteUsername - The username of the user to delete.
@@ -732,6 +797,37 @@ export const banUserAdministrativeAction = mutation({
         await ctx.db.patch(userToBan._id, {
           isBanned: true,
           banReason: args.banReason
+        });
+      }
+    }
+  },
+});
+
+/**
+ * Unbans a user through an administrative action.
+ * 
+ * This mutation allows a user with the role of "developer" or "moderator" to unban another user.
+ * 
+ * @param {string} args.userToUnban - The username of the user to unban.
+ *  
+ * @returns {Promise<void>} - A promise that resolves when the user has been unbanned.
+ * 
+ * @throws {Error} - Throws an error if the user to unban or the current user cannot be found.
+ */
+export const unbanUserAdministrativeAction = mutation({
+  args: {
+    userToUnban: v.string(),
+  },
+  async handler(ctx, args) {
+    const userToUnban = await getUserByUsername(ctx, { username: args.userToUnban });
+    const callUser = await getCurrentUser(ctx);
+    
+    if(userToUnban && callUser) {
+      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" }) || await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" })) {
+        await ctx.db.patch(userToUnban._id, {
+          isBanned: false,
+          banReason: undefined,
+          banAppeal: undefined
         });
       }
     }

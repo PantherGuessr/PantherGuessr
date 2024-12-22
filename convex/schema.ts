@@ -13,6 +13,7 @@ export default defineSchema({
     roles: v.optional(v.array(v.string())),
     isBanned: v.boolean(),
     banReason: v.optional(v.string()),
+    banAppeal: v.optional(v.id("banAppeals")),
     achievements: v.optional(v.array(v.id("achievements"))),
     picture: v.string(),
     profileTagline: v.id("profileTaglines"),
@@ -124,6 +125,16 @@ export default defineSchema({
     reportReason: v.string(),
     reporterMessage: v.optional(v.string()),
     hasBeenResolved: v.boolean(),
+    moderator: v.optional(v.id("users")),
+    moderatorMessage: v.optional(v.string())
+  }),
+
+  banAppeals: defineTable({
+    user: v.id("users"),
+    banReason: v.optional(v.string()),
+    appealMessage: v.string(),
+    hasBeenResolved: v.boolean(),
+    moderator: v.optional(v.id("users")),
     moderatorMessage: v.optional(v.string())
   })
 });
