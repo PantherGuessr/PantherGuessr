@@ -13,6 +13,7 @@ export default defineSchema({
     roles: v.optional(v.array(v.string())),
     isBanned: v.boolean(),
     banReason: v.optional(v.string()),
+    banAppeal: v.optional(v.id("banAppeals")),
     achievements: v.optional(v.array(v.id("achievements"))),
     picture: v.string(),
     profileTagline: v.id("profileTaglines"),

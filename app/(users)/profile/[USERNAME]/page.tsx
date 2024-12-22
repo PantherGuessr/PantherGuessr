@@ -51,9 +51,9 @@ const ProfilePage = ({ params }: Props) => {
   const clerkUser = useUser();
   const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
   const viewingUser = useQuery(api.users.current);
+  const { result: isBanned, banReason, appealActive, isLoading: isBanCheckLoading } = useBanCheck(user?.clerkId);
   const { result: isViewerDeveloperRole, isLoading: viewerDeveloperRoleLoading } = useRoleCheck("developer", viewingUser?.clerkId);
   const { result: isViewerModeratorRole, isLoading: viewerModeratorRoleLoading } = useRoleCheck("moderator", viewingUser?.clerkId);
-  const { result: isBanned, banReason, isLoading: isBanCheckLoading } = useBanCheck(user?.clerkId);
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
   const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
@@ -189,6 +189,7 @@ const ProfilePage = ({ params }: Props) => {
           <BanAppeal
             profileUsername={user!.username}
             banReason={banReason}
+            hasActiveAppeal={appealActive}
           />
         </div>
         <Footer />

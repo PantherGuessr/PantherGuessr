@@ -128,15 +128,15 @@ export const getUserByUsername = query({
 });
 
 /**
- * Query to check if a user is banned based on their Clerk ID.
+ * Query to check if a user is banned.
  *
- * @param {string} args.clerkId - The Clerk ID of the user to check.
- * @returns {Promise<{ result: boolean, banReason: string | undefined }>} 
- *          An object containing the result of whether the user is banned and the reason for the ban if applicable.
- *
- * @example
- * const result = await isUserBanned({ clerkId: 'user_clerk_id' });
- * console.log(result); // { result: true, banReason: 'Violation of terms' }
+ * @param args.clerkId - The Clerk ID of the user to check.
+ * 
+ * @returns An object containing the ban status, ban reason, and appeal submission status.
+ * 
+ * @property {boolean} result - Indicates if the user is banned.
+ * @property {string | undefined} banReason - The reason for the ban, if any.
+ * @property {boolean} appealSubmitted - Indicates if a ban appeal has been submitted.
  */
 export const isUserBanned = query({
   args: {
@@ -146,12 +146,13 @@ export const isUserBanned = query({
     const user = await userByClerkId(ctx, args.clerkId);
 
     if(!user) {
-      return { result: false, banReason: undefined };
+      return { result: false, banReason: undefined, appealSubmitted: false };
     }
     
     return {
       result: user.isBanned,
-      banReason: user.isBanned ? user.banReason : undefined,
+      banReason: user.banReason,
+      appealSubmitted: user.banAppeal ? (await ctx.db.get(user.banAppeal) ? true : false) : false
     };
   },
 });
@@ -696,11 +697,15 @@ export const appealBan = mutation({
       return;
     }
 
-    await ctx.db.insert("banAppeals", {
+    const appeal = await ctx.db.insert("banAppeals", {
       user: user._id,
       banReason: args.banReason,
       appealMessage: args.appealMessage,
       hasBeenResolved: false
+    });
+
+    await ctx.db.patch(user._id, {
+      banAppeal: appeal
     });
   },
 });
@@ -821,7 +826,8 @@ export const unbanUserAdministrativeAction = mutation({
       if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" }) || await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" })) {
         await ctx.db.patch(userToUnban._id, {
           isBanned: false,
-          banReason: undefined
+          banReason: undefined,
+          banAppeal: undefined
         });
       }
     }

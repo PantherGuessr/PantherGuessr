@@ -12,9 +12,10 @@ import { useEffect, useState } from "react";
 interface BanAppealsProps {
   profileUsername: string;
   banReason: string | undefined;
+  hasActiveAppeal: boolean;
 }
 
-const BanAppeal = ({ profileUsername, banReason } : BanAppealsProps) => {
+const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal } : BanAppealsProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [canSubmit, setCanSubmit] = useState(false);
   const [banAppealDialogOpen, setBanAppealDialogOpen] = useState(false);
@@ -46,8 +47,8 @@ const BanAppeal = ({ profileUsername, banReason } : BanAppealsProps) => {
   return (
     <Dialog open={banAppealDialogOpen} onOpenChange={setBanAppealDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">
-          <ShieldX className="h-4 w-4 mr-2" /> Submit Appeal
+        <Button variant="default" disabled={hasActiveAppeal}>
+          <ShieldX className="h-4 w-4 mr-2" /> {hasActiveAppeal ? "Appeal Already Submitted" : "Submit Appeal"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

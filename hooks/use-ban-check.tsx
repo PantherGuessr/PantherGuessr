@@ -18,6 +18,7 @@ export const useBanCheck = (userClerkId: string | null = null) => {
   return {
     result: queryResult?.result,
     banReason: queryResult?.banReason,
+    appealActive: queryResult?.appealSubmitted,
     isLoading
   };
 };
