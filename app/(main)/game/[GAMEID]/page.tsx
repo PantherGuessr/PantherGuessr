@@ -12,6 +12,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useBanCheck } from "@/hooks/use-ban-check";
 
 type Props = {
     params: { GAMEID: string }
@@ -28,12 +29,20 @@ const GameIdPage = ({ params }: Props) => {
 
   const gameExists = useQuery(api.game.gameExists, { gameId: gameIdAsId });
 
+  const currentUser = useQuery(api.users.current);
+  const { result: isBanned } = useBanCheck(currentUser?.clerkId);
+    
+  useEffect(() => {
+    if(isBanned) {
+      router.push(`/profile/${currentUser?.username}`);
+    }
+  }, [currentUser?.username, isBanned, router]);
+
   useEffect(() => {
     if (gameExists === false) {
       router.push("/game");
     }
   }, [gameExists, router]);
-
 
   return (
     <GameProvider gameId={gameIdAsId}>

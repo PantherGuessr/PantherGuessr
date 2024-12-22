@@ -2,10 +2,37 @@
 
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CalendarClock, User, Users } from "lucide-react";
+import { api } from "@/convex/_generated/api";
+import { useBanCheck } from "@/hooks/use-ban-check";
+import { useQuery } from "convex/react";
+import { ArrowLeft, CalendarClock, Loader2, User, Users } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const PlayPage = () => {
+  const currentUser = useQuery(api.users.current);
+  const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if(isBanned) {
+      router.push(`/profile/${currentUser?.username}`);
+    }
+  }, [currentUser?.username, isBanned, router]);
+
+  if(!currentUser && isBanCheckLoading) {
+    return (
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <Loader2 className="animate-spin w-20 h-20" />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-full flex flex-col">
       <div className="absolute mt-20 top-4 left-4">
@@ -38,7 +65,6 @@ const PlayPage = () => {
       <Footer />
     </div>
   );
-    
 };
  
 export default PlayPage;

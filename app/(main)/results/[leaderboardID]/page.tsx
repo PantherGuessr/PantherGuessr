@@ -13,8 +13,9 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useBanCheck } from "@/hooks/use-ban-check";
 
 type Props = {
     params: { 
@@ -25,6 +26,9 @@ type Props = {
 const ResultPage = ({ params }: Props) => {
   const searchParams = useSearchParams();
 
+  const currentUser = useQuery(api.users.current);
+  const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
+  
   const isFromGame = searchParams.get("fromGame") === "true" ? true : false;
 
   const leaderboardId = params.leaderboardID;
@@ -35,6 +39,14 @@ const ResultPage = ({ params }: Props) => {
   const [username, setUsername] = useState<string>("");
   const [oldLevel, setOldLevel] = useState<number>(0);
   const [newLevel, setNewLevel] = useState<number>(0);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if(isBanned) {
+      router.push(`/profile/${currentUser?.username}`);
+    }
+  }, [currentUser?.username, isBanned, router]);
 
   useEffect(() => {
     if(leaderboardEntry) {
@@ -112,12 +124,13 @@ const ResultPage = ({ params }: Props) => {
     }
   };
 
-  if (leaderboardEntry === undefined) {
+  if (!leaderboardEntry || isBanCheckLoading) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
           <Loader2 className="h-20 w-20 animate-spin" />
         </div>
+        <Footer />
       </div>
     );
   }

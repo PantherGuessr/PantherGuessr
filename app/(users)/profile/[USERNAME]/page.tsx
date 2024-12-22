@@ -161,7 +161,7 @@ const ProfilePage = ({ params }: Props) => {
     );
   }
 
-  if(isBanned && !isViewerDeveloperRole && !isViewerModeratorRole) {
+  if(isBanned && (user?.clerkId !== viewingUser?.clerkId) && !isViewerDeveloperRole && !isViewerModeratorRole) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -171,6 +171,22 @@ const ProfilePage = ({ params }: Props) => {
             <Link href="/profile">
               <UserSearch className="h-4 w-4 mr-2" /> Search Different User
             </Link>
+          </Button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if(isBanned && (user?.clerkId === viewingUser?.clerkId) && !isViewerDeveloperRole && !isViewerModeratorRole) {
+    return (
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <ShieldX className="w-12 h-12 sm:w-24 sm:h-24" />
+          <h1 className="text-3xl sm:text-5xl font-bold">Your account has been suspended.</h1>
+          <p className="text-md sm:text-xl"><span className="font-semibold">Reason for Suspension:</span> {banReason ?? "None Provided"}</p>
+          <Button>
+            <ShieldX className="h-4 w-4 mr-2" /> Submit Appeal
           </Button>
         </div>
         <Footer />
