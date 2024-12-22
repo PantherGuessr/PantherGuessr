@@ -675,6 +675,37 @@ export const reportUser = mutation({
 });
 
 /**
+ * Mutation to appeal a ban.
+ * 
+ * @param {string} args.banReason - (Optional) The reason for the ban.
+ * @param {string} args.appealMessage - The message for the appeal.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the appeal has been inserted into the database.
+ * 
+ * @async
+ */
+export const appealBan = mutation({
+  args: {
+    banReason: v.optional(v.string()),
+    appealMessage: v.string(),
+  },
+  async handler(ctx, args) {
+    const user = await getCurrentUser(ctx);
+
+    if(!user) {
+      return;
+    }
+
+    await ctx.db.insert("banAppeals", {
+      user: user._id,
+      banReason: args.banReason,
+      appealMessage: args.appealMessage,
+      hasBeenResolved: false
+    });
+  },
+});
+
+/**
  * Mutation to delete a user as an administrative action.
  *
  * @param args.userToDeleteUsername - The username of the user to delete.

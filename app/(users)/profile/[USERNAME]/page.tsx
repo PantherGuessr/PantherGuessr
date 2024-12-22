@@ -34,6 +34,7 @@ import ProfileActions from "./_components/ProfileActions";
 import { useMediaQuery } from "usehooks-ts";
 import ProfileAdministrativeActions from "./_components/AdministrativeActions";
 import { useBanCheck } from "@/hooks/use-ban-check";
+import BanAppeal from "./_components/BanAppeal";
 
 type Props = {
     params: { USERNAME: string }
@@ -185,9 +186,10 @@ const ProfilePage = ({ params }: Props) => {
           <ShieldX className="w-12 h-12 sm:w-24 sm:h-24" />
           <h1 className="text-3xl sm:text-5xl font-bold">Your account has been suspended.</h1>
           <p className="text-md sm:text-xl"><span className="font-semibold">Reason for Suspension:</span> {banReason ?? "None Provided"}</p>
-          <Button>
-            <ShieldX className="h-4 w-4 mr-2" /> Submit Appeal
-          </Button>
+          <BanAppeal
+            profileUsername={user!.username}
+            banReason={banReason}
+          />
         </div>
         <Footer />
       </div>

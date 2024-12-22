@@ -124,6 +124,16 @@ export default defineSchema({
     reportReason: v.string(),
     reporterMessage: v.optional(v.string()),
     hasBeenResolved: v.boolean(),
+    moderator: v.optional(v.id("users")),
+    moderatorMessage: v.optional(v.string())
+  }),
+
+  banAppeals: defineTable({
+    user: v.id("users"),
+    banReason: v.optional(v.string()),
+    appealMessage: v.string(),
+    hasBeenResolved: v.boolean(),
+    moderator: v.optional(v.id("users")),
     moderatorMessage: v.optional(v.string())
   })
 });
