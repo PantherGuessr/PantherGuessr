@@ -58,7 +58,7 @@ const GameContent = ({ isMobile }: { isMobile: boolean }) => {
     <>
       {isModalVisible && (
         <div className="fixed z-[9999] inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="flex flex-col items-center bg-white p-6 rounded-md">
+          <div className="flex flex-col items-center bg-card text-card-foreground p-6 rounded-md">
             <Loader2 className="mr-2 h-6 w-6 animate-spin" />
             <p>Loading results...</p>
           </div>

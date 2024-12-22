@@ -24,12 +24,11 @@ type Props = {
 }
 
 const ResultPage = ({ params }: Props) => {
-  const searchParams = useSearchParams();
 
   const currentUser = useQuery(api.users.current);
   const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
-  
-  const isFromGame = searchParams.get("fromGame") === "true" ? true : false;
+
+  const searchParams = useSearchParams();
 
   const leaderboardId = params.leaderboardID;
   const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardId });
@@ -39,8 +38,16 @@ const ResultPage = ({ params }: Props) => {
   const [username, setUsername] = useState<string>("");
   const [oldLevel, setOldLevel] = useState<number>(0);
   const [newLevel, setNewLevel] = useState<number>(0);
+  const [isFromGame, setIsFromGame] = useState<boolean>(false);
 
   const router = useRouter();
+
+  // initially set that it is from game, but do not update after that
+  useEffect(() => {
+    if(searchParams.get('fromGame') === 'true') {
+      setIsFromGame(true);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if(isBanned) {
@@ -147,6 +154,12 @@ const ResultPage = ({ params }: Props) => {
         </Link>
       </div>
     );
+  }
+
+  if (isFromGame && leaderboardEntry) {
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.delete('fromGame');
+    window.history.pushState({}, '', newUrl.toString());
   }
 
   return (
