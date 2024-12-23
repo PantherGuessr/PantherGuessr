@@ -32,6 +32,19 @@ export const metadata: Metadata = {
       }
     ]
   },
+  openGraph: {
+    title: "PantherGuessr - The Campus Guessing Game",
+    description: "Can you find these locations on and around Chapman University?",
+    images: [
+      {
+        url: "/og-previews/default.png",
+        width: 1200,
+        height: 630,
+        alt: "PantherGuessr",
+        type: "image/png",
+      },
+    ]
+  }
 };
 
 export default function RootLayout({
