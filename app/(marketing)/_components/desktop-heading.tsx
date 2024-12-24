@@ -120,7 +120,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, backg
           hoveredRightMain ? "skew-y-0 translate-x-0 scale-100" : "skew-y-3 translate-x-4 scale-90")}
       onMouseEnter={() => setHoveredRightMain(true)} onMouseLeave={() => setHoveredRightMain(false)}
       >
-        <Card className="w-full h-full pt-8 pb-6 flex-grow dropshadow-lg cursor-default">
+        <Card className="w-full h-full py-7 flex-grow dropshadow-lg cursor-default">
           <CardHeader>
             <CardTitle>
               Your Streak
