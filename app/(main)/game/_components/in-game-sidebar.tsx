@@ -238,7 +238,7 @@ const InGameSidebar = () => {
           )}
         </div>
         <div className="flex justify-center p-3">
-          { (isLoading) ? (
+          { (isLoading || !currentImageSrcUrl) ? (
             <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
           ) : (
             <Image
@@ -250,7 +250,12 @@ const InGameSidebar = () => {
               onMouseEnter={handleMouseEnter}
               onMouseMove={handleMouseMoveMagnifier}
               onMouseLeave={handleMouseLeave}
-              className="rounded-md"
+              className={
+                cn(
+                  "rounded-md",
+                )
+              }
+
             />
           )}
         </div>
@@ -258,7 +263,7 @@ const InGameSidebar = () => {
           <div className="mt-4 flex flex-col items-center">
             <div className="flex justify-center w-full">
               <div className="text-xl flex flex-col items-center mx-4">
-                { (isLoading && currentRound == 0) ? (
+                { (isLoading || !levels || !currentImageSrcUrl) ? (
                   <>
                     <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
                     <Skeleton className="w-8 h-5 mt-1 bg-zinc-400 dark:bg-red-900" />
@@ -271,7 +276,7 @@ const InGameSidebar = () => {
                 )}
               </div>
               <div className="text-xl flex flex-col items-center mx-4">
-                { (isLoading && currentRound == 0) ? (
+                { (isLoading || !levels || !currentImageSrcUrl) ? (
                   <>
                     <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
                     <Skeleton className="w-4 h-5 mt-1 bg-zinc-400 dark:bg-red-900" />
