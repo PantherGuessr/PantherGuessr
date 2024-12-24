@@ -37,7 +37,7 @@ const LargeStreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime})
   return ( 
     <>
       <div 
-        className={cn("flex justify-center items-center relative hover:scale-105 transition-transform duration-300",
+        className={cn("flex justify-center items-center relative hover:scale-105 transition-transform",
           badgeStyle
         )}
       >
