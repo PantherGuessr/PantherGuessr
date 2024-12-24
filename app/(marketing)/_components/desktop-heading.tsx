@@ -16,7 +16,7 @@ interface DesktopHeadingProps {
     background: string;
     hasOngoingGame: boolean;
     streak: number;
-    lastPlayedTime: number;
+    lastPlayedTime?: number;
 }
 
 const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, background, hasOngoingGame, streak, lastPlayedTime}) => {
@@ -127,7 +127,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, backg
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col">
-            <LargeStreakBadge streak={streak} lastPlayedTime={lastPlayedTime} />
+            <LargeStreakBadge streak={streak} lastPlayedTime={lastPlayedTime || 0} />
           </CardContent>
         </Card>
         <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
