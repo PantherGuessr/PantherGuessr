@@ -10,6 +10,7 @@ import { useGame } from "../_context/GameContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
+import "./sidebar-cursor.css";
 
 const InGameSidebar = () => {
   const isMobile = useMediaQuery("(max-width: 600px");
@@ -141,6 +142,8 @@ const InGameSidebar = () => {
     event.stopPropagation();
 
     isResizingRef.current = true;
+    document.body.classList.add("inheritCursorOverride");
+    document.body.style.cursor = "ew-resize";
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
@@ -167,6 +170,8 @@ const InGameSidebar = () => {
    */
   const handleMouseUp = () => {
     isResizingRef.current = false;
+    document.body.classList.remove("inheritCursorOverride");
+    document.body.style.cursor = "unset";
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
   };

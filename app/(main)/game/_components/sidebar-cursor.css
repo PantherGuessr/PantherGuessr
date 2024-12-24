@@ -1,0 +1,3 @@
+.inheritCursorOverride * {
+  cursor: inherit !important;
+}
