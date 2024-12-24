@@ -55,8 +55,8 @@ const LargeStreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime})
           {streak}
         </p>
       </div> 
-      <div className="flex justify-center items-center pt-5">
-        <p className="text-card-foreground text-xl font-bold">
+      <div className="flex justify-center items-center pt-4">
+        <p className="text-card-foreground text-xl ">
           {calculateStreakMessage()}
         </p>
       </div>
