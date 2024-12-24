@@ -1,7 +1,7 @@
 "use client";
 
 import 'leaflet/dist/leaflet.css';
-import { useEffect, useState } from 'react';
+import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import L, { LatLng } from 'leaflet';
 import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import { useGame } from "../_context/GameContext";
@@ -15,6 +15,7 @@ const InteractableMap = () => {
     correctLocation,
   } = useGame()!;
   const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
+  const prevCorrectLocation = useRef<LatLng | null>(null);
 
   const pantherGuessrMarkerIcon = new L.Icon({
     iconUrl: '/PantherGuessrPin.svg',
@@ -81,6 +82,23 @@ const InteractableMap = () => {
     
     return null;
   }
+  
+  function CenterMapOnNewRound({ localMarkerPosition, correctLocation, prevCorrectLocation }: { localMarkerPosition: LatLng | null, correctLocation: LatLng | null, prevCorrectLocation: MutableRefObject<LatLng | null> }) {
+    const map = useMap();
+    
+    useEffect(() => {
+      if (prevCorrectLocation.current && !correctLocation) {
+        const globalCenter = new LatLng(
+          33.793332,
+          -117.851475
+        );
+        map.setView(globalCenter, 17);
+      }
+      prevCorrectLocation.current = correctLocation;
+    }, [localMarkerPosition, correctLocation, map, prevCorrectLocation]);
+    
+    return null;
+  }
     
   return (
     <div className="flex min-h-full min-w-full grow">
@@ -88,7 +106,7 @@ const InteractableMap = () => {
         className='w-full h-full rounded-md'
         attributionControl={true}
         center={[33.793332, -117.851475]}
-        zoom={16}
+        zoom={17}
         scrollWheelZoom={true}
         doubleClickZoom={true}
       >
@@ -105,6 +123,7 @@ const InteractableMap = () => {
                      */
         />
         <LocationMarker />
+        <CenterMapOnNewRound localMarkerPosition={localMarkerPosition} correctLocation={correctLocation} prevCorrectLocation={prevCorrectLocation} />
         {correctLocation && localMarkerPosition && (
           <>
             <Marker icon={correctLocationPinMarker} position={correctLocation} zIndexOffset={1000}/>
