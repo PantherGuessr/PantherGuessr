@@ -4,9 +4,10 @@ import Image from "next/image";
 interface StreakBadgeProps {
   streak: number;
   lastPlayedTime: number;
+  message?: boolean;
 }
 
-const LargeStreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime}) => {
+const LargeStreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime, message=true}) => {
 
   // If the user has not played today, the streak badge will be greyed out and pulse
   function isStreakActive() {
@@ -55,11 +56,13 @@ const LargeStreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime})
           {streak !== 0 ? streak : ""}
         </p>
       </div> 
-      <div className="flex justify-center items-center pt-4">
-        <p className="text-card-foreground text-xl">
-          {calculateStreakMessage()}
-        </p>
-      </div>
+      {message && (
+        <div className="flex justify-center items-center pt-4">
+          <p className="text-card-foreground text-xl">
+            {calculateStreakMessage()}
+          </p>
+        </div>
+      )}
     </>
   );
 };
