@@ -250,12 +250,7 @@ const InGameSidebar = () => {
               onMouseEnter={handleMouseEnter}
               onMouseMove={handleMouseMoveMagnifier}
               onMouseLeave={handleMouseLeave}
-              className={
-                cn(
-                  "rounded-md",
-                )
-              }
-
+              className="rounded-md"
             />
           )}
         </div>
