@@ -10,6 +10,7 @@ import { useGame } from "../_context/GameContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
+import "./sidebar-cursor.css";
 
 const InGameSidebar = () => {
   const isMobile = useMediaQuery("(max-width: 600px");
@@ -141,6 +142,8 @@ const InGameSidebar = () => {
     event.stopPropagation();
 
     isResizingRef.current = true;
+    document.body.classList.add("inheritCursorOverride");
+    document.body.style.cursor = "ew-resize";
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
@@ -167,6 +170,8 @@ const InGameSidebar = () => {
    */
   const handleMouseUp = () => {
     isResizingRef.current = false;
+    document.body.classList.remove("inheritCursorOverride");
+    document.body.style.cursor = "unset";
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
   };
@@ -233,7 +238,7 @@ const InGameSidebar = () => {
           )}
         </div>
         <div className="flex justify-center p-3">
-          { (isLoading) ? (
+          { (isLoading || !currentImageSrcUrl) ? (
             <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
           ) : (
             <Image
@@ -253,7 +258,7 @@ const InGameSidebar = () => {
           <div className="mt-4 flex flex-col items-center">
             <div className="flex justify-center w-full">
               <div className="text-xl flex flex-col items-center mx-4">
-                { (isLoading && currentRound == 0) ? (
+                { (isLoading || !levels || !currentImageSrcUrl) ? (
                   <>
                     <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
                     <Skeleton className="w-8 h-5 mt-1 bg-zinc-400 dark:bg-red-900" />
@@ -266,7 +271,7 @@ const InGameSidebar = () => {
                 )}
               </div>
               <div className="text-xl flex flex-col items-center mx-4">
-                { (isLoading && currentRound == 0) ? (
+                { (isLoading || !levels || !currentImageSrcUrl) ? (
                   <>
                     <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
                     <Skeleton className="w-4 h-5 mt-1 bg-zinc-400 dark:bg-red-900" />
