@@ -5,6 +5,7 @@ import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import L, { LatLng } from 'leaflet';
 import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import { useGame } from "../_context/GameContext";
+import "./interactable-map.css";
 
 const InteractableMap = () => {
   const {
@@ -83,6 +84,9 @@ const InteractableMap = () => {
     return null;
   }
   
+  /** 
+    * Centers the map on the correct location when the round ends
+  */
   function CenterMapOnNewRound({ localMarkerPosition, correctLocation, prevCorrectLocation }: { localMarkerPosition: LatLng | null, correctLocation: LatLng | null, prevCorrectLocation: MutableRefObject<LatLng | null> }) {
     const map = useMap();
     
@@ -101,7 +105,7 @@ const InteractableMap = () => {
   }
     
   return (
-    <div className="flex min-h-full min-w-full grow">
+    <div className="flex min-h-full min-w-full grow fade-in-map">
       <MapContainer
         className='w-full h-full rounded-md'
         attributionControl={true}
