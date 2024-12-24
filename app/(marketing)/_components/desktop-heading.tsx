@@ -37,7 +37,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, backg
   const isLargeDesktop = useMediaQuery("(min-width: 1024px)");
 
   if (isLargeDesktop) {
-    return ( <div className="flex flex-row justify-center items-center lg:gap-x-10 sm:gap-x-5 mt-20 px-20">
+    return ( <div className="flex flex-row justify-center items-stretch lg:gap-x-10 sm:gap-x-5 mt-20 px-20">
       <div className={
         cn("flex flex-col justify-between h-full items-center basis-1/3 transition-all drop-shadow-lg",
           hoveredLeftMain ? "skew-y-0 translate-x-0 scale-100" : "-skew-y-3 -translate-x-4 scale-90"
@@ -116,11 +116,11 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, backg
         )}></div>
       </div>
       <div className={
-        cn("flex flex-col justify-between h-full items-center basis-1/3 transition-all",
+        cn("flex flex-col justify-between flex-grow h-full items-center basis-1/3 transition-all",
           hoveredRightMain ? "skew-y-0 translate-x-0 scale-100" : "skew-y-3 translate-x-4 scale-90")}
       onMouseEnter={() => setHoveredRightMain(true)} onMouseLeave={() => setHoveredRightMain(false)}
       >
-        <Card className="w-full dropshadow-lg cursor-default">
+        <Card className="w-full h-full pt-8 pb-6 flex-grow dropshadow-lg cursor-default">
           <CardHeader>
             <CardTitle>
               Your Streak
