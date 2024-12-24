@@ -1,0 +1,67 @@
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+
+interface StreakBadgeProps {
+  streak: number;
+  lastPlayedTime: number;
+}
+
+const LargeStreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime}) => {
+
+  // If the user has not played today, the streak badge will be greyed out and pulse
+  function isStreakActive() {
+    const now = new Date();
+    const lastPlayedDate = new Date(lastPlayedTime);
+
+    // Reset time part of the dates to midnight
+    const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const lastPlayedMidnight = new Date(lastPlayedDate.getFullYear(), lastPlayedDate.getMonth(), lastPlayedDate.getDate()).getTime();
+
+    return nowMidnight === lastPlayedMidnight;
+  };
+
+  function calculateStreakMessage() {
+    if (isStreakActive()) {
+      return "Your streak is safe... for now...";
+    }
+    else if (!isStreakActive() && streak !== 0) {
+      return "You have not played today. Your streak is in danger!";
+    }
+    else {
+      return "You have not played today. Start your streak now!";
+    }
+  }
+
+  const badgeStyle = streak !== 0 ? (isStreakActive() ? 'filter-none' : 'filter grayscale animate-pulse') : 'filter grayscale';
+
+  return ( 
+    <>
+      <div 
+        className={cn("flex justify-center items-center relative",
+          badgeStyle
+        )}
+      >
+        <Image
+          draggable={false} 
+          className="select-none"
+          src="/badges/streak_badge.svg"
+          alt={`Daily Streak Badge of ${streak} Days`}
+          width="100"
+          height="100" 
+        />
+        <p
+          className="absolute top-1/2 left-1/2 transform -translate-x-[51%] -translate-y-[40%] text-white rounded-full text-6xl font-bold drop-shadow-md"
+          style={{ textShadow: '1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000' }}>
+          {streak}
+        </p>
+      </div> 
+      <div className="flex justify-center items-center pt-5">
+        <p className="text-card-foreground text-xl font-bold">
+          {calculateStreakMessage()}
+        </p>
+      </div>
+    </>
+  );
+};
+ 
+export default LargeStreakBadge;

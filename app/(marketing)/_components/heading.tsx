@@ -76,6 +76,8 @@ export const Heading = () => {
                           picture={clerkUser.user.imageUrl}
                           background={profileBackground!.backgroundCSS}
                           hasOngoingGame={hasOngoingGame ?? false}
+                          streak={Number(user.currentStreak)}
+                          lastPlayedTime={Number(user.lastPlayedTimestamp)}
                         />
                       ) : (
                         <>

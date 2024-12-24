@@ -1,7 +1,5 @@
 import { WelcomeMessage } from "@/components/text/welcomemessage";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,15 +8,18 @@ import { useMediaQuery } from "usehooks-ts";
 import "../../(users)/profile/[USERNAME]/backgrounds.css";
 import "./heading.css";
 import ProfileHoverCard from "@/components/profile-hover-card";
+import LargeStreakBadge from "./_panels/large-streak-badge";
 
 interface DesktopHeadingProps {
     username: string;
     picture: string;
     background: string;
     hasOngoingGame: boolean;
+    streak: number;
+    lastPlayedTime: number;
 }
 
-const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, background, hasOngoingGame}) => {
+const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, background, hasOngoingGame, streak, lastPlayedTime}) => {
   const [hoveredLeftMain, setHoveredLeftMain] = useState(false);
   const [hoveredCenterMain, setHoveredCenterMain] = useState(false);
   const [hoveredRightMain, setHoveredRightMain] = useState(false);
@@ -121,52 +122,13 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({username, picture, backg
       >
         <Card className="w-full dropshadow-lg cursor-default">
           <CardHeader>
-            <CardTitle className="mb-2">
-              Last Active Friends
+            <CardTitle>
+              Your Streak
             </CardTitle>
-            <CardContent className="flex flex-col gap-y-2">
-              <Separator />
-              <div className="flex flex-row items-center justify-between hover:scale-105 transition-all">
-                <div className="flex flex-row items-center gap-x-2">
-                  <Avatar>
-                    <AvatarImage src="https://github.com/dylandevelops.png" alt="@dylandevelops" />
-                    <AvatarFallback>DR</AvatarFallback>
-                  </Avatar>
-                  <h3 className="text-lg font-bold">dylan</h3>
-                </div>
-                <h2 className="text-sm font-bold text-muted-foreground">1m ago</h2>
-              </div>
-              <Separator />
-              <div className="flex flex-row items-center justify-between hover:scale-105 transition-all">
-                <div className="flex flex-row items-center gap-x-2">
-                  <Avatar>
-                    <AvatarImage src="https://github.com/ssparkpilot.png" alt="@ssparkpilot" />
-                    <AvatarFallback>JM</AvatarFallback>
-                  </Avatar>
-                  <h3 className="text-lg font-bold">jake</h3>
-                </div>
-                <h2 className="text-sm font-bold text-muted-foreground">5m ago</h2>
-              </div>
-              <Separator />
-              <div className="flex flex-row items-center justify-between hover:scale-105 transition-all">
-                <div className="flex flex-row items-center gap-x-2">
-                  <Avatar>
-                    <AvatarImage src="https://github.com/dtsivkovski.png" alt="@dtsivkovski" />
-                    <AvatarFallback>DT</AvatarFallback>
-                  </Avatar>
-                  <h3 className="text-lg font-bold">dan</h3>
-                </div>
-                <h2 className="text-sm font-bold text-muted-foreground">11h ago</h2>
-              </div>
-              <Separator />
-              <div className="flex flex-row items-center justify-center hover:scale-105 transition-all">
-                <Link href="/">
-                  <p className="text-md font-bold text-primary pt-1">View More...</p>
-                </Link>
-              </div>
-            </CardContent>
           </CardHeader>
-
+          <CardContent className="flex flex-col">
+            <LargeStreakBadge streak={streak} lastPlayedTime={lastPlayedTime} />
+          </CardContent>
         </Card>
         <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
       </div>
