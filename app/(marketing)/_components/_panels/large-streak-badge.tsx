@@ -22,7 +22,7 @@ const LargeStreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime, 
   };
 
   function calculateStreakMessage() {
-    if (isStreakActive()) {
+    if (isStreakActive() && streak !== 0) {
       return "Your streak is safe... for now...";
     }
     else if (!isStreakActive() && streak !== 0) {
