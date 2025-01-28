@@ -1,6 +1,8 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import LargeStreakBadge from "./_panels/large-streak-badge";
 
 const DesktopHeadingLoading = () => {
 
@@ -45,7 +47,19 @@ const DesktopHeadingLoading = () => {
           <div className={cn("w-72 h-4 rounded-[50%] blur-lg transition-all mt-16 bg-black/30")}></div>
         </div>
         <div className="flex flex-col justify-between h-full items-center basis-1/3 transition-all skew-y-3 translate-x-4 scale-90">
-          <Skeleton className="w-full h-80" />
+          <Card className="w-full h-full py-6 flex-grow dropshadow-lg cursor-default animate-pulse">
+            <CardHeader>
+              <CardTitle className="flex justify-center items-center">
+                <Skeleton className="h-8 w-32" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col">
+              <LargeStreakBadge streak={0} lastPlayedTime={0} message={false} />
+              <div className="flex justify-center items-center pt-4">
+                <Skeleton className="h-8 w-[95%]" />
+              </div>
+            </CardContent>
+          </Card>
           <div className={"w-72 h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
         </div>
       </div>
