@@ -9,6 +9,9 @@
 # daniel's script to run
 drun.sh
 
+# idea
+/.idea
+
 # testing
 /coverage
 
