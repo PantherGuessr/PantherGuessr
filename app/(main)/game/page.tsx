@@ -10,10 +10,11 @@ import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useBanCheck } from "@/hooks/use-ban-check";
-import { useQuery } from "convex/react";
+import {useConvexAuth, useQuery} from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 const GamePage = () => {
+  const { isLoading: isConvexLoading, isAuthenticated: isConvexAuthenticated } = useConvexAuth();
   const currentUser = useQuery(api.users.current);
   const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
 
@@ -24,6 +25,12 @@ const GamePage = () => {
       router.push(`/profile/${currentUser?.username}`);
     }
   }, [currentUser?.username, isBanned, router]);
+
+  useEffect(() => {
+    if (!isConvexAuthenticated) {
+      router.push(`/`);
+    }
+  }, [isConvexAuthenticated, isConvexLoading, router]);
   
   const isMobile = useMediaQuery("(max-width: 600px");
 

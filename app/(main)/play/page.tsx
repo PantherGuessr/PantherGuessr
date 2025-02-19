@@ -4,17 +4,25 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useBanCheck } from "@/hooks/use-ban-check";
-import { useQuery } from "convex/react";
+import {useConvexAuth, useQuery} from "convex/react";
 import { ArrowLeft, CalendarClock, Loader2, User, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const PlayPage = () => {
+  const { isLoading: isConvexLoading, isAuthenticated: isConvexAuthenticated } = useConvexAuth();
   const currentUser = useQuery(api.users.current);
   const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
 
   const router = useRouter();
+
+
+  useEffect(() => {
+    if (!isConvexAuthenticated) {
+      router.push(`/`);
+    }
+  }, [isConvexAuthenticated, isConvexLoading, router]);
 
   useEffect(() => {
     if(isBanned) {
