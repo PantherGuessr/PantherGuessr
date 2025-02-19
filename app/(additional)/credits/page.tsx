@@ -30,7 +30,7 @@ const CreditsPage = () => {
             websiteLink="https://tsiv.dev"
             gitHubLink="https://github.com/dtsivkovski"
             linkedInLink="https://www.linkedin.com/in/danieltsivkovski"
-            proffessionalEmailUsername="daniel"
+            proffessionalEmailUsername="dan"
           />
           <MaintainerCard
             profilePicture="/profile-pictures/jake.jpeg"
