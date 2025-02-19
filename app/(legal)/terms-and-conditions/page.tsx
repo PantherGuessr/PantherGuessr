@@ -10,7 +10,7 @@ const TermsAndConditionsPage = () => {
         <div className="flex flex-col items-start justify-start md:text-justify gap-y-8 md:mt-10 md:mx-40 flex-1 px-6 pb-10">
           <h1 className="text-5xl">Terms and Conditions</h1>
           <div className="space-y-4">
-            <p><span className="font-bold">Effective Date:</span> December 19th, 2024</p>
+            <p><span className="font-bold">Effective Date:</span> February 16th, 2025</p>
             <p>Welcome to PantherGuessr, designated by (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;). By using our website and services, you, (&quot;user&quot;), agree to abide by the following terms and conditions. These terms govern your access to and use of our website, including any functionality, features, and content.</p>
           </div>
 
@@ -50,7 +50,7 @@ const TermsAndConditionsPage = () => {
 
           <div className="space-y-4">
             <h2 className="text-2xl">7. Contact Information</h2>
-            <p>If you have questions about these terms, please contact us at: <Link href="mailto:example@example.com" className="relative group text-muted-foreground hover:text-black hover:dark:text-white">example@example.com
+            <p>If you have questions about these terms, please contact us at: <Link href="mailto:pantherguessr@gmail.com" className="relative group text-muted-foreground hover:text-black hover:dark:text-white">pantherguessr@gmail.com
               <span className="absolute left-0 bottom-[-3px] w-0 h-[2px] bg-black dark:bg-white transition-all group-hover:w-full"></span>
             </Link></p>
           </div>
