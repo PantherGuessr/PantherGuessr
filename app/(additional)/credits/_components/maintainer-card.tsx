@@ -3,7 +3,7 @@
 import ProfileHoverCard from "@/components/profile-hover-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { GithubIcon, Globe, LinkedinIcon } from "lucide-react";
+import {GithubIcon, Globe, LinkedinIcon, Mail} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,7 @@ interface IMaintainerCard {
   websiteLink?: string,
   gitHubLink?: string,
   linkedInLink?: string,
+  proffessionalEmailUsername?: string,
 }
 
 const MaintainerCard = ({
@@ -25,7 +26,8 @@ const MaintainerCard = ({
   username,
   websiteLink,
   gitHubLink,
-  linkedInLink
+  linkedInLink,
+  proffessionalEmailUsername
 } : IMaintainerCard) => {
   const router = useRouter();
 
@@ -57,6 +59,13 @@ const MaintainerCard = ({
             <Link href={linkedInLink} target="blank">
               <Button variant="ghost" size="icon">
                 <LinkedinIcon />
+              </Button>
+            </Link>
+          )}
+          {proffessionalEmailUsername && (
+            <Link href={`mailto:${proffessionalEmailUsername}@pantherguessr.com`} target="blank">
+              <Button variant="ghost" size="icon">
+                <Mail />
               </Button>
             </Link>
           )}

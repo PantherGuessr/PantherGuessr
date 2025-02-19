@@ -50,7 +50,7 @@ const TermsAndConditionsPage = () => {
 
           <div className="space-y-4">
             <h2 className="text-2xl">7. Contact Information</h2>
-            <p>If you have questions about these terms, please contact us at: <Link href="mailto:pantherguessr@gmail.com" className="relative group text-muted-foreground hover:text-black hover:dark:text-white">pantherguessr@gmail.com
+            <p>If you have questions about these terms, please contact us at: <Link href="mailto:tos@pantherguessr.com" className="relative group text-muted-foreground hover:text-black hover:dark:text-white">tos@pantherguessr.com
               <span className="absolute left-0 bottom-[-3px] w-0 h-[2px] bg-black dark:bg-white transition-all group-hover:w-full"></span>
             </Link></p>
           </div>
