@@ -22,6 +22,9 @@ const GameContinuePage = () => {
   );
 
   useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push(`/`);
+    }
     if (isAuthenticated && !isLoading) {
       if (getOngoingGame === null) {
         router.push('/game'); // If there is no ongoing game, redirect to make a new one.
