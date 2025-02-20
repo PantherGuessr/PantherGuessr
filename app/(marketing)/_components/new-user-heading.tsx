@@ -1,0 +1,34 @@
+import { useState } from "react";
+import { ArrowRight } from "lucide-react";
+
+import DemoRoundPanel from "@/app/(marketing)/_components/_panels/demo-round-panel";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+export const NewUserHeading = () => {
+  const [signOnButtonHovered, setSignOnButtonHovered] = useState(false);
+
+  return (
+    <div className="flex flex-col md:flex-row flex-grow items-center justify-center px-10 xl:px-20 pt-10 md:pt-20">
+      <div className="flex flex-col px-4 basis-1/2 -skew-y-3 translate-y-4 transition-transform duration-300">
+        <h1 className="text-4xl font-bold pb-8">Can you find your way around campus?</h1>
+        <h2 className="text-xl font-normal pb-8">
+          Test your campus knowledge with <span className="font-bold">PantherGuessr</span>, the free game where you
+          identify the locations of photos around Chapman University
+        </h2>
+        <Button
+          variant="default"
+          className="w-full h-16 text-lg transition-transform"
+          onMouseOver={() => setSignOnButtonHovered(true)}
+          onMouseLeave={() => setSignOnButtonHovered(false)}
+        >
+          Join the waitlist
+          <ArrowRight className={cn("transition-transform", signOnButtonHovered && "translate-x-1")} />
+        </Button>
+      </div>
+      <div className="flex flex-col px-4 basis-1/2">
+        <DemoRoundPanel />
+      </div>
+    </div>
+  );
+};

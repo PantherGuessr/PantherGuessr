@@ -14,6 +14,7 @@ import "./header-animation.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { NewUserHeading } from "@/app/(marketing)/_components/new-user-heading";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
 import { api } from "@/convex/_generated/api";
 import { useBanCheck } from "@/hooks/use-ban-check";
@@ -110,23 +111,7 @@ export const Heading = () => {
             )}
           </>
         )}
-      {!isAuthenticated && !isLoading && (
-        <>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold">
-            Can you find your way around Chapman? Find out at <span className="underline">PantherGuessr</span>.
-          </h1>
-          <h3 className="text-base sm:text-xl md:text-2xl font-medium">
-            PantherGuessr is the fun game where <br />
-            your directional skills are challenged.
-          </h3>
-
-          <SignUpButton mode="modal" fallbackRedirectUrl={window.location.href}>
-            <Button>
-              Join for Free <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </SignUpButton>
-        </>
-      )}
+      {!isAuthenticated && !isLoading && <NewUserHeading />}
     </div>
   );
 };
