@@ -28,6 +28,11 @@ jobs:
       - name: Setup TypeScript
         run: npm install -g typescript
 
+      - name: Install Dependencies
+        run: |
+          npm install # Installs dependencies from package.json
+          npm install --save-dev @types/node # Install Node.js type definitions
+
       - name: Compile TypeScript Script
         run: tsc .github/scripts/release-pr-content.ts
 
