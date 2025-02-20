@@ -1,0 +1,66 @@
+name: 'Create Release Pull Request'
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release Version (e.g., v1.0.0)'
+        required: true
+
+jobs:
+  release_pr:
+    name: Create Release Pull Request
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.5.1'
+
+      - name: Setup TypeScript
+        run: npm install -g typescript
+
+      - name: Compile TypeScript Script
+        run: tsc .github/scripts/release-pr-content.ts
+
+      - name: Create Release Branch
+        id: create-branch
+        run: |
+          RELEASE_VERSION="${{ github.event.inputs.release_version }}"
+          RELEASE_BRANCH="releases/v${RELEASE_VERSION}"
+          echo "RELEASE_BRANCH=$RELEASE_BRANCH" >> $GITHUB_ENV
+          git checkout -b "$RELEASE_BRANCH"
+      
+      - name: Update Version and Generate PR Content
+        id: pr-content
+        run: node .github/scripts/release-pr-content.ts "${{ github.event.inputs.release_version }}" "main"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Commit Version Changes to Release Branch
+        if: steps.pr-content.outputs.version_updated == 'true'
+        run: |
+          git config --local user.name "GitHub Actions Bot"
+          git config --local user.email "<>@users.noreply.github.com"
+          git add package.json changelog.json # Add changelog.json here
+          git commit -m "chore(release): update version to ${{ github.event.inputs.release_version }} and changelog" || echo "No version changes to commit"
+          git push origin ${{ env.RELEASE_BRANCH }}
+
+      - name: Create Release Pull Request to Main # PR to main
+        uses: peter-evans/create-pull-request@v6.0.5
+        if: steps.pr-content.outputs.patch_notes_generated == 'true'
+        with:
+          token: ${{ github.token }}
+          title: ${{ steps.pr-content.outputs.pr_title }}
+          body: ${{ steps.pr-content.outputs.pr_body }}
+          branch: ${{ env.RELEASE_BRANCH }}
+          base: main
+          draft: true
