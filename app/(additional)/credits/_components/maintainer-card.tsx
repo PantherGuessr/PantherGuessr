@@ -9,14 +9,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface IMaintainerCard {
-  profilePicture: string,
-  name: string,
-  role: string,
-  username: string,
-  websiteLink?: string,
-  gitHubLink?: string,
-  linkedInLink?: string,
-  proffessionalEmailUsername?: string,
+  profilePicture: string;
+  name: string;
+  role: string;
+  username: string;
+  websiteLink?: string;
+  gitHubLink?: string;
+  linkedInLink?: string;
+  professionalEmailUsername?: string;
 }
 
 const MaintainerCard = ({
@@ -27,8 +27,8 @@ const MaintainerCard = ({
   websiteLink,
   gitHubLink,
   linkedInLink,
-  proffessionalEmailUsername
-} : IMaintainerCard) => {
+  professionalEmailUsername,
+}: IMaintainerCard) => {
   const router = useRouter();
 
   return (
@@ -62,8 +62,8 @@ const MaintainerCard = ({
               </Button>
             </Link>
           )}
-          {proffessionalEmailUsername && (
-            <Link href={`mailto:${proffessionalEmailUsername}@pantherguessr.com`} target="blank">
+          {professionalEmailUsername && (
+            <Link href={`mailto:${professionalEmailUsername}@pantherguessr.com`} target="blank">
               <Button variant="ghost" size="icon">
                 <Mail />
               </Button>
