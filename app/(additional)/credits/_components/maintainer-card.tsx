@@ -17,7 +17,7 @@ interface IMaintainerCard {
   websiteLink?: string;
   gitHubLink?: string;
   linkedInLink?: string;
-  proffessionalEmailUsername?: string;
+  professionalEmailUsername?: string;
 }
 
 const MaintainerCard = ({
@@ -28,7 +28,7 @@ const MaintainerCard = ({
   websiteLink,
   gitHubLink,
   linkedInLink,
-  proffessionalEmailUsername,
+  professionalEmailUsername,
 }: IMaintainerCard) => {
   const router = useRouter();
 
@@ -63,8 +63,8 @@ const MaintainerCard = ({
               </Button>
             </Link>
           )}
-          {proffessionalEmailUsername && (
-            <Link href={`mailto:${proffessionalEmailUsername}@pantherguessr.com`} target="blank">
+          {professionalEmailUsername && (
+            <Link href={`mailto:${professionalEmailUsername}@pantherguessr.com`} target="blank">
               <Button variant="ghost" size="icon">
                 <Mail />
               </Button>
