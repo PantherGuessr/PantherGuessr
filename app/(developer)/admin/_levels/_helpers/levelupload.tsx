@@ -1,17 +1,25 @@
+import { useEffect, useRef, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import imageCompression from "browser-image-compression";
+import { useMutation } from "convex/react";
+import convert from "heic-convert";
+import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import UploadMap from "./upload-map";
-import { useMarker } from "./MarkerContext";
-import { useEffect, useRef, useState } from "react";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import convert from "heic-convert";
-import imageCompression from 'browser-image-compression';
-import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { useUser } from "@clerk/nextjs";
+import { api } from "@/convex/_generated/api";
+import { useMarker } from "./MarkerContext";
+import UploadMap from "./upload-map";
 
 const tagsList = [
   { value: "Standard", label: "Standard", icon: University },
@@ -21,7 +29,6 @@ const tagsList = [
 ];
 
 const LevelUpload = () => {
-
   const user = useUser();
 
   const { localMarkerPosition } = useMarker();
@@ -39,8 +46,7 @@ const LevelUpload = () => {
   useEffect(() => {
     if (!selectedImage || !description || !localMarkerPosition) {
       setSubmitButtonDisabled(true);
-    }
-    else {
+    } else {
       setSubmitButtonDisabled(false);
     }
   }, [selectedImage, description, localMarkerPosition]);
@@ -53,8 +59,7 @@ const LevelUpload = () => {
     if (!selectedImage || !description || !markerPosition) {
       alert("Please fill out all required fields.");
       return;
-    }
-    else {
+    } else {
       setIsSubmitting(true);
       setSubmitButtonDisabled(true);
 
@@ -66,28 +71,28 @@ const LevelUpload = () => {
       let convertedBuffer: ArrayBuffer | undefined;
       let imageConverted = false;
       let chosenImage = selectedImage;
-    
+
       // Convert HEIC to JPEG or PNG if necessary
-      if (selectedImage.type === 'image/heic' || selectedImage.type === 'image/heif') {
+      if (selectedImage.type === "image/heic" || selectedImage.type === "image/heif") {
         imageConverted = true;
         convertedBuffer = await convert({
           buffer: Buffer.from(imageBuffer), // the HEIC file buffer
-          format: 'JPEG',                  // output format (change to 'PNG' if needed)
-          quality: 1                       // the jpeg compression quality, between 0 and 1
+          format: "JPEG", // output format (change to 'PNG' if needed)
+          quality: 1, // the jpeg compression quality, between 0 and 1
         });
-      } 
+      }
 
       // only change the file if it was converted
       if (imageConverted && convertedBuffer) {
         // convert buffer to a Blob
-        const blob = new Blob([convertedBuffer], { type: 'image/jpeg' });
+        const blob = new Blob([convertedBuffer], { type: "image/jpeg" });
         // convert Blob to File
-        chosenImage = new File([blob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), { type: 'image/jpeg' });
+        chosenImage = new File([blob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), { type: "image/jpeg" });
       }
 
       // image compression options regardless of conversion
       const imageCompressionOptions = {
-        maxSizeMB: 1.00,
+        maxSizeMB: 1.0,
         maxWidthOrHeight: 1920,
         useWebWorker: true,
       };
@@ -101,18 +106,23 @@ const LevelUpload = () => {
       // Step 2: POST the file to the URL
       const result = await fetch(postUrl, {
         method: "POST",
-        headers: { "Content-Type": selectedImage.type === 'image/heic' || selectedImage.type === 'image/heif' ? 'image/jpeg' : selectedImage.type },
+        headers: {
+          "Content-Type":
+            selectedImage.type === "image/heic" || selectedImage.type === "image/heif"
+              ? "image/jpeg"
+              : selectedImage.type,
+        },
         body: compressedFile,
       });
       const { storageId } = await result.json();
       // Step 3: Save the newly allocated storage id to the database
-      await createLevelWithImageStorageId({ 
-        storageId, 
-        description: description.value, 
-        latitude: markerPosition.lat, 
+      await createLevelWithImageStorageId({
+        storageId,
+        description: description.value,
+        latitude: markerPosition.lat,
         longitude: markerPosition.lng,
         authorUsername: username,
-        tags: selectedTags
+        tags: selectedTags,
       });
 
       // reset form and close dialog
@@ -124,42 +134,47 @@ const LevelUpload = () => {
       setLevelCreatorDialogOpen(false);
       setIsSubmitting(false);
     }
-        
   }
 
   return (
     <>
       <Dialog open={levelCreatorDialogOpen} onOpenChange={setLevelCreatorDialogOpen}>
         <DialogTrigger asChild>
-          <Button variant="default"><Plus className="h-4 w-4 mr-2" /> Create Level</Button>
+          <Button variant="default">
+            <Plus className="h-4 w-4 mr-2" /> Create Level
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              Create Level
-            </DialogTitle>
+            <DialogTitle>Create Level</DialogTitle>
             <DialogDescription>
               Create a new level by uploading an image and providing all of the necessary details.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center">
             <div className="grid w-full items-center gap-1.5 py-2">
-              <Label htmlFor="picture">Picture <span className="font-bold text-red-500">*</span></Label>
-              <Input 
-                id="picture" 
-                type="file" 
+              <Label htmlFor="picture">
+                Picture <span className="font-bold text-red-500">*</span>
+              </Label>
+              <Input
+                id="picture"
+                type="file"
                 accept="image/png, image/jpg, image/jpeg, image/heic, image/heif"
                 ref={imageInput}
-                onChange={(event) => setSelectedImage(event.target.files![0])}/>
+                onChange={(event) => setSelectedImage(event.target.files![0])}
+              />
             </div>
             <div className="grid w-full items-center gap-1.5 py-2">
-              <Label htmlFor="description">Description <span className="font-bold text-red-500">*</span></Label>
-              <Input 
-                id="description" 
-                type="text" 
+              <Label htmlFor="description">
+                Description <span className="font-bold text-red-500">*</span>
+              </Label>
+              <Input
+                id="description"
+                type="text"
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
-                placeholder="Description"/>
+                placeholder="Description"
+              />
             </div>
             <div className="grid w-full items-center gap-1.5 py-2">
               <Label htmlFor="tags">Tags</Label>
@@ -177,18 +192,16 @@ const LevelUpload = () => {
               <UploadMap />
             </div>
             {isSubmitting ? (
-              <Button
-                variant="default"
-                className="w-full my-2 flex flex-row"
-                disabled={true}>
+              <Button variant="default" className="w-full my-2 flex flex-row" disabled={true}>
                 <LoaderCircle className="animate-spin mr-2" size={24} /> Submitting
               </Button>
             ) : (
-              <Button 
-                variant="default" 
+              <Button
+                variant="default"
                 className="w-full my-2"
                 disabled={submitButtonDisabled}
-                onClick={handleImageSubmission}>
+                onClick={handleImageSubmission}
+              >
                 Submit
               </Button>
             )}
@@ -197,7 +210,6 @@ const LevelUpload = () => {
       </Dialog>
     </>
   );
-
 };
 
 export default LevelUpload;

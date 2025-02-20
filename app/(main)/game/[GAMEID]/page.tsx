@@ -1,22 +1,26 @@
 "use client";
 
+import { useMediaQuery } from "usehooks-ts";
+
 import { cn } from "@/lib/utils";
 import InGameSidebar from "../_components/in-game-sidebar";
 import InteractableMap from "../_components/interactable-map";
 import { GameProvider, useGame } from "../_context/GameContext";
-import { useMediaQuery } from "usehooks-ts";
+
 import "../_components/game-animations.css";
-import { Id } from "@/convex/_generated/dataModel";
-import { Loader2 } from "lucide-react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { Loader2 } from "lucide-react";
+
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useBanCheck } from "@/hooks/use-ban-check";
 
 type Props = {
-    params: { GAMEID: string }
-}
+  params: { GAMEID: string };
+};
 
 const GameIdPage = ({ params }: Props) => {
   /**
@@ -31,9 +35,9 @@ const GameIdPage = ({ params }: Props) => {
 
   const currentUser = useQuery(api.users.current);
   const { result: isBanned } = useBanCheck(currentUser?.clerkId);
-    
+
   useEffect(() => {
-    if(isBanned) {
+    if (isBanned) {
       router.push(`/profile/${currentUser?.username}`);
     }
   }, [currentUser?.username, isBanned, router]);
@@ -64,15 +68,14 @@ const GameContent = ({ isMobile }: { isMobile: boolean }) => {
           </div>
         </div>
       )}
-      <div className={
-        cn("h-full w-full flex overflow-y-auto",
-          isMobile ? "animate-body-opacity-scale-in flex-col" : "flex-row")}>
+      <div
+        className={cn(
+          "h-full w-full flex overflow-y-auto",
+          isMobile ? "animate-body-opacity-scale-in flex-col" : "flex-row"
+        )}
+      >
         <InGameSidebar />
-        <div className={
-          cn("flex grow rounded-sm",
-            isMobile ? "p-3" : "py-4 pr-4 pl-0"
-          )
-        }>
+        <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pr-4 pl-0")}>
           <InteractableMap />
         </div>
       </div>

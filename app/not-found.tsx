@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowLeft, Home } from "lucide-react";
+
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Home } from "lucide-react";
-import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -27,6 +28,6 @@ export default function NotFound() {
           <Footer />
         </div>
       </main>
-    </div> 
+    </div>
   );
 }

@@ -1,31 +1,46 @@
 import { useEffect, useMemo, useState } from "react";
-import { useMarker } from "../_levels/_helpers/MarkerContext";
-import { DataTable } from "./helpers/datatable";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Id } from "@/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DialogTitle } from "@radix-ui/react-dialog";
 import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
-import PreviewMap from "../_levels/_helpers/preview-map";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { useMutation, useQuery } from "convex/react";
 import { LatLng } from "leaflet";
-import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
+import { MoreHorizontal } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
+import { useMarker } from "../_levels/_helpers/MarkerContext";
+import PreviewMap from "../_levels/_helpers/preview-map";
+import { DataTable } from "./helpers/datatable";
 
 type Level = {
-    _id: Id<"levels">;
-    _creationTime: number;
-    title: string;
-    latitude: number;
-    longitude: number;
-    imageId: string;
-    timesPlayed: bigint;
-    authorUsername?: string;
+  _id: Id<"levels">;
+  _creationTime: number;
+  title: string;
+  latitude: number;
+  longitude: number;
+  imageId: string;
+  timesPlayed: bigint;
+  authorUsername?: string;
 };
 
 const WeeklyChallengeConfig = () => {
@@ -65,7 +80,7 @@ const WeeklyChallengeConfig = () => {
         weeklyChallenge.round_2,
         weeklyChallenge.round_3,
         weeklyChallenge.round_4,
-        weeklyChallenge.round_5
+        weeklyChallenge.round_5,
       ];
     }
     return [];
@@ -82,7 +97,7 @@ const WeeklyChallengeConfig = () => {
   useEffect(() => {
     if (imageSrc) {
       setCurrentSrcUrl(imageSrc);
-      setOpenDialogId(clickedLevelId); 
+      setOpenDialogId(clickedLevelId);
     }
   }, [imageSrc, clickedLevelId]);
 
@@ -114,18 +129,25 @@ const WeeklyChallengeConfig = () => {
   // handles the updating of a round in the weekly challenge
   const updateWeeklyChallengeRound = (levelId: Id<"levels">) => {
     if (weeklyChallenge && roundToBeUpdated) {
-      updateWeeklyChallengeRoundMutation({ weeklyChallengeId: weeklyChallenge._id, roundNumber : BigInt(roundToBeUpdated), levelId });
+      updateWeeklyChallengeRoundMutation({
+        weeklyChallengeId: weeklyChallenge._id,
+        roundNumber: BigInt(roundToBeUpdated),
+        levelId,
+      });
     }
   };
 
   // creates image dialog button
   function imageDialogCreator(row: Level) {
     return (
-      <Dialog open={openDialogId === row._id} onOpenChange={(open) => {
-        if (!open) {
-          handleDialogClose();
-        }
-      }}>
+      <Dialog
+        open={openDialogId === row._id}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleDialogClose();
+          }
+        }}
+      >
         <DialogTrigger asChild>
           <Button onClick={() => handleDialogOpen(row._id)} className="my-0 py-0" variant="outline">
             View
@@ -134,18 +156,21 @@ const WeeklyChallengeConfig = () => {
 
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {row.title}
-            </DialogTitle>
-            <DialogDescription>
-              Image ID: {row.imageId}
-            </DialogDescription>
+            <DialogTitle>{row.title}</DialogTitle>
+            <DialogDescription>Image ID: {row.imageId}</DialogDescription>
           </DialogHeader>
           <div className="flex justify-center">
             {currentImageSrcUrl === "/Invalid-Image.jpg" ? (
               <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
             ) : (
-              <Image className="w-full" width="300" height="225" src={currentImageSrcUrl} alt={row.title} id={"image-" + row.imageId} />
+              <Image
+                className="w-full"
+                width="300"
+                height="225"
+                src={currentImageSrcUrl}
+                alt={row.title}
+                id={"image-" + row.imageId}
+              />
             )}
           </div>
         </DialogContent>
@@ -155,11 +180,14 @@ const WeeklyChallengeConfig = () => {
 
   function mapDialogCreator(row: Level) {
     return (
-      <Dialog open={openMapDialogId === row._id} onOpenChange={(open) => {
-        if (!open) {
-          handleMapDialogClose();
-        }
-      }}>
+      <Dialog
+        open={openMapDialogId === row._id}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleMapDialogClose();
+          }
+        }}
+      >
         <DialogTrigger asChild>
           <Button onClick={() => handleMapDialogOpen(row._id, row.latitude, row.longitude)} variant="outline">
             View
@@ -168,9 +196,7 @@ const WeeklyChallengeConfig = () => {
 
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {row.title}
-            </DialogTitle>
+            <DialogTitle>{row.title}</DialogTitle>
             <DialogDescription>
               (Latitude: {row.latitude}, Longitude: {row.longitude})
             </DialogDescription>
@@ -189,11 +215,11 @@ const WeeklyChallengeConfig = () => {
       header: "Round #",
       cell: (cell) => {
         return cell.row.index + 1;
-      }
+      },
     },
     {
       accessorKey: "title",
-      header: "Title"
+      header: "Title",
     },
     {
       accessorKey: "authorEmail",
@@ -201,20 +227,20 @@ const WeeklyChallengeConfig = () => {
     },
     {
       accessorKey: "timesPlayed",
-      header: "Times Played"
+      header: "Times Played",
     },
     {
       accessorKey: "imageId",
       header: "Image",
       cell: (cell) => {
         return imageDialogCreator(cell.row.original);
-      }
+      },
     },
     {
       header: "Map",
       cell: (cell) => {
         return mapDialogCreator(cell.row.original);
-      }
+      },
     },
     {
       accessorKey: "_id",
@@ -239,48 +265,62 @@ const WeeklyChallengeConfig = () => {
                   Copy Image ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigator.clipboard.writeText("(" + level.latitude + ", " + level.longitude + ")")}>
+                <DropdownMenuItem
+                  onClick={() => navigator.clipboard.writeText("(" + level.latitude + ", " + level.longitude + ")")}
+                >
                   Copy Coordinates
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-blue-600 dark:text-blue-500" onClick={() => {
-                  setLevelUpdaterDialogOpen(true);
-                  setRoundToBeUpdated(row.index + 1);
-                }}>
+                <DropdownMenuItem
+                  className="text-blue-600 dark:text-blue-500"
+                  onClick={() => {
+                    setLevelUpdaterDialogOpen(true);
+                    setRoundToBeUpdated(row.index + 1);
+                  }}
+                >
                   Change Level
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-                    
           </>
         );
-      }
-    }
+      },
+    },
   ];
 
   return (
     <>
-      <p className="text-lg text-left justify-start w-full px-2 mb-1"><span className="font-bold">{weeklyChallengeStartDate}</span> - <span className="font-bold">{weeklyChallengeEndDate}</span></p>
+      <p className="text-lg text-left justify-start w-full px-2 mb-1">
+        <span className="font-bold">{weeklyChallengeStartDate}</span> -{" "}
+        <span className="font-bold">{weeklyChallengeEndDate}</span>
+      </p>
       <DataTable columns={columns} data={tableData || []} />
-      <Dialog open={levelUpdaterDialogOpen} onOpenChange={(open) => {
-        if (!open) {
-          setLevelUpdaterDialogOpen(false);
-        }
-      }}
+      <Dialog
+        open={levelUpdaterDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setLevelUpdaterDialogOpen(false);
+          }
+        }}
       >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Change Level</DialogTitle>
-            <DialogDescription>
-              Please paste the new level ID below.
-            </DialogDescription>
+            <DialogDescription>Please paste the new level ID below.</DialogDescription>
           </DialogHeader>
-          <Input placeholder="Level ID" value={levelUpdaterInput} onChange={(event) => setLevelUpdaterInput(event.target.value)} />
+          <Input
+            placeholder="Level ID"
+            value={levelUpdaterInput}
+            onChange={(event) => setLevelUpdaterInput(event.target.value)}
+          />
           <DialogFooter>
-            <Button variant="default" onClick={() => {
-              updateWeeklyChallengeRound(levelUpdaterInput as Id<"levels">);
-              setLevelUpdaterDialogOpen(false);
-            }}>
+            <Button
+              variant="default"
+              onClick={() => {
+                updateWeeklyChallengeRound(levelUpdaterInput as Id<"levels">);
+                setLevelUpdaterDialogOpen(false);
+              }}
+            >
               Submit
             </Button>
           </DialogFooter>

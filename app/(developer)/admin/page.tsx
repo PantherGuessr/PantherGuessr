@@ -4,22 +4,18 @@ import { Footer } from "@/components/footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Analytics from "./_analytics/analytics";
-import Levels from "./_levels/levels";
-import SiteSettings from "./_sitesettings/sitesettings";
+import { useAdmin } from "./_components/adminprovider";
 import LevelUpload from "./_levels/_helpers/levelupload";
 import { MarkerProvider } from "./_levels/_helpers/MarkerContext";
-import { useAdmin } from "./_components/adminprovider";
+import Levels from "./_levels/levels";
+import SiteSettings from "./_sitesettings/sitesettings";
 import WeeklyChallengeConfig from "./_weekly/weeklyconfig";
 
-
-
 const AdminPage = () => {
-
   const { tab } = useAdmin();
 
-
   const handleTabChange = (value: string) => {
-    window.history.pushState(null, '', `?tab=${value}`);
+    window.history.pushState(null, "", `?tab=${value}`);
   };
 
   return (
@@ -28,24 +24,32 @@ const AdminPage = () => {
         <h1 className="text-4xl">Admin Dashboard</h1>
         <Tabs defaultValue={tab} onValueChange={handleTabChange}>
           <TabsList>
-            <TabsTrigger value="analytics" id="analytics-page-trigger">Analytics</TabsTrigger>
-            <TabsTrigger value="levels" id="levels-page-trigger">Levels</TabsTrigger>
-            <TabsTrigger value="weekly" id="weekly-page-trigger">Weekly</TabsTrigger>
-            <TabsTrigger value="users" id="users-page-trigger">Users</TabsTrigger>
-            <TabsTrigger value="settings" id="settings-page-trigger">Site Settings</TabsTrigger>
+            <TabsTrigger value="analytics" id="analytics-page-trigger">
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger value="levels" id="levels-page-trigger">
+              Levels
+            </TabsTrigger>
+            <TabsTrigger value="weekly" id="weekly-page-trigger">
+              Weekly
+            </TabsTrigger>
+            <TabsTrigger value="users" id="users-page-trigger">
+              Users
+            </TabsTrigger>
+            <TabsTrigger value="settings" id="settings-page-trigger">
+              Site Settings
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="analytics">
             <Card className="mt-8 mx-10 p-2">
-              <CardHeader className="text-4xl ml-2 text-start">
-                Analytics
-              </CardHeader>
+              <CardHeader className="text-4xl ml-2 text-start">Analytics</CardHeader>
               <CardContent>
                 <Analytics />
               </CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="levels">
-            <MarkerProvider >
+            <MarkerProvider>
               <Card className="mt-8 mx-10 p-2">
                 <CardHeader className="flex flex-row justify-between">
                   <p className="text-4xl ml-2 text-start ">Levels</p>
@@ -60,9 +64,7 @@ const AdminPage = () => {
           <TabsContent value="weekly">
             <Card className="mt-8 mx-10 p-2">
               <MarkerProvider>
-                <CardHeader className="text-4xl ml-2 text-start">
-                  Weekly Challenges
-                </CardHeader>
+                <CardHeader className="text-4xl ml-2 text-start">Weekly Challenges</CardHeader>
                 <CardContent>
                   <WeeklyChallengeConfig />
                 </CardContent>
@@ -71,9 +73,7 @@ const AdminPage = () => {
           </TabsContent>
           <TabsContent value="settings">
             <Card className="mt-8 mx-10 p-2">
-              <CardHeader className="text-4xl ml-2 text-start">
-                Site Settings
-              </CardHeader>
+              <CardHeader className="text-4xl ml-2 text-start">Site Settings</CardHeader>
               <CardContent>
                 <SiteSettings />
               </CardContent>
@@ -84,7 +84,6 @@ const AdminPage = () => {
       <Footer />
     </div>
   );
-    
 };
- 
+
 export default AdminPage;

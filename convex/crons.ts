@@ -1,4 +1,5 @@
 import { cronJobs } from "convex/server";
+
 import { internal } from "./_generated/api";
 
 const crons = cronJobs();
@@ -15,7 +16,7 @@ crons.daily(
   internal.game.clearOldGames
 );
 
-crons.daily (
+crons.daily(
   "Clear unplayed games",
   { hourUTC: 8, minuteUTC: 0 }, // 12:00am PST
   internal.game.clearUnplayedGames

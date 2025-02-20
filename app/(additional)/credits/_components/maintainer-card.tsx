@@ -1,22 +1,23 @@
 "use client";
 
-import ProfileHoverCard from "@/components/profile-hover-card";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import {GithubIcon, Globe, LinkedinIcon, Mail} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { GithubIcon, Globe, LinkedinIcon, Mail } from "lucide-react";
+
+import ProfileHoverCard from "@/components/profile-hover-card";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface IMaintainerCard {
-  profilePicture: string,
-  name: string,
-  role: string,
-  username: string,
-  websiteLink?: string,
-  gitHubLink?: string,
-  linkedInLink?: string,
-  proffessionalEmailUsername?: string,
+  profilePicture: string;
+  name: string;
+  role: string;
+  username: string;
+  websiteLink?: string;
+  gitHubLink?: string;
+  linkedInLink?: string;
+  proffessionalEmailUsername?: string;
 }
 
 const MaintainerCard = ({
@@ -27,8 +28,8 @@ const MaintainerCard = ({
   websiteLink,
   gitHubLink,
   linkedInLink,
-  proffessionalEmailUsername
-} : IMaintainerCard) => {
+  proffessionalEmailUsername,
+}: IMaintainerCard) => {
   const router = useRouter();
 
   return (
@@ -74,5 +75,5 @@ const MaintainerCard = ({
     </Card>
   );
 };
- 
+
 export default MaintainerCard;

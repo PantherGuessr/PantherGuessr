@@ -1,19 +1,11 @@
 const Levenshtein = (a: string, b: string) => {
+  /**
+   * Code for the Levenshtein Algorithm
+   * utilized from https://github.com/gustf/js-levenshtein/blob/master/index.js
+   */
 
-  /** 
-  * Code for the Levenshtein Algorithm 
-  * utilized from https://github.com/gustf/js-levenshtein/blob/master/index.js
-  */
-
-  function _min(d0 : number, d1 : number, d2 : number, bx : number, ay : number)
-  {
-    return d0 < d1 || d2 < d1
-      ? d0 > d2
-        ? d2 + 1
-        : d0 + 1
-      : bx === ay
-        ? d1
-        : d1 + 1;
+  function _min(d0: number, d1: number, d2: number, bx: number, ay: number) {
+    return d0 < d1 || d2 < d1 ? (d0 > d2 ? d2 + 1 : d0 + 1) : bx === ay ? d1 : d1 + 1;
   }
 
   if (a === b) {
@@ -29,14 +21,14 @@ const Levenshtein = (a: string, b: string) => {
   let la = a.length;
   let lb = b.length;
 
-  while (la > 0 && (a.charCodeAt(la - 1) === b.charCodeAt(lb - 1))) {
+  while (la > 0 && a.charCodeAt(la - 1) === b.charCodeAt(lb - 1)) {
     la--;
     lb--;
   }
 
   let offset = 0;
 
-  while (offset < la && (a.charCodeAt(offset) === b.charCodeAt(offset))) {
+  while (offset < la && a.charCodeAt(offset) === b.charCodeAt(offset)) {
     offset++;
   }
 
@@ -70,12 +62,12 @@ const Levenshtein = (a: string, b: string) => {
 
   const len = vector.length - 1;
 
-  for (; x < lb - 3;) {
+  for (; x < lb - 3; ) {
     bx0 = b.charCodeAt(offset + (d0 = x));
     bx1 = b.charCodeAt(offset + (d1 = x + 1));
     bx2 = b.charCodeAt(offset + (d2 = x + 2));
     bx3 = b.charCodeAt(offset + (d3 = x + 3));
-    dd = (x += 4);
+    dd = x += 4;
     for (y = 0; y < len; y += 2) {
       dy = vector[y];
       ay = vector[y + 1];
@@ -91,7 +83,7 @@ const Levenshtein = (a: string, b: string) => {
     }
   }
 
-  for (; x < lb;) {
+  for (; x < lb; ) {
     bx0 = b.charCodeAt(offset + (d0 = x));
     dd = ++x;
     for (y = 0; y < len; y += 2) {
@@ -102,7 +94,6 @@ const Levenshtein = (a: string, b: string) => {
   }
 
   return dd;
-
 };
- 
+
 export default Levenshtein;

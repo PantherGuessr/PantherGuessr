@@ -1,30 +1,30 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "convex/react";
+import html2canvas from "html2canvas-pro";
+import { ArrowRight, Download, Gamepad2, Home, Loader2, Share, Share2 } from "lucide-react";
+
 import { Footer } from "@/components/footer";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { ArrowRight, Download, Gamepad2, Home, Loader2, Share, Share2 } from "lucide-react";
-import Link from "next/link";
-import html2canvas from 'html2canvas-pro';
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { useBanCheck } from "@/hooks/use-ban-check";
+import { cn } from "@/lib/utils";
 
 type Props = {
-    params: { 
-      leaderboardID: string
-    }
-}
+  params: {
+    leaderboardID: string;
+  };
+};
 
 const ResultPage = ({ params }: Props) => {
-
   const currentUser = useQuery(api.users.current);
   const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
 
@@ -44,22 +44,39 @@ const ResultPage = ({ params }: Props) => {
 
   // initially set that it is from game, but do not update after that
   useEffect(() => {
-    if(searchParams.get('fromGame') === 'true') {
+    if (searchParams.get("fromGame") === "true") {
       setIsFromGame(true);
     }
   }, [searchParams]);
 
   useEffect(() => {
-    if(isBanned) {
+    if (isBanned) {
       router.push(`/profile/${currentUser?.username}`);
     }
   }, [currentUser?.username, isBanned, router]);
 
   useEffect(() => {
-    if(leaderboardEntry) {
-      setDistances([Number(leaderboardEntry.round_1_distance), Number(leaderboardEntry.round_2_distance), Number(leaderboardEntry.round_3_distance), Number(leaderboardEntry.round_4_distance), Number(leaderboardEntry.round_5_distance)]);
-      setScores([Number(leaderboardEntry.round_1), Number(leaderboardEntry.round_2), Number(leaderboardEntry.round_3), Number(leaderboardEntry.round_4), Number(leaderboardEntry.round_5)]);
-      const totalScore = Number(leaderboardEntry.round_1) + Number(leaderboardEntry.round_2) + Number(leaderboardEntry.round_3) + Number(leaderboardEntry.round_4) + Number(leaderboardEntry.round_5);
+    if (leaderboardEntry) {
+      setDistances([
+        Number(leaderboardEntry.round_1_distance),
+        Number(leaderboardEntry.round_2_distance),
+        Number(leaderboardEntry.round_3_distance),
+        Number(leaderboardEntry.round_4_distance),
+        Number(leaderboardEntry.round_5_distance),
+      ]);
+      setScores([
+        Number(leaderboardEntry.round_1),
+        Number(leaderboardEntry.round_2),
+        Number(leaderboardEntry.round_3),
+        Number(leaderboardEntry.round_4),
+        Number(leaderboardEntry.round_5),
+      ]);
+      const totalScore =
+        Number(leaderboardEntry.round_1) +
+        Number(leaderboardEntry.round_2) +
+        Number(leaderboardEntry.round_3) +
+        Number(leaderboardEntry.round_4) +
+        Number(leaderboardEntry.round_5);
       setFinalScore(totalScore);
       setUsername(leaderboardEntry.username);
       setOldLevel(Number(leaderboardEntry.oldLevel));
@@ -68,7 +85,12 @@ const ResultPage = ({ params }: Props) => {
   }, [leaderboardEntry]);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogContent, setDialogContent] = useState<{ title: string; description: string; imageSrc?: string, finalScore?: number }>({ title: "", description: "" });
+  const [dialogContent, setDialogContent] = useState<{
+    title: string;
+    description: string;
+    imageSrc?: string;
+    finalScore?: number;
+  }>({ title: "", description: "" });
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleShareClick = async () => {
@@ -78,7 +100,7 @@ const ResultPage = ({ params }: Props) => {
       logging: true,
       width: cardRef.current!.scrollWidth,
       height: cardRef.current!.scrollHeight + 10,
-      backgroundColor: null
+      backgroundColor: null,
     });
     const imageSrc = canvas.toDataURL("image/png");
 
@@ -86,17 +108,17 @@ const ResultPage = ({ params }: Props) => {
       title: `Share Your Results`,
       description: `Share your game results receipt on any social platforms.`,
       imageSrc: imageSrc,
-      finalScore: finalScore
+      finalScore: finalScore,
     });
 
     setIsDialogOpen(true);
   };
 
   const handleDownloadClick = () => {
-    if(dialogContent.imageSrc) {
-      const link = document.createElement('a');
+    if (dialogContent.imageSrc) {
+      const link = document.createElement("a");
       link.href = dialogContent.imageSrc;
-      link.download = 'game-receipt.png';
+      link.download = "game-receipt.png";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -104,25 +126,23 @@ const ResultPage = ({ params }: Props) => {
   };
 
   const handleSocialShareClick = async () => {
-    if(dialogContent.imageSrc) {
-      const imageBlob = await fetch(dialogContent.imageSrc).then(r => r.blob());
+    if (dialogContent.imageSrc) {
+      const imageBlob = await fetch(dialogContent.imageSrc).then((r) => r.blob());
       const filesArr = [
-        new File([imageBlob], 'game-results.png', 
-          {
-            type: 'image/png',
-            lastModified: new Date().getTime(),
-          }
-        )
+        new File([imageBlob], "game-results.png", {
+          type: "image/png",
+          lastModified: new Date().getTime(),
+        }),
       ];
 
       const webShareData = {
         files: filesArr,
         url: new URL(location.pathname, location.origin).href,
-        text: `Check out my game results on #PantherGuessr! My final score was ${finalScore}/1250!`
+        text: `Check out my game results on #PantherGuessr! My final score was ${finalScore}/1250!`,
       };
 
       try {
-        if(navigator.canShare(webShareData)) {
+        if (navigator.canShare(webShareData)) {
           await navigator.share(webShareData);
         }
       } catch {
@@ -158,8 +178,8 @@ const ResultPage = ({ params }: Props) => {
 
   if (isFromGame && leaderboardEntry) {
     const newUrl = new URL(window.location.href);
-    newUrl.searchParams.delete('fromGame');
-    window.history.pushState({}, '', newUrl.toString());
+    newUrl.searchParams.delete("fromGame");
+    window.history.pushState({}, "", newUrl.toString());
   }
 
   return (
@@ -237,16 +257,21 @@ const ResultPage = ({ params }: Props) => {
             </CardContent>
           </Card>
         </div>
-        <div className={cn("flex justify-between w-[350px]",
-          isFromGame ? "flex-row" : "flex-row-reverse"
-        )}>
-          <Button onClick={() => handleShareClick()} variant="outline" size="icon"><Share className="h-4 w-4" /></Button>
+        <div className={cn("flex justify-between w-[350px]", isFromGame ? "flex-row" : "flex-row-reverse")}>
+          <Button onClick={() => handleShareClick()} variant="outline" size="icon">
+            <Share className="h-4 w-4" />
+          </Button>
           <Link href="/">
-            <Button variant={isFromGame ? "outline" : "default"}><Home className="h-4 w-4 mr-2" /> Main Menu</Button>
+            <Button variant={isFromGame ? "outline" : "default"}>
+              <Home className="h-4 w-4 mr-2" /> Main Menu
+            </Button>
           </Link>
           {isFromGame && (
             <Link href="/game">
-              <Button variant="default"><Gamepad2 className="h-4 w-4 mr-2" />New Game</Button>
+              <Button variant="default">
+                <Gamepad2 className="h-4 w-4 mr-2" />
+                New Game
+              </Button>
             </Link>
           )}
         </div>
@@ -262,7 +287,9 @@ const ResultPage = ({ params }: Props) => {
             <div className="flex flex-col justify-center items-center space-y-2">
               <Image src={dialogContent.imageSrc} width={200} height={100} alt="Game Receipt" />
               <div className="space-x-2">
-                <Button size="icon" className="" onClick={handleSocialShareClick}><Share2 className="h-4 w-4" /></Button>
+                <Button size="icon" className="" onClick={handleSocialShareClick}>
+                  <Share2 className="h-4 w-4" />
+                </Button>
                 <Button className="mt-4" onClick={handleDownloadClick}>
                   <Download className="h-4 w-4 mr-2" /> Download
                 </Button>
@@ -273,7 +300,6 @@ const ResultPage = ({ params }: Props) => {
       </Dialog>
     </div>
   );
-    
 };
- 
+
 export default ResultPage;

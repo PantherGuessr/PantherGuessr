@@ -1,8 +1,8 @@
-import { api } from "@/convex/_generated/api";
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { useEffect, useState } from "react";
 
+import { api } from "@/convex/_generated/api";
 
 /**
  * Custom hook to fetch unlocked taglines for a user.
@@ -20,7 +20,7 @@ export const useGetRecentGames = (userClerkId: string | null = null, numberOfGam
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if(queryResult !== undefined) {
+    if (queryResult !== undefined) {
       setIsLoading(false);
     }
   }, [queryResult]);

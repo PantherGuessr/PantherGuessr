@@ -19,11 +19,11 @@ export const generateUploadUrl = mutation(async (ctx) => {
  * @param args.authorUsername - The username of the author
  */
 export const createLevelWithImageStorageId = mutation({
-  args: { 
-    storageId: v.id("_storage"), 
-    description: v.string(), 
-    latitude: v.float64(), 
-    longitude: v.float64(), 
+  args: {
+    storageId: v.id("_storage"),
+    description: v.string(),
+    latitude: v.float64(),
+    longitude: v.float64(),
     authorUsername: v.string(),
     tags: v.optional(v.array(v.string())),
   },
@@ -35,7 +35,7 @@ export const createLevelWithImageStorageId = mutation({
       longitude: args.longitude,
       timesPlayed: BigInt(0),
       authorUsername: args.authorUsername,
-      tags: args.tags
+      tags: args.tags,
     });
   },
 });

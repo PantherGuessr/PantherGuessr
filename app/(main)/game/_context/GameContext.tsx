@@ -1,12 +1,12 @@
-import { api } from "@/convex/_generated/api";
-import { useMutation, useQuery } from "convex/react";
-import React, { createContext, useState, useEffect, useContext, useMemo } from "react";
-import { Doc, Id } from "@/convex/_generated/dataModel";
-import { LatLng } from "leaflet";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import useGameById from "@/hooks/use-game-by-id";
+import { useMutation, useQuery } from "convex/react";
+import { LatLng } from "leaflet";
 
+import { api } from "@/convex/_generated/api";
+import { Doc, Id } from "@/convex/_generated/dataModel";
+import useGameById from "@/hooks/use-game-by-id";
 
 interface GameData {
   gameContent: Doc<"games">;
@@ -16,37 +16,30 @@ interface GameData {
 }
 
 interface GameContextType {
-    levels: Id<"levels">[];
-    currentRound: number;
-    score: number;
-    currentLevelId: Id<"levels"> | null;
-    currentImageSrcUrl: string;
-    markerHasBeenPlaced: boolean;
-    setMarkerHasBeenPlaced: (marker: boolean) => void;
-    isSubmittingGuess: boolean;
-    setIsSubmittingGuess: (button: boolean) => void;
-    submitGuess: (lat: number, lng: number) => Promise<void>;
-    markerPosition: LatLng | null;
-    setMarkerPosition: (position: LatLng | null) => void;
-    correctLocation: LatLng | null;
-    setCorrectLocation: (position: LatLng | null) => void;
-    nextRound: () => void;
-    scoreAwarded: number | null;
-    distanceFromTarget: number | null;
-    isLoading: boolean;
-    isModalVisible: boolean;
+  levels: Id<"levels">[];
+  currentRound: number;
+  score: number;
+  currentLevelId: Id<"levels"> | null;
+  currentImageSrcUrl: string;
+  markerHasBeenPlaced: boolean;
+  setMarkerHasBeenPlaced: (marker: boolean) => void;
+  isSubmittingGuess: boolean;
+  setIsSubmittingGuess: (button: boolean) => void;
+  submitGuess: (lat: number, lng: number) => Promise<void>;
+  markerPosition: LatLng | null;
+  setMarkerPosition: (position: LatLng | null) => void;
+  correctLocation: LatLng | null;
+  setCorrectLocation: (position: LatLng | null) => void;
+  nextRound: () => void;
+  scoreAwarded: number | null;
+  distanceFromTarget: number | null;
+  isLoading: boolean;
+  isModalVisible: boolean;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
 
-
-export const GameProvider = ({
-  children,
-  gameId
-}: {
-    children: React.ReactNode;
-    gameId?: Id<"games">;
-}) => {
+export const GameProvider = ({ children, gameId }: { children: React.ReactNode; gameId?: Id<"games"> }) => {
   const router = useRouter();
   const user = useUser();
 
@@ -68,17 +61,16 @@ export const GameProvider = ({
   const [allScores, setAllScores] = useState<number[]>([]); // imports starting scores if continuing game
   const [leaderboardEntryId, setLeaderboardEntryId] = useState<string | null>(null);
 
-  const gameData : GameData | null = useGameById(gameId); // gets the game by id
+  const gameData: GameData | null = useGameById(gameId); // gets the game by id
 
-  const ids = useMemo(() => 
-  {
+  const ids = useMemo(() => {
     if (gameData) {
       return [
         gameData.gameContent.round_1,
         gameData.gameContent.round_2,
         gameData.gameContent.round_3,
         gameData.gameContent.round_4,
-        gameData.gameContent.round_5
+        gameData.gameContent.round_5,
       ];
     }
     return [];
@@ -123,7 +115,7 @@ export const GameProvider = ({
   }, [gameData]);
 
   useEffect(() => {
-    if(currentLevelId) {
+    if (currentLevelId) {
       setCurrentSrcUrl(imageSrc ?? "/Invalid-Image.jpg"); // sets the current image source URL
     }
   }, [currentLevelId, imageSrc]);
@@ -136,9 +128,9 @@ export const GameProvider = ({
   }, [gameData?.gameContent?._id, router]);
 
   const submitGuess = async (lat: number, lng: number) => {
-    if(!currentLevelId) return; 
+    if (!currentLevelId) return;
 
-    setIsSubmittingGuess(true); 
+    setIsSubmittingGuess(true);
 
     try {
       // checks the guess and updates the scores, correct values, distances, and scores arrays
@@ -148,9 +140,9 @@ export const GameProvider = ({
 
       setDistanceFromTarget(result.distanceAway);
       setScoreAwarded(result.score);
-          
-      setAllDistances(prevDistances => [...prevDistances, result.distanceAway]);
-      setAllScores(prevScores => [...prevScores, result.score]);
+
+      setAllDistances((prevDistances) => [...prevDistances, result.distanceAway]);
+      setAllScores((prevScores) => [...prevScores, result.score]);
       setScore(allScores.reduce((acc, score) => acc + score, 0) + result.score);
     } catch (error) {
       console.error("Error submitting guess:", error);
@@ -160,7 +152,6 @@ export const GameProvider = ({
   };
 
   const nextRound = async () => {
-
     const nextRoundNumber = currentRound + 1;
 
     updateOngoingGameOrCreate({
@@ -168,11 +159,11 @@ export const GameProvider = ({
       userClerkId: user?.user?.id ?? "",
       currentRound: BigInt(nextRoundNumber),
       totalTimeTaken: BigInt(0),
-      scores: allScores.map(score => BigInt(score)),
-      distances: allDistances.map(distance => BigInt(distance))
+      scores: allScores.map((score) => BigInt(score)),
+      distances: allDistances.map((distance) => BigInt(distance)),
     });
 
-    if(nextRoundNumber > levels.length) {
+    if (nextRoundNumber > levels.length) {
       // adds loading states
       setIsLoading(true);
       setIsModalVisible(true);
@@ -184,7 +175,7 @@ export const GameProvider = ({
       // deletes ongoing game and removes it from local storage
       await deleteOngoingGame({
         gameId: gameData!.gameContent!._id,
-        userClerkId: user?.user?.id ?? ""
+        userClerkId: user?.user?.id ?? "",
       });
 
       // gets username for leaderboard entry
@@ -193,7 +184,7 @@ export const GameProvider = ({
       // !!! it may be a bad idea to assume this is never null but, ya know, YOLO! - Dylan
       updateStreak({ clerkId: currentUser!.clerkId });
 
-      updateFirstPlayedBy({clerkId: currentUser!.clerkId, gameId: gameData!.gameContent!._id});
+      updateFirstPlayedBy({ clerkId: currentUser!.clerkId, gameId: gameData!.gameContent!._id });
 
       addLeaderboardEntryToGame({
         gameId: gameData!.gameContent!._id,
@@ -209,15 +200,15 @@ export const GameProvider = ({
         round_4_distance: BigInt(allDistances[3]),
         round_5: BigInt(allScores[4]),
         round_5_distance: BigInt(allDistances[4]),
-        totalTimeTaken: BigInt(0)
-      }).then(leaderboardEntry => {
+        totalTimeTaken: BigInt(0),
+      }).then((leaderboardEntry) => {
         setLeaderboardEntryId(leaderboardEntry);
       });
     } else {
       // updates the current round to the next round and updates the level
       setCurrentRound(currentRound + 1);
       const nextLevel = levels[nextRoundNumber - 1];
-      if(nextLevel) {
+      if (nextLevel) {
         setCurrentLevel(nextLevel);
       }
 
@@ -245,27 +236,29 @@ export const GameProvider = ({
   }, [ids, currentLevelId, imageSrc]);
 
   return (
-    <GameContext.Provider value={{
-      levels,
-      currentRound,
-      score,
-      currentLevelId,
-      currentImageSrcUrl,
-      markerHasBeenPlaced,
-      setMarkerHasBeenPlaced,
-      isSubmittingGuess,
-      setIsSubmittingGuess,
-      submitGuess,
-      markerPosition,
-      setMarkerPosition,
-      correctLocation,
-      setCorrectLocation,
-      nextRound,
-      scoreAwarded,
-      distanceFromTarget,
-      isLoading,
-      isModalVisible
-    }}>
+    <GameContext.Provider
+      value={{
+        levels,
+        currentRound,
+        score,
+        currentLevelId,
+        currentImageSrcUrl,
+        markerHasBeenPlaced,
+        setMarkerHasBeenPlaced,
+        isSubmittingGuess,
+        setIsSubmittingGuess,
+        submitGuess,
+        markerPosition,
+        setMarkerPosition,
+        correctLocation,
+        setCorrectLocation,
+        nextRound,
+        scoreAwarded,
+        distanceFromTarget,
+        isLoading,
+        isModalVisible,
+      }}
+    >
       {children}
     </GameContext.Provider>
   );

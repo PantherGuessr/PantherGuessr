@@ -1,6 +1,7 @@
-import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
+import { useQuery } from "convex/react";
+
+import { api } from "@/convex/_generated/api";
 
 /**
  * Custom hook to get the selected background for a user.
@@ -15,7 +16,7 @@ export const useGetListOfProfiles = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if(queryResult !== undefined) {
+    if (queryResult !== undefined) {
       setIsLoading(false);
     }
   }, [queryResult]);

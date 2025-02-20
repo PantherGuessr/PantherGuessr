@@ -1,7 +1,8 @@
-import { api } from "@/convex/_generated/api";
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { useEffect, useState } from "react";
+
+import { api } from "@/convex/_generated/api";
 
 /**
  * Custom hook to check if a user has an ongoing game.
@@ -11,14 +12,14 @@ import { useEffect, useState } from "react";
  * @example
  * const { result, isLoading } = useHasOngoingGame({ userClerkIdToCheck });
  */
-export const useHasOngoingGame = (userClerkIdToCheck : string | null = null) => {
+export const useHasOngoingGame = (userClerkIdToCheck: string | null = null) => {
   const { user } = useUser();
   const clerkId = userClerkIdToCheck || user?.id || "";
   const queryResult = useQuery(api.users.hasOngoingGame, { clerkId });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if(queryResult !== undefined) {
+    if (queryResult !== undefined) {
       setIsLoading(false);
     }
   }, [queryResult]);

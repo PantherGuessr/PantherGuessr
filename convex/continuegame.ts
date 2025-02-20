@@ -5,7 +5,7 @@ import { mutation, query } from "./_generated/server";
 /**
  * Creates a new save game entry in the ongoingGames table.
  * This allows users to continue their game progress later.
- * 
+ *
  * @param gameId - ID of the game being saved
  * @param userClerkId - Clerk ID of the user saving the game
  * @param currentRound - The current round number (1-5) the user is on
@@ -30,13 +30,13 @@ export const createNewSaveGame = mutation({
       timeLeftInRound,
       totalTimeTaken,
     });
-  }
+  },
 });
 
 /**
  * Updates an existing ongoing game entry with new progress.
  * Used to save a user's current game state as they play.
- * 
+ *
  * @param ongoingGameId - ID of the ongoing game entry to update
  * @param currentRound - The current round number (1-5) the user is on
  * @param timeLeftInRound - Optional time remaining in current round in seconds
@@ -56,13 +56,13 @@ export const updateOngoingGame = mutation({
       timeLeftInRound,
       totalTimeTaken,
     });
-  }
+  },
 });
 
 /**
  * Updates an existing ongoing game entry or creates a new one if none exists.
  * Used to save a user's current game state as they play.
- * 
+ *
  * @param gameId - ID of the game being saved
  * @param userClerkId - Clerk ID of the user saving the game
  * @param currentRound - The current round number (1-5) the user is on
@@ -81,9 +81,10 @@ export const updateOngoingGameOrCreate = mutation({
   },
   handler: async (ctx, args) => {
     const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances } = args;
-    const existingGame = await ctx.db.query("ongoingGames").withIndex("byUserClerkIdGame", (q) =>
-      q.eq("userClerkId", userClerkId)
-    ).first();
+    const existingGame = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId))
+      .first();
     if (existingGame) {
       await ctx.db.patch(existingGame._id, {
         game: gameId,
@@ -105,13 +106,13 @@ export const updateOngoingGameOrCreate = mutation({
         distances,
       });
     }
-  }
+  },
 });
 
 /**
  * Deletes an ongoing game entry.
  * Used when a user completes a game to clean up their save data.
- * 
+ *
  * @param gameId - ID of the game to delete the ongoing game for
  * @param userClerkId - Clerk ID of the user to delete the ongoing game for
  */
@@ -125,20 +126,18 @@ export const deleteOngoingGame = mutation({
     // find the ongoing game with the given gameId and userClerkId
     const ongoingGame = await ctx.db
       .query("ongoingGames")
-      .withIndex("byUserClerkIdGame", (q) =>
-        q.eq("userClerkId", userClerkId).eq("game", gameId)
-      )
+      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId).eq("game", gameId))
       .first();
     if (ongoingGame) {
       await ctx.db.delete(ongoingGame._id);
     }
-  }
+  },
 });
 
 /**
  * Gets the most recent ongoing game for a user if one exists.
  * Used to check if a user has a game in progress that they can resume.
- * 
+ *
  * @param userClerkId - The Clerk ID of the user to check for ongoing games
  * @returns The most recent ongoing game entry for the user, or null if none exists
  */
@@ -148,15 +147,19 @@ export const getOngoingGameFromUser = query({
   },
   handler: async (ctx, args) => {
     const { userClerkId } = args;
-    const ongoingGame = await ctx.db.query("ongoingGames").withIndex("byUserClerkId").filter(q => q.eq(q.field("userClerkId"), userClerkId)).first();
+    const ongoingGame = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byUserClerkId")
+      .filter((q) => q.eq(q.field("userClerkId"), userClerkId))
+      .first();
     return ongoingGame;
-  }
+  },
 });
 
 /**
  * Deletes all ongoing games for a user.
  * Used when a user starts a new game to delete any old ongoing games.
- * 
+ *
  * @param userClerkId - The Clerk ID of the user to delete ongoing games for
  */
 export const deleteOldOngoingGames = mutation({
@@ -165,10 +168,13 @@ export const deleteOldOngoingGames = mutation({
   },
   handler: async (ctx, args) => {
     const { userClerkId } = args;
-    const ongoingGames = await ctx.db.query("ongoingGames").withIndex("byUserClerkId").filter(q => q.eq(q.field("userClerkId"), userClerkId)).collect();
+    const ongoingGames = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byUserClerkId")
+      .filter((q) => q.eq(q.field("userClerkId"), userClerkId))
+      .collect();
     for (const game of ongoingGames) {
       await ctx.db.delete(game._id);
     }
-  }
+  },
 });
-

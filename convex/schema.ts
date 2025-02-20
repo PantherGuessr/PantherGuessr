@@ -41,18 +41,18 @@ export default defineSchema({
     isoDay: v.string(),
     isoYearMonth: v.string(),
     count: v.int64(),
-    lastUpdated: v.string()
+    lastUpdated: v.string(),
   }),
-    
+
   games: defineTable({
     round_1: v.id("levels"),
     round_2: v.id("levels"),
     round_3: v.id("levels"),
     round_4: v.id("levels"),
-    round_5: v.id("levels"),    
+    round_5: v.id("levels"),
     timeAllowedPerRound: v.optional(v.int64()),
     firstPlayedByClerkId: v.optional(v.string()),
-    leaderboard: v.optional(v.array(v.id("leaderboardEntries")))
+    leaderboard: v.optional(v.array(v.id("leaderboardEntries"))),
   }),
 
   weeklyChallenges: defineTable({
@@ -65,7 +65,7 @@ export default defineSchema({
     round_5: v.id("levels"),
     timeAllowedPerRound: v.optional(v.int64()),
     firstPlayedByClerkId: v.optional(v.string()),
-    leaderboard: v.optional(v.array(v.id("leaderboardEntries")))
+    leaderboard: v.optional(v.array(v.id("leaderboardEntries"))),
   }),
 
   leaderboardEntries: defineTable({
@@ -86,8 +86,7 @@ export default defineSchema({
     round_5_distance: v.int64(),
     totalTimeTaken: v.int64(),
     xpGained: v.number(),
-  })
-    .index("byUserId", ["userId"]),
+  }).index("byUserId", ["userId"]),
 
   ongoingGames: defineTable({
     game: v.union(v.id("games"), v.id("weeklyChallenges")),
@@ -96,14 +95,14 @@ export default defineSchema({
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
     scores: v.optional(v.array(v.int64())),
-    distances: v.optional(v.array(v.int64()))
+    distances: v.optional(v.array(v.int64())),
   })
     .index("byUserClerkIdGame", ["userClerkId", "game"])
     .index("byUserClerkId", ["userClerkId"])
     .index("byGame", ["game"]),
 
   profileTaglines: defineTable({
-    tagline: v.string()
+    tagline: v.string(),
   }),
 
   profileBackgrounds: defineTable({
@@ -115,9 +114,8 @@ export default defineSchema({
     name: v.string(),
     description: v.string(),
     isEnabled: v.boolean(),
-    canUnlock: v.boolean()
-  })
-    .index("byName", ["name"]),
+    canUnlock: v.boolean(),
+  }).index("byName", ["name"]),
 
   userReports: defineTable({
     reportedUser: v.id("users"),
@@ -126,7 +124,7 @@ export default defineSchema({
     reporterMessage: v.optional(v.string()),
     hasBeenResolved: v.boolean(),
     moderator: v.optional(v.id("users")),
-    moderatorMessage: v.optional(v.string())
+    moderatorMessage: v.optional(v.string()),
   }),
 
   banAppeals: defineTable({
@@ -135,6 +133,6 @@ export default defineSchema({
     appealMessage: v.string(),
     hasBeenResolved: v.boolean(),
     moderator: v.optional(v.id("users")),
-    moderatorMessage: v.optional(v.string())
-  })
+    moderatorMessage: v.optional(v.string()),
+  }),
 });

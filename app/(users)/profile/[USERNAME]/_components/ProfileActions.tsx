@@ -1,11 +1,22 @@
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useClerk } from "@clerk/nextjs";
+import { useMutation } from "convex/react";
+import { Flag, Settings, Share, UserPlus } from "lucide-react";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Flag, Settings, Share, UserPlus } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useClerk } from "@clerk/nextjs";
+import { toast } from "@/hooks/use-toast";
 
 interface ProfileActionsProps {
   username: string;
@@ -13,17 +24,15 @@ interface ProfileActionsProps {
   isCurrentUser: boolean;
 }
 
-const ProfileActions = (
-  { username, userClerkId, isCurrentUser }: ProfileActionsProps
-) => {
+const ProfileActions = ({ username, userClerkId, isCurrentUser }: ProfileActionsProps) => {
   const { openUserProfile } = useClerk();
   const reportUser = useMutation(api.users.reportUser);
-  
+
   const handleReportSubmission = () => {
     reportUser({
       offenderClerkId: userClerkId,
       reportReason: "Reason Coming Soon (Dropdown Menu)",
-      reporterMessage: "Reporter Message Coming Soon (User write in)"
+      reporterMessage: "Reporter Message Coming Soon (User write in)",
     });
   };
 
@@ -33,9 +42,7 @@ const ProfileActions = (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button size="icon"
-                onClick={() => openUserProfile()}
-              >
+              <Button size="icon" onClick={() => openUserProfile()}>
                 <Settings className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
@@ -49,9 +56,7 @@ const ProfileActions = (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button size="icon"
-                onClick={() => alert("FRIEND REQUESTS COMING SOON")}
-              >
+              <Button size="icon" onClick={() => alert("FRIEND REQUESTS COMING SOON")}>
                 <UserPlus className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
@@ -64,12 +69,15 @@ const ProfileActions = (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button size="icon" onClick={() => {
-              navigator.clipboard.writeText(window.location.href);
-              toast({
-                description: `@${username} profile URL has been copied to clipboard!`,
-              });
-            }}>
+            <Button
+              size="icon"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                toast({
+                  description: `@${username} profile URL has been copied to clipboard!`,
+                });
+              }}
+            >
               <Share className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
@@ -96,20 +104,14 @@ const ProfileActions = (
           </TooltipProvider>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>
-                Report @{username} to PantherGuessr staff?
-              </AlertDialogTitle>
+              <AlertDialogTitle>Report @{username} to PantherGuessr staff?</AlertDialogTitle>
               <AlertDialogDescription>
                 Are you sure you would like to submit a report about this user? This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>
-                Cancel
-              </AlertDialogCancel>
-              <AlertDialogAction onClick={() => handleReportSubmission()}>
-                Report @{username}
-              </AlertDialogAction>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handleReportSubmission()}>Report @{username}</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -117,5 +119,5 @@ const ProfileActions = (
     </div>
   );
 };
- 
+
 export default ProfileActions;

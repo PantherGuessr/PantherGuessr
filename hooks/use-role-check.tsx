@@ -1,7 +1,8 @@
-import { api } from "@/convex/_generated/api";
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { useEffect, useState } from "react";
+
+import { api } from "@/convex/_generated/api";
 
 /**
  * Custom hook to check if a user has a specific role.
@@ -19,7 +20,7 @@ export const useRoleCheck = (role: string, userClerkIdToCheck: string | null = n
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if(queryResult !== undefined) {
+    if (queryResult !== undefined) {
       setIsLoading(false);
     }
   }, [queryResult]);
