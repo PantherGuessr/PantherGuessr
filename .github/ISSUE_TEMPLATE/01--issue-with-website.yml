@@ -1,6 +1,6 @@
 name: Issue - Issue With Website
 description: Report a software bug on our website.
-labels: ['type: bug', 'status: waiting triage']
+labels: ["type: bug", "status: waiting triage"]
 body:
   - type: markdown
     attributes:

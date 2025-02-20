@@ -1,10 +1,9 @@
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { useConvexAuth, useQuery } from "convex/react";
-import { Doc } from "@/convex/_generated/dataModel";
+import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useState, useEffect, useRef } from "react";
-import { useMutation } from "convex/react";
+import { useConvexAuth, useMutation, useQuery } from "convex/react";
+
+import { api } from "@/convex/_generated/api";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 
 interface GameData {
   gameContent: Doc<"games">;
@@ -28,10 +27,10 @@ const useGameById = (gameId?: Id<"games">) => {
     if (!gameId && !createdGameId && !isCreatingGame.current) {
       isCreatingGame.current = true;
       createGame({ timeAllowedPerRound: BigInt(60) })
-        .then(newGameId => {
+        .then((newGameId) => {
           setCreatedGameId(newGameId);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error creating game:", error);
         })
         .finally(() => {
@@ -49,11 +48,7 @@ const useGameById = (gameId?: Id<"games">) => {
   // Fetch the game data by ID
   const gameContent = useQuery(
     api.game.getExistingGame,
-    gameId
-      ? { gameId }
-      : createdGameId
-        ? { gameId: createdGameId }
-        : "skip"
+    gameId ? { gameId } : createdGameId ? { gameId: createdGameId } : "skip"
   );
 
   // Update gameData when gameContent or ongoingGame changes
@@ -65,8 +60,8 @@ const useGameById = (gameId?: Id<"games">) => {
 
       if (ongoingGame && ongoingGame.game === gameContent._id) {
         data.startingRound = Number(ongoingGame.currentRound);
-        data.startingScores = ongoingGame.scores?.map(score => Number(score));
-        data.startingDistances = ongoingGame.distances?.map(distance => Number(distance));
+        data.startingScores = ongoingGame.scores?.map((score) => Number(score));
+        data.startingDistances = ongoingGame.distances?.map((distance) => Number(distance));
       }
 
       setGameData(data);

@@ -1,8 +1,9 @@
-import { internalAction, internalMutation, mutation, query, QueryCtx } from "./_generated/server";
 import { createClerkClient, UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
-import { Id } from "./_generated/dataModel";
+
 import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
+import { internalAction, internalMutation, mutation, query, QueryCtx } from "./_generated/server";
 
 /**
  * Query to get the current user.
@@ -22,28 +23,28 @@ export const current = query({
 
 /**
  * Upserts a user record from Clerk data.
- * 
+ *
  * This function performs an internal mutation that either inserts a new user record
  * or updates an existing one based on the provided Clerk user data.
- * 
+ *
  * @param args.data - The user data from Clerk, validated as `UserJSON`.
- * 
+ *
  * @remarks
  * - This function does not perform runtime validation on the input data and trusts the data from Clerk.
  * - If a user with the given Clerk ID does not exist, a new record is inserted.
  * - If a user with the given Clerk ID already exists, the existing record is updated.
- * 
+ *
  * @param ctx - The context object containing the database connection.
  * @param data - The user data from Clerk.
- * 
+ *
  * @returns {Promise<void>} - A promise that resolves when the upsert operation is complete.
  */
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
   async handler(ctx, { data }) {
     const user = await userByClerkId(ctx, data.id);
-    
-    if (user === null) {      
+
+    if (user === null) {
       const background = await ctx.db.query("profileBackgrounds").withIndex("by_creation_time").first(); // generates background
       // TODO: Guarantee that the "Just born" tagline is always set
       const tagline = await ctx.db.query("profileTaglines").first(); // generates tagline
@@ -51,7 +52,7 @@ export const upsertFromClerk = internalMutation({
       const userAttributes = {
         clerkId: data.id!,
         username: data.username!,
-        emails: data.email_addresses ? data.email_addresses.map(email => email.email_address) : [],
+        emails: data.email_addresses ? data.email_addresses.map((email) => email.email_address) : [],
         level: 1n,
         currentXP: 0n,
         currentStreak: 0n,
@@ -62,13 +63,13 @@ export const upsertFromClerk = internalMutation({
         unlockedProfileBackgrounds: [background!._id],
         unlockedProfileTaglines: [tagline!._id],
       };
-            
+
       await ctx.db.insert("users", userAttributes);
     } else {
       const userAttributes = {
         clerkId: data.id!,
         username: data.username!,
-        emails: data.email_addresses ? data.email_addresses.map(email => email.email_address) : [],
+        emails: data.email_addresses ? data.email_addresses.map((email) => email.email_address) : [],
         picture: data.image_url,
       };
 
@@ -79,13 +80,13 @@ export const upsertFromClerk = internalMutation({
 
 /**
  * Deletes a user from the database based on the provided Clerk user ID.
- * 
+ *
  * @param {string} args.clerkUserId - The Clerk user ID of the user to be deleted.
- * 
+ *
  * @returns {Promise<void>} - A promise that resolves when the user is deleted.
- * 
+ *
  * @throws {Error} - Throws an error if the user cannot be found or deleted.
- * 
+ *
  * @example
  * ```typescript
  * await deleteUserFromConvex
@@ -100,9 +101,7 @@ export const deleteUserFromConvex = internalMutation({
     if (user !== null) {
       await ctx.db.delete(user._id);
     } else {
-      console.warn(
-        `Can't delete user, there is none for Clerk user ID: ${clerkUserId}`,
-      );
+      console.warn(`Can't delete user, there is none for Clerk user ID: ${clerkUserId}`);
     }
   },
 });
@@ -116,7 +115,7 @@ export const deleteUserFromConvex = internalMutation({
  * @param {Object} args - The arguments object.
  * @param {string} args.username - The username of the user to retrieve.
  * @returns {Promise<Object|null>} - A promise that resolves to the user document if found, or null if not found.
-*/
+ */
 export const getUserByUsername = query({
   args: {
     username: v.string(),
@@ -124,16 +123,16 @@ export const getUserByUsername = query({
   async handler(ctx, args) {
     const user = await userByUsername(ctx, args.username);
     return user;
-  }
+  },
 });
 
 /**
  * Query to check if a user is banned.
  *
  * @param args.clerkId - The Clerk ID of the user to check.
- * 
+ *
  * @returns An object containing the ban status, ban reason, and appeal submission status.
- * 
+ *
  * @property {boolean} result - Indicates if the user is banned.
  * @property {string | undefined} banReason - The reason for the ban, if any.
  * @property {boolean} appealSubmitted - Indicates if a ban appeal has been submitted.
@@ -145,32 +144,32 @@ export const isUserBanned = query({
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return { result: false, banReason: undefined, appealSubmitted: false };
     }
-    
+
     return {
       result: user.isBanned,
       banReason: user.banReason,
-      appealSubmitted: user.banAppeal ? (await ctx.db.get(user.banAppeal) ? true : false) : false
+      appealSubmitted: user.banAppeal ? ((await ctx.db.get(user.banAppeal)) ? true : false) : false,
     };
   },
 });
 
 /**
  * Awards experience points (XP) to a user and updates their level accordingly.
- * 
+ *
  * @param args - The arguments for the mutation.
  * @param args.username - The username of the user to award XP to.
  * @param args.earnedXP - The amount of XP earned by the user.
- * 
+ *
  * @throws {Error} If the user is not found.
- * 
+ *
  * @remarks
  * This function calculates the new XP and level for the user based on the earned XP.
  * The XP required for each level doubles with each level up to a maximum level.
  * The user's level and current XP are updated in the database.
- * 
+ *
  * @example
  * ```typescript
  * await awardUserXP({ username: "john_doe", earnedXP: 150 });
@@ -191,7 +190,7 @@ export const awardUserXP = internalMutation({
     // Define the XP required for each level
     const xpForLevels = [25, 50, 75, 100];
     const xpForMaxLevel = 100;
-    
+
     // Add the earned XP to the user's current XP
     let currentXP = user.currentXP + BigInt(args.earnedXP);
     let level = user.level;
@@ -202,8 +201,9 @@ export const awardUserXP = internalMutation({
     // Loop to calculate the new level and remaining XP
     do {
       // Determine the XP required for the next level
-      const xpForNextLevel = level < BigInt(xpForLevels.length + 1) ? BigInt(xpForLevels[Number(level) - 1]) : BigInt(xpForMaxLevel);
-      
+      const xpForNextLevel =
+        level < BigInt(xpForLevels.length + 1) ? BigInt(xpForLevels[Number(level) - 1]) : BigInt(xpForMaxLevel);
+
       // Check if the user has enough XP to level up
       if (currentXP >= xpForNextLevel) {
         currentXP -= xpForNextLevel; // Subtract the XP required for the next level
@@ -222,28 +222,29 @@ export const awardUserXP = internalMutation({
       oldLevel,
       newLevel: level,
     };
-  }
+  },
 });
 
 /**
  * Query to check if a user has an ongoing game.
- * 
+ *
  * @param args - The arguments for the query.
  * @param args.clerkId - The Clerk ID of the user.
- * 
+ *
  * @returns {Promise<boolean>} - A promise that resolves to `true` if the user has an ongoing game, otherwise `false`.
  */
 export const hasOngoingGame = query({
   args: {
-    clerkId: v.string()
+    clerkId: v.string(),
   },
   async handler(ctx, args) {
-    const ongoingGame = await ctx.db.query("ongoingGames").withIndex("byUserClerkIdGame", (q) =>
-      q.eq("userClerkId", args.clerkId)
-    ).first();
+    const ongoingGame = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", args.clerkId))
+      .first();
 
     return ongoingGame !== null;
-  }
+  },
 });
 
 /**
@@ -270,12 +271,12 @@ export const hasRole = query({
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return false;
     }
 
     return user.roles?.includes(args.role);
-  }
+  },
 });
 
 /**
@@ -293,12 +294,12 @@ export const hasRole = query({
 export const hasAchievement = query({
   args: {
     name: v.string(),
-    clerkId: v.string()
+    clerkId: v.string(),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return false;
     }
 
@@ -310,7 +311,7 @@ export const hasAchievement = query({
     }
 
     return false;
-  }
+  },
 });
 
 export const getAchievementByName = query({
@@ -319,7 +320,7 @@ export const getAchievementByName = query({
   },
   async handler(ctx, args) {
     return await achievementByName(ctx, args.name);
-  }
+  },
 });
 
 /**
@@ -331,17 +332,17 @@ export const getAchievementByName = query({
  */
 export const hasChapmanEmail = query({
   args: {
-    clerkId: v.string()
+    clerkId: v.string(),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return false;
     }
-        
-    return user.emails.some(email => email.endsWith("@chapman.edu"));
-  }
+
+    return user.emails.some((email) => email.endsWith("@chapman.edu"));
+  },
 });
 
 /**
@@ -357,12 +358,12 @@ export const hasChapmanEmail = query({
  */
 export const getUnlockedTaglines = query({
   args: {
-    clerkId: v.string()
+    clerkId: v.string(),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return null;
     }
 
@@ -371,12 +372,15 @@ export const getUnlockedTaglines = query({
     // iterate through taglines to return objects
     const taglines = [];
     for (const taglineId of taglineIds) {
-      const tagline = await ctx.db.query("profileTaglines").withIndex("by_id", (q) => q.eq("_id", taglineId)).unique();
+      const tagline = await ctx.db
+        .query("profileTaglines")
+        .withIndex("by_id", (q) => q.eq("_id", taglineId))
+        .unique();
       taglines.push(tagline);
     }
-        
+
     return taglines;
-  }
+  },
 });
 
 /**
@@ -393,21 +397,24 @@ export const getUnlockedTaglines = query({
  */
 export const getSelectedTagline = query({
   args: {
-    clerkId: v.string()
+    clerkId: v.string(),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return null;
     }
 
     const taglineId = user?.profileTagline;
 
-    const tagline = await ctx.db.query("profileTaglines").withIndex("by_id", (q) => q.eq("_id", taglineId)).unique();
-        
+    const tagline = await ctx.db
+      .query("profileTaglines")
+      .withIndex("by_id", (q) => q.eq("_id", taglineId))
+      .unique();
+
     return tagline;
-  }
+  },
 });
 
 /**
@@ -428,27 +435,27 @@ export const getSelectedTagline = query({
 export const updateSelectedTagline = mutation({
   args: {
     clerkId: v.string(),
-    taglineId: v.id("profileTaglines")
+    taglineId: v.id("profileTaglines"),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return null;
     }
 
     await ctx.db.patch(user._id, { profileTagline: args.taglineId });
-  }
+  },
 });
 
 export const getUnlockedBackgrounds = query({
   args: {
-    clerkId: v.string()
+    clerkId: v.string(),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return null;
     }
 
@@ -456,59 +463,65 @@ export const getUnlockedBackgrounds = query({
 
     const backgrounds = [];
     for (const backgroundId of backgroundIds) {
-      const background = await ctx.db.query("profileBackgrounds").withIndex("by_id", (q) => q.eq("_id", backgroundId)).unique();
+      const background = await ctx.db
+        .query("profileBackgrounds")
+        .withIndex("by_id", (q) => q.eq("_id", backgroundId))
+        .unique();
       backgrounds.push(background);
     }
-        
+
     return backgrounds;
-  }
+  },
 });
 
 export const getSelectedBackground = query({
   args: {
-    clerkId: v.string()
+    clerkId: v.string(),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return null;
     }
 
     const backgroundId = user?.profileBackground;
 
-    const background = await ctx.db.query("profileBackgrounds").withIndex("by_id", (q) => q.eq("_id", backgroundId)).unique();
-        
+    const background = await ctx.db
+      .query("profileBackgrounds")
+      .withIndex("by_id", (q) => q.eq("_id", backgroundId))
+      .unique();
+
     return background;
-  }
+  },
 });
 
 export const updateSelectedBackground = mutation({
   args: {
     clerkId: v.string(),
-    backgroundId: v.id("profileBackgrounds")
+    backgroundId: v.id("profileBackgrounds"),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return null;
     }
 
     await ctx.db.patch(user._id, { profileBackground: args.backgroundId });
-  }
+  },
 });
 
 export const getListOfProfiles = query({
   args: {},
   async handler(ctx) {
     return await ctx.db.query("users").collect();
-  }
+  },
 });
 
 /**
  * Retrieves the last N played games for a user based on their Clerk ID.
- * 
+ *
  * @param {Object} args - The arguments object.
  * @param {string} args.clerkId - The Clerk ID of the user.
  * @param {number} args.n - The number of games to retrieve.
@@ -517,22 +530,23 @@ export const getListOfProfiles = query({
 export const getLastNPlayedGames = query({
   args: {
     clerkId: v.string(),
-    n: v.number()
+    n: v.number(),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
 
-    if(!user) {
+    if (!user) {
       return null;
     }
 
-    const leaderboardEntriesList = await ctx.db.query("leaderboardEntries")
+    const leaderboardEntriesList = await ctx.db
+      .query("leaderboardEntries")
       .withIndex("byUserId", (q) => q.eq("userId", user._id))
       .order("desc")
       .take(args.n);
 
     return leaderboardEntriesList;
-  }
+  },
 });
 
 /**
@@ -550,7 +564,7 @@ export const getLastNPlayedGames = query({
  */
 export const updateStreak = mutation({
   args: {
-    clerkId: v.string()
+    clerkId: v.string(),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
@@ -585,18 +599,18 @@ export const updateStreak = mutation({
     await ctx.db.patch(user._id, { currentStreak: newStreak, lastPlayedTimestamp: now.getTime() });
 
     return newStreak;
-  }
+  },
 });
 
 /**
  * Resets the current streaks of users who have been inactive for more than 24 hours.
- * 
- * This function calculates the current time in the PST timezone and determines the 
- * midnight timestamp of the current day in PST. It then queries the database for users 
+ *
+ * This function calculates the current time in the PST timezone and determines the
+ * midnight timestamp of the current day in PST. It then queries the database for users
  * whose `lastPlayedTimestamp` is earlier than 24 hours before the current midnight PST.
- * For each inactive user found, it resets their `currentStreak` to 0 and sets their 
+ * For each inactive user found, it resets their `currentStreak` to 0 and sets their
  * `lastPlayedTimestamp` to undefined.
- * 
+ *
  * @param ctx - The context object containing the database connection and other utilities.
  * @returns A message indicating the number of users whose streaks were cleared.
  */
@@ -606,29 +620,32 @@ export const resetInactiveStreaks = internalMutation({
     const nowPST = new Date(now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
     const nowMidnightPST = new Date(nowPST.getFullYear(), nowPST.getMonth(), nowPST.getDate()).getTime();
 
-    const inactiveUsers = await ctx.db.query("users").filter(q => q.lt(q.field("lastPlayedTimestamp"), nowMidnightPST - 24 * 60 * 60 * 1000)).collect();
+    const inactiveUsers = await ctx.db
+      .query("users")
+      .filter((q) => q.lt(q.field("lastPlayedTimestamp"), nowMidnightPST - 24 * 60 * 60 * 1000))
+      .collect();
 
     for (const user of inactiveUsers) {
       await ctx.db.patch(user._id, { currentStreak: 0n, lastPlayedTimestamp: undefined });
     }
 
     return `Cleared streaks for ${inactiveUsers.length} users.`;
-  }
+  },
 });
 
 /**
  * Mutation to report a user.
- * 
+ *
  * @param {string} args.offenderClerkId - The Clerk ID of the user being reported.
  * @param {string} args.reportReason - The reason for reporting the user.
  * @param {string} args.reporterMessage - Additional message from the reporter.
- * 
+ *
  * @returns {Promise<void>} - A promise that resolves when the report is successfully created.
- * 
+ *
  * @async
  * @function
  * @name reportUser
- * 
+ *
  * @example
  * ```typescript
  * await reportUser({
@@ -642,26 +659,27 @@ export const reportUser = mutation({
   args: {
     offenderClerkId: v.string(),
     reportReason: v.string(),
-    reporterMessage: v.string()
+    reporterMessage: v.string(),
   },
   async handler(ctx, args) {
     const reportUser = await getCurrentUser(ctx);
     const offenderUser = await userByClerkId(ctx, args.offenderClerkId);
 
-    if(!reportUser || !offenderUser) {
+    if (!reportUser || !offenderUser) {
       return;
     }
 
     const timeFrame = 1 * 60 * 60 * 1000; // 1 hour
 
     // Fetch the reports made by the user within the time frame
-    const recentReports = await ctx.db.query("userReports")
-      .filter(q => q.eq(q.field("reporter"), reportUser._id))
-      .filter(q => q.gt(q.field("_creationTime"), Date.now() - timeFrame))
-      .filter(q => q.eq(q.field("hasBeenResolved"), false))
+    const recentReports = await ctx.db
+      .query("userReports")
+      .filter((q) => q.eq(q.field("reporter"), reportUser._id))
+      .filter((q) => q.gt(q.field("_creationTime"), Date.now() - timeFrame))
+      .filter((q) => q.eq(q.field("hasBeenResolved"), false))
       .collect();
 
-    if(recentReports.length > 0) {
+    if (recentReports.length > 0) {
       return;
     }
 
@@ -670,19 +688,19 @@ export const reportUser = mutation({
       reporter: reportUser!._id,
       reportReason: args.reportReason,
       reporterMessage: args.reporterMessage,
-      hasBeenResolved: false
+      hasBeenResolved: false,
     });
-  }
+  },
 });
 
 /**
  * Mutation to appeal a ban.
- * 
+ *
  * @param {string} args.banReason - (Optional) The reason for the ban.
  * @param {string} args.appealMessage - The message for the appeal.
- * 
+ *
  * @returns {Promise<void>} - A promise that resolves when the appeal has been inserted into the database.
- * 
+ *
  * @async
  */
 export const appealBan = mutation({
@@ -693,7 +711,7 @@ export const appealBan = mutation({
   async handler(ctx, args) {
     const user = await getCurrentUser(ctx);
 
-    if(!user) {
+    if (!user) {
       return;
     }
 
@@ -701,11 +719,11 @@ export const appealBan = mutation({
       user: user._id,
       banReason: args.banReason,
       appealMessage: args.appealMessage,
-      hasBeenResolved: false
+      hasBeenResolved: false,
     });
 
     await ctx.db.patch(user._id, {
-      banAppeal: appeal
+      banAppeal: appeal,
     });
   },
 });
@@ -727,11 +745,11 @@ export const deleteUserAdministrativeAction = mutation({
   async handler(ctx, args) {
     const userToDelete = await getUserByUsername(ctx, { username: args.userToDeleteUsername });
     const callUser = await getCurrentUser(ctx);
-    
-    if(userToDelete && callUser) {
-      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+
+    if (userToDelete && callUser) {
+      if (await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
         await ctx.scheduler.runAfter(0, internal.users.deleteFromClerkAction, {
-          clerkUserId: userToDelete.clerkId
+          clerkUserId: userToDelete.clerkId,
         });
       }
     }
@@ -753,15 +771,15 @@ export const deleteUserAdministrativeAction = mutation({
  */
 export const deleteFromClerkAction = internalAction({
   args: {
-    clerkUserId: v.string()
+    clerkUserId: v.string(),
   },
   async handler(ctx, args) {
     try {
       const clerkClient = createClerkClient({
         publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-        secretKey: process.env.CLERK_SECRET_KEY
+        secretKey: process.env.CLERK_SECRET_KEY,
       });
-      
+
       await clerkClient.users.deleteUser(args.clerkUserId);
     } catch (error) {
       console.log("Error deleting user:", error);
@@ -771,12 +789,12 @@ export const deleteFromClerkAction = internalAction({
 
 /**
  * Mutation to ban a user as an administrative action.
- * 
+ *
  * @param args.userToBanUsername - The username of the user to be banned.
  * @param args.banReason - The optional reason for banning the user.
- * 
+ *
  * @returns {Promise<void>} - A promise that resolves when the user has been banned.
- * 
+ *
  * The handler performs the following steps:
  * 1. Retrieves the user to be banned by their username.
  * 2. Retrieves the current user performing the action.
@@ -791,12 +809,15 @@ export const banUserAdministrativeAction = mutation({
   async handler(ctx, args) {
     const userToBan = await getUserByUsername(ctx, { username: args.userToBanUsername });
     const callUser = await getCurrentUser(ctx);
-    
-    if(userToBan && callUser) {
-      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" }) || await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" })) {
+
+    if (userToBan && callUser) {
+      if (
+        (await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) ||
+        (await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" }))
+      ) {
         await ctx.db.patch(userToBan._id, {
           isBanned: true,
-          banReason: args.banReason
+          banReason: args.banReason,
         });
       }
     }
@@ -805,13 +826,13 @@ export const banUserAdministrativeAction = mutation({
 
 /**
  * Unbans a user through an administrative action.
- * 
+ *
  * This mutation allows a user with the role of "developer" or "moderator" to unban another user.
- * 
+ *
  * @param {string} args.userToUnban - The username of the user to unban.
- *  
+ *
  * @returns {Promise<void>} - A promise that resolves when the user has been unbanned.
- * 
+ *
  * @throws {Error} - Throws an error if the user to unban or the current user cannot be found.
  */
 export const unbanUserAdministrativeAction = mutation({
@@ -821,13 +842,16 @@ export const unbanUserAdministrativeAction = mutation({
   async handler(ctx, args) {
     const userToUnban = await getUserByUsername(ctx, { username: args.userToUnban });
     const callUser = await getCurrentUser(ctx);
-    
-    if(userToUnban && callUser) {
-      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" }) || await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" })) {
+
+    if (userToUnban && callUser) {
+      if (
+        (await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) ||
+        (await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" }))
+      ) {
         await ctx.db.patch(userToUnban._id, {
           isBanned: false,
           banReason: undefined,
-          banAppeal: undefined
+          banAppeal: undefined,
         });
       }
     }
@@ -863,12 +887,12 @@ export const modifyLevelAndXPAdministrativeAction = mutation({
   async handler(ctx, args) {
     const userToModify = await getUserByUsername(ctx, { username: args.userToModifyUsername });
     const callUser = await getCurrentUser(ctx);
-    
-    if(userToModify && callUser) {
-      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+
+    if (userToModify && callUser) {
+      if (await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
         await ctx.db.patch(userToModify._id, {
           level: args.newLevel,
-          currentXP: args.newXP
+          currentXP: args.newXP,
         });
       }
     }
@@ -877,31 +901,31 @@ export const modifyLevelAndXPAdministrativeAction = mutation({
 
 /**
  * Mutation to modify the roles of a user as an administrative action.
- * 
+ *
  * @param args.userToModifyUsername - The username of the user whose roles are to be modified.
  * @param args.roles - An array of roles to assign to the user.
- * 
+ *
  * @returns {Promise<void>} - A promise that resolves when the roles have been modified.
- * 
+ *
  * @remarks
  * This mutation allows a user with the "developer" role to modify the roles of another user.
  * If the `roles` array is empty, the roles will be set to `undefined`.
- * 
+ *
  * @throws {Error} - If the user to modify or the calling user cannot be found.
  */
 export const modifyRolesAdministrativeAction = mutation({
   args: {
     userToModifyUsername: v.string(),
-    roles: v.array(v.string())
+    roles: v.array(v.string()),
   },
   async handler(ctx, args) {
     const userToModify = await getUserByUsername(ctx, { username: args.userToModifyUsername });
     const callUser = await getCurrentUser(ctx);
-    
-    if(userToModify && callUser) {
-      if(await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+
+    if (userToModify && callUser) {
+      if (await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
         await ctx.db.patch(userToModify._id, {
-          roles: args.roles.length == 0 ? undefined : args.roles
+          roles: args.roles.length == 0 ? undefined : args.roles,
         });
       }
     }

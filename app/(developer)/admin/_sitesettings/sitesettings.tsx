@@ -11,12 +11,8 @@ const SiteSettings = () => {
         <div className="md:basis-1/2 w-full my-4 flex-grow">
           <Card className="p-2 m-2 h-full">
             <CardHeader className="text-start">
-              <CardTitle>
-                Gamemode Configuration
-              </CardTitle>
-              <CardDescription>
-                Configure which gamemodes are enabled for all users.
-              </CardDescription>
+              <CardTitle>Gamemode Configuration</CardTitle>
+              <CardDescription>Configure which gamemodes are enabled for all users.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex-col gap-x-4">
@@ -42,12 +38,8 @@ const SiteSettings = () => {
         <div className="md:basis-1/2 w-full my-4 flex-grow">
           <Card className="p-2 m-2 h-full">
             <CardHeader className="text-start">
-              <CardTitle>
-                Category Configuration
-              </CardTitle>
-              <CardDescription>
-                Configure which level categories are enabled for all users.
-              </CardDescription>
+              <CardTitle>Category Configuration</CardTitle>
+              <CardDescription>Configure which level categories are enabled for all users.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex-col gap-x-4">

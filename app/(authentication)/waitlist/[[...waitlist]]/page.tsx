@@ -1,5 +1,6 @@
-import { Footer } from "@/components/footer";
 import { Waitlist } from "@clerk/nextjs";
+
+import { Footer } from "@/components/footer";
 
 const WaitlistPage = () => {
   return (
@@ -11,5 +12,5 @@ const WaitlistPage = () => {
     </div>
   );
 };
- 
+
 export default WaitlistPage;

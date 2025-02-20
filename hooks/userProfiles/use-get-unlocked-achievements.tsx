@@ -1,7 +1,8 @@
-import { api } from "@/convex/_generated/api";
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { useEffect, useState } from "react";
+
+import { api } from "@/convex/_generated/api";
 
 export const useAchievementCheck = (name: string, userClerkIdToCheck: string | null = null) => {
   const { user } = useUser();
@@ -11,7 +12,7 @@ export const useAchievementCheck = (name: string, userClerkIdToCheck: string | n
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if(hasAchievement !== undefined && achievement !== undefined) {
+    if (hasAchievement !== undefined && achievement !== undefined) {
       setIsLoading(false);
     }
   }, [hasAchievement, achievement]);
@@ -20,6 +21,6 @@ export const useAchievementCheck = (name: string, userClerkIdToCheck: string | n
     result: hasAchievement,
     isLoading,
     name: achievement?.name,
-    description: achievement?.description
+    description: achievement?.description,
   };
 };
