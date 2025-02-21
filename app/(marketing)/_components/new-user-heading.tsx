@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { Poppins } from "next/font/google";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 
 import DemoRoundPanel from "@/app/(marketing)/_components/_panels/demo-round-panel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {Poppins} from "next/font/google";
-import Image from "next/image";
 
 const font = Poppins({
   subsets: ["latin"],
