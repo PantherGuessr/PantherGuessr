@@ -21,7 +21,7 @@ const DemoRoundPanel = () => {
   return (
     <div className="relative items-center justify-center w-full">
       <img
-        src={"/new-user-heading/DemoCampusImage.jpeg"}
+        src={"/new-user-heading/Sammy.jpeg"}
         alt={"PantherGuessr Demo Image 1"}
         className={"object-contain aspect-4/3 rounded-lg border-4 border-primary"}
       />
