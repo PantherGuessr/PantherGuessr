@@ -11,7 +11,7 @@ const DemoRoundPanel = () => {
   const lightHintIcon = "/new-user-heading/HintCircle.svg";
 
   const hintOverlayClassName =
-    "absolute h-7 bottom-[60%] right-[26%] duration-300 bg-primary text-primary-foreground text-sm text-center py-1 px-2 rounded-lg transition-opacity rounded-br-none drop-shadow-lg";
+    "absolute h-7 bottom-[60%] right-[26%] duration-300 bg-black dark:bg-white text-white dark:text-black text-sm text-center py-1 px-2 rounded-lg transition-opacity rounded-br-none drop-shadow-lg";
 
   const [hint1Open, setHint1Open] = useState(false);
   // const [hint2Open, setHint2Open] = useState(false);
@@ -21,7 +21,7 @@ const DemoRoundPanel = () => {
   return (
     <div className="relative items-center justify-center w-full">
       <img
-        src={"/new-user-heading/Sammy.jpeg"}
+        src={"/new-user-heading/DemoCampusImage.jpeg"}
         alt={"PantherGuessr Demo Image 1"}
         className={"object-contain aspect-4/3 rounded-lg border-4 border-primary"}
       />
@@ -34,7 +34,9 @@ const DemoRoundPanel = () => {
         height={20}
         width={20}
       />
-      <div className={cn(hintOverlayClassName, hint1Open ? "opacity-100" : "opacity-0")}>DeMille Hall</div>
+      <div id="hint1" className={cn(hintOverlayClassName, hint1Open ? "opacity-100" : "opacity-0")}>
+        DeMille Hall
+      </div>
     </div>
   );
 };
