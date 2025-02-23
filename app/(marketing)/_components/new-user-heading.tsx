@@ -1,17 +1,11 @@
 import { useState } from "react";
-import { Poppins } from "next/font/google";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
 import DemoRoundPanel from "@/app/(marketing)/_components/_panels/demo-round-panel";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-const font = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-});
 
 export const NewUserHeading = () => {
   const [signOnButtonHovered, setSignOnButtonHovered] = useState(false);
@@ -21,25 +15,7 @@ export const NewUserHeading = () => {
   return (
     <>
       <div className="flex items-center justify-center gap-x-4 w-full">
-        <Image
-          draggable={false}
-          src={"/logo.svg"}
-          height="60"
-          width="60"
-          alt="Logo"
-          className="dark:hidden select-none"
-        />
-        <Image
-          draggable={false}
-          src={"/logo-dark.svg"}
-          height="60"
-          width="60"
-          alt="Logo"
-          className="hidden dark:block select-none"
-        />
-        <h1 className={cn("text-primary text-2xl sm:text-5xl md:text-7xl font-semibold", font.className)}>
-          PantherGuessr
-        </h1>
+        <Logo badge={false} logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
       </div>
       <div className="flex flex-col md:flex-row flex-grow items-center justify-center px-4 sm:px-10 xl:px-20 pt-4 sm:pt-8">
         <div className="flex flex-col px-4 basis-1/2 transition-transform duration-300">
