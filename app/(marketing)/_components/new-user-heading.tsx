@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Poppins } from "next/font/google";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
 import DemoRoundPanel from "@/app/(marketing)/_components/_panels/demo-round-panel";
@@ -14,6 +15,8 @@ const font = Poppins({
 
 export const NewUserHeading = () => {
   const [signOnButtonHovered, setSignOnButtonHovered] = useState(false);
+
+  const router = useRouter();
 
   return (
     <>
@@ -50,6 +53,7 @@ export const NewUserHeading = () => {
             className="w-full h-16 text-lg transition-transform"
             onMouseOver={() => setSignOnButtonHovered(true)}
             onMouseLeave={() => setSignOnButtonHovered(false)}
+            onClick={() => router.push("/waitlist")}
           >
             Join the waitlist
             <ArrowRight className={cn("transition-transform", signOnButtonHovered && "translate-x-1")} />
