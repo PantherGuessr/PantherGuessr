@@ -1,4 +1,4 @@
-<!-- 
+<!--
 Please follow this checklist and put an x in each of the boxes, like this: [x]. It will ensure that our team takes your pull request seriously.
 -->
 
@@ -14,9 +14,11 @@ If you have not created an issue for your PR, please search the issue tracker to
 Closes #[issue number]
 
 ## Description
+
 <!--
 A summary of the changes made along with any other information that would be helpful to a reviewer such as potential tradeoffs or alternative approaches you considered.
 -->
+
 -
 
 ### Screenshots
