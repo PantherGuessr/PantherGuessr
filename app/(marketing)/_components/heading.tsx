@@ -1,12 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { SignUpButton, useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-react";
 import { useConvexAuth, useQuery } from "convex/react";
-import { ArrowRight, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 
-import { Button } from "@/components/ui/button";
 import MobileDrawer from "./mobiledrawer";
 
 import "./header-animation.css";
@@ -14,6 +13,7 @@ import "./header-animation.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { NewUserHeading } from "@/app/(marketing)/_components/new-user-heading";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
 import { api } from "@/convex/_generated/api";
 import { useBanCheck } from "@/hooks/use-ban-check";
@@ -50,14 +50,42 @@ export const Heading = () => {
 
   return (
     <div className="space-y-4 w-full">
-      {isLoading && isBanCheckLoading && (
+      {!isAuthenticated && isLoading && (
+        <>
+          <div className="flex flex-col w-full h-full justify-center items-center pt-48">
+            <LoaderCircle className="animate-spin-quick-load h-20 w-20" />
+          </div>
+          {/*<div className="flex items-center justify-center gap-x-4 w-full blur-md">*/}
+          {/*  <Logo badge={false} logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />*/}
+          {/*</div>*/}
+          {/*<div className="flex flex-col text-muted-foreground md:flex-row flex-grow items-center justify-center px-4 sm:px-10 xl:px-20 pt-4 sm:pt-8">*/}
+          {/*  <div className="flex flex-col justify-center items-center px-4 basis-1/2 transition-transform duration-300">*/}
+          {/*    <h1 className="text-xl sm:text-4xl font-bold pb-2 sm:pb-8 blur-sm">*/}
+          {/*      Can you find your way around campus?*/}
+          {/*    </h1>*/}
+          {/*    <h2 className="text-lg sm:text-xl font-normal pb-4 sm:pb-8 blur-sm">*/}
+          {/*      Test your campus knowledge with <span className="font-bold">PantherGuessr</span>, the free game where*/}
+          {/*      you identify the locations of photos around Chapman University*/}
+          {/*    </h2>*/}
+          {/*    <div className="waitlist-button bg-primary h-16 text-primary-foreground shadow-md animate-pulse flex flex-row justify-center items-center">*/}
+          {/*      <p className="text-lg pr-1 blur-sm">Join our waitlist</p>*/}
+          {/*      <ArrowRight className="transition-transform translate-x-1 blur-sm" />*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*  <div className="flex flex-col grow px-4 pt-8 md:pt-0 basis-1/2 ">*/}
+          {/*    <Skeleton className="object-contain aspect-4/3 bg-primary rounded-md" />*/}
+          {/*  </div>*/}
+          {/*</div>*/}
+        </>
+      )}
+      {isLoading && isBanCheckLoading && isAuthenticated && (
         <>
           <div className="hidden md:flex flex-col w-full">
             <DesktopHeadingLoading />
           </div>
           {/* mobile loading */}
           <div className={"md:hidden flex flex-col justify-center items-center"}>
-            <LoaderCircle className="h-20 w-20 animate-spin" />
+            <LoaderCircle className="h-20 w-20 animate-spin-quick-load" />
           </div>
         </>
       )}
@@ -110,23 +138,7 @@ export const Heading = () => {
             )}
           </>
         )}
-      {!isAuthenticated && !isLoading && (
-        <>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold">
-            Can you find your way around Chapman? Find out at <span className="underline">PantherGuessr</span>.
-          </h1>
-          <h3 className="text-base sm:text-xl md:text-2xl font-medium">
-            PantherGuessr is the fun game where <br />
-            your directional skills are challenged.
-          </h3>
-
-          <SignUpButton mode="modal" fallbackRedirectUrl={window.location.href}>
-            <Button>
-              Join for Free <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </SignUpButton>
-        </>
-      )}
+      {!isAuthenticated && !isLoading && <NewUserHeading />}
     </div>
   );
 };

@@ -1,5 +1,7 @@
 import { Navbar } from "@/components/navbar";
 
+import "./_components/new-user-heading.css";
+
 const MarketingLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>

@@ -14,28 +14,30 @@ interface LogoProps {
   href?: string;
   as_png?: boolean;
   badge?: boolean;
+  logoDimensions?: number;
+  textOptions?: string;
 }
 
-export const Logo = ({ href, as_png, badge = true }: LogoProps) => {
+export const Logo = ({ href, as_png, badge = true, logoDimensions = 40, textOptions }: LogoProps) => {
   const logoContent = (
     <div className="flex items-center gap-x-2">
       <Image
         draggable={false}
         src={as_png ? "/logo.png" : "/logo.svg"}
-        height="40"
-        width="40"
+        height={logoDimensions}
+        width={logoDimensions}
         alt="Logo"
         className="dark:hidden select-none"
       />
       <Image
         draggable={false}
         src={as_png ? "/logo-dark.png" : "/logo-dark.svg"}
-        height="40"
-        width="40"
+        height={logoDimensions}
+        width={logoDimensions}
         alt="Logo"
         className="hidden dark:block select-none"
       />
-      <p className={cn("font-semibold pl-2 select-none", font.className)}>PantherGuessr</p>
+      <p className={cn("font-semibold pl-2 select-none", font.className, textOptions)}>PantherGuessr</p>
       {badge && (
         <Badge
           className={cn(

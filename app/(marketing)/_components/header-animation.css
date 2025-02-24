@@ -48,7 +48,7 @@
   }
   100% {
     transform: scale(0.01);
-    opacity: 0%;
+    opacity: 0;
   }
 }
 
@@ -71,5 +71,21 @@
   }
   100% {
     transform: rotateX(15deg) skewX(2deg);
+  }
+}
+
+.animate-spin-quick-load {
+  animation: custom-spin 0.75s linear infinite;
+}
+
+@keyframes custom-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
