@@ -85,7 +85,7 @@ const DemoRoundPanel = () => {
                 hint3Open ? "opacity-100" : "opacity-0"
               )}
             >
-              Waltmar Theater
+              Waltmar Theatre
             </div>
             <Image
               className="absolute left-[48%] top-[50%] cursor-pointer hover:scale-125 transition-all drop-shadow-lg"
