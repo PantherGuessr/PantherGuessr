@@ -72,9 +72,9 @@ To run this project, you will need to add the following environment variables to
 
 Contributions are always welcome!
 
-See `contributing.md` for ways to get started.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for ways to get started.
 
-Please adhere to this project's `code of conduct`.
+Please adhere to this project's [code of conduct](./CODE_OF_CONDUCT.md).
 
 ## Feedback
 
