@@ -17,15 +17,11 @@ const AdminPage = () => {
   const { tab } = useAdmin();
   const router = useRouter();
 
-  const handleTabChange = (value: string) => {
-    router.push(`?tab=${value}`);
-  };
-
   return (
     <div className="min-h-full flex flex-col">
       <div className="flex flex-col text-center gap-y-8 flex-1 px-6 pb-10">
         <h1 className="text-4xl">Admin Dashboard</h1>
-        <Tabs defaultValue={tab} onValueChange={handleTabChange}>
+        <Tabs defaultValue={tab} onValueChange={(value: string) => router.push(`?tab=${value}`)}>
           <TabsList>
             <TabsTrigger value="analytics" id="analytics-page-trigger">
               Analytics
