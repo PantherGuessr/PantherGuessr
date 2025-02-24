@@ -221,7 +221,7 @@ const ProfilePage = ({ params }: Props) => {
           <p className="text-md sm:text-xl">
             <span className="font-semibold">Reason for Suspension:</span> {banReason ?? "None Provided"}
           </p>
-          <BanAppeal profileUsername={user!.username} banReason={banReason} hasActiveAppeal={appealActive} />
+          <BanAppeal profileUsername={user!.username} banReason={banReason} hasActiveAppeal={appealActive ?? false} />
         </div>
         <Footer />
       </div>
