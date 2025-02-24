@@ -1,28 +1,36 @@
 "use client";
 
+import { useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useConvexAuth, useQuery } from "convex/react";
+import { ArrowLeft, CalendarClock, Loader2, User, Users } from "lucide-react";
+
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useBanCheck } from "@/hooks/use-ban-check";
-import { useQuery } from "convex/react";
-import { ArrowLeft, CalendarClock, Loader2, User, Users } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 const PlayPage = () => {
+  const { isLoading: isConvexLoading, isAuthenticated: isConvexAuthenticated } = useConvexAuth();
   const currentUser = useQuery(api.users.current);
   const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
 
   const router = useRouter();
 
   useEffect(() => {
-    if(isBanned) {
+    if (!isConvexAuthenticated) {
+      router.push(`/`);
+    }
+  }, [isConvexAuthenticated, isConvexLoading, router]);
+
+  useEffect(() => {
+    if (isBanned) {
       router.push(`/profile/${currentUser?.username}`);
     }
   }, [currentUser?.username, isBanned, router]);
 
-  if(!currentUser && isBanCheckLoading) {
+  if (!currentUser && isBanCheckLoading) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -43,7 +51,13 @@ const PlayPage = () => {
         </Link>
       </div>
       <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-        <Link href="#" onClick={(e) => { e.preventDefault(); alert('WEEKLY CHALLENGE COMING SOON'); }}>
+        <Link
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            alert("WEEKLY CHALLENGE COMING SOON");
+          }}
+        >
           <div className="gamemode-card bg-primary text-primary-foreground shadow-md glow flex flex-col items-center">
             <CalendarClock className="mb-2" />
             <h1>Weekly Challenge</h1>
@@ -55,7 +69,13 @@ const PlayPage = () => {
             <h1>Singleplayer</h1>
           </div>
         </Link>
-        <Link href="#" onClick={(e) => { e.preventDefault(); alert('MULTIPLAYER COMING SOON'); }}>
+        <Link
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            alert("MULTIPLAYER COMING SOON");
+          }}
+        >
           <div className="gamemode-card bg-primary text-primary-foreground shadow-md flex flex-col items-center">
             <Users className="mb-2" />
             <h1>Multiplayer</h1>
@@ -66,5 +86,5 @@ const PlayPage = () => {
     </div>
   );
 };
- 
+
 export default PlayPage;

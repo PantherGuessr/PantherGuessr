@@ -1,8 +1,8 @@
 import { v } from "convex/values";
 
-import { internalMutation, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
+import { internalMutation, mutation, query } from "./_generated/server";
 
 // Gets the number of random Levels from the database
 // export const getRandomLevels = query({
@@ -35,7 +35,7 @@ import { Id } from "./_generated/dataModel";
 
 /**
  * Retrieves a game document by its ID.
- * 
+ *
  * @param args.gameId - The ID of the game to retrieve
  * @returns The game document if found, null otherwise
  */
@@ -46,13 +46,12 @@ export const getExistingGame = query({
       const docId = args.gameId as Id<"games">;
       const doc = await ctx.db.get(docId);
       return doc || null; // If doc doesn't exist, doc is null
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
       // If decoding fails (invalid ID format), return null
       return null;
     }
-  }
+  },
 });
 
 /**
@@ -75,17 +74,16 @@ export const gameExists = query({
       const docId = args.gameId as Id<"games">;
       const doc = await ctx.db.get(docId);
       return doc ? true : false;
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
       return false;
     }
-  }
+  },
 });
 
 /**
  * Mutation to clear old games from the database.
- * 
+ *
  * This mutation performs the following steps:
  * 1. Calculates the current time and the time one month ago.
  * 2. Queries the "games" collection for games older than one month.
@@ -93,7 +91,7 @@ export const gameExists = query({
  *    - Deletes any connected leaderboard entries.
  *    - Deletes any connected ongoing games.
  *    - Deletes the game itself.
- * 
+ *
  * @param {Object} ctx - The context object containing the database connection.
  * @returns {Promise<string>} - A promise that resolves to a string indicating the number of deleted games.
  */
@@ -103,9 +101,10 @@ export const clearOldGames = internalMutation({
     const time = now.getTime();
     const monthInMs = 30 * 24 * 60 * 60 * 1000;
     const oldtime = time - monthInMs;
-    const games = await ctx.db.query("games").filter(
-      q => q.lt(q.field("_creationTime"), oldtime)
-    ).collect();
+    const games = await ctx.db
+      .query("games")
+      .filter((q) => q.lt(q.field("_creationTime"), oldtime))
+      .collect();
 
     // iterate through all games
     for (const game of games) {
@@ -116,22 +115,24 @@ export const clearOldGames = internalMutation({
       }
 
       // get any connected ongoing games, if applicable
-      await ctx.db.query("ongoingGames").filter(
-        q => q.eq(q.field("game"), game._id)
-      ).collect().then(
-        // delete the ongoing games
-        async (ongoingGames) => {
-          for (const ongoingGame of ongoingGames) {
-            await ctx.db.delete(ongoingGame._id);
+      await ctx.db
+        .query("ongoingGames")
+        .filter((q) => q.eq(q.field("game"), game._id))
+        .collect()
+        .then(
+          // delete the ongoing games
+          async (ongoingGames) => {
+            for (const ongoingGame of ongoingGames) {
+              await ctx.db.delete(ongoingGame._id);
+            }
           }
-        }
-      );
+        );
       // delete game
       await ctx.db.delete(game._id);
 
       return `Deleted ${games.length} games`;
     }
-  }
+  },
 });
 
 export const clearUnplayedGames = internalMutation({
@@ -141,16 +142,18 @@ export const clearUnplayedGames = internalMutation({
     const time = now.getTime();
     const timeLimit = days * 24 * 60 * 60 * 1000; // 7 days
     const oldTime = time - timeLimit;
-    const games = await ctx.db.query("games").filter(
-      q => q.lt(q.field("_creationTime"), oldTime)
-    ).collect();
+    const games = await ctx.db
+      .query("games")
+      .filter((q) => q.lt(q.field("_creationTime"), oldTime))
+      .collect();
 
     for (const game of games) {
       if (!game.firstPlayedByClerkId) {
         // check if game has any ongoing games
-        const ongoingGames = await ctx.db.query("ongoingGames").filter(
-          q => q.eq(q.field("game"), game._id)
-        ).collect();
+        const ongoingGames = await ctx.db
+          .query("ongoingGames")
+          .filter((q) => q.eq(q.field("game"), game._id))
+          .collect();
         // delete ongoing games
         for (const ongoingGame of ongoingGames) {
           await ctx.db.delete(ongoingGame._id);
@@ -161,15 +164,15 @@ export const clearUnplayedGames = internalMutation({
     }
 
     return `Deleted ${games.length} unplayed games older than ${days} days`;
-  }
+  },
 });
 
 /**
  * Creates a new game with 5 randomly selected levels.
- * 
+ *
  * @param args.timeAllowedPerRound - The time limit in seconds for each round
- * @returns 
- * 
+ * @returns
+ *
  * This mutation:
  * 1. Gets all available levels from the database
  * 2. Randomly selects 5 unique levels
@@ -182,7 +185,7 @@ export const createNewGame = mutation({
     const levels = await ctx.db.query("levels").collect();
     const randomLevels = [];
     const randomIndices: number[] = [];
-        
+
     for (let i = 0; i < 5; i++) {
       const randomIndex = Math.floor(Math.random() * levels.length);
       if (randomIndices.includes(randomIndex)) {
@@ -195,23 +198,23 @@ export const createNewGame = mutation({
 
     const gameId = await ctx.db.insert("games", {
       round_1: randomLevels[0],
-      round_2: randomLevels[1], 
+      round_2: randomLevels[1],
       round_3: randomLevels[2],
       round_4: randomLevels[3],
       round_5: randomLevels[4],
-      timeAllowedPerRound: args.timeAllowedPerRound
+      timeAllowedPerRound: args.timeAllowedPerRound,
     });
 
     return gameId;
-  }
+  },
 });
 
 /**
  * Retrieves a game document by its ID.
- * 
+ *
  * @param args.id - The ID of the game to retrieve
  * @returns The game document if found, null otherwise
- * 
+ *
  * This query:
  * 1. Takes a game ID as input
  * 2. Looks up the corresponding game document in the database
@@ -221,22 +224,22 @@ export const getGameById = query({
   args: { id: v.id("games") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
-  }
+  },
 });
 
 /**
  * Adds a leaderboard entry for a completed game.
- * 
+ *
  * @param args.gameId - ID of the game the entry is for
  * @param args.userClerkId - Clerk ID of the user who completed the game
- * @param args.round_1 - Score for round 1 
+ * @param args.round_1 - Score for round 1
  * @param args.round_2 - Score for round 2
  * @param args.round_3 - Score for round 3
  * @param args.round_4 - Score for round 4
  * @param args.round_5 - Score for round 5
  * @param args.totalTimeTaken - Total time taken to complete all rounds
  * @returns Object indicating success/failure of adding the entry
- * 
+ *
  * This mutation:
  * 1. Creates a new leaderboard entry document with the provided scores
  * 2. Retrieves the game document
@@ -258,27 +261,24 @@ export const addLeaderboardEntryToGame = mutation({
     round_4_distance: v.int64(),
     round_5: v.int64(),
     round_5_distance: v.int64(),
-    totalTimeTaken: v.int64()
+    totalTimeTaken: v.int64(),
   },
   handler: async (ctx, args) => {
     const newXP = getTotalEarnedXP(
-      [
-        args.round_1,
-        args.round_2,
-        args.round_3,
-        args.round_4,
-        args.round_5
-      ],
+      [args.round_1, args.round_2, args.round_3, args.round_4, args.round_5],
       [
         args.round_1_distance,
         args.round_2_distance,
         args.round_3_distance,
         args.round_4_distance,
-        args.round_5_distance
+        args.round_5_distance,
       ]
     );
 
-    const xpResult: { newLevel: bigint, oldLevel: bigint } = await ctx.runMutation(internal.users.awardUserXP, { username: args.username, earnedXP: newXP });
+    const xpResult: { newLevel: bigint; oldLevel: bigint } = await ctx.runMutation(internal.users.awardUserXP, {
+      username: args.username,
+      earnedXP: newXP,
+    });
 
     // make leaderboard entry
     const leaderboardEntry = await ctx.db.insert("leaderboardEntries", {
@@ -298,7 +298,7 @@ export const addLeaderboardEntryToGame = mutation({
       round_5: args.round_5,
       round_5_distance: args.round_5_distance,
       totalTimeTaken: args.totalTimeTaken,
-      xpGained: newXP
+      xpGained: newXP,
     });
 
     // get game by ID
@@ -307,20 +307,19 @@ export const addLeaderboardEntryToGame = mutation({
     // add leaderboard entry to game with existing entries
     if (game) {
       await ctx.db.patch(args.gameId, {
-        leaderboard: [...(game?.leaderboard ?? []), leaderboardEntry]
+        leaderboard: [...(game?.leaderboard ?? []), leaderboardEntry],
       });
-    }
-    else {
+    } else {
       return null;
     }
-        
+
     return leaderboardEntry;
-  }
+  },
 });
 
 /**
  * Retrieves a leaderboard entry by its ID
- * 
+ *
  * @param args.id - The ID of the leaderboard entry to retrieve
  * @returns The leaderboard entry
  */
@@ -341,27 +340,27 @@ export const getPersonalLeaderboardEntryById = query({
 
 /**
  * Retrieves the image src url based on an id
- * 
+ *
  * @param args.id - The ID of the level to retrieve
  * @returns The image src url
  */
 export const getImageSrc = query({
   args: { id: v.id("levels") },
   handler: async (ctx, args) => {
-    if(!args.id) {
+    if (!args.id) {
       throw new Error("Missing entryId parameter.");
     }
 
     const level = await ctx.db.get(args.id);
 
-    if(!level) {
+    if (!level) {
       throw new Error("No levels exist");
     }
 
     const imageUrl = await ctx.storage.getUrl(level.imageId);
 
     return imageUrl;
-  }
+  },
 });
 
 export const updateFirstPlayedByClerkId = mutation({
@@ -370,29 +369,29 @@ export const updateFirstPlayedByClerkId = mutation({
     // update only if firstPlayedByClerkId is not set
     const game = await ctx.db.get(args.gameId);
 
-    if(!game) {
+    if (!game) {
       throw new Error("No games exist");
     }
 
-    if(game.firstPlayedByClerkId) {
+    if (game.firstPlayedByClerkId) {
       return { success: false };
     }
 
     // update
     const newGame = {
       ...game,
-      firstPlayedByClerkId: args.clerkId
+      firstPlayedByClerkId: args.clerkId,
     };
 
     await ctx.db.replace(args.gameId, newGame);
 
     return { success: true };
-  }
+  },
 });
 
 /**
  * Calculates the distance between two points in feet using the Haversine formula
- * 
+ *
  * @param lat1 - Latitude of the first point
  * @param lon1 - Longitude of the first point
  * @param lat2 - Latitude of the second point
@@ -406,9 +405,8 @@ export const haversineDistanceInFeet = (lat1: number, lon1: number, lat2: number
   const dLat = toRadians(lat2 - lat1);
   const dLon = toRadians(lon2 - lon1);
   const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distanceInMiles = R * c;
   const distanceInFeet = distanceInMiles * 5280; // Convert miles to feet
@@ -418,7 +416,7 @@ export const haversineDistanceInFeet = (lat1: number, lon1: number, lat2: number
 
 /**
  * Checks a user's guess against the correct latitude and longitude of a level
- * 
+ *
  * @param args.id - The ID of the level to check against
  * @param args.guessLatitude - The user's guess for the latitude
  * @param args.guessLongitude - The user's guess for the longitude
@@ -426,25 +424,28 @@ export const haversineDistanceInFeet = (lat1: number, lon1: number, lat2: number
  */
 export const checkGuess = mutation({
   args: { id: v.id("levels"), guessLatitude: v.float64(), guessLongitude: v.float64() },
-  handler: async(ctx, args) => {
+  handler: async (ctx, args) => {
     const level = await ctx.db.get(args.id);
 
-    if(!level) {
+    if (!level) {
       throw new Error("No levels exist");
     }
 
     const correctLat = level.latitude;
     const correctLng = level.longitude;
 
-    const distanceAway = parseInt(haversineDistanceInFeet(correctLat, correctLng, args.guessLatitude, args.guessLongitude).toFixed(0));
+    const distanceAway = parseInt(
+      haversineDistanceInFeet(correctLat, correctLng, args.guessLatitude, args.guessLongitude).toFixed(0)
+    );
     // give some leniency to the distance
     let lenientDistance = distanceAway - 20;
     if (lenientDistance < 0) {
       lenientDistance = 0;
     }
     // If within 250 feet, score increases by distance if outside of 250 feet score = 0
-    let score = 250 - lenientDistance; 
-    if (score < 0) { // no negative score
+    let score = 250 - lenientDistance;
+    if (score < 0) {
+      // no negative score
       score = 0;
     }
 
@@ -457,21 +458,21 @@ export const checkGuess = mutation({
       distanceAway,
       score,
     };
-  }
+  },
 });
 
 /**
  * Updates the timesPlayed field for a level //TODO: Fix this to enable it to work
- * 
+ *
  * @param args.id - The ID of the level to update
  * @returns Object indicating success/failure of updating the timesPlayed field
  */
 export const updateTimesPlayed = mutation({
   args: { id: v.id("levels") },
-  handler: async(ctx, args) => {
+  handler: async (ctx, args) => {
     const level = await ctx.db.get(args.id);
 
-    if(!level) {
+    if (!level) {
       throw new Error("No levels exist");
     }
 
@@ -480,14 +481,13 @@ export const updateTimesPlayed = mutation({
     // update level
     const newLevel = {
       ...level,
-      timesPlayed
+      timesPlayed,
     };
 
     await ctx.db.replace(args.id, newLevel);
 
     return { success: true };
-
-  }
+  },
 });
 
 /**
@@ -506,30 +506,30 @@ export const updateTimesPlayed = mutation({
  */
 function getTotalEarnedXP(allPoints: bigint[], allDistances: bigint[]): number {
   let earnedXP = 0;
-  
+
   // TODO: Add 10xp if first game of the day
-  
+
   // * Add score for playing a game
   earnedXP += 10;
-  
+
   // * For every 25 points you get 1xp
   let totalPointsEarned = 0;
-  for(let i = 0; i < allPoints.length; ++i) {
+  for (let i = 0; i < allPoints.length; ++i) {
     totalPointsEarned += Number(allPoints[i]);
   }
   earnedXP += Math.floor(totalPointsEarned / 25);
 
   // * For every "Spot On" (distance away <= 20) add 5xp bonus
   let numberOfSpotOnGames = 0;
-  for(let i = 0; i < allDistances.length; ++i) {
-    if(allDistances[i] <= 20) {
+  for (let i = 0; i < allDistances.length; ++i) {
+    if (allDistances[i] <= 20) {
       earnedXP += 5;
       numberOfSpotOnGames++;
     }
   }
 
   // * If every round was spot on, double their score
-  if(numberOfSpotOnGames == allPoints.length) {
+  if (numberOfSpotOnGames == allPoints.length) {
     earnedXP *= 2;
   }
 

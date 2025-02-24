@@ -1,26 +1,23 @@
+import Image from "next/image";
 import Link from "next/link";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { CalendarDays } from "lucide-react";
-import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
+import { CalendarDays } from "lucide-react";
+
+import { api } from "@/convex/_generated/api";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 interface IProfileHoverCard {
-  username: string,
-  hasAtSymbol?: boolean,
-  isUnderlined?: boolean
+  username: string;
+  hasAtSymbol?: boolean;
+  isUnderlined?: boolean;
 }
 
-const ProfileHoverCard = ({
-  username,
-  hasAtSymbol = true,
-  isUnderlined = false,
-} : IProfileHoverCard) => {
+const ProfileHoverCard = ({ username, hasAtSymbol = true, isUnderlined = false }: IProfileHoverCard) => {
   const user = useQuery(api.users.getUserByUsername, { username });
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
@@ -29,19 +26,17 @@ const ProfileHoverCard = ({
   const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
   const { result: profileTagline } = useGetSelectedTagline(user?.clerkId);
 
-  if(
-    !user
-    || isChapmanStudentLoading
-    || developerRoleLoading
-    || topPlayerIsLoading
-    || moderatorRoleLoading
-    || friendRoleLoading
+  if (
+    !user ||
+    isChapmanStudentLoading ||
+    developerRoleLoading ||
+    topPlayerIsLoading ||
+    moderatorRoleLoading ||
+    friendRoleLoading
   ) {
     <Link href={"/profile/" + username}>
-      {hasAtSymbol && ("@")}
-      <span className={cn(isUnderlined && "underline")}>
-        {username}
-      </span>
+      {hasAtSymbol && "@"}
+      <span className={cn(isUnderlined && "underline")}>{username}</span>
     </Link>;
   }
 
@@ -49,10 +44,8 @@ const ProfileHoverCard = ({
     <HoverCard openDelay={0} closeDelay={25}>
       <HoverCardTrigger asChild>
         <Link href={"/profile/" + username}>
-          {hasAtSymbol && ("@")}
-          <span className={cn(isUnderlined && "underline")}>
-            {username}
-          </span>
+          {hasAtSymbol && "@"}
+          <span className={cn(isUnderlined && "underline")}>{username}</span>
         </Link>
       </HoverCardTrigger>
       <HoverCardContent className="w-80 z-[9999]" align="center">
@@ -67,19 +60,54 @@ const ProfileHoverCard = ({
                 <h4 className="text-sm font-semibold">@{username}</h4>
                 <div className="flex flex-row items-center gap-x-2 pl-2">
                   {isDeveloperRole && (
-                    <Image draggable={false} className="select-none cursor-default" src="/badges/developer_badge.svg" width="15" height="15" alt="Developer Badge" />
+                    <Image
+                      draggable={false}
+                      className="select-none cursor-default"
+                      src="/badges/developer_badge.svg"
+                      width="15"
+                      height="15"
+                      alt="Developer Badge"
+                    />
                   )}
                   {isModeratorRole && (
-                    <Image draggable={false} className="select-none cursor-default" src="/badges/moderator_badge.svg" width="15" height="15" alt="Moderator Badge" />
+                    <Image
+                      draggable={false}
+                      className="select-none cursor-default"
+                      src="/badges/moderator_badge.svg"
+                      width="15"
+                      height="15"
+                      alt="Moderator Badge"
+                    />
                   )}
                   {isTopPlayer && (
-                    <Image draggable={false} className="select-none cursor-default" src="/badges/top_player_badge.svg" width="15" height="15" alt="Top Ranked Player Badge" />
+                    <Image
+                      draggable={false}
+                      className="select-none cursor-default"
+                      src="/badges/top_player_badge.svg"
+                      width="15"
+                      height="15"
+                      alt="Top Ranked Player Badge"
+                    />
                   )}
                   {isFriendRole && (
-                    <Image draggable={false} className="select-none cursor-default" src="/badges/friend_badge.svg" alt="Friend Badge" width="15" height="15" />
+                    <Image
+                      draggable={false}
+                      className="select-none cursor-default"
+                      src="/badges/friend_badge.svg"
+                      alt="Friend Badge"
+                      width="15"
+                      height="15"
+                    />
                   )}
                   {isChapmanStudent && (
-                    <Image draggable={false} className="select-none cursor-default" src="/badges/chapman_badge.svg" alt="Chapman Student Badge" width="15" height="15" />
+                    <Image
+                      draggable={false}
+                      className="select-none cursor-default"
+                      src="/badges/chapman_badge.svg"
+                      alt="Chapman Student Badge"
+                      width="15"
+                      height="15"
+                    />
                   )}
                 </div>
               </div>
@@ -88,7 +116,12 @@ const ProfileHoverCard = ({
             <div className="flex items-center pt-2">
               <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
               <span className="text-xs text-muted-foreground">
-                Joined {new Date(user?._creationTime ?? "").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                Joined{" "}
+                {new Date(user?._creationTime ?? "").toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </span>
             </div>
           </div>
@@ -97,5 +130,5 @@ const ProfileHoverCard = ({
     </HoverCard>
   );
 };
- 
+
 export default ProfileHoverCard;

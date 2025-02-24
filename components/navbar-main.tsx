@@ -1,9 +1,14 @@
-
 import Link from "next/link";
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from "./ui/navigation-menu";
+
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "./ui/navigation-menu";
 
 const NavbarMain = () => {
-
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -11,12 +16,14 @@ const NavbarMain = () => {
           <NavigationMenuTrigger className="bg-transparent hover:bg-transparent data-[state=open]:bg-transparent">
             Play
           </NavigationMenuTrigger>
-          <NavigationMenuContent >
+          <NavigationMenuContent>
             <ul className="grid grid-rows-6 p-2 grid-flow-col gap-2 w-[350px]">
               <li className="row-span-4">
                 <Link href="/play">
                   <div className="flex text-center justify-center items-center hover:scale-95 transition-all h-full px-10 py-10 bg-primary text-primary-foreground rounded-md">
-                    Weekly<br/>Challenge
+                    Weekly
+                    <br />
+                    Challenge
                   </div>
                 </Link>
               </li>

@@ -1,17 +1,17 @@
+import Link from "next/link";
+import { ArrowRight, ReceiptText } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Doc } from "@/convex/_generated/dataModel";
-import { ArrowRight, ReceiptText } from "lucide-react";
-import Link from "next/link";
 
 interface GameHistoryProps {
   recentGames: Doc<"leaderboardEntries">[] | undefined | null;
   isCurrentUser: boolean;
 }
 
-const GameHistory = ({recentGames, isCurrentUser} : GameHistoryProps) => {
-
+const GameHistory = ({ recentGames, isCurrentUser }: GameHistoryProps) => {
   // Calculate the time since a game was played
   const calculateTimeSince = (creationTime: number) => {
     // separate by minutes, hours, days, weeks, or months
@@ -51,13 +51,11 @@ const GameHistory = ({recentGames, isCurrentUser} : GameHistoryProps) => {
     window.location.href = `/results/${gameId}`;
   };
 
-  return ( 
+  return (
     <>
       <Card className="w-full mt-4 md:mt-2">
         <CardHeader>
-          <CardTitle className="text-xl text-primary text-start font-bold">
-            Game History
-          </CardTitle>
+          <CardTitle className="text-xl text-primary text-start font-bold">Game History</CardTitle>
         </CardHeader>
         <CardContent>
           {recentGames && recentGames.length > 0 ? (
@@ -72,15 +70,24 @@ const GameHistory = ({recentGames, isCurrentUser} : GameHistoryProps) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentGames && recentGames.map((game, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="text-start font-bold">Singleplayer {/* TODO: Implement game type recognition */}</TableCell>
-                    <TableCell className="text-start">{calculateGameTotalScore(game)}</TableCell>
-                    <TableCell className="text-start hidden md:table-cell">{game.xpGained}</TableCell>
-                    <TableCell className="text-start hidden sm:table-cell">{calculateTimeSince(game._creationTime)}</TableCell>
-                    <TableCell><Button onClick={() => handleLeaderboardRedirect(game._id)}><ReceiptText /></Button></TableCell>
-                  </TableRow>
-                ))}
+                {recentGames &&
+                  recentGames.map((game, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="text-start font-bold">
+                        Singleplayer {/* TODO: Implement game type recognition */}
+                      </TableCell>
+                      <TableCell className="text-start">{calculateGameTotalScore(game)}</TableCell>
+                      <TableCell className="text-start hidden md:table-cell">{game.xpGained}</TableCell>
+                      <TableCell className="text-start hidden sm:table-cell">
+                        {calculateTimeSince(game._creationTime)}
+                      </TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleLeaderboardRedirect(game._id)}>
+                          <ReceiptText />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           ) : (
@@ -88,7 +95,11 @@ const GameHistory = ({recentGames, isCurrentUser} : GameHistoryProps) => {
               {isCurrentUser ? (
                 <>
                   <p className="text-center">You don&apos;t have any recent games...</p>
-                  <Link href="/"><Button className="mt-4 mb-2 px-8">Let&apos;s change that! <ArrowRight className="h-4 w-4 ml-2" /></Button></Link>
+                  <Link href="/">
+                    <Button className="mt-4 mb-2 px-8">
+                      Let&apos;s change that! <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </Link>
                 </>
               ) : (
                 <>
@@ -99,8 +110,8 @@ const GameHistory = ({recentGames, isCurrentUser} : GameHistoryProps) => {
           )}
         </CardContent>
       </Card>
-    </> 
+    </>
   );
 };
- 
+
 export default GameHistory;

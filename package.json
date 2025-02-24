@@ -1,17 +1,19 @@
 {
   "name": "pantherguessr",
-  "version": "0.1.0",
+  "version": "0.0.1-alpha",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "next:lint": "next lint",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+    "lint": "eslint \"./**/*.+(ts|tsx)\"",
+    "lint:fix": "eslint \"./**/*.+(ts|tsx)\" --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "dependencies": {
-    "@clerk/nextjs": "^5.7.2",
+    "@clerk/nextjs": "^6.11.3",
+    "@octokit/rest": "^21.1.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.3",
@@ -55,14 +57,23 @@
     "vaul": "^1.1.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.20.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
     "@types/heic-convert": "^2.1.0",
     "@types/leaflet": "^1.9.12",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
+    "@typescript-eslint/eslint-plugin": "^8.24.1",
+    "@typescript-eslint/parser": "^8.24.1",
+    "eslint": "^8.57.1",
     "eslint-config-next": "14.2.14",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
     "postcss": "^8",
+    "prettier": "^3.5.1",
+    "prettier-plugin-sort-json": "^4.1.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }

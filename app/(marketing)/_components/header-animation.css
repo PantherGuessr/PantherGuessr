@@ -1,75 +1,91 @@
 .animate-skew-left-right {
-    animation: skew-left-right 3s ease-in-out infinite;
+  animation: skew-left-right 3s ease-in-out infinite;
 }
 
 @keyframes skew-left-right {
-    0% {
-        transform: skewY(10deg) translateX(2em) skewX(-10deg);
-    }
-    50% {
-        transform: skewY(-10deg) translateX(-2em) skewX(10deg);
-    }
-    100% {
-        transform: skewY(10deg) translateX(2em) skewX(-10deg);
-    }
+  0% {
+    transform: skewY(10deg) translateX(2em) skewX(-10deg);
+  }
+  50% {
+    transform: skewY(-10deg) translateX(-2em) skewX(10deg);
+  }
+  100% {
+    transform: skewY(10deg) translateX(2em) skewX(-10deg);
+  }
 }
 
 .animate-fly-in-from-top-delay-0ms {
-    animation: fly-in-from-top 0.5s ease-in-out forwards;
+  animation: fly-in-from-top 0.5s ease-in-out forwards;
 }
 
 .animate-fly-in-from-top-delay-500ms {
-    transform: translateY(-100vh);
-    animation: fly-in-from-top 0.5s ease-in-out 500ms forwards;
+  transform: translateY(-100vh);
+  animation: fly-in-from-top 0.5s ease-in-out 500ms forwards;
 }
 
 .animate-fly-in-from-top-delay-1000ms {
-    transform: translateY(-100vh);
-    animation: fly-in-from-top 0.5s ease-in-out 1000ms forwards;
+  transform: translateY(-100vh);
+  animation: fly-in-from-top 0.5s ease-in-out 1000ms forwards;
 }
 
 @keyframes fly-in-from-top {
-    0% {
-        transform: translateY(-100vh);
-    }
-    100% {
-        transform: translateY(0);
-    }
+  0% {
+    transform: translateY(-100vh);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .animate-body-opacity-scale {
-    animation: body-spin-scale 1s ease-in forwards;
+  animation: body-spin-scale 1s ease-in forwards;
 }
 
 @keyframes body-spin-scale {
-    0% {
-        transform: scale(1);
-        opacity: 100%;
-    }
-    100% {
-        transform: scale(0.01);
-        opacity: 0%;
-    }
+  0% {
+    transform: scale(1);
+    opacity: 100%;
+  }
+  100% {
+    transform: scale(0.01);
+    opacity: 0;
+  }
 }
 
 .animate-flip-left-right {
-    animation: flip-left-right 5s linear infinite;
+  animation: flip-left-right 5s linear infinite;
 }
 
 @keyframes flip-left-right {
-    0% {
-        transform: rotateX(15deg) skewX(2deg);
-    }
-    25% {
-        transform: rotateX(0deg);
-    }
-    50% {
-        transform: rotateX(-15deg) skewX(-2deg);
-    }
-    75% {
-        transform: rotateX(0deg);
-    }
-    100% {
-        transform: rotateX(15deg) skewX(2deg);
-    }
+  0% {
+    transform: rotateX(15deg) skewX(2deg);
+  }
+  25% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(-15deg) skewX(-2deg);
+  }
+  75% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(15deg) skewX(2deg);
+  }
+}
+
+.animate-spin-quick-load {
+  animation: custom-spin 0.75s linear infinite;
+}
+
+@keyframes custom-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

@@ -20,6 +20,7 @@ const CreditsPage = () => {
             websiteLink="https://www.dylanravel.com"
             gitHubLink="https://www.github.com/dylandevelops"
             linkedInLink="https://www.linkedin.com/in/dylanravel"
+            professionalEmailUsername="dylan"
           />
           <MaintainerCard
             profilePicture="/profile-pictures/daniel.jpeg"
@@ -29,6 +30,7 @@ const CreditsPage = () => {
             websiteLink="https://tsiv.dev"
             gitHubLink="https://github.com/dtsivkovski"
             linkedInLink="https://www.linkedin.com/in/danieltsivkovski"
+            professionalEmailUsername="dan"
           />
           <MaintainerCard
             profilePicture="/profile-pictures/jake.jpeg"
@@ -37,6 +39,7 @@ const CreditsPage = () => {
             username="jake"
             gitHubLink="https://github.com/ssparkpilot"
             linkedInLink="https://www.linkedin.com/in/jake-milam-125258328"
+            professionalEmailUsername="jake"
           />
         </div>
         <p>Made with ❤️ at Chapman University</p>

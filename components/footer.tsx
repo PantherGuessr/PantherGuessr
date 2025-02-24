@@ -1,9 +1,18 @@
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Menu } from "lucide-react";
 
 import { ModeToggle } from "@/components/mode-toggle";
-import Link from "next/link";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export const Footer = () => {
   return (
@@ -36,25 +45,17 @@ export const Footer = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <Link href="/credits">
-              <DropdownMenuItem>
-                Credits
-              </DropdownMenuItem>
+              <DropdownMenuItem>Credits</DropdownMenuItem>
             </Link>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                Legal
-              </DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger>Legal</DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   <Link href="/privacy-policy">
-                    <DropdownMenuItem>
-                      Privacy Policy
-                    </DropdownMenuItem>
+                    <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
                   </Link>
                   <Link href="/terms-and-conditions">
-                    <DropdownMenuItem>
-                      Terms & Conditions
-                    </DropdownMenuItem>
+                    <DropdownMenuItem>Terms & Conditions</DropdownMenuItem>
                   </Link>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>

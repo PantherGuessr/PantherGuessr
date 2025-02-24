@@ -1,37 +1,48 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { ColumnDef } from "@tanstack/react-table";
+import { useQuery } from "convex/react";
+import { LatLng } from "leaflet";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
-  ColumnDef,
-} from "@tanstack/react-table";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import Image from "next/image";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useEffect, useState } from "react";
-import { Id } from "@/convex/_generated/dataModel";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { DataTable } from "./_helpers/datatable";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 import { useMarker } from "./_helpers/MarkerContext";
-import { LatLng } from "leaflet";
 import PreviewMap from "./_helpers/preview-map";
 
 type Level = {
-    _id: Id<"levels">;
-    _creationTime: number;
-    title: string;
-    latitude: number;
-    longitude: number;
-    imageId: string;
-    timesPlayed: bigint;
-    tags?: string[];
+  _id: Id<"levels">;
+  _creationTime: number;
+  title: string;
+  latitude: number;
+  longitude: number;
+  imageId: string;
+  timesPlayed: bigint;
+  tags?: string[];
 };
 
-
 const Levels = () => {
-
   // get marker context positions
   const { setLocalMarkerPosition } = useMarker();
 
@@ -58,7 +69,7 @@ const Levels = () => {
   useEffect(() => {
     if (imageSrc) {
       setCurrentSrcUrl(imageSrc);
-      setOpenDialogId(clickedLevelId); 
+      setOpenDialogId(clickedLevelId);
     }
   }, [imageSrc, clickedLevelId]);
 
@@ -80,7 +91,7 @@ const Levels = () => {
   };
 
   // opens map dialog
-  const handleMapDialogOpen = (levelId: Id<"levels">, latitude : number, longitude : number) => {
+  const handleMapDialogOpen = (levelId: Id<"levels">, latitude: number, longitude: number) => {
     console.log("handleMapDialogOpen called with:", { levelId, latitude, longitude });
     const latlng = new LatLng(latitude, longitude);
     setLocalMarkerPosition(latlng);
@@ -88,66 +99,75 @@ const Levels = () => {
   };
 
   // creates image dialog button
-  function imageDialogCreator(row: Level) {return (
-    <Dialog open={openDialogId === row._id} onOpenChange={(open) => {
-      if (!open) {
-        handleDialogClose();
-      }
-    }}>
-      <DialogTrigger asChild>
-        <Button onClick={() => handleDialogOpen(row._id)} className="my-0 py-0" variant="outline">
-          View
-        </Button>
-      </DialogTrigger>
+  function imageDialogCreator(row: Level) {
+    return (
+      <Dialog
+        open={openDialogId === row._id}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleDialogClose();
+          }
+        }}
+      >
+        <DialogTrigger asChild>
+          <Button onClick={() => handleDialogOpen(row._id)} className="my-0 py-0" variant="outline">
+            View
+          </Button>
+        </DialogTrigger>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {row.title}
-          </DialogTitle>
-          <DialogDescription>
-            Image ID: {row.imageId}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex justify-center">
-          {currentImageSrcUrl === "/Invalid-Image.jpg" ? (
-            <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
-          ) : (
-            <Image className="w-full" width="300" height="225" src={currentImageSrcUrl} alt={row.title} id={"image-" + row.imageId} />
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{row.title}</DialogTitle>
+            <DialogDescription>Image ID: {row.imageId}</DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center">
+            {currentImageSrcUrl === "/Invalid-Image.jpg" ? (
+              <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
+            ) : (
+              <Image
+                className="w-full"
+                width="300"
+                height="225"
+                src={currentImageSrcUrl}
+                alt={row.title}
+                id={"image-" + row.imageId}
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
   }
 
-  function mapDialogCreator(row: Level) {return (
-    <Dialog open={openMapDialogId === row._id} onOpenChange={(open) => {
-      if (!open) {
-        handleMapDialogClose();
-      }
-    }}>
-      <DialogTrigger asChild>
-        <Button onClick={() => handleMapDialogOpen(row._id, row.latitude, row.longitude)} variant="outline">
-          View
-        </Button>
-      </DialogTrigger>
+  function mapDialogCreator(row: Level) {
+    return (
+      <Dialog
+        open={openMapDialogId === row._id}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleMapDialogClose();
+          }
+        }}
+      >
+        <DialogTrigger asChild>
+          <Button onClick={() => handleMapDialogOpen(row._id, row.latitude, row.longitude)} variant="outline">
+            View
+          </Button>
+        </DialogTrigger>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {row.title}
-          </DialogTitle>
-          <DialogDescription>
-            (Latitude: {row.latitude}, Longitude: {row.longitude})
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex w-full h-80 grow py-2">
-          <PreviewMap />
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{row.title}</DialogTitle>
+            <DialogDescription>
+              (Latitude: {row.latitude}, Longitude: {row.longitude})
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex w-full h-80 grow py-2">
+            <PreviewMap />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
   }
 
   // columns key value pairs for shadcn DataTable component
@@ -156,10 +176,7 @@ const Levels = () => {
       accessorKey: "title",
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
             Title
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -170,10 +187,7 @@ const Levels = () => {
       accessorKey: "tags",
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
             Tags
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -181,16 +195,13 @@ const Levels = () => {
       },
       cell: (cell) => {
         return cell.row.original.tags ? cell.row.original.tags.join(", ") : "";
-      }
+      },
     },
     {
       accessorKey: "timesPlayed",
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
             Times Played
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -202,20 +213,20 @@ const Levels = () => {
       header: "Image",
       cell: (cell) => {
         return imageDialogCreator(cell.row.original);
-      }
+      },
     },
     {
       header: "Map",
       cell: (cell) => {
         return mapDialogCreator(cell.row.original);
-      }
+      },
     },
     {
       accessorKey: "_id",
       header: "Actions",
       cell: ({ row }) => {
         const level = row.original;
-           
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -226,33 +237,30 @@ const Levels = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(level._id)}
-              >
+              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(level._id)}>
                 Copy Level ID
               </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => navigator.clipboard.writeText(level.imageId)}
-              >
+              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(level.imageId)}>
                 Copy Image ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText("(" + level.latitude + ", " + level.longitude + ")")}
               >
                 Copy Coordinates
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600 dark:text-red-500" onClick={ () =>
-                alert("Sorry, delete level action not implemented yet.")
-              }>
+              <DropdownMenuItem
+                className="text-red-600 dark:text-red-500"
+                onClick={() => alert("Sorry, delete level action not implemented yet.")}
+              >
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
-      }
-    }
+      },
+    },
   ];
 
   return (

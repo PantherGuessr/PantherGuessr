@@ -1,5 +1,6 @@
-import { Footer } from "@/components/footer";
 import { SignUp } from "@clerk/nextjs";
+
+import { Footer } from "@/components/footer";
 
 const RegisterPage = () => {
   return (
@@ -11,5 +12,5 @@ const RegisterPage = () => {
     </div>
   );
 };
- 
+
 export default RegisterPage;

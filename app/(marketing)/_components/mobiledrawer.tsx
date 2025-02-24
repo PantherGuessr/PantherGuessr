@@ -1,22 +1,20 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+
 import "./header-animation.css";
 
 interface MobileDrawerProps {
   hasOngoingGame: boolean;
 }
 
-const MobileDrawer = ({
-  hasOngoingGame
-}: MobileDrawerProps) => {
-
+const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
   return (
-
     <Sheet>
       <SheetTrigger asChild>
         <Button className="px-8 py-6">
@@ -28,16 +26,18 @@ const MobileDrawer = ({
           <SheetTitle className="text-2xl">Gamemode Selection</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-y-4 pt-4">
-
           {hasOngoingGame ? (
             <>
               <Card className="bg-primary text-primary-foreground cursor-pointer">
-                <CardContent className="p-4" onClick={() => {
-                  document.body.classList.add("animate-body-opacity-scale");
-                  setTimeout(() => {
-                    window.location.href="/game/continue";
-                  }, 800);
-                }}>
+                <CardContent
+                  className="p-4"
+                  onClick={() => {
+                    document.body.classList.add("animate-body-opacity-scale");
+                    setTimeout(() => {
+                      window.location.href = "/game/continue";
+                    }, 800);
+                  }}
+                >
                   <div className="flex flex-col gap-x-2 align-center text-center justify-center">
                     <h1 className="text-xl font-bold">Continue Game</h1>
                     <p className="italic text-sm">Pick up where you left off!</p>
@@ -45,12 +45,15 @@ const MobileDrawer = ({
                 </CardContent>
               </Card>
               <Card className="bg-primary text-primary-foreground cursor-pointer">
-                <CardContent className="p-4" onClick={() => {
-                  document.body.classList.add("animate-body-opacity-scale");
-                  setTimeout(() => {
-                    window.location.href="/game";
-                  }, 800);
-                }}>
+                <CardContent
+                  className="p-4"
+                  onClick={() => {
+                    document.body.classList.add("animate-body-opacity-scale");
+                    setTimeout(() => {
+                      window.location.href = "/game";
+                    }, 800);
+                  }}
+                >
                   <div className="flex flex-col gap-x-2 align-center text-center justify-center">
                     <h1 className="text-xl font-bold">New Game</h1>
                     <p className="italic text-sm">Start a new classic PantherGuessr game</p>
@@ -60,12 +63,15 @@ const MobileDrawer = ({
             </>
           ) : (
             <Card className="bg-primary text-primary-foreground cursor-pointer">
-              <CardContent className="p-4" onClick={() => {
-                document.body.classList.add("animate-body-opacity-scale");
-                setTimeout(() => {
-                  window.location.href="/game";
-                }, 800);
-              }}>
+              <CardContent
+                className="p-4"
+                onClick={() => {
+                  document.body.classList.add("animate-body-opacity-scale");
+                  setTimeout(() => {
+                    window.location.href = "/game";
+                  }, 800);
+                }}
+              >
                 <div className="flex flex-col gap-x-2 align-center text-center justify-center">
                   <h1 className="text-xl font-bold">Singleplayer</h1>
                   <p className="italic text-sm">The classic way to play PantherGuessr</p>

@@ -1,22 +1,30 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import AnalyticsHelper from "./_helpers/analyticshelper";
 
 const Analytics = () => {
-
   const chartConfig = {
     gamesPlayed: {
       label: "Games",
       color: "rgb(206, 52, 52)",
-    }
+    },
   } satisfies ChartConfig;
 
   // import all helper functions
-  const { gamesPlayedToday, gamesPlayedThisWeek, buildWeekData, gamesPlayedThisMonth, buildMonthData } = AnalyticsHelper();
+  const { gamesPlayedToday, gamesPlayedThisWeek, buildWeekData, gamesPlayedThisMonth, buildMonthData } =
+    AnalyticsHelper();
 
   return (
     <>
@@ -48,9 +56,7 @@ const Analytics = () => {
         </div>
         <div className="md:basis-1/3 w-full my-4 flex-grow">
           <Card className="p-2 m-2 h-full">
-            <CardHeader>
-              Past 7 Days
-            </CardHeader>
+            <CardHeader>Past 7 Days</CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
                 <BarChart accessibilityLayer data={buildWeekData()}>
@@ -63,8 +69,7 @@ const Analytics = () => {
                     tickFormatter={(value) => {
                       if (value === "Today") {
                         return value;
-                      }
-                      else return value.slice(0, 3);
+                      } else return value.slice(0, 3);
                     }}
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
@@ -77,9 +82,7 @@ const Analytics = () => {
         </div>
         <div className="md:basis-1/3 w-full my-4 flex-grow">
           <Card className="p-2 m-2 h-full">
-            <CardHeader>
-              Games Played By Month
-            </CardHeader>
+            <CardHeader>Games Played By Month</CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
                 <BarChart accessibilityLayer data={buildMonthData()}>

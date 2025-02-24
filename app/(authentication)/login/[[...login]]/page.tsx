@@ -1,5 +1,6 @@
-import { Footer } from "@/components/footer";
 import { SignIn } from "@clerk/nextjs";
+
+import { Footer } from "@/components/footer";
 
 const LoginPage = () => {
   return (
@@ -11,5 +12,5 @@ const LoginPage = () => {
     </div>
   );
 };
- 
+
 export default LoginPage;

@@ -1,8 +1,8 @@
 // import { v } from "convex/values";
 
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
 
+import { mutation, query } from "./_generated/server";
 
 /**
  * Retrieves the daily game statistics from the database.
@@ -23,19 +23,15 @@ export const getDailyGameStats = query({
     const today = date.toISOString().split("T")[0];
     const gameStats = await ctx.db
       .query("gameStats")
-      .filter(q => q.and(
-        q.eq(q.field("type"), "daily"),
-        q.eq(q.field("isoDay"), today)
-      ))
+      .filter((q) => q.and(q.eq(q.field("type"), "daily"), q.eq(q.field("isoDay"), today)))
       .collect();
-            
-    return gameStats;
 
-  }
+    return gameStats;
+  },
 });
 
 export const getPastNDaysOfStats = query({
-  args: { n : v.number() },
+  args: { n: v.number() },
   handler: async (ctx, args) => {
     // get the current data and past n days of data
     const todayDate = new Date();
@@ -46,10 +42,7 @@ export const getPastNDaysOfStats = query({
       const dateString = date.toISOString().split("T")[0];
       const gameStats = await ctx.db
         .query("gameStats")
-        .filter(q => q.and(
-          q.eq(q.field("type"), "daily"),
-          q.eq(q.field("isoDay"), dateString)
-        ))
+        .filter((q) => q.and(q.eq(q.field("type"), "daily"), q.eq(q.field("isoDay"), dateString)))
         .collect();
       if (gameStats.length > 0) {
         dataCollection.push(gameStats[0]);
@@ -57,15 +50,15 @@ export const getPastNDaysOfStats = query({
     }
 
     return dataCollection;
-  }
+  },
 });
 
 /**
  * Mutation to create daily game statistics.
- * 
+ *
  * This function inserts a new record into the "gameStats" table with the type set to "daily".
  * The record includes the current date, time in ISO format, and initializes the count to 0.
- * 
+ *
  * @param ctx - The context object containing the database instance.
  * @returns A promise that resolves to a BigInt value of 0.
  */
@@ -78,12 +71,11 @@ export const createDailyGameStats = mutation({
       isoDay: date.toISOString().split("T")[0],
       isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
       count: BigInt(0),
-      lastUpdated: date.toISOString()
+      lastUpdated: date.toISOString(),
     });
     return BigInt(0);
-  }
+  },
 });
-
 
 /**
  * Increments the daily game statistics in the database.
@@ -102,19 +94,15 @@ export const incrementDailyGameStats = mutation({
     const today = date.toISOString().split("T")[0];
     const gameStats = await ctx.db
       .query("gameStats")
-      .filter(q => q.and(
-        q.eq(q.field("type"), "daily"),
-        q.eq(q.field("isoDay"), today)
-      ))
+      .filter((q) => q.and(q.eq(q.field("type"), "daily"), q.eq(q.field("isoDay"), today)))
       .collect();
 
     if (gameStats.length > 0) {
-
       const gameStat = gameStats[0];
       const newGameStat = {
         ...gameStat,
         count: gameStat.count + BigInt(1),
-        lastUpdated: date.toISOString()
+        lastUpdated: date.toISOString(),
       };
       const count = gameStat.count + BigInt(1);
       await ctx.db.replace(gameStat._id, newGameStat);
@@ -126,11 +114,11 @@ export const incrementDailyGameStats = mutation({
         isoDay: date.toISOString().split("T")[0],
         isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
         count: BigInt(1),
-        lastUpdated: date.toISOString()
+        lastUpdated: date.toISOString(),
       });
       return BigInt(1);
     }
-  }
+  },
 });
 
 // monthly stats
@@ -141,13 +129,10 @@ export const getMonthlyGameStats = query({
     const isoYearMonth = date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1];
     const gameStats = await ctx.db
       .query("gameStats")
-      .filter(q => q.and(
-        q.eq(q.field("type"), "monthly"),
-        q.eq(q.field("isoYearMonth"), isoYearMonth))
-      )
+      .filter((q) => q.and(q.eq(q.field("type"), "monthly"), q.eq(q.field("isoYearMonth"), isoYearMonth)))
       .collect();
     return gameStats;
-  }
+  },
 });
 
 export const createMonthlyGameStats = mutation({
@@ -159,10 +144,10 @@ export const createMonthlyGameStats = mutation({
       isoDay: date.toISOString().split("T")[0],
       isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
       count: BigInt(0),
-      lastUpdated: date.toISOString()
+      lastUpdated: date.toISOString(),
     });
     return BigInt(0);
-  }
+  },
 });
 
 export const incrementMonthlyGameStats = mutation({
@@ -171,10 +156,7 @@ export const incrementMonthlyGameStats = mutation({
     const isoYearMonth = date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1];
     const gameStats = await ctx.db
       .query("gameStats")
-      .filter(q => q.and(
-        q.eq(q.field("type"), "monthly"),
-        q.eq(q.field("isoYearMonth"), isoYearMonth)
-      ))
+      .filter((q) => q.and(q.eq(q.field("type"), "monthly"), q.eq(q.field("isoYearMonth"), isoYearMonth)))
       .collect();
 
     if (gameStats.length > 0) {
@@ -182,7 +164,7 @@ export const incrementMonthlyGameStats = mutation({
       const newGameStat = {
         ...gameStat,
         count: gameStat.count + BigInt(1),
-        lastUpdated: date.toISOString()
+        lastUpdated: date.toISOString(),
       };
       const count = gameStat.count + BigInt(1);
       await ctx.db.replace(gameStat._id, newGameStat);
@@ -194,9 +176,9 @@ export const incrementMonthlyGameStats = mutation({
         isoDay: date.toISOString().split("T")[0],
         isoYearMonth: date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1],
         count: BigInt(1),
-        lastUpdated: date.toISOString()
+        lastUpdated: date.toISOString(),
       });
       return BigInt(1);
     }
-  }
+  },
 });

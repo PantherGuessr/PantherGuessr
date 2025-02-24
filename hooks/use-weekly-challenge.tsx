@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { api } from '@/convex/_generated/api';
-import { useMutation, useQuery } from 'convex/react';
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+
+import { api } from "@/convex/_generated/api";
 
 const useWeeklyChallenge = () => {
   // Fetch weekly challenge data

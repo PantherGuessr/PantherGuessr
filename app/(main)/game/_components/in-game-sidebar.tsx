@@ -1,15 +1,27 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Hash, Loader2, LogOut, Medal, User } from "lucide-react";
-import Image from "next/image";
 import { ElementRef, useRef, useState } from "react";
-import { useMediaQuery } from "usehooks-ts";
-import { useGame } from "../_context/GameContext";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Hash, Loader2, LogOut, Medal, User } from "lucide-react";
+import { useMediaQuery } from "usehooks-ts";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { useGame } from "../_context/GameContext";
+
 import "./sidebar-cursor.css";
 
 const InGameSidebar = () => {
@@ -35,16 +47,16 @@ const InGameSidebar = () => {
     nextRound,
     scoreAwarded,
     distanceFromTarget,
-    isLoading
+    isLoading,
   } = useGame()!;
-    
+
   /**
    * Handles submitting a guess for the current round
    * Only submits if a marker has been placed and there is a valid marker position
    */
   const handleSubmittingGuess = () => {
-    if(!markerHasBeenPlaced || !markerPosition) return;
-    
+    if (!markerHasBeenPlaced || !markerPosition) return;
+
     const { lat, lng } = markerPosition;
     submitGuess(lat, lng);
   };
@@ -68,7 +80,9 @@ const InGameSidebar = () => {
       magnifier.style.display = "block";
       magnifier.style.backgroundImage = `url(${event.currentTarget.src})`;
       magnifier.style.backgroundRepeat = "no-repeat";
-      magnifier.style.backgroundColor = getComputedStyle(document.querySelector("aside")!).getPropertyValue("background-color");
+      magnifier.style.backgroundColor = getComputedStyle(document.querySelector("aside")!).getPropertyValue(
+        "background-color"
+      );
     }
 
     event.currentTarget.classList.add("hide-cursor");
@@ -79,7 +93,7 @@ const InGameSidebar = () => {
    */
   const handleMouseMoveMagnifier = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
     if (isResizingRef.current) return;
-    
+
     const magnifier = magnifierRef.current;
     if (magnifier) {
       const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
@@ -90,7 +104,7 @@ const InGameSidebar = () => {
 
       const half = magnifier.offsetWidth / 16;
       const yhalf = half * 1.4;
-    
+
       magnifier.style.left = `${event.clientX - magnifier.offsetWidth / 2}px`;
       magnifier.style.top = `${event.clientY - magnifier.offsetHeight / 2}px`;
 
@@ -101,14 +115,14 @@ const InGameSidebar = () => {
       // Calculate the scaling factor (you can adjust the factor as needed)
       const xScalingFactor = xDistanceFromCenter / (width / 2);
       const yScalingFactor = yDistanceFromCenter / (height / 2);
-    
+
       // if on the right side of the image, move the background position to the left
       if (x > width / 2) {
         bgPosX = bgPosX + half * xScalingFactor;
       } else if (x < width / 2) {
         bgPosX = bgPosX - half * xScalingFactor;
       }
-            
+
       // Scale the y-offset instead of having a sharp transition
       if (y > height / 2) {
         bgPosY = bgPosY + yhalf * yScalingFactor;
@@ -135,9 +149,7 @@ const InGameSidebar = () => {
   /**
    * Handles starting the resizing of the sidebar when clicking on the right side of the sidebar
    */
-  const handleMouseDown = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -152,15 +164,15 @@ const InGameSidebar = () => {
    * Handles resizing the sidebar when clicking and dragging on the right side of the sidebar
    */
   const handleMouseMove = (event: MouseEvent) => {
-    if(!isResizingRef.current) return;
+    if (!isResizingRef.current) return;
     let newWidth = event.clientX;
 
     // Clamps so that the width of the sidebar
     // can't get too big or too small.
-    if(newWidth < 270) newWidth = 270;
-    if(newWidth > 600) newWidth = 600;
+    if (newWidth < 270) newWidth = 270;
+    if (newWidth > 600) newWidth = 600;
 
-    if(sidebarRef.current) {
+    if (sidebarRef.current) {
       sidebarRef.current.style.width = `${newWidth}px`;
     }
   };
@@ -188,11 +200,14 @@ const InGameSidebar = () => {
 
   return (
     <>
-      <aside ref={sidebarRef} className={cn(
-        "group/sidebar h-full bg-background overflow-y-auto relative flex flex-col z-[999]",
-        isResetting && "transition-all ease-in-out duration-300",
-        isMobile ? "w-full h-auto" : "w-80 px-1",
-      )}>
+      <aside
+        ref={sidebarRef}
+        className={cn(
+          "group/sidebar h-full bg-background overflow-y-auto relative flex flex-col z-[999]",
+          isResetting && "transition-all ease-in-out duration-300",
+          isMobile ? "w-full h-auto" : "w-80 px-1"
+        )}
+      >
         <div className="flex justify-center pt-4 px-3 pb-1">
           <div className="flex flex-row pr-2">
             <AlertDialog>
@@ -210,25 +225,33 @@ const InGameSidebar = () => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => {
-                    router.push("/");
-                  }}>Leave Game</AlertDialogAction>
+                  <AlertDialogAction
+                    onClick={() => {
+                      router.push("/");
+                    }}
+                  >
+                    Leave Game
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
           </div>
-          <div className={
-            cn("text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center p-4 w-full rounded-md gap-x-2",
+          <div
+            className={cn(
+              "text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center p-4 w-full rounded-md gap-x-2",
               isMobile && "basis-1/5"
-            )}>
+            )}
+          >
             <User />
-            {!isMobile && (<p>Singleplayer</p>)}
+            {!isMobile && <p>Singleplayer</p>}
           </div>
           {isMobile && (
             <>
               <div className="text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center mx-2 w-full rounded-md gap-x-2">
                 <Hash />
-                <p className="pr-1">{(currentRound <= 5) ? currentRound : levels.length}/{levels.length}</p>
+                <p className="pr-1">
+                  {currentRound <= 5 ? currentRound : levels.length}/{levels.length}
+                </p>
               </div>
               <div className="text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center w-full rounded-md gap-x-2">
                 <Medal />
@@ -238,7 +261,7 @@ const InGameSidebar = () => {
           )}
         </div>
         <div className="flex justify-center p-3">
-          { (isLoading || !currentImageSrcUrl) ? (
+          {isLoading || !currentImageSrcUrl ? (
             <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
           ) : (
             <Image
@@ -258,7 +281,7 @@ const InGameSidebar = () => {
           <div className="mt-4 flex flex-col items-center">
             <div className="flex justify-center w-full">
               <div className="text-xl flex flex-col items-center mx-4">
-                { (isLoading || !levels || !currentImageSrcUrl) ? (
+                {isLoading || !levels || !currentImageSrcUrl ? (
                   <>
                     <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
                     <Skeleton className="w-8 h-5 mt-1 bg-zinc-400 dark:bg-red-900" />
@@ -266,12 +289,14 @@ const InGameSidebar = () => {
                 ) : (
                   <>
                     <Hash />
-                    <p>{(currentRound <= 5) ? currentRound : levels.length}/{levels.length}</p>
+                    <p>
+                      {currentRound <= 5 ? currentRound : levels.length}/{levels.length}
+                    </p>
                   </>
                 )}
               </div>
               <div className="text-xl flex flex-col items-center mx-4">
-                { (isLoading || !levels || !currentImageSrcUrl) ? (
+                {isLoading || !levels || !currentImageSrcUrl ? (
                   <>
                     <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
                     <Skeleton className="w-4 h-5 mt-1 bg-zinc-400 dark:bg-red-900" />
@@ -286,19 +311,15 @@ const InGameSidebar = () => {
             </div>
           </div>
         )}
-        <div className={
-          cn(
-            "mt-auto px-3 w-full",
-            isMobile ? "py-2" : "py-4"
-
-          )
-        }>
-          {scoreAwarded!== null && distanceFromTarget !== null && (
+        <div className={cn("mt-auto px-3 w-full", isMobile ? "py-2" : "py-4")}>
+          {scoreAwarded !== null && distanceFromTarget !== null && (
             <div className="text-lg flex flex-col bg-secondary text-center text-secondary-foreground justify-items-center justify-center items-center p-4 mb-3 w-full rounded-md gap-x-2">
               {distanceFromTarget <= 20 ? (
                 <p>Spot on! You scored {scoreAwarded} points.</p>
               ) : (
-                <p>You scored {scoreAwarded} points from being {distanceFromTarget} feet away from the target.</p>
+                <p>
+                  You scored {scoreAwarded} points from being {distanceFromTarget} feet away from the target.
+                </p>
               )}
             </div>
           )}
@@ -308,7 +329,7 @@ const InGameSidebar = () => {
             </Button>
           ) : correctLocation ? (
             <Button disabled={false} onClick={handleNextRound} className="w-full">
-              {currentRound >= levels.length ? 'FINISH GAME' : 'NEXT ROUND'}
+              {currentRound >= levels.length ? "FINISH GAME" : "NEXT ROUND"}
             </Button>
           ) : (
             <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={handleSubmittingGuess}>

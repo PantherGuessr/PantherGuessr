@@ -1,8 +1,9 @@
-import { httpRouter } from "convex/server";
-import { httpAction } from "./_generated/server";
-import { internal } from "./_generated/api";
 import type { WebhookEvent } from "@clerk/backend";
+import { httpRouter } from "convex/server";
 import { Webhook } from "svix";
+
+import { internal } from "./_generated/api";
+import { httpAction } from "./_generated/server";
 
 const http = httpRouter();
 
@@ -11,27 +12,27 @@ http.route({
   method: "POST",
   handler: httpAction(async (convexToJson, request) => {
     const event = await validateRequest(request);
-    if(!event) {
+    if (!event) {
       return new Response("Error occurred", { status: 400 });
     }
 
-    switch(event.type) {
-    case "user.created":
-    case "user.updated":
-      await convexToJson.runMutation(internal.users.upsertFromClerk, {
-        data: event.data,
-      });
-      break;
+    switch (event.type) {
+      case "user.created":
+      case "user.updated":
+        await convexToJson.runMutation(internal.users.upsertFromClerk, {
+          data: event.data,
+        });
+        break;
 
-    case "user.deleted": {
-      const clerkUserId = event.data.id!;
-      await convexToJson.runMutation(internal.users.deleteUserFromConvex, { clerkUserId });
-      break;
-    }
+      case "user.deleted": {
+        const clerkUserId = event.data.id!;
+        await convexToJson.runMutation(internal.users.deleteUserFromConvex, { clerkUserId });
+        break;
+      }
 
-    default:
-      console.log("Ignored Clerk webhook event", event.type);
-      break;
+      default:
+        console.log("Ignored Clerk webhook event", event.type);
+        break;
     }
 
     return new Response(null, { status: 200 });

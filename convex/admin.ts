@@ -2,7 +2,6 @@ import { v } from "convex/values";
 
 import { query } from "./_generated/server";
 
-
 /**
  * Retrieves all levels from the database
  * @returns An array containing all level documents from the database
@@ -12,9 +11,8 @@ export const getAllLevels = query({
     const levels = await ctx.db.query("levels").collect();
 
     return levels;
-  }
+  },
 });
-
 
 /**
  * Retrieves the image URL for a specific level from storage
@@ -25,18 +23,18 @@ export const getAllLevels = query({
 export const getImageSrcByLevelId = query({
   args: { id: v.id("levels") },
   handler: async (ctx, args) => {
-    if(!args.id) {
+    if (!args.id) {
       throw new Error("Missing entryId parameter.");
     }
 
     const level = await ctx.db.get(args.id);
 
-    if(!level) {
+    if (!level) {
       throw new Error("No levels exist");
     }
 
     const imageUrl = await ctx.storage.getUrl(level.imageId);
 
     return imageUrl;
-  }
+  },
 });

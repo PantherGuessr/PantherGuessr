@@ -12,13 +12,11 @@ export const getWeeklyChallenge = query({
     const today = date.getTime();
     const weeklyChallenges = await ctx.db
       .query("weeklyChallenges")
-      .filter(q => 
-        q.gte(q.field("endDate"), BigInt(today))
-      )
+      .filter((q) => q.gte(q.field("endDate"), BigInt(today)))
       .collect();
 
     return weeklyChallenges;
-  }
+  },
 });
 
 /**
@@ -51,9 +49,9 @@ export const makeWeeklyChallenge = mutation({
       round_3: randomLevels[2],
       round_4: randomLevels[3],
       round_5: randomLevels[4],
-      timeAllowedPerRound: BigInt(60)
+      timeAllowedPerRound: BigInt(60),
     });
-  }
+  },
 });
 
 /**
@@ -66,7 +64,13 @@ export const makeWeeklyChallenge = mutation({
  * @returns - The levels from the weekly challenge
  */
 export const getLevelsFromWeeklyChallenge = query({
-  args: { round1: v.id("levels"), round2: v.id("levels"), round3: v.id("levels"), round4: v.id("levels"), round5: v.id("levels") },
+  args: {
+    round1: v.id("levels"),
+    round2: v.id("levels"),
+    round3: v.id("levels"),
+    round4: v.id("levels"),
+    round5: v.id("levels"),
+  },
   handler: async (ctx, args) => {
     const round_1 = await ctx.db.get(args.round1);
     const round_2 = await ctx.db.get(args.round2);
@@ -79,9 +83,9 @@ export const getLevelsFromWeeklyChallenge = query({
       round_2,
       round_3,
       round_4,
-      round_5
+      round_5,
     };
-  }
+  },
 });
 
 /**
@@ -93,21 +97,45 @@ export const getPopulatedLevelsFromWeeklyChallenge = query({
     const today = new Date().getTime();
     const weeklyChallenges = await ctx.db
       .query("weeklyChallenges")
-      .filter(q => q.gte(q.field("endDate"), BigInt(today)))
+      .filter((q) => q.gte(q.field("endDate"), BigInt(today)))
       .collect();
 
     console.log(weeklyChallenges);
 
     if (weeklyChallenges.length === 0) {
       return null;
-    }
-    else {
+    } else {
       const weeklyChallenge = weeklyChallenges[0];
-      const round_1 = (await ctx.db.query("levels").filter(q => q.eq(q.field("_id"), weeklyChallenge.round_1)).collect())[0];
-      const round_2 = (await ctx.db.query("levels").filter(q => q.eq(q.field("_id"), weeklyChallenge.round_2)).collect())[0];
-      const round_3 = (await ctx.db.query("levels").filter(q => q.eq(q.field("_id"), weeklyChallenge.round_3)).collect())[0];
-      const round_4 = (await ctx.db.query("levels").filter(q => q.eq(q.field("_id"), weeklyChallenge.round_4)).collect())[0];
-      const round_5 = (await ctx.db.query("levels").filter(q => q.eq(q.field("_id"), weeklyChallenge.round_5)).collect())[0];
+      const round_1 = (
+        await ctx.db
+          .query("levels")
+          .filter((q) => q.eq(q.field("_id"), weeklyChallenge.round_1))
+          .collect()
+      )[0];
+      const round_2 = (
+        await ctx.db
+          .query("levels")
+          .filter((q) => q.eq(q.field("_id"), weeklyChallenge.round_2))
+          .collect()
+      )[0];
+      const round_3 = (
+        await ctx.db
+          .query("levels")
+          .filter((q) => q.eq(q.field("_id"), weeklyChallenge.round_3))
+          .collect()
+      )[0];
+      const round_4 = (
+        await ctx.db
+          .query("levels")
+          .filter((q) => q.eq(q.field("_id"), weeklyChallenge.round_4))
+          .collect()
+      )[0];
+      const round_5 = (
+        await ctx.db
+          .query("levels")
+          .filter((q) => q.eq(q.field("_id"), weeklyChallenge.round_5))
+          .collect()
+      )[0];
 
       return {
         _id: weeklyChallenge._id,
@@ -117,10 +145,10 @@ export const getPopulatedLevelsFromWeeklyChallenge = query({
         round_2,
         round_3,
         round_4,
-        round_5
+        round_5,
       };
     }
-  }
+  },
 });
 
 /**
@@ -130,34 +158,34 @@ export const getPopulatedLevelsFromWeeklyChallenge = query({
  * @param args.levelId - The ID of the new level
  */
 export const updateWeeklyChallengeRound = mutation({
-  args: { weeklyChallengeId: v.id("weeklyChallenges"), roundNumber: v.int64() , levelId: v.id("levels") },
+  args: { weeklyChallengeId: v.id("weeklyChallenges"), roundNumber: v.int64(), levelId: v.id("levels") },
   handler: async (ctx, args) => {
     const weeklyChallenge = await ctx.db.get(args.weeklyChallengeId);
 
     if (!weeklyChallenge) {
       return;
     }
-        
+
     // switch
     switch (Number(args.roundNumber)) {
-    case 1:
-      weeklyChallenge.round_1 = args.levelId;
-      break;
-    case 2:
-      weeklyChallenge.round_2 = args.levelId;
-      break;
-    case 3:
-      weeklyChallenge.round_3 = args.levelId;
-      break;
-    case 4:
-      weeklyChallenge.round_4 = args.levelId;
-      break;
-    case 5:
-      weeklyChallenge.round_5 = args.levelId;
-      break;
-    default:
-      break;
+      case 1:
+        weeklyChallenge.round_1 = args.levelId;
+        break;
+      case 2:
+        weeklyChallenge.round_2 = args.levelId;
+        break;
+      case 3:
+        weeklyChallenge.round_3 = args.levelId;
+        break;
+      case 4:
+        weeklyChallenge.round_4 = args.levelId;
+        break;
+      case 5:
+        weeklyChallenge.round_5 = args.levelId;
+        break;
+      default:
+        break;
     }
     await ctx.db.patch(args.weeklyChallengeId, weeklyChallenge);
-  }
+  },
 });

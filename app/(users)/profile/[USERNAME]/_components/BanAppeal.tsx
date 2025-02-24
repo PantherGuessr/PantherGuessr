@@ -1,13 +1,22 @@
+import { useEffect, useState } from "react";
+import { useMutation } from "convex/react";
+import { LoaderCircle, ShieldX } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
-import { LoaderCircle, ShieldX } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface BanAppealsProps {
   profileUsername: string;
@@ -15,7 +24,7 @@ interface BanAppealsProps {
   hasActiveAppeal: boolean;
 }
 
-const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal } : BanAppealsProps) => {
+const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal }: BanAppealsProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [canSubmit, setCanSubmit] = useState(false);
   const [banAppealDialogOpen, setBanAppealDialogOpen] = useState(false);
@@ -26,8 +35,7 @@ const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal } : BanAppealsP
   useEffect(() => {
     if (!appealMessage || !agreementCheck) {
       setCanSubmit(true);
-    }
-    else {
+    } else {
       setCanSubmit(false);
     }
   }, [agreementCheck, appealMessage]);
@@ -37,7 +45,7 @@ const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal } : BanAppealsP
 
     await submitAppeal({
       banReason,
-      appealMessage
+      appealMessage,
     });
 
     setBanAppealDialogOpen(false);
@@ -55,7 +63,8 @@ const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal } : BanAppealsP
         <DialogHeader>
           <DialogTitle>Suspension Appeal</DialogTitle>
           <DialogDescription>
-            Submit a suspension appeal for PantherGuessr staff to read. The more seriously you take this appeal, the higher chance staff will take it seriously and issue a release of your suspension.
+            Submit a suspension appeal for PantherGuessr staff to read. The more seriously you take this appeal, the
+            higher chance staff will take it seriously and issue a release of your suspension.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -63,23 +72,13 @@ const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal } : BanAppealsP
             <Label htmlFor="username" className="text-left">
               Username
             </Label>
-            <Input
-              id="username"
-              disabled={true}
-              defaultValue={`@${profileUsername}`}
-              className="w-full"
-            />
+            <Input id="username" disabled={true} defaultValue={`@${profileUsername}`} className="w-full" />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="ban_reason" className="text-left">
               Suspension Reason
             </Label>
-            <Input
-              id="ban_reason"
-              disabled={true}
-              defaultValue={banReason ?? "None Provided"}
-              className="w-full"
-            />
+            <Input id="ban_reason" disabled={true} defaultValue={banReason ?? "None Provided"} className="w-full" />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="user_message" className="text-left">
@@ -102,28 +101,27 @@ const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal } : BanAppealsP
                 onCheckedChange={(checked) => setAgreementCheck(!!checked)}
               />
               <Label htmlFor="agreement" className="text-left">
-              I agree that if I am granted another chance, I will follow the <a href="/terms-and-conditions" className="underline">terms and conditions</a> for play.
+                I agree that if I am granted another chance, I will follow the{" "}
+                <a href="/terms-and-conditions" className="underline">
+                  terms and conditions
+                </a>{" "}
+                for play.
               </Label>
             </div>
           </div>
         </div>
         <DialogFooter>
           {isSubmitting ? (
-            <Button variant="default" type="submit" disabled={true}><LoaderCircle className="animate-spin mr-2" size={24} />Submitting Appeal</Button>
+            <Button variant="default" type="submit" disabled={true}>
+              <LoaderCircle className="animate-spin mr-2" size={24} />
+              Submitting Appeal
+            </Button>
           ) : (
             <>
-              <Button
-                variant="outline"
-                onClick={() => setBanAppealDialogOpen(false)}
-              >
+              <Button variant="outline" onClick={() => setBanAppealDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button
-                variant="default"
-                type="submit"
-                disabled={canSubmit}
-                onClick={handleSubmitAppeal}
-              >
+              <Button variant="default" type="submit" disabled={canSubmit} onClick={handleSubmitAppeal}>
                 Submit Appeal
               </Button>
             </>
@@ -133,5 +131,5 @@ const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal } : BanAppealsP
     </Dialog>
   );
 };
- 
+
 export default BanAppeal;
