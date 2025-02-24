@@ -53,7 +53,7 @@ export const Heading = () => {
       {!isAuthenticated && isLoading && (
         <>
           <div className="flex flex-col w-full h-full justify-center items-center pt-48">
-            <LoaderCircle className="animate-spin h-20 w-20" />
+            <LoaderCircle className="animate-spin-quick-load h-20 w-20" />
           </div>
           {/*<div className="flex items-center justify-center gap-x-4 w-full blur-md">*/}
           {/*  <Logo badge={false} logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />*/}
@@ -85,7 +85,7 @@ export const Heading = () => {
           </div>
           {/* mobile loading */}
           <div className={"md:hidden flex flex-col justify-center items-center"}>
-            <LoaderCircle className="h-20 w-20 animate-spin" />
+            <LoaderCircle className="h-20 w-20 animate-spin-quick-load" />
           </div>
         </>
       )}
