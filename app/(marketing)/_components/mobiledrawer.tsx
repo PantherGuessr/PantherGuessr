@@ -9,11 +9,15 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 
 import "./header-animation.css";
 
+import { useRouter } from "next/navigation";
+
 interface MobileDrawerProps {
   hasOngoingGame: boolean;
 }
 
 const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
+  const router = useRouter();
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -34,7 +38,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
                   onClick={() => {
                     document.body.classList.add("animate-body-opacity-scale");
                     setTimeout(() => {
-                      window.location.href = "/game/continue";
+                      router.push("/game/continue");
                     }, 800);
                   }}
                 >
@@ -50,7 +54,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
                   onClick={() => {
                     document.body.classList.add("animate-body-opacity-scale");
                     setTimeout(() => {
-                      window.location.href = "/game";
+                      router.push("/game");
                     }, 800);
                   }}
                 >
@@ -68,7 +72,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
                 onClick={() => {
                   document.body.classList.add("animate-body-opacity-scale");
                   setTimeout(() => {
-                    window.location.href = "/game";
+                    router.push("/game");
                   }, 800);
                 }}
               >

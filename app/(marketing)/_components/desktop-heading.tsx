@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import "../../(users)/profile/[USERNAME]/backgrounds.css";
 import "./heading.css";
 
+import { useRouter } from "next/navigation";
+
 import ProfileHoverCard from "@/components/profile-hover-card";
 import LargeStreakBadge from "./_panels/large-streak-badge";
 
@@ -30,14 +32,15 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
   streak,
   lastPlayedTime,
 }) => {
+  const router = useRouter();
+
   const [hoveredLeftMain, setHoveredLeftMain] = useState(false);
   const [hoveredCenterMain, setHoveredCenterMain] = useState(false);
   const [hoveredRightMain, setHoveredRightMain] = useState(false);
 
   const [welcomeMessage, setWelcomeMessage] = useState("");
-
   const handleGoToUserProfile = () => {
-    window.location.href = "/profile/" + username;
+    router.push(`/profile/${username}`);
   };
 
   useEffect(() => {

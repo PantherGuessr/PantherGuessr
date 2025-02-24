@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { Footer } from "@/components/footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -15,16 +15,10 @@ import WeeklyChallengeConfig from "./_weekly/weeklyconfig";
 
 const AdminPage = () => {
   const { tab } = useAdmin();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const router = useRouter();
 
   const handleTabChange = (value: string) => {
-    if (isMounted) {
-      window.history.pushState(null, "", `?tab=${value}`);
-    }
+    router.push(`?tab=${value}`);
   };
 
   return (

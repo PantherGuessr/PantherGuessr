@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, ReceiptText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,8 @@ interface GameHistoryProps {
 }
 
 const GameHistory = ({ recentGames, isCurrentUser }: GameHistoryProps) => {
+  const router = useRouter();
+
   // Calculate the time since a game was played
   const calculateTimeSince = (creationTime: number) => {
     // separate by minutes, hours, days, weeks, or months
@@ -48,7 +51,7 @@ const GameHistory = ({ recentGames, isCurrentUser }: GameHistoryProps) => {
 
   // Redirect to the leaderboard page for the game
   const handleLeaderboardRedirect = (gameId: string) => {
-    window.location.href = `/results/${gameId}`;
+    router.push(`/results/${gameId}`);
   };
 
   return (

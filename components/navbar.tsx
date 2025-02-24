@@ -27,6 +27,7 @@ import { Toaster } from "./ui/toaster";
 
 export const Navbar = () => {
   const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
   const { isAuthenticated, isLoading } = useConvexAuth();
   const clerkUser = useUser();
   const user = useQuery(api.users.getUserByUsername, { username: clerkUser.user?.username ?? "" });
@@ -41,6 +42,11 @@ export const Navbar = () => {
   const scrolled = useScrollTop();
 
   const [isUserLoading, setIsUserLoading] = useState(true);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   useEffect(() => {
     if (user !== undefined) {
       setIsUserLoading(false);
@@ -72,7 +78,7 @@ export const Navbar = () => {
                 <Skeleton className="h-8 w-8 rounded-full" />
               </div>
             ))}
-          {!isLoading && !isAuthenticated && (
+          {!isLoading && !isAuthenticated && isMounted && (
             <>
               <div className="hidden sm:block ml-auto space-x-2">
                 <SignInButton mode="modal" fallbackRedirectUrl={window.location.href}>
