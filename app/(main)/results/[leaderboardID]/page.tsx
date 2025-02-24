@@ -39,8 +39,21 @@ const ResultPage = ({ params }: Props) => {
   const [oldLevel, setOldLevel] = useState<number>(0);
   const [newLevel, setNewLevel] = useState<number>(0);
   const [isFromGame, setIsFromGame] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isFromGame && leaderboardEntry && isMounted) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete("fromGame");
+      window.history.pushState({}, "", newUrl.toString());
+    }
+  }, [isMounted, leaderboardEntry, isFromGame]);
 
   // initially set that it is from game, but do not update after that
   useEffect(() => {
@@ -174,12 +187,6 @@ const ResultPage = ({ params }: Props) => {
         </Link>
       </div>
     );
-  }
-
-  if (isFromGame && leaderboardEntry) {
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.delete("fromGame");
-    window.history.pushState({}, "", newUrl.toString());
   }
 
   return (

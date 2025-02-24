@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { Footer } from "@/components/footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,9 +15,14 @@ import WeeklyChallengeConfig from "./_weekly/weeklyconfig";
 
 const AdminPage = () => {
   const { tab } = useAdmin();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleTabChange = (value: string) => {
-    if (typeof window !== "undefined") {
+    if (isMounted) {
       window.history.pushState(null, "", `?tab=${value}`);
     }
   };
