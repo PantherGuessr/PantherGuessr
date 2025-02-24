@@ -15,7 +15,9 @@ const AdminPage = () => {
   const { tab } = useAdmin();
 
   const handleTabChange = (value: string) => {
-    window.history.pushState(null, "", `?tab=${value}`);
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", `?tab=${value}`);
+    }
   };
 
   return (

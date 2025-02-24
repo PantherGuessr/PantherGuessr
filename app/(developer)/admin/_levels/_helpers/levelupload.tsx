@@ -76,7 +76,7 @@ const LevelUpload = () => {
       if (selectedImage.type === "image/heic" || selectedImage.type === "image/heif") {
         imageConverted = true;
         convertedBuffer = await convert({
-          buffer: Buffer.from(imageBuffer), // the HEIC file buffer
+          buffer: imageBuffer, // the HEIC file buffer
           format: "JPEG", // output format (change to 'PNG' if needed)
           quality: 1, // the jpeg compression quality, between 0 and 1
         });
