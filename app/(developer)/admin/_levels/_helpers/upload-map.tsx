@@ -2,8 +2,9 @@ import "leaflet/dist/leaflet.css";
 
 import { useEffect, useState } from "react";
 import L from "leaflet";
-import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
+import { CircleMarker, Marker, useMapEvents } from "react-leaflet";
 
+import NextjsMap from "@/components/map/dynamic-map";
 import { useMarker } from "./MarkerContext"; // Adjust the path as needed
 
 const UploadMap = () => {
@@ -41,7 +42,7 @@ const UploadMap = () => {
 
   return (
     <div className="flex min-h-full min-w-full grow">
-      <MapContainer
+      <NextjsMap
         className="w-full h-full rounded-md"
         attributionControl={true}
         center={[33.793332, -117.851475]}
@@ -49,12 +50,8 @@ const UploadMap = () => {
         scrollWheelZoom={true}
         doubleClickZoom={true}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
         <LocationMarker />
-      </MapContainer>
+      </NextjsMap>
     </div>
   );
 };
