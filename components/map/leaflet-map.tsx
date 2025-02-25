@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 import type { MapOptions } from "leaflet";
 import { MapContainer, TileLayer } from "react-leaflet";

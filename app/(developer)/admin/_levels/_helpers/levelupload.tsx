@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import convert from "heic-convert";
 import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
 
+import NoSSRWrapper from "@/components/map/no-ssr-wrapper";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -189,7 +190,9 @@ const LevelUpload = () => {
               />
             </div>
             <div className="flex w-full h-80 grow py-2">
-              <UploadMap />
+              <NoSSRWrapper>
+                <UploadMap />
+              </NoSSRWrapper>
             </div>
             {isSubmitting ? (
               <Button variant="default" className="w-full my-2 flex flex-row" disabled={true}>

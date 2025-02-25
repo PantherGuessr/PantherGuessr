@@ -1,10 +1,11 @@
+"use client";
+
 import "leaflet/dist/leaflet.css";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import L from "leaflet";
-import { useMapEvents } from "react-leaflet";
 
-import { LazyCircleMarker, LazyMap, LazyMarker } from "@/components/map/lazy-loaders"; // Adjust the path as needed
+import { LazyLocationMarker, LazyMap } from "@/components/map/lazy-loaders";
 import { useMarker } from "./MarkerContext";
 
 const UploadMap = () => {
@@ -16,29 +17,6 @@ const UploadMap = () => {
     iconSize: [48, 48],
     iconAnchor: [24, 48],
   });
-
-  function LocationMarker() {
-    useMapEvents({
-      click(e) {
-        const position = e.latlng;
-        setLocalMarkerPosition(position);
-        setMarkerHasBeenPlaced(true);
-      },
-    });
-
-    useEffect(() => {
-      if (!markerHasBeenPlaced) {
-        setLocalMarkerPosition(null);
-      }
-    });
-
-    return localMarkerPosition === null ? null : (
-      <>
-        <LazyMarker icon={pantherGuessrMarkerIcon} position={localMarkerPosition} />
-        <LazyCircleMarker center={localMarkerPosition} pathOptions={{ color: "#a50034" }} radius={3} />
-      </>
-    );
-  }
 
   return (
     <div className="flex min-h-full min-w-full grow">
@@ -52,7 +30,15 @@ const UploadMap = () => {
           doubleClickZoom={true}
         >
           <Suspense fallback={<></>}>
-            <LocationMarker />
+            <LazyLocationMarker
+              localMarkerPosition={localMarkerPosition}
+              setLocalMarkerPosition={(pos) => {
+                setLocalMarkerPosition(pos);
+                setMarkerHasBeenPlaced(true);
+              }}
+              markerHasBeenPlaced={markerHasBeenPlaced}
+              pantherGuessrMarkerIcon={pantherGuessrMarkerIcon}
+            />
           </Suspense>
         </LazyMap>
       </Suspense>

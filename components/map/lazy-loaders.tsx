@@ -9,3 +9,7 @@ export const LazyMarker = dynamic(async () => (await import("react-leaflet")).Ma
 export const LazyCircleMarker = dynamic(async () => (await import("react-leaflet")).CircleMarker, {
   ssr: false,
 });
+
+export const LazyLocationMarker = dynamic(() => import("./location-marker"), {
+  ssr: false,
+});
