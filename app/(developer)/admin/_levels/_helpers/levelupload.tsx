@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import imageCompression from "browser-image-compression";
@@ -18,8 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { api } from "@/convex/_generated/api";
+import DynamicUploadMap from "./dynamic-upload-map";
 import { useMarker } from "./MarkerContext";
-import UploadMap from "./upload-map";
 
 const tagsList = [
   { value: "Standard", label: "Standard", icon: University },
@@ -189,7 +191,7 @@ const LevelUpload = () => {
               />
             </div>
             <div className="flex w-full h-80 grow py-2">
-              <UploadMap />
+              <DynamicUploadMap />
             </div>
             {isSubmitting ? (
               <Button variant="default" className="w-full my-2 flex flex-row" disabled={true}>

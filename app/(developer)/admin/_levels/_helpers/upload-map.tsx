@@ -1,10 +1,12 @@
+"use client";
+
 import "leaflet/dist/leaflet.css";
 
 import { useEffect, useState } from "react";
 import L from "leaflet";
 import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 
-import { useMarker } from "./MarkerContext"; // Adjust the path as needed
+import { useMarker } from "./MarkerContext";
 
 const UploadMap = () => {
   const { localMarkerPosition, setLocalMarkerPosition } = useMarker();

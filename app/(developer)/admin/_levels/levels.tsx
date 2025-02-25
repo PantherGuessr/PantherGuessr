@@ -28,8 +28,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { DataTable } from "./_helpers/datatable";
+import DynamicPreviewMap from "./_helpers/dynamic-preview-map";
 import { useMarker } from "./_helpers/MarkerContext";
-import PreviewMap from "./_helpers/preview-map";
 
 type Level = {
   _id: Id<"levels">;
@@ -163,7 +163,7 @@ const Levels = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="flex w-full h-80 grow py-2">
-            <PreviewMap />
+            <DynamicPreviewMap />
           </div>
         </DialogContent>
       </Dialog>
