@@ -12,6 +12,10 @@ const UploadMap = () => {
   const { localMarkerPosition, setLocalMarkerPosition } = useMarker();
   const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
 
+  if (typeof window === "undefined") {
+    return <></>;
+  }
+
   const pantherGuessrMarkerIcon = new L.Icon({
     iconUrl: "/PantherGuessrPin.svg",
     iconSize: [48, 48],

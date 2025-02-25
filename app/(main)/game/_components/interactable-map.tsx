@@ -16,6 +16,10 @@ const InteractableMap = () => {
   const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
   const prevCorrectLocation = useRef<LatLng | null>(null);
 
+  if (typeof window === "undefined") {
+    return <></>;
+  }
+
   const pantherGuessrMarkerIcon = new L.Icon({
     iconUrl: "/PantherGuessrPin.svg",
     iconSize: [48, 48],

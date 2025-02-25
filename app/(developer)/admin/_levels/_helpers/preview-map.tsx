@@ -11,6 +11,10 @@ const PreviewMap = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { localMarkerPosition, setLocalMarkerPosition } = useMarker();
 
+  if (typeof window === "undefined") {
+    return <></>;
+  }
+
   const pantherGuessrMarkerIcon = new L.Icon({
     iconUrl: "/PantherGuessrPin.svg",
     iconSize: [48, 48],
