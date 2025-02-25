@@ -1,10 +1,11 @@
 import "leaflet/dist/leaflet.css";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import L from "leaflet";
-import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
+import { useMapEvents } from "react-leaflet";
 
-import { useMarker } from "./MarkerContext"; // Adjust the path as needed
+import { LazyCircleMarker, LazyMap, LazyMarker } from "@/components/map/lazy-loaders"; // Adjust the path as needed
+import { useMarker } from "./MarkerContext";
 
 const UploadMap = () => {
   const { localMarkerPosition, setLocalMarkerPosition } = useMarker();
@@ -33,28 +34,28 @@ const UploadMap = () => {
 
     return localMarkerPosition === null ? null : (
       <>
-        <Marker icon={pantherGuessrMarkerIcon} position={localMarkerPosition} />
-        <CircleMarker center={localMarkerPosition} pathOptions={{ color: "#a50034" }} radius={3} />
+        <LazyMarker icon={pantherGuessrMarkerIcon} position={localMarkerPosition} />
+        <LazyCircleMarker center={localMarkerPosition} pathOptions={{ color: "#a50034" }} radius={3} />
       </>
     );
   }
 
   return (
     <div className="flex min-h-full min-w-full grow">
-      <MapContainer
-        className="w-full h-full rounded-md"
-        attributionControl={true}
-        center={[33.793332, -117.851475]}
-        zoom={16}
-        scrollWheelZoom={true}
-        doubleClickZoom={true}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <LocationMarker />
-      </MapContainer>
+      <Suspense fallback={<div className="h-[200px]" />}>
+        <LazyMap
+          className="w-full h-full rounded-md"
+          attributionControl={true}
+          center={[33.793332, -117.851475]}
+          zoom={16}
+          scrollWheelZoom={true}
+          doubleClickZoom={true}
+        >
+          <Suspense fallback={<></>}>
+            <LocationMarker />
+          </Suspense>
+        </LazyMap>
+      </Suspense>
     </div>
   );
 };
