@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { GitBranch, GlobeLock, Heart, Menu, Scale } from "lucide-react";
 
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
+import pk from "../package.json";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,17 +22,25 @@ export const Footer = () => {
         <p className="text-sm mr-auto ml-2">© 2025 • PantherGuessr</p>
         <Link href="/credits">
           <Button variant="ghost" size="sm">
+            <Heart className="w-4 h-4 mr-2" />
             Credits
           </Button>
         </Link>
         <Link href="/privacy-policy">
           <Button variant="ghost" size="sm">
+            <GlobeLock className="w-4 h-4 mr-2" />
             Privacy Policy
           </Button>
         </Link>
         <Link href="/terms-and-conditions">
           <Button variant="ghost" size="sm">
+            <Scale className="w-4 h-4 mr-2" />
             Terms & Conditions
+          </Button>
+        </Link>
+        <Link href="/release-notes">
+          <Button variant="ghost" size="sm">
+            <GitBranch className="w-4 h-4 mr-2" /> {pk.version}
           </Button>
         </Link>
         <ModeToggle />
@@ -45,10 +54,16 @@ export const Footer = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <Link href="/credits">
-              <DropdownMenuItem>Credits</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Heart className="w-4 h-4 mr-2" />
+                Credits
+              </DropdownMenuItem>
             </Link>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Legal</DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger>
+                <Scale className="w-4 h-4 mr-2" />
+                Legal
+              </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   <Link href="/privacy-policy">
@@ -60,6 +75,11 @@ export const Footer = () => {
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
+            <Link href="/release-notes">
+              <DropdownMenuItem>
+                <GitBranch className="w-4 h-4 mr-2" /> {pk.version}
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
         <p className="text-sm mx-auto">© 2025 • PantherGuessr</p>
