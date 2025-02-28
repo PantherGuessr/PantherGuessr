@@ -71,7 +71,7 @@ We use GitHub issues to track bugs and errors. If you run into an issue with the
 
 - Open an [Issue](https://github.com/PantherGuessr/PantherGuessr/issues/new/choose). (Since we can't be sure at this point whether it is a bug or not, we ask you not to talk about a bug yet and not to label the issue.)
 - Explain the behavior you would expect and the actual behavior.
-- Please provide as much context as possible and describe the *reproduction steps* that someone else can follow to recreate the issue on their own. This usually includes your code. For good bug reports you should isolate the problem and create a reduced test case.
+- Please provide as much context as possible and describe the _reproduction steps_ that someone else can follow to recreate the issue on their own. This usually includes your code. For good bug reports you should isolate the problem and create a reduced test case.
 - Provide the information you collected in the previous section.
 
 Once it's filed:
@@ -115,15 +115,15 @@ We are excited that you are interested in contributing to PantherGuessr! Follow 
 
 2. **Clone Your Fork**: Clone your forked repository to your local machine using the following command:
 
-  ```sh
-  git clone https://github.com/YOUR_USERNAME/PantherGuessr.git
-  ```
+```sh
+git clone https://github.com/YOUR_USERNAME/PantherGuessr.git
+```
 
 3. **Navigate to the Project Directory**: Change into the project directory:
 
-  ```sh
-  cd PantherGuessr
-  ```
+```sh
+cd PantherGuessr
+```
 
 4. **Install Node**: Install the correct version of node (v22.5.1) for the project.
 
@@ -138,55 +138,55 @@ We are excited that you are interested in contributing to PantherGuessr! Follow 
 
 Run the follow commands to make sure that you are on the correct versions:
 
-  ```sh
-  node -v # Should be v22.5.1
-  npm -v # Should be 10.8.3
-  npx -v # Should be 10.8.3
-  ```
+```sh
+node -v # Should be v22.5.1
+npm -v # Should be 10.8.3
+npx -v # Should be 10.8.3
+```
 
 5. **Install Dependencies**: Install the required dependencies using npm:
 
-  ```sh
-  npm install
-  ```
+```sh
+npm install
+```
 
 6. **Set Up Environment Variables**: Create an `.env.local` file in the root directory and add the necessary environment variables. You can find the required variables in the README file under the "Environment Variables" section.
 
 7. **Start the Development Server**: Start the development server to see your changes live:
 
-  First attach to the Convex database by running the following:
+First attach to the Convex database by running the following:
 
-  ```sh
-  npx convex dev
-  ```
+```sh
+npx convex dev
+```
 
-  Then, in a seperate terminal, attach to the development server by running the following:
+Then, in a seperate terminal, attach to the development server by running the following:
 
-  ```sh
-  npm run dev
-  ```
+```sh
+npm run dev
+```
 
 #### Making Changes
 
 1. **Creating a New Branch**: Create a new branch for your changes:
 
-  ```sh
-  git checkout -b my-feature-branch
-  ```
+```sh
+git checkout -b my-feature-branch
+```
 
 2. **Make Your Changes**: Make your changes to the codebase. Ensure your code follows the project's coding standards and works.
 
 3. **Commit Your Changes**: Commit your changes with a clear and descriptive commit message:
 
-  ```sh
-  git commit -m "Add new feature
-  ```
+```sh
+git commit -m "Add new feature
+```
 
 4. **Push Your Changes:** Push your changes to your forked repository:
 
-  ```sh
-  git push origin my-feature-branch
-  ```
+```sh
+git push origin my-feature-branch
+```
 
 #### Submitting a Pull Request
 
@@ -204,9 +204,9 @@ Thank you for contributing to PantherGuessr. We look forward to your contributio
 
 We use Prettier and ESLint for all of our styling needs! If you are using an IDE such as Visual Studio Code, these formatting changes should be applied to your file on save, however, you can always manually trigger a format by running the following command:
 
-  ```sh
-  npm run format
-  ```
+```sh
+npm run format
+```
 
 ### Commit Messages
 
