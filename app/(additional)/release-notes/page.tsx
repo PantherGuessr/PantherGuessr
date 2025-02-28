@@ -9,14 +9,17 @@ import { Separator } from "@/components/ui/separator";
 import ReleaseCard from "./_components/release-card";
 
 const ReleaseNotes = () => {
+  const owner = "PantherGuessr";
+  const repo = "PantherGuessr";
+
   const [releases, setReleases] = useState<any[] | undefined>(undefined);
 
   useEffect(() => {
     const fetchReleases = async () => {
       const octokit = new Octokit();
       const response = await octokit.request("GET /repos/{owner}/{repo}/releases", {
-        owner: "PantherGuessr",
-        repo: "PantherGuessr",
+        owner,
+        repo,
       });
       setReleases(response.data);
     };
@@ -34,23 +37,28 @@ const ReleaseNotes = () => {
           <div className="w-full max-w-4xl mx-auto">
             {releases !== undefined && releases.length !== 0 ? (
               releases.map((release, index) => (
-                <>
-                  <ReleaseCard
-                    key={release.id}
-                    releaseNumber={index}
-                    name={release.name}
-                    body={release.body}
-                    publishDate={release.published_at}
-                    url={release.html_url}
-                  />
-                </>
+                <ReleaseCard
+                  owner={owner}
+                  repo={repo}
+                  key={release.id}
+                  releaseNumber={index}
+                  name={release.name}
+                  body={release.body}
+                  publishDate={release.published_at}
+                  url={release.html_url}
+                />
               ))
             ) : (
               <div className="flex justify-center items-center">
                 <Loader2 className="w-10 h-10 animate-spin" />
               </div>
             )}
-            {releases !== undefined && <p className="italic font-bold text-foreground/60">That's all folks!</p>}
+            {releases !== undefined && (
+              <>
+                <Separator />
+                <p className="pt-2 italic font-bold text-foreground/60">That's all folks!</p>
+              </>
+            )}
           </div>
         </div>
       </div>
