@@ -4,6 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import imageCompression from "browser-image-compression";
 import { useMutation } from "convex/react";
 import convert from "heic-convert";
+import L from "leaflet";
 import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,11 @@ const LevelUpload = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
   const [levelCreatorDialogOpen, setLevelCreatorDialogOpen] = useState(false);
+
+  // Added states from UploadMap
+  const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
+  const [pantherGuessrMarkerIcon, setPantherGuessrMarkerIcon] = useState<L.Icon | null>(null);
+
   const generateUploadUrl = useMutation(api.levelcreator.generateUploadUrl);
   const createLevelWithImageStorageId = useMutation(api.levelcreator.createLevelWithImageStorageId);
 
@@ -195,7 +201,12 @@ const LevelUpload = () => {
               />
             </div>
             <div className="flex w-full h-80 grow py-2">
-              <DynamicUploadMap />
+              <DynamicUploadMap
+                markerHasBeenPlaced={markerHasBeenPlaced}
+                setMarkerHasBeenPlaced={setMarkerHasBeenPlaced}
+                pantherGuessrMarkerIcon={pantherGuessrMarkerIcon}
+                setPantherGuessrMarkerIcon={setPantherGuessrMarkerIcon}
+              />
             </div>
             {isSubmitting ? (
               <Button variant="default" className="w-full my-2 flex flex-row" disabled={true}>

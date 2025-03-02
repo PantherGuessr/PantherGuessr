@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import L from "leaflet";
 
 import { LazyLocationMarker, LazyMap } from "@/components/map/lazy-loaders";
@@ -8,10 +8,20 @@ import LeafletStyles from "@/components/map/leaflet-styles";
 import MarkerSetup from "@/components/map/marker-setup";
 import { useMarker } from "./MarkerContext";
 
-const UploadMap = () => {
+interface UploadMapProps {
+  markerHasBeenPlaced: boolean;
+  setMarkerHasBeenPlaced: (placed: boolean) => void;
+  pantherGuessrMarkerIcon: L.Icon | null;
+  setPantherGuessrMarkerIcon: (icon: L.Icon) => void;
+}
+
+const UploadMap = ({
+  markerHasBeenPlaced,
+  setMarkerHasBeenPlaced,
+  pantherGuessrMarkerIcon,
+  setPantherGuessrMarkerIcon,
+}: UploadMapProps) => {
   const { localMarkerPosition, setLocalMarkerPosition } = useMarker();
-  const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
-  const [pantherGuessrMarkerIcon, setPantherGuessrMarkerIcon] = useState<L.Icon | null>(null);
 
   return (
     <div className="flex min-h-full min-w-full grow">
