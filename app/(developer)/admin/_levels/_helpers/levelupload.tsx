@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 import { useUser } from "@clerk/nextjs";
 import imageCompression from "browser-image-compression";
 import { useMutation } from "convex/react";
 import convert from "heic-convert";
-import L from "leaflet";
+// import L from "leaflet";
 import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -20,13 +20,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { api } from "@/convex/_generated/api";
-import { useMarker } from "./MarkerContext";
+
+// import { useMarker } from "./MarkerContext";
 
 // Dynamically import the map with SSR disabled
-const DynamicUploadMap = dynamic(() => import("./upload-map"), {
-  ssr: false,
-  loading: () => <div className="h-80 w-full flex items-center justify-center">Loading map...</div>,
-});
+// const DynamicUploadMap = dynamic(() => import("./upload-map"), {
+//   ssr: false,
+//   loading: () => <div className="h-80 w-full flex items-center justify-center">Loading map...</div>,
+// });
 
 const tagsList = [
   { value: "Standard", label: "Standard", icon: University },
@@ -38,7 +39,7 @@ const tagsList = [
 const LevelUpload = () => {
   const user = useUser();
 
-  const { localMarkerPosition } = useMarker();
+  // const { localMarkerPosition } = useMarker();
   const imageInput = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [description, setDescription] = useState("");
@@ -48,27 +49,27 @@ const LevelUpload = () => {
   const [levelCreatorDialogOpen, setLevelCreatorDialogOpen] = useState(false);
 
   // Added states from UploadMap
-  const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
-  const [pantherGuessrMarkerIcon, setPantherGuessrMarkerIcon] = useState<L.Icon | null>(null);
+  // const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
+  // const [pantherGuessrMarkerIcon, setPantherGuessrMarkerIcon] = useState<L.Icon | null>(null);
 
   const generateUploadUrl = useMutation(api.levelcreator.generateUploadUrl);
   const createLevelWithImageStorageId = useMutation(api.levelcreator.createLevelWithImageStorageId);
 
   // disable submit button if no image, description, or marker position
   useEffect(() => {
-    if (!selectedImage || !description || !localMarkerPosition) {
+    if (!selectedImage || !description) {
       setSubmitButtonDisabled(true);
     } else {
       setSubmitButtonDisabled(false);
     }
-  }, [selectedImage, description, localMarkerPosition]);
+  }, [selectedImage, description]);
 
   async function handleImageSubmission() {
     const description = document.getElementById("description") as HTMLInputElement;
-    const markerPosition = localMarkerPosition;
+    // const markerPosition = localMarkerPosition;
 
     // check if form has all required fields
-    if (!selectedImage || !description || !markerPosition) {
+    if (!selectedImage || !description) {
       alert("Please fill out all required fields.");
       return;
     } else {
@@ -131,8 +132,8 @@ const LevelUpload = () => {
       await createLevelWithImageStorageId({
         storageId,
         description: description.value,
-        latitude: markerPosition.lat,
-        longitude: markerPosition.lng,
+        latitude: -33.8688,
+        longitude: -151.2093,
         authorUsername: username,
         tags: selectedTags,
       });
@@ -201,12 +202,12 @@ const LevelUpload = () => {
               />
             </div>
             <div className="flex w-full h-80 grow py-2">
-              <DynamicUploadMap
+              {/* <DynamicUploadMap
                 markerHasBeenPlaced={markerHasBeenPlaced}
                 setMarkerHasBeenPlaced={setMarkerHasBeenPlaced}
                 pantherGuessrMarkerIcon={pantherGuessrMarkerIcon}
                 setPantherGuessrMarkerIcon={setPantherGuessrMarkerIcon}
-              />
+              /> */}
             </div>
             {isSubmitting ? (
               <Button variant="default" className="w-full my-2 flex flex-row" disabled={true}>

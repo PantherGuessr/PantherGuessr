@@ -42,8 +42,8 @@ const InGameSidebar = () => {
     markerHasBeenPlaced,
     isSubmittingGuess,
     submitGuess,
-    markerPosition,
-    correctLocation,
+    // markerPosition,
+    // correctLocation,
     nextRound,
     scoreAwarded,
     distanceFromTarget,
@@ -55,10 +55,10 @@ const InGameSidebar = () => {
    * Only submits if a marker has been placed and there is a valid marker position
    */
   const handleSubmittingGuess = () => {
-    if (!markerHasBeenPlaced || !markerPosition) return;
+    if (!markerHasBeenPlaced) return;
 
-    const { lat, lng } = markerPosition;
-    submitGuess(lat, lng);
+    // const { lat, lng } = markerPosition;
+    submitGuess(1, 1);
   };
 
   /**
@@ -327,7 +327,7 @@ const InGameSidebar = () => {
             <Button disabled={true} className="w-full">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
             </Button>
-          ) : correctLocation ? (
+          ) : true ? (
             <Button disabled={false} onClick={handleNextRound} className="w-full">
               {currentRound >= levels.length ? "FINISH GAME" : "NEXT ROUND"}
             </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -24,11 +24,16 @@ type Props = {
   };
 };
 
+// Component that uses useSearchParams
+const SearchParamsContent = () => {
+  const searchParams = useSearchParams();
+  const isFromGame = searchParams.get("fromGame") === "true";
+  return { isFromGame };
+};
+
 const ResultPage = ({ params }: Props) => {
   const currentUser = useQuery(api.users.current);
   const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
-
-  const searchParams = useSearchParams();
 
   const leaderboardId = params.leaderboardID;
   const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardId });
@@ -43,6 +48,17 @@ const ResultPage = ({ params }: Props) => {
 
   const router = useRouter();
 
+  // Get isFromGame state from the SearchParams component
+  const SearchParamsWrapper = () => {
+    const { isFromGame: fromGameParam } = SearchParamsContent();
+
+    useEffect(() => {
+      setIsFromGame(fromGameParam);
+    }, [fromGameParam]);
+
+    return null;
+  };
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -54,13 +70,6 @@ const ResultPage = ({ params }: Props) => {
       window.history.pushState({}, "", newUrl.toString());
     }
   }, [isMounted, leaderboardEntry, isFromGame]);
-
-  // initially set that it is from game, but do not update after that
-  useEffect(() => {
-    if (searchParams.get("fromGame") === "true") {
-      setIsFromGame(true);
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     if (isBanned) {
@@ -191,6 +200,9 @@ const ResultPage = ({ params }: Props) => {
 
   return (
     <div className="min-h-full flex flex-col">
+      <Suspense fallback={null}>
+        <SearchParamsWrapper />
+      </Suspense>
       <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
         <div ref={cardRef} className="bg-transparent">
           <Card className="w-[350px] shadow-xl">

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMutation, useQuery } from "convex/react";
-import { LatLng } from "leaflet";
+// import { LatLng } from "leaflet";
 import { MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
-import { useMarker } from "../_levels/_helpers/MarkerContext";
+// import { useMarker } from "../_levels/_helpers/MarkerContext";
 import PreviewMap from "../_levels/_helpers/preview-map";
 import { DataTable } from "./helpers/datatable";
 
@@ -46,7 +46,7 @@ type Level = {
 const WeeklyChallengeConfig = () => {
   // get marker context positions
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { localMarkerPosition, setLocalMarkerPosition } = useMarker();
+  // const { localMarkerPosition, setLocalMarkerPosition } = useMarker();
 
   const defaultImageSource = "/Invalid-Image.jpg";
 
@@ -114,15 +114,15 @@ const WeeklyChallengeConfig = () => {
 
   // closes map dialog
   const handleMapDialogClose = () => {
-    setLocalMarkerPosition(null);
+    // setLocalMarkerPosition(null);
     setOpenMapDialogId(null);
   };
 
   // opens map dialog
   const handleMapDialogOpen = (levelId: Id<"levels">, latitude: number, longitude: number) => {
     console.log("handleMapDialogOpen called with:", { levelId, latitude, longitude });
-    const latlng = new LatLng(latitude, longitude);
-    setLocalMarkerPosition(latlng);
+    // const latlng = new LatLng(latitude, longitude);
+    // setLocalMarkerPosition(latlng);
     setOpenMapDialogId(levelId);
   };
 

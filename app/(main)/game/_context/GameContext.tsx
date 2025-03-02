@@ -2,7 +2,8 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
-import { LatLng } from "leaflet";
+
+// import { LatLng } from "leaflet";
 
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
@@ -26,10 +27,10 @@ interface GameContextType {
   isSubmittingGuess: boolean;
   setIsSubmittingGuess: (button: boolean) => void;
   submitGuess: (lat: number, lng: number) => Promise<void>;
-  markerPosition: LatLng | null;
-  setMarkerPosition: (position: LatLng | null) => void;
-  correctLocation: LatLng | null;
-  setCorrectLocation: (position: LatLng | null) => void;
+  // markerPosition: LatLng | null;
+  // setMarkerPosition: (position: LatLng | null) => void;
+  // correctLocation: LatLng | null;
+  // setCorrectLocation: (position: LatLng | null) => void;
   nextRound: () => void;
   scoreAwarded: number | null;
   distanceFromTarget: number | null;
@@ -51,8 +52,8 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
   const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
   const [isSubmittingGuess, setIsSubmittingGuess] = useState(false);
-  const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
-  const [correctLocation, setCorrectLocation] = useState<LatLng | null>(null);
+  // const [markerPosition, setMarkerPosition] = useState<LatLng | null>(null);
+  // const [correctLocation, setCorrectLocation] = useState<LatLng | null>(null);
   const [scoreAwarded, setScoreAwarded] = useState<number | null>(null);
   const [distanceFromTarget, setDistanceFromTarget] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -136,7 +137,7 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
       // checks the guess and updates the scores, correct values, distances, and scores arrays
       const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
 
-      setCorrectLocation(new LatLng(result.correctLat, result.correctLng));
+      // setCorrectLocation(new LatLng(result.correctLat, result.correctLng));
 
       setDistanceFromTarget(result.distanceAway);
       setScoreAwarded(result.score);
@@ -214,8 +215,8 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
 
       // resets marker positions and score values
       setMarkerHasBeenPlaced(false);
-      setMarkerPosition(null);
-      setCorrectLocation(null);
+      // setMarkerPosition(null);
+      // setCorrectLocation(null);
       setDistanceFromTarget(null);
       setScoreAwarded(null);
     }
@@ -248,10 +249,10 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
         isSubmittingGuess,
         setIsSubmittingGuess,
         submitGuess,
-        markerPosition,
-        setMarkerPosition,
-        correctLocation,
-        setCorrectLocation,
+        // markerPosition,
+        // setMarkerPosition,
+        // correctLocation,
+        // setCorrectLocation,
         nextRound,
         scoreAwarded,
         distanceFromTarget,

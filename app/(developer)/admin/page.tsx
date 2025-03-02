@@ -1,27 +1,23 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { Loader2 } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Analytics from "./_analytics/analytics";
-import { useAdmin } from "./_components/adminprovider";
 import LevelUpload from "./_levels/_helpers/levelupload";
-import { MarkerProvider } from "./_levels/_helpers/MarkerContext";
 import Levels from "./_levels/levels";
 import SiteSettings from "./_sitesettings/sitesettings";
 import WeeklyChallengeConfig from "./_weekly/weeklyconfig";
 
-const AdminPage = () => {
-  const { tab } = useAdmin();
-  const router = useRouter();
-
+const AdminContent = () => {
   return (
     <div className="min-h-full flex flex-col">
       <div className="flex flex-col text-center gap-y-8 flex-1 px-6 pb-10">
         <h1 className="text-4xl">Admin Dashboard</h1>
-        <Tabs defaultValue={tab} onValueChange={(value: string) => router.push(`?tab=${value}`)}>
+        <Tabs tabIndex={0}>
           <TabsList>
             <TabsTrigger value="analytics" id="analytics-page-trigger">
               Analytics
@@ -48,26 +44,22 @@ const AdminPage = () => {
             </Card>
           </TabsContent>
           <TabsContent value="levels">
-            <MarkerProvider>
-              <Card className="mt-8 mx-10 p-2">
-                <CardHeader className="flex flex-row justify-between">
-                  <p className="text-4xl ml-2 text-start ">Levels</p>
-                  <LevelUpload />
-                </CardHeader>
-                <CardContent>
-                  <Levels />
-                </CardContent>
-              </Card>
-            </MarkerProvider>
+            <Card className="mt-8 mx-10 p-2">
+              <CardHeader className="flex flex-row justify-between">
+                <p className="text-4xl ml-2 text-start ">Levels</p>
+                <LevelUpload />
+              </CardHeader>
+              <CardContent>
+                <Levels />
+              </CardContent>
+            </Card>
           </TabsContent>
           <TabsContent value="weekly">
             <Card className="mt-8 mx-10 p-2">
-              <MarkerProvider>
-                <CardHeader className="text-4xl ml-2 text-start">Weekly Challenges</CardHeader>
-                <CardContent>
-                  <WeeklyChallengeConfig />
-                </CardContent>
-              </MarkerProvider>
+              <CardHeader className="text-4xl ml-2 text-start">Weekly Challenges</CardHeader>
+              <CardContent>
+                <WeeklyChallengeConfig />
+              </CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="settings">
@@ -85,4 +77,17 @@ const AdminPage = () => {
   );
 };
 
-export default AdminPage;
+// Main page component with Suspense
+export default function AdminPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center h-screen">
+          <Loader2 className="h-10 w-10 animate-spin" />
+        </div>
+      }
+    >
+      <AdminContent />
+    </Suspense>
+  );
+}

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "convex/react";
-import { LatLng } from "leaflet";
+// import { LatLng } from "leaflet";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -28,8 +28,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { DataTable } from "./_helpers/datatable";
-import { useMarker } from "./_helpers/MarkerContext";
-import PreviewMap from "./_helpers/preview-map";
+
+// import { useMarker } from "./_helpers/MarkerContext";
+
+// import PreviewMap from "./_helpers/preview-map";
 
 type Level = {
   _id: Id<"levels">;
@@ -44,7 +46,7 @@ type Level = {
 
 const Levels = () => {
   // get marker context positions
-  const { setLocalMarkerPosition } = useMarker();
+  // const { setLocalMarkerPosition } = useMarker();
 
   const defaultImageSource = "/Invalid-Image.jpg";
 
@@ -86,15 +88,15 @@ const Levels = () => {
 
   // closes map dialog
   const handleMapDialogClose = () => {
-    setLocalMarkerPosition(null);
+    // setLocalMarkerPosition(null);
     setOpenMapDialogId(null);
   };
 
   // opens map dialog
   const handleMapDialogOpen = (levelId: Id<"levels">, latitude: number, longitude: number) => {
     console.log("handleMapDialogOpen called with:", { levelId, latitude, longitude });
-    const latlng = new LatLng(latitude, longitude);
-    setLocalMarkerPosition(latlng);
+    // const latlng = new LatLng(latitude, longitude);
+    // setLocalMarkerPosition(latlng);
     setOpenMapDialogId(levelId);
   };
 
@@ -162,9 +164,7 @@ const Levels = () => {
               (Latitude: {row.latitude}, Longitude: {row.longitude})
             </DialogDescription>
           </DialogHeader>
-          <div className="flex w-full h-80 grow py-2">
-            <PreviewMap />
-          </div>
+          <div className="flex w-full h-80 grow py-2">{/* <PreviewMap /> */}</div>
         </DialogContent>
       </Dialog>
     );

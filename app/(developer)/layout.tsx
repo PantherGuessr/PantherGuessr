@@ -1,19 +1,16 @@
 "use client";
 
-import { redirect, useSearchParams } from "next/navigation";
+import { redirect } from "next/navigation";
 import { RedirectToSignIn } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
 
 import { Navbar } from "@/components/navbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRoleCheck } from "@/hooks/use-role-check";
-import { AdminProvider } from "./admin/_components/adminprovider";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
   const { result: isDeveloper, isLoading: isDeveloperLoading } = useRoleCheck("developer");
-  const searchParams = useSearchParams();
-  const tab = searchParams.get("tab") || "analytics";
 
   // If they are loading
   if (authLoading || isDeveloperLoading) {
@@ -35,12 +32,10 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <AdminProvider tab={tab}>
-      <div className="h-full">
-        <Navbar />
-        <main className="h-full pt-32">{children}</main>
-      </div>
-    </AdminProvider>
+    <div className="h-full">
+      <Navbar />
+      <main className="h-full pt-32">{children}</main>
+    </div>
   );
 };
 

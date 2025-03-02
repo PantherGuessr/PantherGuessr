@@ -4,7 +4,7 @@ import { useMediaQuery } from "usehooks-ts";
 
 import { cn } from "@/lib/utils";
 import InGameSidebar from "./_components/in-game-sidebar";
-import InteractableMap from "./_components/interactable-map";
+// import InteractableMap from "./_components/interactable-map";
 import { GameProvider } from "./_context/GameContext";
 
 import "./_components/game-animations.css";
@@ -58,7 +58,7 @@ const GamePage = () => {
       >
         <InGameSidebar />
         <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pr-4 pl-0")}>
-          <InteractableMap />
+          {/* <InteractableMap /> */}
         </div>
       </div>
     </GameProvider>

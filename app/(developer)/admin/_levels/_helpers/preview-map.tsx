@@ -1,37 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import L from "leaflet";
+import { useEffect } from "react";
 
-import { LazyCircleMarker, LazyMap, LazyMarker } from "@/components/map/lazy-loaders";
-import LeafletStyles from "@/components/map/leaflet-styles";
-import { useMarker } from "./MarkerContext";
+// import L from "leaflet";
+
+// import { LazyCircleMarker, LazyMap, LazyMarker } from "@/components/map/lazy-loaders";
+// import LeafletStyles from "@/components/map/leaflet-styles";
+// import { useMarker } from "./MarkerContext";
 
 const PreviewMap = () => {
-  const { localMarkerPosition } = useMarker();
-  const [pantherGuessrMarkerIcon, setPantherGuessrMarkerIcon] = useState<L.Icon | null>(null);
+  // const { localMarkerPosition } = useMarker();
+  // const [pantherGuessrMarkerIcon, setPantherGuessrMarkerIcon] = useState<L.Icon | null>(null);
 
   // Create the icon only on the client side
   useEffect(() => {
-    setPantherGuessrMarkerIcon(
-      new L.Icon({
-        iconUrl: "/PantherGuessrPin.svg",
-        iconSize: [48, 48],
-        iconAnchor: [24, 48],
-      })
-    );
+    // setPantherGuessrMarkerIcon(
+    //   new L.Icon({
+    //     iconUrl: "/PantherGuessrPin.svg",
+    //     iconSize: [48, 48],
+    //     iconAnchor: [24, 48],
+    //   })
+    // );
   }, []);
 
   // Only render map if we have a marker position
-  if (!localMarkerPosition) {
-    return (
-      <div className="w-full h-full rounded-md bg-gray-100 flex items-center justify-center">No location selected</div>
-    );
-  }
+  // if (!localMarkerPosition) {
+  //   return (
+  //     <div className="w-full h-full rounded-md bg-gray-100 flex items-center justify-center">No location selected</div>
+  //   );
+  // }
 
   return (
     <div className="flex min-h-full min-w-full grow">
-      <LeafletStyles />
+      {/* <LeafletStyles />
       <LazyMap
         className="w-full h-full rounded-md"
         attributionControl={true}
@@ -46,7 +47,7 @@ const PreviewMap = () => {
             <LazyCircleMarker center={localMarkerPosition} pathOptions={{ color: "#a50034" }} radius={3} />
           </>
         )}
-      </LazyMap>
+      </LazyMap> */}
     </div>
   );
 };
