@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useUser } from "@clerk/nextjs";
 import imageCompression from "browser-image-compression";
 import { useMutation } from "convex/react";
 import convert from "heic-convert";
 import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
 
-import NoSSRWrapper from "@/components/map/no-ssr-wrapper";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,7 +20,12 @@ import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { api } from "@/convex/_generated/api";
 import { useMarker } from "./MarkerContext";
-import UploadMap from "./upload-map";
+
+// Dynamically import the map with SSR disabled
+const DynamicUploadMap = dynamic(() => import("./upload-map"), {
+  ssr: false,
+  loading: () => <div className="h-80 w-full flex items-center justify-center">Loading map...</div>,
+});
 
 const tagsList = [
   { value: "Standard", label: "Standard", icon: University },
@@ -190,9 +195,7 @@ const LevelUpload = () => {
               />
             </div>
             <div className="flex w-full h-80 grow py-2">
-              <NoSSRWrapper>
-                <UploadMap />
-              </NoSSRWrapper>
+              <DynamicUploadMap />
             </div>
             {isSubmitting ? (
               <Button variant="default" className="w-full my-2 flex flex-row" disabled={true}>

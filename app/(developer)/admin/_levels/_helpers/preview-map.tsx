@@ -1,8 +1,9 @@
 import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
-import { CircleMarker, MapContainer, Marker, TileLayer } from "react-leaflet";
+import { CircleMarker, Marker, TileLayer } from "react-leaflet";
 
+import LeafletMap from "@/components/map/leaflet-map";
 import { useMarker } from "./MarkerContext"; // Adjust the path as needed
 
 const PreviewMap = () => {
@@ -26,7 +27,7 @@ const PreviewMap = () => {
 
   return (
     <div className="flex min-h-full min-w-full grow">
-      <MapContainer
+      <LeafletMap
         className="w-full h-full rounded-md"
         attributionControl={true}
         center={[localMarkerPosition!.lat, localMarkerPosition!.lng]}
@@ -47,7 +48,7 @@ const PreviewMap = () => {
            */
         />
         <LocationMarker />
-      </MapContainer>
+      </LeafletMap>
     </div>
   );
 };

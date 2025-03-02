@@ -1,26 +1,22 @@
 "use client";
 
-import "leaflet/dist/leaflet.css";
-
 import { Suspense, useState } from "react";
 import L from "leaflet";
 
 import { LazyLocationMarker, LazyMap } from "@/components/map/lazy-loaders";
+import LeafletStyles from "@/components/map/leaflet-styles";
+import MarkerSetup from "@/components/map/marker-setup";
 import { useMarker } from "./MarkerContext";
 
 const UploadMap = () => {
   const { localMarkerPosition, setLocalMarkerPosition } = useMarker();
   const [markerHasBeenPlaced, setMarkerHasBeenPlaced] = useState(false);
-
-  const pantherGuessrMarkerIcon = new L.Icon({
-    iconUrl: "/PantherGuessrPin.svg",
-    iconSize: [48, 48],
-    iconAnchor: [24, 48],
-  });
+  const [pantherGuessrMarkerIcon, setPantherGuessrMarkerIcon] = useState<L.Icon | null>(null);
 
   return (
     <div className="flex min-h-full min-w-full grow">
-      <Suspense fallback={<div className="h-[200px]" />}>
+      <LeafletStyles />
+      <Suspense fallback={<div className="h-[200px]">Loading...</div>}>
         <LazyMap
           className="w-full h-full rounded-md"
           attributionControl={true}
@@ -29,17 +25,20 @@ const UploadMap = () => {
           scrollWheelZoom={true}
           doubleClickZoom={true}
         >
-          <Suspense fallback={<></>}>
-            <LazyLocationMarker
-              localMarkerPosition={localMarkerPosition}
-              setLocalMarkerPosition={(pos) => {
-                setLocalMarkerPosition(pos);
-                setMarkerHasBeenPlaced(true);
-              }}
-              markerHasBeenPlaced={markerHasBeenPlaced}
-              pantherGuessrMarkerIcon={pantherGuessrMarkerIcon}
-            />
-          </Suspense>
+          <MarkerSetup onIconCreate={setPantherGuessrMarkerIcon} />
+          {pantherGuessrMarkerIcon && (
+            <Suspense fallback={<></>}>
+              <LazyLocationMarker
+                localMarkerPosition={localMarkerPosition}
+                setLocalMarkerPosition={(pos) => {
+                  setLocalMarkerPosition(pos);
+                  setMarkerHasBeenPlaced(true);
+                }}
+                markerHasBeenPlaced={markerHasBeenPlaced}
+                pantherGuessrMarkerIcon={pantherGuessrMarkerIcon}
+              />
+            </Suspense>
+          )}
         </LazyMap>
       </Suspense>
     </div>
