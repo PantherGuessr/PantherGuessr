@@ -10,8 +10,11 @@
  * @module
  */
 
-import type { ApiFromModules, FilterApi, FunctionReference } from "convex/server";
-
+import type {
+  ApiFromModules,
+  FilterApi,
+  FunctionReference,
+} from "convex/server";
 import type * as admin from "../admin.js";
 import type * as continuegame from "../continuegame.js";
 import type * as crons from "../crons.js";
@@ -41,7 +44,13 @@ declare const fullApi: ApiFromModules<{
   users: typeof users;
   weeklychallenge: typeof weeklychallenge;
 }>;
-export declare const api: FilterApi<typeof fullApi, FunctionReference<any, "public">>;
-export declare const internal: FilterApi<typeof fullApi, FunctionReference<any, "internal">>;
+export declare const api: FilterApi<
+  typeof fullApi,
+  FunctionReference<any, "public">
+>;
+export declare const internal: FilterApi<
+  typeof fullApi,
+  FunctionReference<any, "internal">
+>;
 
 /* prettier-ignore-end */
