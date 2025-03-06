@@ -1,9 +1,9 @@
 import { forwardRef, ReactNode } from "react";
 import dynamic from "next/dynamic";
 
-export const LazyMapContainer = dynamic(() => import("./map-lazy-components").then((m) => m.MapContainer), {
+const LazyMapContainer = dynamic(() => import("./map-lazy-components").then((mod) => mod.MapContainer), {
   ssr: false,
-  loading: () => <div style={{ height: "400px" }} />,
+  loading: () => <div className="w-full h-full bg-secondary/20 rounded-md" />,
 });
 
 interface MapContainerProps {
@@ -14,13 +14,15 @@ interface MapContainerProps {
   zoom: number;
   scrollWheelZoom?: boolean;
   doubleClickZoom?: boolean;
+  ref?: React.RefObject<HTMLDivElement>;
 }
 
-// eslint-disable-next-line react/display-name
 export const MapContainer = forwardRef<HTMLDivElement, MapContainerProps>(({ children, ...props }, ref) => (
   <LazyMapContainer {...props} ref={ref}>
     {children}
   </LazyMapContainer>
 ));
 
-export const TileLayer = dynamic(() => import("react-leaflet").then((m) => m.TileLayer), { ssr: false });
+MapContainer.displayName = "MapContainer";
+
+export const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });

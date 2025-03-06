@@ -1,8 +1,13 @@
-import { forwardRef } from "react";
-import { MapContainer as LMapContainer } from "react-leaflet";
+import { forwardRef, ReactNode } from "react";
+import { MapContainer as LeafletMapContainer, MapContainerProps as LeafletMapContainerProps } from "react-leaflet";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const MapContainer = forwardRef((props: any, ref) => <LMapContainer {...props} ref={ref} />);
+interface ExtendedMapContainerProps extends LeafletMapContainerProps {
+  children?: ReactNode;
+}
+
+const MapContainer = forwardRef<HTMLDivElement, ExtendedMapContainerProps>((props, ref) => (
+  <LeafletMapContainer {...props} ref={ref} />
+));
 
 MapContainer.displayName = "MapContainer";
 

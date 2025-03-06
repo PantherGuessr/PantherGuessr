@@ -17,6 +17,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useBanCheck } from "@/hooks/use-ban-check";
 import Map from "../_components/map/map";
+import MapErrorBoundary from "../_components/map/map-error-boundary";
 
 type Props = {
   params: { GAMEID: string };
@@ -76,7 +77,9 @@ const GameContent = ({ isMobile }: { isMobile: boolean }) => {
       >
         <InGameSidebar />
         <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pr-4 pl-0")}>
-          <Map />
+          <MapErrorBoundary>
+            <Map />
+          </MapErrorBoundary>
         </div>
       </div>
     </>

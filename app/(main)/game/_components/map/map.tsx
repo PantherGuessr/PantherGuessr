@@ -3,7 +3,8 @@ import { useRef } from "react";
 import { MapContainer, TileLayer } from "./map-components";
 
 const Map = () => {
-  const mapRef = useRef(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+
   return (
     <MapContainer
       ref={mapRef}
