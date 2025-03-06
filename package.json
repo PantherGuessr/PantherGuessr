@@ -48,7 +48,7 @@
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-leaflet": "^5.0.0",
+    "react-leaflet": "^4.2.1",
     "recharts": "^2.12.7",
     "svix": "^1.37.0",
     "tailwind-merge": "^2.5.3",

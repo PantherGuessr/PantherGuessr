@@ -5,8 +5,8 @@ interface ExtendedMapContainerProps extends LeafletMapContainerProps {
   children?: ReactNode;
 }
 
-const MapContainer = forwardRef<HTMLDivElement, ExtendedMapContainerProps>((props, ref) => (
-  <LeafletMapContainer {...props} ref={ref} />
+const MapContainer = forwardRef<HTMLDivElement, ExtendedMapContainerProps>((props) => (
+  <LeafletMapContainer {...props} />
 ));
 
 MapContainer.displayName = "MapContainer";
