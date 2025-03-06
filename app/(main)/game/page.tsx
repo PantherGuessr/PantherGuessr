@@ -4,7 +4,6 @@ import { useMediaQuery } from "usehooks-ts";
 
 import { cn } from "@/lib/utils";
 import InGameSidebar from "./_components/in-game-sidebar";
-// import InteractableMap from "./_components/interactable-map";
 import { GameProvider } from "./_context/GameContext";
 
 import "./_components/game-animations.css";
@@ -16,6 +15,7 @@ import { Loader2 } from "lucide-react";
 
 import { api } from "@/convex/_generated/api";
 import { useBanCheck } from "@/hooks/use-ban-check";
+import Map from "./_components/map/map";
 
 const GamePage = () => {
   const { isLoading: isConvexLoading, isAuthenticated: isConvexAuthenticated } = useConvexAuth();
@@ -58,7 +58,7 @@ const GamePage = () => {
       >
         <InGameSidebar />
         <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pr-4 pl-0")}>
-          {/* <InteractableMap /> */}
+          <Map />
         </div>
       </div>
     </GameProvider>
