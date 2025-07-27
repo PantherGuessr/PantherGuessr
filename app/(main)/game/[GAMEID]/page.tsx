@@ -1,34 +1,30 @@
 "use client";
 
+import { use, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { Loader2 } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 
 import { cn } from "@/lib/utils";
 import InGameSidebar from "../_components/in-game-sidebar";
-import InteractableMap from "../_components/interactable-map";
 import { GameProvider, useGame } from "../_context/GameContext";
 
 import "../_components/game-animations.css";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useQuery } from "convex/react";
-import { Loader2 } from "lucide-react";
-
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useBanCheck } from "@/hooks/use-ban-check";
+import DynamicInteractableMap from "../_components/map-wrapper";
 
 type Props = {
-  params: { GAMEID: string };
+  params: Promise<{ GAMEID: string }>;
 };
 
 const GameIdPage = ({ params }: Props) => {
-  /**
-   * Sets the game ID based on the URL parameter
-   * Passes in the game ID to the GameProvider
-   */
   const router = useRouter();
-  const gameIdAsId = params.GAMEID as Id<"games">;
+  const { GAMEID } = use(params);
+  const gameIdAsId = GAMEID as Id<"games">;
   const isMobile = useMediaQuery("(max-width: 600px)");
 
   const gameExists = useQuery(api.game.gameExists, { gameId: gameIdAsId });
@@ -76,7 +72,7 @@ const GameContent = ({ isMobile }: { isMobile: boolean }) => {
       >
         <InGameSidebar />
         <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pr-4 pl-0")}>
-          <InteractableMap />
+          <DynamicInteractableMap />
         </div>
       </div>
     </>

@@ -140,7 +140,7 @@ const ProfileSearchPage = () => {
             {filteredUsernames.length > 0 && (
               <div className="flex flex-col gap-y-2 mt-2 max-h-60 overflow-y-auto">
                 {filteredUsernames.map((user, index) => (
-                  <>
+                  <div key={user.username}>
                     <Separator className="" />
                     <div
                       key={user.username}
@@ -155,7 +155,7 @@ const ProfileSearchPage = () => {
                     >
                       {user.username}
                     </div>
-                  </>
+                  </div>
                 ))}
               </div>
             )}

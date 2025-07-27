@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
-import { LatLng } from "leaflet";
+import type { LatLng } from "leaflet";
 
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
@@ -136,8 +136,10 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
       // checks the guess and updates the scores, correct values, distances, and scores arrays
       const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
 
-      setCorrectLocation(new LatLng(result.correctLat, result.correctLng));
+      // Dynamically import leaflet here to avoid SSR issues
+      const L = (await import("leaflet")).default;
 
+      setCorrectLocation(new L.LatLng(result.correctLat, result.correctLng));
       setDistanceFromTarget(result.distanceAway);
       setScoreAwarded(result.score);
 

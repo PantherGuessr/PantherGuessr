@@ -38,9 +38,9 @@ const MaintainerCard = ({
         <Image className="rounded-lg mx-auto" src={profilePicture} width={100} height={100} alt="Dylan" />
         <CardTitle className="pt-2">{name}</CardTitle>
         <p>{role}</p>
-        <p className="font-bold cursor-pointer" onClick={() => router.push(`/profile/${username}`)}>
+        <span className="font-bold cursor-pointer" onClick={() => router.push(`/profile/${username}`)}>
           <ProfileHoverCard username={username} isUnderlined={true} />
-        </p>
+        </span>
         <div className="flex justify-center space-x-2 pt-2">
           {websiteLink && (
             <Link href={websiteLink} target="blank">

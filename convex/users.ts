@@ -3,9 +3,9 @@
 import { createClerkClient, UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
 
-import { internal } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
-import { internalAction, internalMutation, mutation, query, QueryCtx } from "./_generated/server";
+import { internalAction, internalMutation, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 
 /**
  * Query to get the current user.
@@ -651,9 +651,9 @@ export const resetInactiveStreaks = internalMutation({
  * @example
  * ```typescript
  * await reportUser({
- *   offenderClerkId: "offender123",
- *   reportReason: "Inappropriate behavior",
- *   reporterMessage: "User was spamming in the chat."
+ * offenderClerkId: "offender123",
+ * reportReason: "Inappropriate behavior",
+ * reporterMessage: "User was spamming in the chat."
  * });
  * ```
  */
@@ -745,11 +745,11 @@ export const deleteUserAdministrativeAction = mutation({
     userToDeleteUsername: v.string(),
   },
   async handler(ctx, args) {
-    const userToDelete = await getUserByUsername(ctx, { username: args.userToDeleteUsername });
+    const userToDelete = await ctx.runQuery(api.users.getUserByUsername, { username: args.userToDeleteUsername });
     const callUser = await getCurrentUser(ctx);
 
     if (userToDelete && callUser) {
-      if (await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+      if (await ctx.runQuery(api.users.hasRole, { clerkId: callUser.clerkId, role: "developer" })) {
         await ctx.scheduler.runAfter(0, internal.users.deleteFromClerkAction, {
           clerkUserId: userToDelete.clerkId,
         });
@@ -809,13 +809,13 @@ export const banUserAdministrativeAction = mutation({
     banReason: v.optional(v.string()),
   },
   async handler(ctx, args) {
-    const userToBan = await getUserByUsername(ctx, { username: args.userToBanUsername });
+    const userToBan = await ctx.runQuery(api.users.getUserByUsername, { username: args.userToBanUsername });
     const callUser = await getCurrentUser(ctx);
 
     if (userToBan && callUser) {
       if (
-        (await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) ||
-        (await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" }))
+        (await ctx.runQuery(api.users.hasRole, { clerkId: callUser.clerkId, role: "developer" })) ||
+        (await ctx.runQuery(api.users.hasRole, { clerkId: callUser.clerkId, role: "moderator" }))
       ) {
         await ctx.db.patch(userToBan._id, {
           isBanned: true,
@@ -842,13 +842,13 @@ export const unbanUserAdministrativeAction = mutation({
     userToUnban: v.string(),
   },
   async handler(ctx, args) {
-    const userToUnban = await getUserByUsername(ctx, { username: args.userToUnban });
+    const userToUnban = await ctx.runQuery(api.users.getUserByUsername, { username: args.userToUnban });
     const callUser = await getCurrentUser(ctx);
 
     if (userToUnban && callUser) {
       if (
-        (await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) ||
-        (await hasRole(ctx, { clerkId: callUser.clerkId, role: "moderator" }))
+        (await ctx.runQuery(api.users.hasRole, { clerkId: callUser.clerkId, role: "developer" })) ||
+        (await ctx.runQuery(api.users.hasRole, { clerkId: callUser.clerkId, role: "moderator" }))
       ) {
         await ctx.db.patch(userToUnban._id, {
           isBanned: false,
@@ -874,9 +874,9 @@ export const unbanUserAdministrativeAction = mutation({
  * @example
  * ```typescript
  * await modifyLevelAndXPAdministrativeAction({
- *   userToModifyUsername: "exampleUser",
- *   newLevel: 10,
- *   newXP: 75
+ * userToModifyUsername: "exampleUser",
+ * newLevel: 10,
+ * newXP: 75
  * });
  * ```
  */
@@ -887,11 +887,11 @@ export const modifyLevelAndXPAdministrativeAction = mutation({
     newXP: v.int64(),
   },
   async handler(ctx, args) {
-    const userToModify = await getUserByUsername(ctx, { username: args.userToModifyUsername });
+    const userToModify = await ctx.runQuery(api.users.getUserByUsername, { username: args.userToModifyUsername });
     const callUser = await getCurrentUser(ctx);
 
     if (userToModify && callUser) {
-      if (await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+      if (await ctx.runQuery(api.users.hasRole, { clerkId: callUser.clerkId, role: "developer" })) {
         await ctx.db.patch(userToModify._id, {
           level: args.newLevel,
           currentXP: args.newXP,
@@ -921,11 +921,11 @@ export const modifyRolesAdministrativeAction = mutation({
     roles: v.array(v.string()),
   },
   async handler(ctx, args) {
-    const userToModify = await getUserByUsername(ctx, { username: args.userToModifyUsername });
+    const userToModify = await ctx.runQuery(api.users.getUserByUsername, { username: args.userToModifyUsername });
     const callUser = await getCurrentUser(ctx);
 
     if (userToModify && callUser) {
-      if (await hasRole(ctx, { clerkId: callUser.clerkId, role: "developer" })) {
+      if (await ctx.runQuery(api.users.hasRole, { clerkId: callUser.clerkId, role: "developer" })) {
         await ctx.db.patch(userToModify._id, {
           roles: args.roles.length == 0 ? undefined : args.roles,
         });
@@ -941,7 +941,7 @@ export const modifyRolesAdministrativeAction = mutation({
  * @returns The current user record.
  * @throws Will throw an error if the current user cannot be retrieved.
  */
-export async function getCurrentUserOrThrow(ctx: QueryCtx) {
+export async function getCurrentUserOrThrow(ctx: QueryCtx | MutationCtx) {
   const userRecord = await getCurrentUser(ctx);
   if (!userRecord) throw new Error("Can't get current user");
   return userRecord;
@@ -953,7 +953,7 @@ export async function getCurrentUserOrThrow(ctx: QueryCtx) {
  * @param ctx - The query context containing authentication information.
  * @returns A promise that resolves to the current user or null if no user is authenticated.
  */
-export async function getCurrentUser(ctx: QueryCtx) {
+export async function getCurrentUser(ctx: QueryCtx | MutationCtx) {
   const identity = await ctx.auth.getUserIdentity();
   if (identity === null) {
     return null;
@@ -968,7 +968,7 @@ export async function getCurrentUser(ctx: QueryCtx) {
  * @param clerkId - The Clerk ID of the user to be retrieved.
  * @returns A promise that resolves to the user object if found, otherwise null.
  */
-async function userByClerkId(ctx: QueryCtx, clerkId: string) {
+async function userByClerkId(ctx: QueryCtx | MutationCtx, clerkId: string) {
   return await ctx.db
     .query("users")
     .withIndex("byClerkId", (q) => q.eq("clerkId", clerkId))
@@ -982,7 +982,7 @@ async function userByClerkId(ctx: QueryCtx, clerkId: string) {
  * @param username - The username of the user to retrieve.
  * @returns A promise that resolves to the user object if found, otherwise null.
  */
-async function userByUsername(ctx: QueryCtx, username: string) {
+async function userByUsername(ctx: QueryCtx | MutationCtx, username: string) {
   return await ctx.db
     .query("users")
     .withIndex("byUsername", (q) => q.eq("username", username))
