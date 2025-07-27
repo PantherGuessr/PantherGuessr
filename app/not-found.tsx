@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, Home } from "lucide-react";
 
 import { Footer } from "@/components/footer";
@@ -8,6 +9,8 @@ import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
+  const router = useRouter();
+
   return (
     <div className="h-full">
       <Navbar />
@@ -16,7 +19,7 @@ export default function NotFound() {
           <div className="flex flex-col items-center justify-center text-center gap-y-4 flex-1 px-6 pb-10">
             <h1 className="text-8xl">404</h1>
             <p className="text-xl pt-4">Page Does Not Exist</p>
-            <Button variant="outline" className="mt-4" onClick={() => window.history.back()}>
+            <Button variant="outline" className="mt-4" onClick={() => router.back()}>
               <ArrowLeft className="mr-2 w-4 h-4" /> Go Back To Previous Page
             </Button>
             <Link href="/">
