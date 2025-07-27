@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { Endpoints } from "@octokit/types";
 import { Loader2 } from "lucide-react";
 import { Octokit } from "octokit";
 
@@ -8,11 +9,13 @@ import { Footer } from "@/components/footer";
 import { Separator } from "@/components/ui/separator";
 import ReleaseCard from "./_components/release-card";
 
+type Release = Endpoints["GET /repos/{owner}/{repo}/releases"]["response"]["data"][number];
+
 const ReleaseNotes = () => {
   const owner = "PantherGuessr";
   const repo = "PantherGuessr";
 
-  const [releases, setReleases] = useState<any[] | undefined>(undefined);
+  const [releases, setReleases] = useState<Release[] | undefined>(undefined);
 
   useEffect(() => {
     const fetchReleases = async () => {
@@ -21,11 +24,11 @@ const ReleaseNotes = () => {
         owner,
         repo,
       });
-      setReleases(response.data);
+      setReleases(response.data as Release[]);
     };
 
     fetchReleases();
-  }, [releases]);
+  }, []);
 
   return (
     <div className="min-h-full flex flex-col">

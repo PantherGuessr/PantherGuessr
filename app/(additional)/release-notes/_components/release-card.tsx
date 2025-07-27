@@ -12,10 +12,10 @@ interface IReleaseCard {
   owner: string;
   repo: string;
   releaseNumber: number;
-  name?: string;
-  body?: string;
-  url?: string;
-  publishDate?: string;
+  name?: string | null;
+  body?: string | null;
+  url?: string | null;
+  publishDate?: string | null;
 }
 
 const ReleaseCard = ({ owner, repo, releaseNumber, name, body, publishDate, url }: IReleaseCard) => {
