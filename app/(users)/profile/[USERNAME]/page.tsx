@@ -10,7 +10,7 @@ import { api } from "@/convex/_generated/api";
 
 import "./backgrounds.css";
 
-import { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -41,11 +41,11 @@ import ProfileActions from "./_components/ProfileActions";
 import ProfileBackground from "./_components/ProfileBackground";
 
 type Props = {
-  params: { USERNAME: string };
+  params: Promise<{ USERNAME: string }>;
 };
 
 const ProfilePage = ({ params }: Props) => {
-  const usernameSubPage = params.USERNAME as string;
+  const { USERNAME: usernameSubPage } = use(params);
   const router = useRouter();
 
   if (usernameSubPage !== usernameSubPage.toLowerCase()) {
@@ -322,6 +322,7 @@ const ProfilePage = ({ params }: Props) => {
                                         <SquarePen className="h-7 w-7 ml-1 mt-1 cursor-pointer" onClick={() => {
                                             // setIsEditingUsername(true)
                                             // setUsernameForUpdate(user.username);
+
                                         }} />
                                          */}
                               </>

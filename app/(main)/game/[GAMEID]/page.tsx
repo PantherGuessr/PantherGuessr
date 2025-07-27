@@ -9,7 +9,7 @@ import { GameProvider, useGame } from "../_context/GameContext";
 
 import "../_components/game-animations.css";
 
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
@@ -19,7 +19,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useBanCheck } from "@/hooks/use-ban-check";
 
 type Props = {
-  params: { GAMEID: string };
+  params: Promise<{ GAMEID: string }>;
 };
 
 const GameIdPage = ({ params }: Props) => {
@@ -28,7 +28,8 @@ const GameIdPage = ({ params }: Props) => {
    * Passes in the game ID to the GameProvider
    */
   const router = useRouter();
-  const gameIdAsId = params.GAMEID as Id<"games">;
+  const { GAMEID } = use(params);
+  const gameIdAsId = GAMEID as Id<"games">;
   const isMobile = useMediaQuery("(max-width: 600px)");
 
   const gameExists = useQuery(api.game.gameExists, { gameId: gameIdAsId });
