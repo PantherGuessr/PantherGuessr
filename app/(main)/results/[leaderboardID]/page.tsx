@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -19,9 +19,7 @@ import { useBanCheck } from "@/hooks/use-ban-check";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  params: {
-    leaderboardID: string;
-  };
+  params: Promise<{ leaderboardID: string }>;
 };
 
 const ResultPage = ({ params }: Props) => {
@@ -30,8 +28,8 @@ const ResultPage = ({ params }: Props) => {
 
   const searchParams = useSearchParams();
 
-  const leaderboardId = params.leaderboardID;
-  const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardId });
+  const { leaderboardID } = use(params);
+  const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardID });
   const [distances, setDistances] = useState<number[]>([]);
   const [scores, setScores] = useState<number[]>([]);
   const [finalScore, setFinalScore] = useState<number>(0);

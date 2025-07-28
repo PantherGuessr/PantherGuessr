@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,8 @@ interface MobileDrawerProps {
 }
 
 const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
+  const router = useRouter();
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -34,7 +37,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
                   onClick={() => {
                     document.body.classList.add("animate-body-opacity-scale");
                     setTimeout(() => {
-                      window.location.href = "/game/continue";
+                      router.push("/game/continue");
                     }, 800);
                   }}
                 >
@@ -50,7 +53,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
                   onClick={() => {
                     document.body.classList.add("animate-body-opacity-scale");
                     setTimeout(() => {
-                      window.location.href = "/game";
+                      router.push("/game");
                     }, 800);
                   }}
                 >
@@ -68,7 +71,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
                 onClick={() => {
                   document.body.classList.add("animate-body-opacity-scale");
                   setTimeout(() => {
-                    window.location.href = "/game";
+                    router.push("/game");
                   }, 800);
                 }}
               >

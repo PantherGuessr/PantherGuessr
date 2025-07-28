@@ -3,6 +3,7 @@
   "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": "error",
-    "semi": ["error", "always"]
+    "semi": ["error", "always"],
+    "no-warning-comments": "off"
   }
 }

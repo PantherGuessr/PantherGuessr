@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "convex/react";
-import { LatLng } from "leaflet";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -28,8 +27,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { DataTable } from "./_helpers/datatable";
+import DynamicPreviewMap from "./_helpers/dynamic-preview-map";
 import { useMarker } from "./_helpers/MarkerContext";
-import PreviewMap from "./_helpers/preview-map";
 
 type Level = {
   _id: Id<"levels">;
@@ -91,9 +90,9 @@ const Levels = () => {
   };
 
   // opens map dialog
-  const handleMapDialogOpen = (levelId: Id<"levels">, latitude: number, longitude: number) => {
-    console.log("handleMapDialogOpen called with:", { levelId, latitude, longitude });
-    const latlng = new LatLng(latitude, longitude);
+  const handleMapDialogOpen = async (levelId: Id<"levels">, latitude: number, longitude: number) => {
+    const L = (await import("leaflet")).default;
+    const latlng = new L.LatLng(latitude, longitude);
     setLocalMarkerPosition(latlng);
     setOpenMapDialogId(levelId);
   };
@@ -163,7 +162,7 @@ const Levels = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="flex w-full h-80 grow py-2">
-            <PreviewMap />
+            <DynamicPreviewMap />
           </div>
         </DialogContent>
       </Dialog>

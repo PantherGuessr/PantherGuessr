@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { redirect, useSearchParams } from "next/navigation";
 import { RedirectToSignIn } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
@@ -9,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { AdminProvider } from "./admin/_components/adminprovider";
 
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+const AdminLayoutInner = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
   const { result: isDeveloper, isLoading: isDeveloperLoading } = useRoleCheck("developer");
   const searchParams = useSearchParams();
@@ -43,5 +44,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     </AdminProvider>
   );
 };
+
+const AdminLayout = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<Skeleton className="w-[240px] h-[40px] translate-y-[40%]" />}>
+    <AdminLayoutInner>{children}</AdminLayoutInner>
+  </Suspense>
+);
 
 export default AdminLayout;

@@ -194,7 +194,7 @@ git push origin my-feature-branch
 
 2. **Link to Issues**: If your pull request address an issue, link to the issue in the description using the format `Closes #[issue number]`
 
-3. **Review Process**> A project maintainer will review your pull request. They must request changes or ask for additional information. Please be responsive to their feedback.
+3. **Review Process**: A project maintainer will review your pull request. They must request changes or ask for additional information. Please be responsive to their feedback.
 
 4. **Merge**: Once your pull request is approved, it will be merged into the main branch.
 
