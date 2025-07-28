@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "convex/react";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Loader2 } from "lucide-react";
 
 import { api } from "@/convex/_generated/api";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
@@ -21,6 +21,8 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
     username ? { username } : userID ? { id: userID } : "skip"
   );
 
+  const isUserLoading = user === undefined;
+
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
   const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
@@ -29,17 +31,22 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
   const { result: profileTagline } = useGetSelectedTagline(user?.clerkId);
 
   if (
-    !user ||
+    isUserLoading ||
     isChapmanStudentLoading ||
     developerRoleLoading ||
     topPlayerIsLoading ||
     moderatorRoleLoading ||
     friendRoleLoading
   ) {
-    <Link href={"/profile/" + user?.username}>
-      {hasAtSymbol && "@"}
-      <span className={cn(isUnderlined && "underline")}>{user?.username}</span>
-    </Link>;
+    return (
+      <span className={"font-bold flex justify-center items-center"}>
+        <Loader2 className="w-4 h-4 animate-spin" />
+      </span>
+    );
+  }
+
+  if (!user) {
+    return <span className="font-bold">{"@NOT_FOUND"}</span>;
   }
 
   return (
@@ -47,7 +54,7 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
       <HoverCardTrigger asChild>
         <Link href={"/profile/" + user?.username}>
           {hasAtSymbol && "@"}
-          <span className={cn(isUnderlined && "underline")}>{user?.username}</span>
+          <span className={cn(isUnderlined && "underline font-bold")}>{user?.username}</span>
         </Link>
       </HoverCardTrigger>
       <HoverCardContent className="w-80 z-[9999]" align="center">
