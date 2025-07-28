@@ -1,7 +1,7 @@
 const config = {
   providers: [
     {
-      domain: "https://easy-chimp-60.clerk.accounts.dev",
+      domain: process.env.CLERK_URL,
       applicationID: "convex",
     },
   ],
