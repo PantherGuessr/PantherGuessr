@@ -36,7 +36,7 @@ const CreditsPage = () => {
             profilePicture="/profile-pictures/jake.jpeg"
             name="Jake Milam"
             role="Game Design"
-            userId="NO_USER_YET"
+            userId="jh708xtkavmwa7b9q6q9np9pwn7mnj5z"
             gitHubLink="https://github.com/ssparkpilot"
             linkedInLink="https://www.linkedin.com/in/jake-milam-125258328"
             professionalEmailUsername="jake"
