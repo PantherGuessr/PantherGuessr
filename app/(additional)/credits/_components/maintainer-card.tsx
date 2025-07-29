@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { GithubIcon, Globe, LinkedinIcon, Mail } from "lucide-react";
 
 import ProfileHoverCard from "@/components/profile-hover-card";
@@ -13,7 +12,7 @@ interface IMaintainerCard {
   profilePicture: string;
   name: string;
   role: string;
-  username: string;
+  userId: string;
   websiteLink?: string;
   gitHubLink?: string;
   linkedInLink?: string;
@@ -24,23 +23,19 @@ const MaintainerCard = ({
   profilePicture,
   name,
   role,
-  username,
+  userId,
   websiteLink,
   gitHubLink,
   linkedInLink,
   professionalEmailUsername,
 }: IMaintainerCard) => {
-  const router = useRouter();
-
   return (
     <Card className="hover:bg-[rgba(35,22,22,0.07)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.03)]">
       <CardHeader>
         <Image className="rounded-lg mx-auto" src={profilePicture} width={100} height={100} alt="Dylan" />
         <CardTitle className="pt-2">{name}</CardTitle>
         <p>{role}</p>
-        <span className="font-bold cursor-pointer" onClick={() => router.push(`/profile/${username}`)}>
-          <ProfileHoverCard username={username} isUnderlined={true} />
-        </span>
+        <ProfileHoverCard userID={userId} isUnderlined={true} />
         <div className="flex justify-center space-x-2 pt-2">
           {websiteLink && (
             <Link href={websiteLink} target="blank">

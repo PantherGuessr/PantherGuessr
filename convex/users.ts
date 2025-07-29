@@ -109,6 +109,26 @@ export const deleteUserFromConvex = internalMutation({
 });
 
 /**
+ * Retrieves a user by their unique identifier.
+ *
+ * @param {Object} args - The arguments object.
+ * @param {string} args.id - The id of the user to retrieve.
+ * @returns {Promise<Object|null>} - A promise that resolves to the user document if found, or null if not found.
+ *
+ * @example
+ * const user = await getUserById({ id: "3jh3h2j23jhd" });
+ */
+export const getUserById = query({
+  args: {
+    id: v.string(),
+  },
+  async handler(ctx, args) {
+    const user = await userById(ctx, args.id as Id<"users">);
+    return user;
+  },
+});
+
+/**
  * Query to get a user by their username.
  *
  * This query takes a username as an argument and retrieves the corresponding user document
@@ -959,6 +979,20 @@ export async function getCurrentUser(ctx: QueryCtx | MutationCtx) {
     return null;
   }
   return await userByClerkId(ctx, identity.subject);
+}
+
+/**
+ * Retrieves a user from the database using their Convex ID.
+ *
+ * @param ctx - The query context containing the database connection.
+ * @param convexId - The Convex users table ID of the user to be retrieved.
+ * @returns A promise that resolves to the user object if found, otherwise null.
+ */
+async function userById(ctx: QueryCtx | MutationCtx, convexId: Id<"users">) {
+  return await ctx.db
+    .query("users")
+    .withIndex("by_id", (q) => q.eq("_id", convexId))
+    .unique();
 }
 
 /**

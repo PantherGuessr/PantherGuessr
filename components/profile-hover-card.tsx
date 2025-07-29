@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "convex/react";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Loader2 } from "lucide-react";
 
 import { api } from "@/convex/_generated/api";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
@@ -11,14 +11,18 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
-interface IProfileHoverCard {
-  username: string;
-  hasAtSymbol?: boolean;
-  isUnderlined?: boolean;
-}
+type IProfileHoverCard =
+  | { userID: string; username?: never; hasAtSymbol?: boolean; isUnderlined?: boolean }
+  | { username: string; userID?: never; hasAtSymbol?: boolean; isUnderlined?: boolean };
 
-const ProfileHoverCard = ({ username, hasAtSymbol = true, isUnderlined = false }: IProfileHoverCard) => {
-  const user = useQuery(api.users.getUserByUsername, { username });
+const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined = false }: IProfileHoverCard) => {
+  const user = useQuery(
+    username ? api.users.getUserByUsername : api.users.getUserById,
+    username ? { username } : userID ? { id: userID } : "skip"
+  );
+
+  const isUserLoading = user === undefined;
+
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
   const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
@@ -27,37 +31,42 @@ const ProfileHoverCard = ({ username, hasAtSymbol = true, isUnderlined = false }
   const { result: profileTagline } = useGetSelectedTagline(user?.clerkId);
 
   if (
-    !user ||
+    isUserLoading ||
     isChapmanStudentLoading ||
     developerRoleLoading ||
     topPlayerIsLoading ||
     moderatorRoleLoading ||
     friendRoleLoading
   ) {
-    <Link href={"/profile/" + username}>
-      {hasAtSymbol && "@"}
-      <span className={cn(isUnderlined && "underline")}>{username}</span>
-    </Link>;
+    return (
+      <span className={"font-bold flex justify-center items-center"}>
+        <Loader2 className="w-4 h-4 animate-spin" />
+      </span>
+    );
+  }
+
+  if (!user) {
+    return <span className="font-bold">{"@NOT_FOUND"}</span>;
   }
 
   return (
     <HoverCard openDelay={0} closeDelay={25}>
       <HoverCardTrigger asChild>
-        <Link href={"/profile/" + username}>
+        <Link href={"/profile/" + user?.username}>
           {hasAtSymbol && "@"}
-          <span className={cn(isUnderlined && "underline")}>{username}</span>
+          <span className={cn(isUnderlined && "underline font-bold")}>{user?.username}</span>
         </Link>
       </HoverCardTrigger>
       <HoverCardContent className="w-80 z-[9999]" align="center">
         <div className="flex space-x-4">
           <Avatar>
             <AvatarImage src={user?.picture} />
-            <AvatarFallback>{username[0].toUpperCase()}</AvatarFallback>
+            <AvatarFallback>{user?.username[0].toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="space-y-1 text-left">
             <div className="flex md:flex-row flex-col items-start">
               <div className="flex flex-row items-left">
-                <h4 className="text-sm font-semibold">@{username}</h4>
+                <h4 className="text-sm font-semibold">@{user?.username}</h4>
                 <div className="flex flex-row items-center gap-x-2 pl-2">
                   {isDeveloperRole && (
                     <Image
