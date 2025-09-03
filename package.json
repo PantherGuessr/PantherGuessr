@@ -1,6 +1,6 @@
 {
   "name": "pantherguessr",
-  "version": "0.0.4-alpha",
+  "version": "0.1.1-beta",
   "private": true,
   "scripts": {
     "dev": "next dev",
