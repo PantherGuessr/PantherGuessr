@@ -32,6 +32,7 @@ const InGameSidebar = () => {
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const [isResetting] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
 
   // Retrieve Game Context
   const {
@@ -154,6 +155,7 @@ const InGameSidebar = () => {
     event.stopPropagation();
 
     isResizingRef.current = true;
+    setIsResizing(true);
     document.body.classList.add("inheritCursorOverride");
     document.body.style.cursor = "ew-resize";
     document.addEventListener("mousemove", handleMouseMove);
@@ -182,6 +184,7 @@ const InGameSidebar = () => {
    */
   const handleMouseUp = () => {
     isResizingRef.current = false;
+    setIsResizing(false);
     document.body.classList.remove("inheritCursorOverride");
     document.body.style.cursor = "unset";
     document.removeEventListener("mousemove", handleMouseMove);
@@ -340,12 +343,37 @@ const InGameSidebar = () => {
         <div
           onMouseDown={handleMouseDown}
           className={cn(
-            "absolute h-full w-3 right-0 top-0 flex items-center justify-center cursor-ew-resize z-10",
-            "transition hover:bg-zinc-300 dark:hover:bg-zinc-700"
+            "absolute h-full w-3 right-0 top-0 flex items-center justify-center cursor-ew-resize z-10 group",
+            "transition-all duration-200",
+            isResizing ? "bg-primary/10" : "hover:bg-primary/10"
           )}
           title="Drag to resize sidebar"
         >
-          <div className="w-1 h-10 rounded bg-zinc-400 dark:bg-zinc-600" />
+          <div
+            className={cn(
+              "flex flex-col gap-1 transition-all duration-200",
+              isResizing ? "scale-110" : "group-hover:scale-110"
+            )}
+          >
+            <div
+              className={cn(
+                "w-1 h-1 rounded-full transition-colors duration-200",
+                isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+              )}
+            />
+            <div
+              className={cn(
+                "w-1 h-1 rounded-full transition-colors duration-200",
+                isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+              )}
+            />
+            <div
+              className={cn(
+                "w-1 h-1 rounded-full transition-colors duration-200",
+                isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+              )}
+            />
+          </div>
         </div>
       </aside>
       <div ref={magnifierRef} className="magnifier"></div>
