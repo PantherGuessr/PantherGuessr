@@ -339,9 +339,14 @@ const InGameSidebar = () => {
         </div>
         <div
           onMouseDown={handleMouseDown}
-          onClick={() => {}}
-          className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 right-0 top-0"
-        />
+          className={cn(
+            "absolute h-full w-3 right-0 top-0 flex items-center justify-center cursor-ew-resize z-10",
+            "transition hover:bg-zinc-300 dark:hover:bg-zinc-700"
+          )}
+          title="Drag to resize sidebar"
+        >
+          <div className="w-1 h-10 rounded bg-zinc-400 dark:bg-zinc-600" />
+        </div>
       </aside>
       <div ref={magnifierRef} className="magnifier"></div>
     </>
