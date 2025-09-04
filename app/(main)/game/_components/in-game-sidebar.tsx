@@ -202,15 +202,28 @@ const InGameSidebar = () => {
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
-  /*TODO: Comment this back in when ready
-
-    function preventUnload(event: BeforeUnloadEvent) {
+  // Add this useEffect hook to allow spacebar to trigger button actions
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.code === "Space" || event.key === " ") {
         event.preventDefault();
-    }
 
-    window.addEventListener("beforeunload", preventUnload);
+        if (isSubmittingGuess) {
+          return;
+        } else if (correctLocation) {
+          handleNextRound();
+        } else if (markerHasBeenPlaced) {
+          handleSubmittingGuess();
+        }
+      }
+    };
 
-    */
+    document.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [isSubmittingGuess, correctLocation, markerHasBeenPlaced, handleNextRound, handleSubmittingGuess]);
 
   return (
     <>
