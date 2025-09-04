@@ -66,6 +66,7 @@ const ProfilePage = ({ params }: Props) => {
   );
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
+  const { result: isContributorRole, isLoading: contributorRoleLoading } = useRoleCheck("contributor", user?.clerkId);
   const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
   const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
   const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
@@ -170,6 +171,7 @@ const ProfilePage = ({ params }: Props) => {
     viewerModeratorRoleLoading ||
     isChapmanStudentLoading ||
     developerRoleLoading ||
+    contributorRoleLoading ||
     topPlayerIsLoading ||
     moderatorRoleLoading ||
     friendRoleLoading ||
@@ -366,6 +368,25 @@ const ProfilePage = ({ params }: Props) => {
                                 </TooltipTrigger>
                                 <TooltipContent>
                                   <p className="text-sm p-1">Moderator</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+                          {isContributorRole && (
+                            <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Image
+                                    draggable={false}
+                                    className="select-none cursor-default"
+                                    src="/badges/contributor_badge.svg"
+                                    width="25"
+                                    height="25"
+                                    alt="Contributor Badge"
+                                  />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="text-sm p-1">Contributor</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
