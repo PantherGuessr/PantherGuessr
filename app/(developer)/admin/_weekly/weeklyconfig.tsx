@@ -64,8 +64,7 @@ const WeeklyChallengeConfig = () => {
   // fetch weekly challenge data
   const weeklyChallenge = useWeeklyChallenge();
 
-  // mutation to update weekly challenge round
-  const updateWeeklyChallengeRoundMutation = useMutation(api.weeklychallenge.updateWeeklyChallengeRound);
+  // TODO: add an option to reroll weekly challenge
 
   // fetch image source
   const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
@@ -76,11 +75,11 @@ const WeeklyChallengeConfig = () => {
       setWeeklyChallengeStartDate(new Date(Number(weeklyChallenge.startDate)).toLocaleDateString());
       setWeeklyChallengeEndDate(new Date(Number(weeklyChallenge.endDate)).toLocaleDateString());
       return [
-        weeklyChallenge.round_1,
-        weeklyChallenge.round_2,
-        weeklyChallenge.round_3,
-        weeklyChallenge.round_4,
-        weeklyChallenge.round_5,
+        weeklyChallenge.game.round_1,
+        weeklyChallenge.game.round_2,
+        weeklyChallenge.game.round_3,
+        weeklyChallenge.game.round_4,
+        weeklyChallenge.game.round_5,
       ];
     }
     return [];
@@ -126,19 +125,10 @@ const WeeklyChallengeConfig = () => {
     setOpenMapDialogId(levelId);
   };
 
-  // handles the updating of a round in the weekly challenge
-  const updateWeeklyChallengeRound = (levelId: Id<"levels">) => {
-    if (weeklyChallenge && roundToBeUpdated) {
-      updateWeeklyChallengeRoundMutation({
-        weeklyChallengeId: weeklyChallenge._id,
-        roundNumber: BigInt(roundToBeUpdated),
-        levelId,
-      });
-    }
-  };
-
   // creates image dialog button
-  function imageDialogCreator(row: Level) {
+  function imageDialogCreator(row: Level | null) {
+    if (!row) return null;
+
     return (
       <Dialog
         open={openDialogId === row._id}
@@ -178,7 +168,9 @@ const WeeklyChallengeConfig = () => {
     );
   }
 
-  function mapDialogCreator(row: Level) {
+  function mapDialogCreator(row: Level | null) {
+    if (!row) return null;
+
     return (
       <Dialog
         open={openMapDialogId === row._id}
@@ -210,7 +202,7 @@ const WeeklyChallengeConfig = () => {
   }
 
   // columns key value pairs for shadcn DataTable component
-  const columns: ColumnDef<Level>[] = [
+  const columns: ColumnDef<Level | null>[] = [
     {
       header: "Round #",
       cell: (cell) => {
@@ -258,28 +250,19 @@ const WeeklyChallengeConfig = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => navigator.clipboard.writeText(level._id)}>
+                <DropdownMenuItem onClick={() => navigator.clipboard.writeText(level?._id ?? "")}>
                   Copy Level ID
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigator.clipboard.writeText(level.imageId)}>
+                <DropdownMenuItem onClick={() => navigator.clipboard.writeText(level?.imageId ?? "")}>
                   Copy Image ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText("(" + level.latitude + ", " + level.longitude + ")")}
+                  onClick={() => navigator.clipboard.writeText("(" + (level?.latitude ?? 0) + ", " + (level?.longitude ?? 0) + ")")}
                 >
                   Copy Coordinates
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="text-blue-600 dark:text-blue-500"
-                  onClick={() => {
-                    setLevelUpdaterDialogOpen(true);
-                    setRoundToBeUpdated(row.index + 1);
-                  }}
-                >
-                  Change Level
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </>
@@ -295,37 +278,6 @@ const WeeklyChallengeConfig = () => {
         <span className="font-bold">{weeklyChallengeEndDate}</span>
       </p>
       <DataTable columns={columns} data={tableData || []} />
-      <Dialog
-        open={levelUpdaterDialogOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            setLevelUpdaterDialogOpen(false);
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Change Level</DialogTitle>
-            <DialogDescription>Please paste the new level ID below.</DialogDescription>
-          </DialogHeader>
-          <Input
-            placeholder="Level ID"
-            value={levelUpdaterInput}
-            onChange={(event) => setLevelUpdaterInput(event.target.value)}
-          />
-          <DialogFooter>
-            <Button
-              variant="default"
-              onClick={() => {
-                updateWeeklyChallengeRound(levelUpdaterInput as Id<"levels">);
-                setLevelUpdaterDialogOpen(false);
-              }}
-            >
-              Submit
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };

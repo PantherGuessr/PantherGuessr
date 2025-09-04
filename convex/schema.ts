@@ -58,12 +58,7 @@ export default defineSchema({
   weeklyChallenges: defineTable({
     startDate: v.int64(),
     endDate: v.int64(),
-    round_1: v.id("levels"),
-    round_2: v.id("levels"),
-    round_3: v.id("levels"),
-    round_4: v.id("levels"),
-    round_5: v.id("levels"),
-    timeAllowedPerRound: v.optional(v.int64()),
+    gameId: v.id("games"),
     firstPlayedByClerkId: v.optional(v.string()),
     leaderboard: v.optional(v.array(v.id("leaderboardEntries"))),
   }),
@@ -89,13 +84,14 @@ export default defineSchema({
   }).index("byUserId", ["userId"]),
 
   ongoingGames: defineTable({
-    game: v.union(v.id("games"), v.id("weeklyChallenges")),
+    game: v.id("games"),
     userClerkId: v.string(),
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
     scores: v.optional(v.array(v.int64())),
     distances: v.optional(v.array(v.int64())),
+    isWeekly: v.boolean(),
   })
     .index("byUserClerkIdGame", ["userClerkId", "game"])
     .index("byUserClerkId", ["userClerkId"])

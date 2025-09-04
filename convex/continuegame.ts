@@ -11,6 +11,8 @@ import { mutation, query } from "./_generated/server";
  * @param currentRound - The current round number (1-5) the user is on
  * @param timeLeftInRound - Optional time remaining in current round in seconds
  * @param totalTimeTaken - Total time taken across all rounds in seconds
+ * @param isWeekly - Boolean indicating if the game is a weekly challenge
+ *
  * @returns ID of the newly created save game entry
  */
 export const createNewSaveGame = mutation({
@@ -20,15 +22,17 @@ export const createNewSaveGame = mutation({
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
+    isWeekly: v.boolean()
   },
   handler: async (ctx, args) => {
-    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken } = args;
+    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, isWeekly } = args;
     await ctx.db.insert("ongoingGames", {
       game: gameId,
       userClerkId,
       currentRound,
       timeLeftInRound,
       totalTimeTaken,
+      isWeekly
     });
   },
 });
@@ -41,6 +45,7 @@ export const createNewSaveGame = mutation({
  * @param currentRound - The current round number (1-5) the user is on
  * @param timeLeftInRound - Optional time remaining in current round in seconds
  * @param totalTimeTaken - Total time taken across all rounds in seconds
+ * @param isWeekly - Boolean indicating if the game is a weekly challenge
  */
 export const updateOngoingGame = mutation({
   args: {
@@ -48,13 +53,15 @@ export const updateOngoingGame = mutation({
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
+    isWeekly: v.boolean()
   },
   handler: async (ctx, args) => {
-    const { ongoingGameId, currentRound, timeLeftInRound, totalTimeTaken } = args;
+    const { ongoingGameId, currentRound, timeLeftInRound, totalTimeTaken, isWeekly } = args;
     await ctx.db.patch(ongoingGameId, {
       currentRound,
       timeLeftInRound,
       totalTimeTaken,
+      isWeekly
     });
   },
 });
@@ -68,6 +75,9 @@ export const updateOngoingGame = mutation({
  * @param currentRound - The current round number (1-5) the user is on
  * @param timeLeftInRound - Optional time remaining in current round in seconds
  * @param totalTimeTaken - Total time taken across all rounds in seconds
+ * @param scores - Optional array of scores for each round completed
+ * @param distances - Optional array of distances for each round completed
+ * @param isWeekly - Boolean indicating if the game is a weekly challenge
  */
 export const updateOngoingGameOrCreate = mutation({
   args: {
@@ -78,9 +88,10 @@ export const updateOngoingGameOrCreate = mutation({
     totalTimeTaken: v.int64(),
     scores: v.optional(v.array(v.int64())),
     distances: v.optional(v.array(v.int64())),
+    isWeekly: v.boolean()
   },
   handler: async (ctx, args) => {
-    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances } = args;
+    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances, isWeekly } = args;
     const existingGame = await ctx.db
       .query("ongoingGames")
       .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId))
@@ -94,6 +105,7 @@ export const updateOngoingGameOrCreate = mutation({
         totalTimeTaken,
         scores,
         distances,
+        isWeekly
       });
     } else {
       await ctx.db.insert("ongoingGames", {
@@ -104,6 +116,7 @@ export const updateOngoingGameOrCreate = mutation({
         totalTimeTaken,
         scores,
         distances,
+        isWeekly
       });
     }
   },
@@ -154,6 +167,29 @@ export const getOngoingGameFromUser = query({
       .first();
     return ongoingGame;
   },
+});
+
+
+/**
+ * Gets an ongoing game by its game ID.
+ * Used to retrieve the ongoing game details when resuming a game.
+ *
+ * @param gameId - The ID of the game to retrieve the ongoing game for
+ * @returns The ongoing game entry for the given game ID, or null if none exists
+*/
+export const getOngoingGameById = query({
+  args: {
+    gameId: v.id("games"),
+  },
+  handler: async (ctx, args) => {
+    const { gameId } = args;
+    const ongoingGame = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byGame")
+      .filter((q) => q.eq(q.field("game"), gameId))
+      .first();
+    return ongoingGame;
+  }
 });
 
 /**
