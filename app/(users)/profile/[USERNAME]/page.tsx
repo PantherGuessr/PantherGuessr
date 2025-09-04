@@ -277,7 +277,7 @@ const ProfilePage = ({ params }: Props) => {
               <div className="flex w-full lg:flex-row flex-col lg:items-start items-center justify-between px-4 lg:px-10 xl:px-20">
                 <div className="flex flex-col w-full lg:mr-8">
                   <div className="flex lg:flex-row flex-col items-center lg:items-start lg:pt-4 lg:mb-[-4em]">
-                    <Avatar className="flex-col translate-y-[-5em] w-[200px] h-[200px] mb-[-5em] lg:mb-0 border-8 border-background overflow-hidden">
+                    <Avatar className="flex-col translate-y-[-5em] w-[200px] h-[200px] mb-[-5em] lg:mb-0 border-8 border-background bg-background overflow-hidden">
                       <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
                       <AvatarImage
                         src={user.picture}
