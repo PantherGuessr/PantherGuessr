@@ -202,7 +202,6 @@ const InGameSidebar = () => {
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
-  // Add this useEffect hook to allow spacebar to trigger button actions
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.code === "Space" || event.key === " ") {
