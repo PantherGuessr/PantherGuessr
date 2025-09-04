@@ -1,6 +1,6 @@
 "use client";
 
-import { ElementRef, useRef, useState } from "react";
+import { ElementRef, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Hash, Loader2, LogOut, Medal, User } from "lucide-react";
@@ -32,6 +32,7 @@ const InGameSidebar = () => {
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const [isResetting] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
 
   // Retrieve Game Context
   const {
@@ -49,6 +50,13 @@ const InGameSidebar = () => {
     distanceFromTarget,
     isLoading,
   } = useGame()!;
+
+  // Reset sidebar width when switching to mobile
+  useEffect(() => {
+    if (isMobile && sidebarRef.current) {
+      sidebarRef.current.style.width = "";
+    }
+  }, [isMobile]);
 
   /**
    * Handles submitting a guess for the current round
@@ -148,12 +156,16 @@ const InGameSidebar = () => {
 
   /**
    * Handles starting the resizing of the sidebar when clicking on the right side of the sidebar
+   * Only works on desktop
    */
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (isMobile) return; // Prevent resizing on mobile
+
     event.preventDefault();
     event.stopPropagation();
 
     isResizingRef.current = true;
+    setIsResizing(true);
     document.body.classList.add("inheritCursorOverride");
     document.body.style.cursor = "ew-resize";
     document.addEventListener("mousemove", handleMouseMove);
@@ -162,9 +174,10 @@ const InGameSidebar = () => {
 
   /**
    * Handles resizing the sidebar when clicking and dragging on the right side of the sidebar
+   * Only works on desktop
    */
   const handleMouseMove = (event: MouseEvent) => {
-    if (!isResizingRef.current) return;
+    if (!isResizingRef.current || isMobile) return;
     let newWidth = event.clientX;
 
     // Clamps so that the width of the sidebar
@@ -182,6 +195,7 @@ const InGameSidebar = () => {
    */
   const handleMouseUp = () => {
     isResizingRef.current = false;
+    setIsResizing(false);
     document.body.classList.remove("inheritCursorOverride");
     document.body.style.cursor = "unset";
     document.removeEventListener("mousemove", handleMouseMove);
@@ -337,11 +351,43 @@ const InGameSidebar = () => {
             </Button>
           )}
         </div>
-        <div
-          onMouseDown={handleMouseDown}
-          onClick={() => {}}
-          className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 right-0 top-0"
-        />
+        {!isMobile && (
+          <div
+            onMouseDown={handleMouseDown}
+            className={cn(
+              "absolute h-full w-3 right-0 top-0 flex items-center justify-center cursor-ew-resize z-10 group",
+              "transition-all duration-200",
+              isResizing ? "bg-primary/10" : "hover:bg-primary/10"
+            )}
+            title="Drag to resize sidebar"
+          >
+            <div
+              className={cn(
+                "flex flex-col gap-1 transition-all duration-200",
+                isResizing ? "scale-110" : "group-hover:scale-110"
+              )}
+            >
+              <div
+                className={cn(
+                  "w-1 h-1 rounded-full transition-colors duration-200",
+                  isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+                )}
+              />
+              <div
+                className={cn(
+                  "w-1 h-1 rounded-full transition-colors duration-200",
+                  isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+                )}
+              />
+              <div
+                className={cn(
+                  "w-1 h-1 rounded-full transition-colors duration-200",
+                  isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+                )}
+              />
+            </div>
+          </div>
+        )}
       </aside>
       <div ref={magnifierRef} className="magnifier"></div>
     </>
