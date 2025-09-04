@@ -25,6 +25,7 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
 
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
+  const { result: isContributorRole, isLoading: contributorRoleLoading } = useRoleCheck("contributor", user?.clerkId);
   const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
   const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
   const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
@@ -34,6 +35,7 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
     isUserLoading ||
     isChapmanStudentLoading ||
     developerRoleLoading ||
+    contributorRoleLoading ||
     topPlayerIsLoading ||
     moderatorRoleLoading ||
     friendRoleLoading
@@ -86,6 +88,16 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
                       width="15"
                       height="15"
                       alt="Moderator Badge"
+                    />
+                  )}
+                  {isContributorRole && (
+                    <Image
+                      draggable={false}
+                      className="select-none cursor-default"
+                      src="/badges/contributor_badge.svg"
+                      width="15"
+                      height="15"
+                      alt="Contributor Badge"
                     />
                   )}
                   {isTopPlayer && (

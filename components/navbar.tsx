@@ -34,6 +34,7 @@ export const Navbar = () => {
   const { signOut, openUserProfile } = useClerk();
 
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer");
+  const { result: isContributorRole, isLoading: contributorRoleLoading } = useRoleCheck("contributor");
   const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
   const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator");
   const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend");
@@ -61,6 +62,7 @@ export const Navbar = () => {
           </div>
           {isLoading ||
             developerRoleLoading ||
+            contributorRoleLoading ||
             topPlayerIsLoading ||
             moderatorRoleLoading ||
             friendRoleLoading ||
@@ -108,6 +110,7 @@ export const Navbar = () => {
           {isAuthenticated &&
             !isLoading &&
             !developerRoleLoading &&
+            !contributorRoleLoading &&
             !moderatorRoleLoading &&
             !friendRoleLoading &&
             !chapmanRoleLoading &&
@@ -173,6 +176,16 @@ export const Navbar = () => {
                                         width="15"
                                         height="15"
                                         alt="Moderator Badge"
+                                      />
+                                    )}
+                                    {isContributorRole && (
+                                      <Image
+                                        draggable={false}
+                                        className="select-none"
+                                        src="/badges/contributor_badge.svg"
+                                        width="15"
+                                        height="15"
+                                        alt="Contributor Badge"
                                       />
                                     )}
                                     {isTopPlayer && (
