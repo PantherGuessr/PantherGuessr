@@ -1,6 +1,5 @@
-// src/components/multi-select.tsx
-
 import * as React from "react";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { cva, type VariantProps } from "class-variance-authority";
 import { CheckIcon, ChevronDown, WandSparkles, XCircle, XIcon } from "lucide-react";
 
@@ -15,9 +14,26 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent as PortaledPopoverContent } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+
+const NonPortalPopoverContent = React.forwardRef<
+  React.ElementRef<typeof PopoverPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
+>(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+  <PopoverPrimitive.Content
+    ref={ref}
+    align={align}
+    sideOffset={sideOffset}
+    className={cn(
+      "z-[2000] w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+      className
+    )}
+    {...props}
+  />
+));
+NonPortalPopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
 /**
  * Variants for the multi-select component to handle different styles.
@@ -45,11 +61,7 @@ const multiSelectVariants = cva(
  */
 interface MultiSelectProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof multiSelectVariants> {
-  /**
-   * An array of option objects to be displayed in the multi-select component.
-   * Each option object has a label, value, and an optional icon.
-   */
+  VariantProps<typeof multiSelectVariants> {
   options: {
     /** The text to display for the option. */
     label: string;
@@ -98,12 +110,12 @@ interface MultiSelectProps
    * Optional, defaults to false.
    */
   asChild?: boolean;
-
-  /**
-   * Additional class names to apply custom styles to the multi-select component.
-   * Optional, can be used to add custom styles.
-   */
   className?: string;
+  /**
+   * When true, the popover content will be rendered inside the DOM tree,
+   * instead of in a portal. Use this when the multi-select is in a modal or dialog.
+   */
+  renderInPlace?: boolean;
 }
 
 export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
@@ -117,8 +129,8 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       animation = 0,
       maxCount = 3,
       modalPopover = false,
-      // asChild = false,
       className,
+      renderInPlace = false,
       ...props
     },
     ref
@@ -126,6 +138,8 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
     const [selectedValues, setSelectedValues] = React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isAnimating, setIsAnimating] = React.useState(false);
+
+    const PopoverContent = renderInPlace ? NonPortalPopoverContent : PortaledPopoverContent;
 
     const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
