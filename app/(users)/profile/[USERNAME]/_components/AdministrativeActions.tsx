@@ -384,6 +384,7 @@ const ProfileAdministrativeActions = ({
                           variant="inverted"
                           animation={0}
                           className="w-full"
+                          renderInPlace
                         />
                       </div>
                     </div>
