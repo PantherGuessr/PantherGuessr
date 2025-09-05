@@ -1,0 +1,4 @@
+.cl-profileSectionContent__profile .cl-formButtonPrimary,
+.cl-profileSectionContent__profile .cl-formButtonReset {
+  display: none; /* !!! Remove this if we ever add more than just the avatar to the user settings modal */
+}

@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/navbar";
+import { Navbar } from "@/components/navbar/navbar";
 
 import "./_components/new-user-heading.css";
 
