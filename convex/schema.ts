@@ -53,6 +53,7 @@ export default defineSchema({
     timeAllowedPerRound: v.optional(v.int64()),
     firstPlayedByClerkId: v.optional(v.string()),
     leaderboard: v.optional(v.array(v.id("leaderboardEntries"))),
+    isWeekly: v.optional(v.boolean())
   }),
 
   weeklyChallenges: defineTable({

@@ -35,6 +35,7 @@ interface GameContextType {
   distanceFromTarget: number | null;
   isLoading: boolean;
   isModalVisible: boolean;
+  isWeekly: boolean;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -163,6 +164,7 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
       totalTimeTaken: BigInt(0),
       scores: allScores.map((score) => BigInt(score)),
       distances: allDistances.map((distance) => BigInt(distance)),
+      isWeekly,
     });
 
     if (nextRoundNumber > levels.length) {
@@ -237,6 +239,9 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
     }
   }, [ids, currentLevelId, imageSrc]);
 
+  // Determine isWeekly from gameData.gameContent.isWeekly (default to false)
+  const isWeekly = Boolean(gameData?.gameContent?.isWeekly);
+
   return (
     <GameContext.Provider
       value={{
@@ -259,6 +264,7 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
         distanceFromTarget,
         isLoading,
         isModalVisible,
+        isWeekly,
       }}
     >
       {children}

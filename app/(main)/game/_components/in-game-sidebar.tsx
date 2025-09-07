@@ -3,7 +3,7 @@
 import { ElementRef, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Hash, Loader2, LogOut, Medal, User } from "lucide-react";
+import { Calendar, Hash, Loader2, LogOut, Medal, User } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 
 import {
@@ -49,6 +49,7 @@ const InGameSidebar = () => {
     scoreAwarded,
     distanceFromTarget,
     isLoading,
+    isWeekly
   } = useGame()!;
 
   // Reset sidebar width when switching to mobile
@@ -256,8 +257,10 @@ const InGameSidebar = () => {
               isMobile && "basis-1/5"
             )}
           >
-            <User />
-            {!isMobile && <p>Singleplayer</p>}
+            {isWeekly ?  <Calendar /> : <User />}
+            <p className={isMobile ? "sr-only" : ""}>
+              {isWeekly ? "Weekly" : "Singleplayer"}
+            </p>
           </div>
           {isMobile && (
             <>
