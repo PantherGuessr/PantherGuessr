@@ -22,4 +22,14 @@ crons.daily(
   internal.game.clearUnplayedGames
 );
 
+crons.weekly(
+  "Create weekly challenge",
+  {
+    dayOfWeek: "monday",
+    hourUTC: 17,
+    minuteUTC: 0
+  }, // 9:00 am PST on Monday
+  internal.weeklychallenge.makeWeeklyChallenge
+)
+
 export default crons;

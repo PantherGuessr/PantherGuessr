@@ -8,7 +8,7 @@ const useWeeklyChallenge = () => {
   const weeklyChallengeData = useQuery(api.weeklychallenge.getPopulatedWeeklyChallenge);
 
   // Mutation to create a weekly challenge
-  const createWeeklyChallenge = useMutation(api.weeklychallenge.makeWeeklyChallenge);
+  const createWeeklyChallenge = useMutation(api.weeklychallenge.makeWeeklyChallengeIfNonexistent);
 
   // State to track if the challenge creation has been attempted
   const [challengeCreated, setChallengeCreated] = useState(false);
