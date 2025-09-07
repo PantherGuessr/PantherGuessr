@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/navbar";
+import { Navbar } from "@/components/navbar/navbar";
 
 const LegalPageLayout = ({ children }: { children: React.ReactNode }) => {
   return (

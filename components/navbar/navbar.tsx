@@ -17,13 +17,15 @@ import { useScrollTop } from "@/hooks/use-scroll-top";
 import { toast } from "@/hooks/use-toast";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
 import { cn } from "@/lib/utils";
-import LevelBadge from "./level-badge";
-import { Logo } from "./logo";
-import StreakBadge from "./streak-badge";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
-import { Toaster } from "./ui/toaster";
+import LevelBadge from "../level-badge";
+import { Logo } from "../logo";
+import StreakBadge from "../streak-badge";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "../ui/menubar";
+import { Toaster } from "../ui/toaster";
+
+import "./navbar.css";
 
 export const Navbar = () => {
   const router = useRouter();
