@@ -83,6 +83,7 @@ export const makeWeeklyChallenge = mutation({
       round_4: randomLevels[3],
       round_5: randomLevels[4],
       timeAllowedPerRound: BigInt(60),
+      isWeekly: true
     });
 
     await ctx.db.insert("weeklyChallenges", {
