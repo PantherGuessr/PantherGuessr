@@ -64,6 +64,17 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
 
   const gameData: GameData | null = useGameById(gameId); // gets the game by id
 
+  // user
+  const currentUser = useQuery(api.users.current);
+
+  // Get leaderboard entry for this game and user
+  const leaderboardEntry = useQuery(
+    api.game.getLeaderboardEntryByGameAndUser,
+    gameData?.gameContent?._id && currentUser?._id
+      ? { gameId: gameData.gameContent._id, userId: currentUser._id }
+      : "skip"
+  );
+
   const ids = useMemo(() => {
     if (gameData) {
       return [
@@ -82,7 +93,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   const checkGuess = useMutation(api.game.checkGuess);
 
   // user
-  const currentUser = useQuery(api.users.current);
   const updateStreak = useMutation(api.users.updateStreak);
 
   // analytics
@@ -224,6 +234,13 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
       setScoreAwarded(null);
     }
   };
+
+  // Redirect user to their results page if they have already completed the game
+  useEffect(() => {
+    if (leaderboardEntry && leaderboardEntry._id) {
+      router.replace(`/results/${leaderboardEntry._id}?fromGame=true`);
+    }
+  }, [leaderboardEntry, router]);
 
   useEffect(() => {
     if (leaderboardEntryId) {

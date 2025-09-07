@@ -341,6 +341,25 @@ export const getPersonalLeaderboardEntryById = query({
 });
 
 /**
+ * Retrieves a leaderboard entry for a specific game and user.
+ *
+ * @param args.gameId - The ID of the game
+ * @param args.userId - The ID of the user
+ * @returns The leaderboard entry if found, null otherwise
+ */
+export const getLeaderboardEntryByGameAndUser = query({
+  args: { gameId: v.id("games"), userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const entry = await ctx.db
+      .query("leaderboardEntries")
+      .filter(q => q.eq(q.field("game"), args.gameId))
+      .filter(q => q.eq(q.field("userId"), args.userId))
+      .first();
+    return entry || null;
+  },
+});
+
+/**
  * Retrieves the image src url based on an id
  *
  * @param args.id - The ID of the level to retrieve
