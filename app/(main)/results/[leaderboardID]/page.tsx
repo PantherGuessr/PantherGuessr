@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import html2canvas from "html2canvas-pro";
-import { ArrowRight, Download, Gamepad2, Home, Loader2, Share, Share2 } from "lucide-react";
+import { ArrowRight, Download, Gamepad2, Home, ListOrdered, Loader2, Share, Share2 } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Logo } from "@/components/logo";
@@ -252,6 +252,13 @@ const ResultPage = ({ params }: Props) => {
               </div>
             </CardContent>
           </Card>
+        </div>
+        <div className="flex w-[350px] justify-center items-center">
+          <Link href={`/results/game/${leaderboardEntry.game.toString()}`}>
+            <Button className="w-full">
+              <ListOrdered className="h-4 w-4 mr-2" /> Game Leaderboard 
+            </Button>
+          </Link>
         </div>
         <div className={cn("flex justify-between w-[350px]", isFromGame ? "flex-row" : "flex-row-reverse")}>
           <Button onClick={() => handleShareClick()} variant="outline" size="icon">
