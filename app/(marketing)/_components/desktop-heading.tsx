@@ -12,8 +12,8 @@ import "./heading.css";
 
 import { Logo } from "@/components/logo";
 import ProfileHoverCard from "@/components/profile-hover-card";
-import LargeStreakBadge from "./_panels/large-streak-badge";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import LargeStreakBadge from "./_panels/large-streak-badge";
 
 interface DesktopHeadingProps {
   username: string;
@@ -77,7 +77,6 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                     alt="Profile Picture"
                     onClick={handleGoToUserProfile}
                   />
-
                 </Avatar>
               </div>
               <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold hover:scale-105 transition-all cursor-default">
@@ -204,7 +203,6 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                     alt="Profile Picture"
                     onClick={handleGoToUserProfile}
                   />
-
                 </Avatar>
               </div>
               <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold cursor-default hover:scale-105 transition-all">
