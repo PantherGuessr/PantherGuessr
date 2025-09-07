@@ -253,19 +253,19 @@ const ResultPage = ({ params }: Props) => {
             </CardContent>
           </Card>
         </div>
-        <div className="flex w-[350px] justify-center items-center">
-          <Link href={`/results/game/${leaderboardEntry.game.toString()}`}>
-            <Button className="w-full">
-              <ListOrdered className="h-4 w-4 mr-2" /> Game Leaderboard 
+        <div className="w-[350px] flex">
+          <Link href={`/results/game/${leaderboardEntry.game.toString()}`} className="w-full">
+            <Button className="w-full flex justify-center items-center">
+              <ListOrdered className="h-4 w-4 mr-2" /> Game Leaderboard
             </Button>
           </Link>
         </div>
-        <div className={cn("flex justify-between w-[350px]", isFromGame ? "flex-row" : "flex-row-reverse")}>
-          <Button onClick={() => handleShareClick()} variant="outline" size="icon">
+        <div className={cn("flex justify-between w-[350px] gap-2", isFromGame ? "flex-row" : "flex-row-reverse")}>
+          <Button onClick={() => handleShareClick()} variant="outline" size="icon" className="aspect-square">
             <Share className="h-4 w-4" />
           </Button>
-          <Link href="/">
-            <Button variant={isFromGame ? "outline" : "default"}>
+          <Link href="/" className="w-full">
+            <Button className="w-full flex justify-center items-center" variant={isFromGame ? "outline" : "default"}>
               <Home className="h-4 w-4 mr-2" /> Main Menu
             </Button>
           </Link>
