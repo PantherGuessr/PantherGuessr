@@ -23,11 +23,10 @@ type Props = {
 };
 
 const ResultPage = ({ params }: Props) => {
+  // All hooks must be called before any return statements
   const currentUser = useQuery(api.users.current);
   const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
-
   const searchParams = useSearchParams();
-
   const { leaderboardID } = use(params);
   const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardID });
   const [distances, setDistances] = useState<number[]>([]);
@@ -37,10 +36,16 @@ const ResultPage = ({ params }: Props) => {
   const [oldLevel, setOldLevel] = useState<number>(0);
   const [newLevel, setNewLevel] = useState<number>(0);
   const [isFromGame, setIsFromGame] = useState<boolean>(false);
-
   const router = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogContent, setDialogContent] = useState<{
+    title: string;
+    description: string;
+    imageSrc?: string;
+    finalScore?: number;
+  }>({ title: "", description: "" });
+  const cardRef = useRef<HTMLDivElement>(null);
 
-  // initially set that it is from game, but do not update after that
   useEffect(() => {
     if (searchParams.get("fromGame") === "true") {
       setIsFromGame(true);
@@ -82,14 +87,13 @@ const ResultPage = ({ params }: Props) => {
     }
   }, [leaderboardEntry]);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogContent, setDialogContent] = useState<{
-    title: string;
-    description: string;
-    imageSrc?: string;
-    finalScore?: number;
-  }>({ title: "", description: "" });
-  const cardRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (isFromGame && leaderboardEntry) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete("fromGame");
+      window.history.pushState({}, "", newUrl.toString());
+    }
+  }, [isFromGame, leaderboardEntry]);
 
   const handleShareClick = async () => {
     const canvas = await html2canvas(cardRef.current!, {
@@ -172,12 +176,6 @@ const ResultPage = ({ params }: Props) => {
         </Link>
       </div>
     );
-  }
-
-  if (isFromGame && leaderboardEntry) {
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.delete("fromGame");
-    window.history.pushState({}, "", newUrl.toString());
   }
 
   return (
