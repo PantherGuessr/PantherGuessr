@@ -16,12 +16,13 @@ export default function WeeklyPage() {
 
   if (gameId === null) {
     return (
-      <div className="flex flex-row p-8 text-center items-center justify-center">
-        No weekly challenge is currently active.
+      // should never be nonexistent
+      <div className="w-full h-full min-h-screen flex flex-row p-8 text-center items-center justify-center">
+        Finding weekly challenge...
       </div>
     );
   }
 
-  // Optionally, show a loading spinner while waiting for gameId
-  return <div className="p-8 text-center">Loading weekly challenge...</div>;
+  // show loading challenge
+  return <div className="w-full h-full min-h-screen flex flex-row p-8 text-center items-center justify-center">Loading weekly challenge...</div>;
 }
