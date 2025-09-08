@@ -1,4 +1,6 @@
+import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { getNextWeeklyResetTimestamp } from "../lib/weeklytimes";
 
 /**
  * Retrieves the weekly challenge that is currently active
@@ -58,15 +60,14 @@ export const getPopulatedWeeklyChallenge = query({
  * Creates a new weekly challenge by selecting 5 random levels from the levels table
  * @returns The mutation promise of the new weekly challenge
  */
-export const makeWeeklyChallenge = internalMutation({
+export const createWeeklyChallenge = internalMutation({
   handler: async (ctx) => {
     const today = new Date().getTime();
-    const endDate = new Date(today + 7 * 24 * 60 * 60 * 1000).getTime();
+    const endDate = getNextWeeklyResetTimestamp(new Date(today));
     const levels = await ctx.db.query("levels").collect();
     const randomLevels = [];
     const randomIndices: number[] = [];
-
-    // fiunction to get random levels
+    // function to get random levels
     for (let i = 0; i < 5; i++) {
       const randomIndex = Math.floor(Math.random() * levels.length);
       if (randomIndices.includes(randomIndex)) {
@@ -76,7 +77,6 @@ export const makeWeeklyChallenge = internalMutation({
       randomIndices.push(randomIndex);
       randomLevels.push(levels[randomIndex]._id);
     }
-
     // makes a new game with weekly challenge parameter set
     const gameId = await ctx.db.insert("games", {
       round_1: randomLevels[0],
@@ -87,7 +87,6 @@ export const makeWeeklyChallenge = internalMutation({
       timeAllowedPerRound: BigInt(60),
       isWeekly: true
     });
-
     await ctx.db.insert("weeklyChallenges", {
       startDate: BigInt(today),
       endDate: BigInt(endDate),
@@ -112,15 +111,7 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
     if (existingChallenge) {
       return null;
     }
-
-    // Calculate upcoming Monday
-    const dayOfWeek = now.getUTCDay(); // Sunday = 0, Monday = 1, etc
-    const daysUntilMonday = (8 - dayOfWeek) % 7 || 7; // If today is Monday, set to next Monday
-    const nextMonday = new Date(now);
-    nextMonday.setUTCDate(now.getUTCDate() + daysUntilMonday);
-    nextMonday.setUTCHours(17, 0, 0, 0); // 17:00 UTC (9am PST)
-    const endDate = nextMonday.getTime();
-
+    const endDate = getNextWeeklyResetTimestamp(now);
     // selects 5 random levels
     const levels = await ctx.db.query("levels").collect();
     const randomLevels = [];
@@ -134,7 +125,6 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
       randomIndices.push(randomIndex);
       randomLevels.push(levels[randomIndex]._id);
     }
-
     // creates weekly challenge game
     const gameId = await ctx.db.insert("games", {
       round_1: randomLevels[0],
@@ -145,7 +135,6 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
       timeAllowedPerRound: BigInt(60),
       isWeekly: true
     });
-
     // creates weekly challenge entry
     await ctx.db.insert("weeklyChallenges", {
       startDate: BigInt(today),
@@ -153,4 +142,22 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
       gameId: gameId,
     });
   },
+});
+
+/**
+ * Checks if a given game is a weekly challenge
+ * @param gameId - The ID of the game to check
+ * @returns True if the game is a weekly challenge, false otherwise
+ */
+export const isGameWeeklyChallenge = query({
+  args: {
+    gameId: v.id("games")
+  },
+  handler: async (ctx, { gameId }) => {
+    const game = await ctx.db.get(gameId);
+    if (!game) {
+      return false;
+    }
+    return game.isWeekly === true;
+  }
 });
