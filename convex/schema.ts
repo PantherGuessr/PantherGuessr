@@ -53,7 +53,7 @@ export default defineSchema({
     timeAllowedPerRound: v.optional(v.int64()),
     firstPlayedByClerkId: v.optional(v.string()),
     leaderboard: v.optional(v.array(v.id("leaderboardEntries"))),
-    isWeekly: v.optional(v.boolean())
+    isWeekly: v.optional(v.boolean()),
   }),
 
   weeklyChallenges: defineTable({
@@ -82,7 +82,7 @@ export default defineSchema({
     round_5_distance: v.int64(),
     totalTimeTaken: v.int64(),
     xpGained: v.number(),
-    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer"))
+    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   }).index("byUserId", ["userId"]),
 
   ongoingGames: defineTable({

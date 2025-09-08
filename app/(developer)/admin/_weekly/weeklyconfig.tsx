@@ -258,7 +258,9 @@ const WeeklyChallengeConfig = () => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText("(" + (level?.latitude ?? 0) + ", " + (level?.longitude ?? 0) + ")")}
+                  onClick={() =>
+                    navigator.clipboard.writeText("(" + (level?.latitude ?? 0) + ", " + (level?.longitude ?? 0) + ")")
+                  }
                 >
                   Copy Coordinates
                 </DropdownMenuItem>

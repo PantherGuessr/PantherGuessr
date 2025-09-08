@@ -1,6 +1,7 @@
 import { v } from "convex/values";
-import { internalMutation, mutation, query } from "./_generated/server";
+
 import { getNextWeeklyResetTimestamp } from "../lib/weeklytimes";
+import { internalMutation, mutation, query } from "./_generated/server";
 
 /**
  * Retrieves the weekly challenge that is currently active
@@ -85,7 +86,7 @@ export const createWeeklyChallenge = internalMutation({
       round_4: randomLevels[3],
       round_5: randomLevels[4],
       timeAllowedPerRound: BigInt(60),
-      isWeekly: true
+      isWeekly: true,
     });
     await ctx.db.insert("weeklyChallenges", {
       startDate: BigInt(today),
@@ -133,7 +134,7 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
       round_4: randomLevels[3],
       round_5: randomLevels[4],
       timeAllowedPerRound: BigInt(60),
-      isWeekly: true
+      isWeekly: true,
     });
     // creates weekly challenge entry
     await ctx.db.insert("weeklyChallenges", {
@@ -151,7 +152,7 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
  */
 export const isGameWeeklyChallenge = query({
   args: {
-    gameId: v.id("games")
+    gameId: v.id("games"),
   },
   handler: async (ctx, { gameId }) => {
     const game = await ctx.db.get(gameId);
@@ -159,5 +160,5 @@ export const isGameWeeklyChallenge = query({
       return false;
     }
     return game.isWeekly === true;
-  }
+  },
 });

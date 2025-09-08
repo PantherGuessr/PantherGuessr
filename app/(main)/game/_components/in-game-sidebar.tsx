@@ -49,7 +49,7 @@ const InGameSidebar = () => {
     scoreAwarded,
     distanceFromTarget,
     isLoading,
-    isWeekly
+    isWeekly,
   } = useGame()!;
 
   // Reset sidebar width when switching to mobile
@@ -257,10 +257,8 @@ const InGameSidebar = () => {
               isMobile && "basis-1/5"
             )}
           >
-            {isWeekly ?  <Calendar /> : <User />}
-            <p className={isMobile ? "sr-only" : ""}>
-              {isWeekly ? "Weekly" : "Singleplayer"}
-            </p>
+            {isWeekly ? <Calendar /> : <User />}
+            <p className={isMobile ? "sr-only" : ""}>{isWeekly ? "Weekly" : "Singleplayer"}</p>
           </div>
           {isMobile && (
             <>

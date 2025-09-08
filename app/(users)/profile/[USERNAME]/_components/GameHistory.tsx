@@ -78,7 +78,11 @@ const GameHistory = ({ recentGames, isCurrentUser }: GameHistoryProps) => {
                   recentGames.map((game, index) => (
                     <TableRow key={index}>
                       <TableCell className="text-start font-bold">
-                        {game.gameType === "weekly" ? "Weekly Challenge" : game.gameType === "multiplayer" ? "Multiplayer" : "Singleplayer"}
+                        {game.gameType === "weekly"
+                          ? "Weekly Challenge"
+                          : game.gameType === "multiplayer"
+                            ? "Multiplayer"
+                            : "Singleplayer"}
                       </TableCell>
                       <TableCell className="text-start">{calculateGameTotalScore(game)}</TableCell>
                       <TableCell className="text-start hidden md:table-cell">{game.xpGained}</TableCell>

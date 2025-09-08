@@ -1,4 +1,5 @@
 import { useQuery } from "convex/react";
+
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
@@ -8,10 +9,7 @@ import { Id } from "@/convex/_generated/dataModel";
  * @returns { isWeekly: boolean | undefined, loading: boolean }
  */
 export function useIsGameWeekly(gameId?: Id<"games">) {
-  const result = useQuery(
-    api.weeklychallenge.isGameWeeklyChallenge,
-    gameId ? { gameId } : "skip"
-  );
+  const result = useQuery(api.weeklychallenge.isGameWeeklyChallenge, gameId ? { gameId } : "skip");
   return {
     isWeekly: result,
     loading: result === undefined,

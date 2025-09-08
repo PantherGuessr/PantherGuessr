@@ -5,7 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-
 /**
  * Calculates the total score from an entry object by summing the values of rounds 1 to 5.
  * If a round value is missing or undefined, it defaults to 0.

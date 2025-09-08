@@ -22,7 +22,7 @@ export const createNewSaveGame = mutation({
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
-    isWeekly: v.boolean()
+    isWeekly: v.boolean(),
   },
   handler: async (ctx, args) => {
     const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, isWeekly } = args;
@@ -32,7 +32,7 @@ export const createNewSaveGame = mutation({
       currentRound,
       timeLeftInRound,
       totalTimeTaken,
-      isWeekly
+      isWeekly,
     });
   },
 });
@@ -53,7 +53,7 @@ export const updateOngoingGame = mutation({
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
-    isWeekly: v.boolean()
+    isWeekly: v.boolean(),
   },
   handler: async (ctx, args) => {
     const { ongoingGameId, currentRound, timeLeftInRound, totalTimeTaken, isWeekly } = args;
@@ -61,7 +61,7 @@ export const updateOngoingGame = mutation({
       currentRound,
       timeLeftInRound,
       totalTimeTaken,
-      isWeekly
+      isWeekly,
     });
   },
 });
@@ -88,7 +88,7 @@ export const updateOngoingGameOrCreate = mutation({
     totalTimeTaken: v.int64(),
     scores: v.optional(v.array(v.int64())),
     distances: v.optional(v.array(v.int64())),
-    isWeekly: v.boolean()
+    isWeekly: v.boolean(),
   },
   handler: async (ctx, args) => {
     const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances, isWeekly } = args;
@@ -105,7 +105,7 @@ export const updateOngoingGameOrCreate = mutation({
         totalTimeTaken,
         scores,
         distances,
-        isWeekly
+        isWeekly,
       });
     } else {
       await ctx.db.insert("ongoingGames", {
@@ -116,7 +116,7 @@ export const updateOngoingGameOrCreate = mutation({
         totalTimeTaken,
         scores,
         distances,
-        isWeekly
+        isWeekly,
       });
     }
   },
@@ -169,14 +169,13 @@ export const getOngoingGameFromUser = query({
   },
 });
 
-
 /**
  * Gets an ongoing game by its game ID.
  * Used to retrieve the ongoing game details when resuming a game.
  *
  * @param gameId - The ID of the game to retrieve the ongoing game for
  * @returns The ongoing game entry for the given game ID, or null if none exists
-*/
+ */
 export const getOngoingGameById = query({
   args: {
     gameId: v.id("games"),
@@ -189,7 +188,7 @@ export const getOngoingGameById = query({
       .filter((q) => q.eq(q.field("game"), gameId))
       .first();
     return ongoingGame;
-  }
+  },
 });
 
 /**

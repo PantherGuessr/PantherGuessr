@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+
 import { api } from "@/convex/_generated/api";
-import { useQuery, useMutation } from "convex/react";
 
 /**
  * Custom hook to get the currently active weekly challenge game ID, and create one if not found

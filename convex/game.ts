@@ -264,7 +264,7 @@ export const addLeaderboardEntryToGame = mutation({
     round_5: v.int64(),
     round_5_distance: v.int64(),
     totalTimeTaken: v.int64(),
-    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer"))
+    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   },
   handler: async (ctx, args) => {
     const newXP = getTotalEarnedXP(
@@ -302,7 +302,7 @@ export const addLeaderboardEntryToGame = mutation({
       round_5_distance: args.round_5_distance,
       totalTimeTaken: args.totalTimeTaken,
       xpGained: newXP,
-      gameType: args.gameType
+      gameType: args.gameType,
     });
 
     // get game by ID
@@ -352,12 +352,12 @@ export const getLeaderboardEntriesForGame = query({
   handler: async (ctx, args) => {
     const entries = await ctx.db
       .query("leaderboardEntries")
-      .filter(q => q.eq(q.field("game"), args.gameId))
+      .filter((q) => q.eq(q.field("game"), args.gameId))
       .collect();
 
     // Calculate total score for each entry and sort descending
     const sorted = entries
-      .map(entry => ({
+      .map((entry) => ({
         ...entry,
         totalScore:
           Number(entry.round_1 ?? 0) +
@@ -384,8 +384,8 @@ export const getLeaderboardEntryByGameAndUser = query({
   handler: async (ctx, args) => {
     const entry = await ctx.db
       .query("leaderboardEntries")
-      .filter(q => q.eq(q.field("game"), args.gameId))
-      .filter(q => q.eq(q.field("userId"), args.userId))
+      .filter((q) => q.eq(q.field("game"), args.gameId))
+      .filter((q) => q.eq(q.field("userId"), args.userId))
       .first();
     return entry || null;
   },

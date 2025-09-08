@@ -51,9 +51,7 @@ const PlayPage = () => {
         </Link>
       </div>
       <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-        <Link
-          href="/weekly"
-        >
+        <Link href="/weekly">
           <div className="gamemode-card bg-primary text-primary-foreground shadow-md glow flex flex-col items-center">
             <CalendarClock className="mb-2" />
             <h1>Weekly Challenge</h1>

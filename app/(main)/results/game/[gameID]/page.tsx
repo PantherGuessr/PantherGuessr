@@ -1,18 +1,19 @@
 "use client";
+
 import { use, useEffect, useMemo, useState } from "react";
+import { useParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { useParams } from "next/navigation";
-import { api } from "@/convex/_generated/api";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import ProfileHoverCard from "@/components/profile-hover-card";
-import { Id } from "@/convex/_generated/dataModel";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { getTotalScore } from "@/lib/utils";
-import { Footer } from "@/components/footer";
-import { useIsGameWeekly } from "@/hooks/use-is-game-weekly";
-import { getNextWeeklyResetTimestamp, getNextWeeklyResetUTC } from "@/lib/weeklytimes";
 
+import { Footer } from "@/components/footer";
+import ProfileHoverCard from "@/components/profile-hover-card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useIsGameWeekly } from "@/hooks/use-is-game-weekly";
+import { getTotalScore } from "@/lib/utils";
+import { getNextWeeklyResetTimestamp, getNextWeeklyResetUTC } from "@/lib/weeklytimes";
 
 type GameLeaderboardProps = {
   params: Promise<{ gameID: string }>;
@@ -53,12 +54,17 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
       // Determine if we're in PDT (UTC-7) or PST (UTC-8)
       const resetHourUTC = isPacificDaylightTime(now) ? 16 : 17;
       // Find this week's Monday at resetHourUTC
-      const thisMonday = new Date(Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate() - ((now.getUTCDay() + 6) % 7), // go back to Monday
-        resetHourUTC, 0, 0, 0
-      ));
+      const thisMonday = new Date(
+        Date.UTC(
+          now.getUTCFullYear(),
+          now.getUTCMonth(),
+          now.getUTCDate() - ((now.getUTCDay() + 6) % 7), // go back to Monday
+          resetHourUTC,
+          0,
+          0,
+          0
+        )
+      );
       if (now.getTime() < thisMonday.getTime()) {
         return thisMonday;
       } else {
@@ -89,10 +95,7 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
   }, [isWeekly]);
 
   // Fetch all leaderboard entries for this game
-  const leaderboardEntries = useQuery(
-    api.game.getLeaderboardEntriesForGame,
-    gameID ? { gameId: gameIdAsId } : "skip"
-  );
+  const leaderboardEntries = useQuery(api.game.getLeaderboardEntriesForGame, gameID ? { gameId: gameIdAsId } : "skip");
 
   // Fetch current user's entry for this game using Convex user _id
   const userEntry = useQuery(
@@ -109,23 +112,21 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
   // Find user's rank
   const userRank = useMemo(() => {
     if (!leaderboardEntries || !userEntry) return null;
-    const idx = leaderboardEntries.findIndex(e => e._id === userEntry._id);
+    const idx = leaderboardEntries.findIndex((e) => e._id === userEntry._id);
     return idx >= 0 ? idx + 1 : null;
   }, [leaderboardEntries, userEntry]);
 
   // If user is not in top 25, add their entry to the table
   const displayEntries = useMemo(() => {
     if (!topEntries || !userEntry) return topEntries;
-    const inTop = topEntries.some(e => e._id === userEntry._id);
+    const inTop = topEntries.some((e) => e._id === userEntry._id);
     return inTop ? topEntries : [...topEntries, userEntry];
   }, [topEntries, userEntry]);
 
   return (
     <div className="flex flex-col w-screen h-full min-h-screen justify-between">
       <div className="w-full max-w-5xl mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-6 text-center">
-          {isWeekly ? "Weekly Challenge " : "Game "}Leaderboard
-        </h1>
+        <h1 className="text-3xl font-bold mb-6 text-center">{isWeekly ? "Weekly Challenge " : "Game "}Leaderboard</h1>
         {isWeekly && (
           <div className="mb-4 text-center">
             <span className="font-semibold">Weekly Challenge resets in:</span> {countdown}
@@ -146,19 +147,10 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
           </TableHeader>
           <TableBody>
             {displayEntries.map((entry, idx) => {
-              const rank = leaderboardEntries
-                ? leaderboardEntries.findIndex(e => e._id === entry._id) + 1
-                : idx + 1;
+              const rank = leaderboardEntries ? leaderboardEntries.findIndex((e) => e._id === entry._id) + 1 : idx + 1;
               const isCurrentUser = userEntry && entry._id === userEntry._id;
               return (
-                <TableRow
-                  key={entry._id}
-                  className={
-                    isCurrentUser
-                      ? "bg-red-600/10 dark:bg-red-600/30"
-                      : ""
-                  }
-                >
+                <TableRow key={entry._id} className={isCurrentUser ? "bg-red-600/10 dark:bg-red-600/30" : ""}>
                   <TableCell className="p-2 text-center">{rank}</TableCell>
                   <TableCell className="p-2 flex items-center gap-2">
                     {/* TODO: Implement avatars for users later */}
