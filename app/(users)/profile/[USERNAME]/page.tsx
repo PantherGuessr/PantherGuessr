@@ -285,8 +285,8 @@ const ProfilePage = ({ params }: Props) => {
                         className="object-cover"
                       />
                     </Avatar>
-                    <div className="flex flex-col items-center text-center md:text-start md:items-start justify-center gap-y-1">
-                      <div className="flex md:flex-row flex-col items-center md:items-start">
+                    <div className="flex flex-col items-center text-center lg:text-start lg:items-start justify-center gap-y-1">
+                      <div className="flex lg:flex-row flex-col items-center lg:items-start">
                         <div className="flex flex-row items-center">
                           {isCurrentUser ? (
                             isEditingUsername ? (
@@ -333,7 +333,7 @@ const ProfilePage = ({ params }: Props) => {
                             <h1 className="text-4xl font-bold md:pl-4">{user.username}</h1>
                           )}
                         </div>
-                        <div className="flex flex-row items-center md:items-start gap-x-2 pl-0 pt-0 sm:md:pl-3 sm:md:pt-2">
+                        <div className="flex flex-row items-center lg:items-start gap-x-2 pl-0 pt-2 sm:md:pl-3 sm:md:pt-2">
                           {isDeveloperRole && (
                             <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                               <Tooltip>
