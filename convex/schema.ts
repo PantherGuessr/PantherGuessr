@@ -82,6 +82,7 @@ export default defineSchema({
     round_5_distance: v.int64(),
     totalTimeTaken: v.int64(),
     xpGained: v.number(),
+    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer"))
   }).index("byUserId", ["userId"]),
 
   ongoingGames: defineTable({

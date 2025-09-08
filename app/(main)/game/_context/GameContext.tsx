@@ -215,6 +215,7 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
         round_5: BigInt(allScores[4]),
         round_5_distance: BigInt(allDistances[4]),
         totalTimeTaken: BigInt(0),
+        gameType: isWeekly ? "weekly" : "singleplayer", 
       }).then((leaderboardEntry) => {
         setLeaderboardEntryId(leaderboardEntry);
       });

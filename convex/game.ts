@@ -264,6 +264,7 @@ export const addLeaderboardEntryToGame = mutation({
     round_5: v.int64(),
     round_5_distance: v.int64(),
     totalTimeTaken: v.int64(),
+    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer"))
   },
   handler: async (ctx, args) => {
     const newXP = getTotalEarnedXP(
@@ -301,6 +302,7 @@ export const addLeaderboardEntryToGame = mutation({
       round_5_distance: args.round_5_distance,
       totalTimeTaken: args.totalTimeTaken,
       xpGained: newXP,
+      gameType: args.gameType
     });
 
     // get game by ID
