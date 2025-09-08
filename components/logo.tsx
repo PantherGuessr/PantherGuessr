@@ -45,7 +45,7 @@ export const Logo = ({ href, as_png, badge = true, logoDimensions = 40, textOpti
             "h-6 bg-red-800 text-white select-none"
           )}
         >
-          Alpha
+          Beta
         </Badge>
       )}
     </div>
