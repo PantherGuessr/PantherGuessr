@@ -333,7 +333,7 @@ const ProfilePage = ({ params }: Props) => {
                             <h1 className="text-4xl font-bold md:pl-4">{user.username}</h1>
                           )}
                         </div>
-                        <div className="flex flex-row items-center md:items-start gap-x-2 pl-0 pt-0 sm:md:pl-3 sm:md:pt-2">
+                        <div className="flex flex-row items-center md:items-start gap-x-2 pl-0 pt-2 sm:md:pl-3 sm:md:pt-2">
                           {isDeveloperRole && (
                             <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                               <Tooltip>
