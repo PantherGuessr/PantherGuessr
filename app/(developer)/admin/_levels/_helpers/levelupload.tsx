@@ -186,6 +186,7 @@ const LevelUpload = () => {
                 variant="inverted"
                 animation={0}
                 maxCount={3}
+                renderInPlace
               />
             </div>
             <div className="flex w-full h-80 grow py-2">
