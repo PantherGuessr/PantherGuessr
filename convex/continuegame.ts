@@ -22,17 +22,17 @@ export const createNewSaveGame = mutation({
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
-    isWeekly: v.boolean(),
+    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   },
   handler: async (ctx, args) => {
-    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, isWeekly } = args;
+    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, gameType } = args;
     await ctx.db.insert("ongoingGames", {
       game: gameId,
       userClerkId,
       currentRound,
       timeLeftInRound,
       totalTimeTaken,
-      isWeekly,
+      gameType,
     });
   },
 });
@@ -53,15 +53,15 @@ export const updateOngoingGame = mutation({
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
-    isWeekly: v.boolean(),
+    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   },
   handler: async (ctx, args) => {
-    const { ongoingGameId, currentRound, timeLeftInRound, totalTimeTaken, isWeekly } = args;
+    const { ongoingGameId, currentRound, timeLeftInRound, totalTimeTaken, gameType } = args;
     await ctx.db.patch(ongoingGameId, {
       currentRound,
       timeLeftInRound,
       totalTimeTaken,
-      isWeekly,
+      gameType
     });
   },
 });
@@ -88,10 +88,10 @@ export const updateOngoingGameOrCreate = mutation({
     totalTimeTaken: v.int64(),
     scores: v.optional(v.array(v.int64())),
     distances: v.optional(v.array(v.int64())),
-    isWeekly: v.boolean(),
+    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   },
   handler: async (ctx, args) => {
-    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances, isWeekly } = args;
+    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances, gameType } = args;
     const existingGame = await ctx.db
       .query("ongoingGames")
       .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId))
@@ -105,7 +105,7 @@ export const updateOngoingGameOrCreate = mutation({
         totalTimeTaken,
         scores,
         distances,
-        isWeekly,
+        gameType,
       });
     } else {
       await ctx.db.insert("ongoingGames", {
@@ -116,7 +116,7 @@ export const updateOngoingGameOrCreate = mutation({
         totalTimeTaken,
         scores,
         distances,
-        isWeekly,
+        gameType,
       });
     }
   },

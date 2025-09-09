@@ -35,7 +35,7 @@ interface GameContextType {
   distanceFromTarget: number | null;
   isLoading: boolean;
   isModalVisible: boolean;
-  isWeekly: boolean;
+  gameType: string;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -174,7 +174,7 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
       totalTimeTaken: BigInt(0),
       scores: allScores.map((score) => BigInt(score)),
       distances: allDistances.map((distance) => BigInt(distance)),
-      isWeekly,
+      gameType: gameData!.gameContent!.gameType,
     });
 
     if (nextRoundNumber > levels.length) {
@@ -215,7 +215,7 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
         round_5: BigInt(allScores[4]),
         round_5_distance: BigInt(allDistances[4]),
         totalTimeTaken: BigInt(0),
-        gameType: isWeekly ? "weekly" : "singleplayer",
+        gameType: gameData!.gameContent!.gameType,
       }).then((leaderboardEntry) => {
         setLeaderboardEntryId(leaderboardEntry);
       });
@@ -257,9 +257,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
     }
   }, [ids, currentLevelId, imageSrc]);
 
-  // Determine isWeekly from gameData.gameContent.isWeekly (default to false)
-  const isWeekly = Boolean(gameData?.gameContent?.isWeekly);
-
   return (
     <GameContext.Provider
       value={{
@@ -282,7 +279,7 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
         distanceFromTarget,
         isLoading,
         isModalVisible,
-        isWeekly,
+        gameType: gameData?.gameContent?.gameType || "loading",
       }}
     >
       {children}

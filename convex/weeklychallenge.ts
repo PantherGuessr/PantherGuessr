@@ -86,7 +86,7 @@ export const createWeeklyChallenge = internalMutation({
       round_4: randomLevels[3],
       round_5: randomLevels[4],
       timeAllowedPerRound: BigInt(60),
-      isWeekly: true,
+      gameType: "weekly",
     });
     await ctx.db.insert("weeklyChallenges", {
       startDate: BigInt(today),
@@ -134,7 +134,7 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
       round_4: randomLevels[3],
       round_5: randomLevels[4],
       timeAllowedPerRound: BigInt(60),
-      isWeekly: true,
+      gameType: "weekly",
     });
     // creates weekly challenge entry
     await ctx.db.insert("weeklyChallenges", {
@@ -142,23 +142,5 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
       endDate: BigInt(endDate),
       gameId: gameId,
     });
-  },
-});
-
-/**
- * Checks if a given game is a weekly challenge
- * @param gameId - The ID of the game to check
- * @returns True if the game is a weekly challenge, false otherwise
- */
-export const isGameWeeklyChallenge = query({
-  args: {
-    gameId: v.id("games"),
-  },
-  handler: async (ctx, { gameId }) => {
-    const game = await ctx.db.get(gameId);
-    if (!game) {
-      return false;
-    }
-    return game.isWeekly === true;
   },
 });

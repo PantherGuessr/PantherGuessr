@@ -205,6 +205,7 @@ export const createNewGame = mutation({
       round_4: randomLevels[3],
       round_5: randomLevels[4],
       timeAllowedPerRound: args.timeAllowedPerRound,
+      gameType: "singleplayer",
     });
 
     return gameId;
@@ -588,3 +589,21 @@ function getTotalEarnedXP(allPoints: bigint[], allDistances: bigint[]): number {
 
   return earnedXP;
 }
+
+/**
+ * Gets the game type for a given game ID.
+ * @param gameId - The ID of the game to retrieve the type for
+ * @returns The game type as a string ("weekly", "singleplayer", or "multiplayer"), or null if not found
+ */
+export const getGameType = query({
+  args: {
+    gameId: v.id("games"),
+  },
+  handler: async (ctx, { gameId }) => {
+    const game = await ctx.db.get(gameId);
+    if (!game) {
+      return null;
+    }
+    return game.gameType;
+  },
+});
