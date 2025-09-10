@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useIsGameWeekly } from "@/hooks/use-is-game-weekly";
+import { useGameType } from "@/hooks/use-game-type";
 import { getTotalScore } from "@/lib/utils";
 import { getNextWeeklyResetTimestamp, getNextWeeklyResetUTC } from "@/lib/weeklytimes";
 
@@ -24,56 +24,15 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
   const gameIdAsId = gameID as Id<"games">;
   const currentUser = useQuery(api.users.current);
 
-  // Weekly challenge check
-  const { isWeekly, loading: weeklyLoading } = useIsGameWeekly(gameIdAsId);
+  // Get game type
+  const { gameType, loading: gameTypeLoading } = useGameType(gameIdAsId);
 
   // Countdown state
   const [countdown, setCountdown] = useState<string>("");
 
   // Calculate next Monday 17:00 UTC
   useEffect(() => {
-    if (!isWeekly) return;
-
-    // Helper to check if a date is in daylight savings for Pacific Time
-    function isPacificDaylightTime(date: Date) {
-      // DST starts second Sunday in March, ends first Sunday in November
-      const year = date.getUTCFullYear();
-      // Second Sunday in March
-      const march = new Date(Date.UTC(year, 2, 1));
-      const marchDay = march.getUTCDay();
-      const dstStart = new Date(Date.UTC(year, 2, 8 - marchDay));
-      // First Sunday in November
-      const november = new Date(Date.UTC(year, 10, 1));
-      const novDay = november.getUTCDay();
-      const dstEnd = new Date(Date.UTC(year, 10, 1 - novDay));
-      return date >= dstStart && date < dstEnd;
-    }
-
-    const getNextMondayResetUTC = () => {
-      const now = new Date();
-      // Determine if we're in PDT (UTC-7) or PST (UTC-8)
-      const resetHourUTC = isPacificDaylightTime(now) ? 16 : 17;
-      // Find this week's Monday at resetHourUTC
-      const thisMonday = new Date(
-        Date.UTC(
-          now.getUTCFullYear(),
-          now.getUTCMonth(),
-          now.getUTCDate() - ((now.getUTCDay() + 6) % 7), // go back to Monday
-          resetHourUTC,
-          0,
-          0,
-          0
-        )
-      );
-      if (now.getTime() < thisMonday.getTime()) {
-        return thisMonday;
-      } else {
-        // Next Monday
-        const nextMonday = new Date(thisMonday);
-        nextMonday.setUTCDate(thisMonday.getUTCDate() + 7);
-        return nextMonday;
-      }
-    };
+    if (gameType !== "weekly") return;
 
     const updateCountdown = () => {
       const now = new Date();
@@ -92,7 +51,7 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, [isWeekly]);
+  }, [gameType]);
 
   // Fetch all leaderboard entries for this game
   const leaderboardEntries = useQuery(api.game.getLeaderboardEntriesForGame, gameID ? { gameId: gameIdAsId } : "skip");
@@ -126,8 +85,10 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
   return (
     <div className="flex flex-col w-screen h-full min-h-screen justify-between">
       <div className="w-full max-w-5xl mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-6 text-center">{isWeekly ? "Weekly Challenge " : "Game "}Leaderboard</h1>
-        {isWeekly && (
+        <h1 className="text-3xl font-bold mb-6 text-center">
+          {gameType === "weekly" ? "Weekly Challenge " : "Game "}Leaderboard
+        </h1>
+        {gameType === "weekly" && (
           <div className="mb-4 text-center">
             <span className="font-semibold">Weekly Challenge resets in:</span> {countdown}
           </div>
