@@ -17,13 +17,15 @@ import { useScrollTop } from "@/hooks/use-scroll-top";
 import { toast } from "@/hooks/use-toast";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
 import { cn } from "@/lib/utils";
-import LevelBadge from "./level-badge";
-import { Logo } from "./logo";
-import StreakBadge from "./streak-badge";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
-import { Toaster } from "./ui/toaster";
+import LevelBadge from "../level-badge";
+import { Logo } from "../logo";
+import StreakBadge from "../streak-badge";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "../ui/menubar";
+import { Toaster } from "../ui/toaster";
+
+import "./navbar.css";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -34,6 +36,7 @@ export const Navbar = () => {
   const { signOut, openUserProfile } = useClerk();
 
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer");
+  const { result: isContributorRole, isLoading: contributorRoleLoading } = useRoleCheck("contributor");
   const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
   const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator");
   const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend");
@@ -61,6 +64,7 @@ export const Navbar = () => {
           </div>
           {isLoading ||
             developerRoleLoading ||
+            contributorRoleLoading ||
             topPlayerIsLoading ||
             moderatorRoleLoading ||
             friendRoleLoading ||
@@ -108,6 +112,7 @@ export const Navbar = () => {
           {isAuthenticated &&
             !isLoading &&
             !developerRoleLoading &&
+            !contributorRoleLoading &&
             !moderatorRoleLoading &&
             !friendRoleLoading &&
             !chapmanRoleLoading &&
@@ -173,6 +178,16 @@ export const Navbar = () => {
                                         width="15"
                                         height="15"
                                         alt="Moderator Badge"
+                                      />
+                                    )}
+                                    {isContributorRole && (
+                                      <Image
+                                        draggable={false}
+                                        className="select-none"
+                                        src="/badges/contributor_badge.svg"
+                                        width="15"
+                                        height="15"
+                                        alt="Contributor Badge"
                                       />
                                     )}
                                     {isTopPlayer && (

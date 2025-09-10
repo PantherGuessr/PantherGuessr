@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import imageCompression from "browser-image-compression";
 import { useMutation } from "convex/react";
-import convert from "heic-convert";
+import heic2any from "heic2any";
 import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -75,11 +75,15 @@ const LevelUpload = () => {
       // Convert HEIC to JPEG or PNG if necessary
       if (selectedImage.type === "image/heic" || selectedImage.type === "image/heif") {
         imageConverted = true;
-        convertedBuffer = await convert({
-          buffer: Buffer.from(imageBuffer), // the HEIC file buffer
-          format: "JPEG", // output format (change to 'PNG' if needed)
-          quality: 1, // the jpeg compression quality, between 0 and 1
+        const convertedBlob = await heic2any({
+          blob: selectedImage,
+          toType: "image/jpeg",
+          quality: 0.9,
         });
+        // checks to see if blobs may be an array (should not be but here for safety)
+        const finalBlob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+        // creates chosen image file
+        chosenImage = new File([finalBlob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), { type: "image/jpeg" });
       }
 
       // only change the file if it was converted
@@ -186,6 +190,7 @@ const LevelUpload = () => {
                 variant="inverted"
                 animation={0}
                 maxCount={3}
+                renderInPlace
               />
             </div>
             <div className="flex w-full h-80 grow py-2">

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import html2canvas from "html2canvas-pro";
-import { ArrowRight, Download, Gamepad2, Home, Loader2, Share, Share2 } from "lucide-react";
+import { ArrowRight, Download, Gamepad2, Home, ListOrdered, Loader2, Share, Share2 } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Logo } from "@/components/logo";
@@ -23,11 +23,10 @@ type Props = {
 };
 
 const ResultPage = ({ params }: Props) => {
+  // All hooks must be called before any return statements
   const currentUser = useQuery(api.users.current);
   const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
-
   const searchParams = useSearchParams();
-
   const { leaderboardID } = use(params);
   const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardID });
   const [distances, setDistances] = useState<number[]>([]);
@@ -37,10 +36,16 @@ const ResultPage = ({ params }: Props) => {
   const [oldLevel, setOldLevel] = useState<number>(0);
   const [newLevel, setNewLevel] = useState<number>(0);
   const [isFromGame, setIsFromGame] = useState<boolean>(false);
-
   const router = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogContent, setDialogContent] = useState<{
+    title: string;
+    description: string;
+    imageSrc?: string;
+    finalScore?: number;
+  }>({ title: "", description: "" });
+  const cardRef = useRef<HTMLDivElement>(null);
 
-  // initially set that it is from game, but do not update after that
   useEffect(() => {
     if (searchParams.get("fromGame") === "true") {
       setIsFromGame(true);
@@ -82,14 +87,13 @@ const ResultPage = ({ params }: Props) => {
     }
   }, [leaderboardEntry]);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogContent, setDialogContent] = useState<{
-    title: string;
-    description: string;
-    imageSrc?: string;
-    finalScore?: number;
-  }>({ title: "", description: "" });
-  const cardRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (isFromGame && leaderboardEntry) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete("fromGame");
+      window.history.pushState({}, "", newUrl.toString());
+    }
+  }, [isFromGame, leaderboardEntry]);
 
   const handleShareClick = async () => {
     const canvas = await html2canvas(cardRef.current!, {
@@ -174,12 +178,6 @@ const ResultPage = ({ params }: Props) => {
     );
   }
 
-  if (isFromGame && leaderboardEntry) {
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.delete("fromGame");
-    window.history.pushState({}, "", newUrl.toString());
-  }
-
   return (
     <div className="min-h-full flex flex-col">
       <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -255,12 +253,19 @@ const ResultPage = ({ params }: Props) => {
             </CardContent>
           </Card>
         </div>
-        <div className={cn("flex justify-between w-[350px]", isFromGame ? "flex-row" : "flex-row-reverse")}>
-          <Button onClick={() => handleShareClick()} variant="outline" size="icon">
+        <div className="w-[350px] flex">
+          <Link href={`/results/game/${leaderboardEntry.game.toString()}`} className="w-full">
+            <Button className="w-full flex justify-center items-center">
+              <ListOrdered className="h-4 w-4 mr-2" /> Game Leaderboard
+            </Button>
+          </Link>
+        </div>
+        <div className={cn("flex justify-between w-[350px] gap-2", isFromGame ? "flex-row" : "flex-row-reverse")}>
+          <Button onClick={() => handleShareClick()} variant="outline" size="icon" className="aspect-square">
             <Share className="h-4 w-4" />
           </Button>
-          <Link href="/">
-            <Button variant={isFromGame ? "outline" : "default"}>
+          <Link href="/" className="w-full">
+            <Button className="w-full flex justify-center items-center" variant={isFromGame ? "outline" : "default"}>
               <Home className="h-4 w-4 mr-2" /> Main Menu
             </Button>
           </Link>

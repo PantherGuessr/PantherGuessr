@@ -66,6 +66,7 @@ const ProfilePage = ({ params }: Props) => {
   );
   const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
   const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
+  const { result: isContributorRole, isLoading: contributorRoleLoading } = useRoleCheck("contributor", user?.clerkId);
   const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
   const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
   const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
@@ -170,6 +171,7 @@ const ProfilePage = ({ params }: Props) => {
     viewerModeratorRoleLoading ||
     isChapmanStudentLoading ||
     developerRoleLoading ||
+    contributorRoleLoading ||
     topPlayerIsLoading ||
     moderatorRoleLoading ||
     friendRoleLoading ||
@@ -275,7 +277,7 @@ const ProfilePage = ({ params }: Props) => {
               <div className="flex w-full lg:flex-row flex-col lg:items-start items-center justify-between px-4 lg:px-10 xl:px-20">
                 <div className="flex flex-col w-full lg:mr-8">
                   <div className="flex lg:flex-row flex-col items-center lg:items-start lg:pt-4 lg:mb-[-4em]">
-                    <Avatar className="flex-col translate-y-[-5em] w-[200px] h-[200px] mb-[-5em] lg:mb-0 border-8 border-background overflow-hidden">
+                    <Avatar className="flex-col translate-y-[-5em] w-[200px] h-[200px] mb-[-5em] lg:mb-0 border-8 border-background bg-background overflow-hidden">
                       <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
                       <AvatarImage
                         src={user.picture}
@@ -283,8 +285,8 @@ const ProfilePage = ({ params }: Props) => {
                         className="object-cover"
                       />
                     </Avatar>
-                    <div className="flex flex-col items-center text-center md:text-start md:items-start justify-center gap-y-1">
-                      <div className="flex md:flex-row flex-col items-center md:items-start">
+                    <div className="flex flex-col items-center text-center lg:text-start lg:items-start justify-center gap-y-1">
+                      <div className="flex lg:flex-row flex-col items-center lg:items-start">
                         <div className="flex flex-row items-center">
                           {isCurrentUser ? (
                             isEditingUsername ? (
@@ -331,7 +333,7 @@ const ProfilePage = ({ params }: Props) => {
                             <h1 className="text-4xl font-bold md:pl-4">{user.username}</h1>
                           )}
                         </div>
-                        <div className="flex flex-row items-center md:items-start gap-x-2 pl-0 pt-0 sm:md:pl-3 sm:md:pt-2">
+                        <div className="flex flex-row items-center lg:items-start gap-x-2 pl-0 pt-2 sm:md:pl-3 sm:md:pt-2">
                           {isDeveloperRole && (
                             <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                               <Tooltip>
@@ -366,6 +368,25 @@ const ProfilePage = ({ params }: Props) => {
                                 </TooltipTrigger>
                                 <TooltipContent>
                                   <p className="text-sm p-1">Moderator</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+                          {isContributorRole && (
+                            <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Image
+                                    draggable={false}
+                                    className="select-none cursor-default"
+                                    src="/badges/contributor_badge.svg"
+                                    width="25"
+                                    height="25"
+                                    alt="Contributor Badge"
+                                  />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="text-sm p-1">Contributor</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>

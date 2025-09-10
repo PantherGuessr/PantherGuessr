@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
-import { BookHeart, Gavel, Hash, Heart, LoaderCircle, Send, Shield, ShieldX, Trash2, Wrench } from "lucide-react";
+import {
+  BookHeart,
+  Gavel,
+  HandHeart,
+  Hash,
+  Heart,
+  LoaderCircle,
+  Send,
+  Shield,
+  ShieldX,
+  Trash2,
+  Wrench,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +42,7 @@ interface ProfileAdministrativeActionsProps {
 const roles = [
   { value: "developer", label: "Developer", icon: Wrench },
   { value: "moderator", label: "Moderator", icon: Shield },
+  { value: "contributor", label: "Contributor", icon: HandHeart },
   { value: "friend", label: "Friend", icon: Heart },
 ];
 
@@ -371,6 +384,7 @@ const ProfileAdministrativeActions = ({
                           variant="inverted"
                           animation={0}
                           className="w-full"
+                          renderInPlace
                         />
                       </div>
                     </div>

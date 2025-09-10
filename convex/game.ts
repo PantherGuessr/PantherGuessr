@@ -205,6 +205,7 @@ export const createNewGame = mutation({
       round_4: randomLevels[3],
       round_5: randomLevels[4],
       timeAllowedPerRound: args.timeAllowedPerRound,
+      gameType: "singleplayer",
     });
 
     return gameId;
@@ -264,6 +265,7 @@ export const addLeaderboardEntryToGame = mutation({
     round_5: v.int64(),
     round_5_distance: v.int64(),
     totalTimeTaken: v.int64(),
+    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   },
   handler: async (ctx, args) => {
     const newXP = getTotalEarnedXP(
@@ -301,6 +303,7 @@ export const addLeaderboardEntryToGame = mutation({
       round_5_distance: args.round_5_distance,
       totalTimeTaken: args.totalTimeTaken,
       xpGained: newXP,
+      gameType: args.gameType,
     });
 
     // get game by ID
@@ -337,6 +340,55 @@ export const getPersonalLeaderboardEntryById = query({
       // If decoding fails (invalid ID format), return null
       return null;
     }
+  },
+});
+
+/**
+ * Retrieves all leaderboard entries for a specific game, sorted by total score descending.
+ * @param args.gameId - The ID of the game
+ * @returns Array of leaderboard entries
+ */
+export const getLeaderboardEntriesForGame = query({
+  args: { gameId: v.id("games") },
+  handler: async (ctx, args) => {
+    const entries = await ctx.db
+      .query("leaderboardEntries")
+      .filter((q) => q.eq(q.field("game"), args.gameId))
+      .collect();
+
+    // Calculate total score for each entry and sort descending
+    const sorted = entries
+      .map((entry) => ({
+        ...entry,
+        totalScore:
+          Number(entry.round_1 ?? 0) +
+          Number(entry.round_2 ?? 0) +
+          Number(entry.round_3 ?? 0) +
+          Number(entry.round_4 ?? 0) +
+          Number(entry.round_5 ?? 0),
+      }))
+      .sort((a, b) => b.totalScore - a.totalScore);
+
+    return sorted;
+  },
+});
+
+/**
+ * Retrieves a leaderboard entry for a specific game and user.
+ *
+ * @param args.gameId - The ID of the game
+ * @param args.userId - The ID of the user
+ * @returns The leaderboard entry if found, null otherwise
+ */
+export const getLeaderboardEntryByGameAndUser = query({
+  args: { gameId: v.id("games"), userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const entry = await ctx.db
+      .query("leaderboardEntries")
+      .filter((q) => q.eq(q.field("game"), args.gameId))
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .first();
+    return entry || null;
   },
 });
 
@@ -537,3 +589,21 @@ function getTotalEarnedXP(allPoints: bigint[], allDistances: bigint[]): number {
 
   return earnedXP;
 }
+
+/**
+ * Gets the game type for a given game ID.
+ * @param gameId - The ID of the game to retrieve the type for
+ * @returns The game type as a string ("weekly", "singleplayer", or "multiplayer"), or null if not found
+ */
+export const getGameType = query({
+  args: {
+    gameId: v.id("games"),
+  },
+  handler: async (ctx, { gameId }) => {
+    const game = await ctx.db.get(gameId);
+    if (!game) {
+      return null;
+    }
+    return game.gameType;
+  },
+});

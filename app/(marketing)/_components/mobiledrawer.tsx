@@ -93,7 +93,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
               </CardContent>
             </Card>
           </Link> */}
-          <Link href="/play">
+          <Link href="/weekly">
             <Card className="bg-primary text-primary-foreground">
               <CardContent className="p-4">
                 <div className="flex flex-col gap-x-2 align-center text-center justify-center">
