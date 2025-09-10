@@ -124,15 +124,15 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                   </Link>
                 </li>
               )}
-              <li className="row-span-2 col-span-2">
+              {/* <li className="row-span-2 col-span-2">
                 <Link href="/play">
                   <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                     Multiplayer
                   </div>
                 </Link>
-              </li>
+              </li> */}
               <li className="row-span-2 col-span-2">
-                <Link href="/play">
+                <Link href="/weekly">
                   <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                     Weekly Challenge
                   </div>
@@ -250,15 +250,15 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                   </Link>
                 </li>
               )}
-              <li className="row-span-2 col-span-2">
+              {/* <li className="row-span-2 col-span-2">
                 <Link href="/play">
                   <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                     Multiplayer
                   </div>
                 </Link>
-              </li>
+              </li> */}
               <li className="row-span-2 col-span-2">
-                <Link href="/play">
+                <Link href="/weekly">
                   <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
                     Weekly Challenge
                   </div>

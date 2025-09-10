@@ -5,10 +5,10 @@ import { api } from "@/convex/_generated/api";
 
 const useWeeklyChallenge = () => {
   // Fetch weekly challenge data
-  const weeklyChallengeData = useQuery(api.weeklychallenge.getPopulatedLevelsFromWeeklyChallenge);
+  const weeklyChallengeData = useQuery(api.weeklychallenge.getPopulatedWeeklyChallenge);
 
   // Mutation to create a weekly challenge
-  const createWeeklyChallenge = useMutation(api.weeklychallenge.makeWeeklyChallenge);
+  const createWeeklyChallenge = useMutation(api.weeklychallenge.makeWeeklyChallengeIfNonexistent);
 
   // State to track if the challenge creation has been attempted
   const [challengeCreated, setChallengeCreated] = useState(false);

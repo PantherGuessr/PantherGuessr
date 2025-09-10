@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Doc } from "@/convex/_generated/dataModel";
+import { useIsGameWeekly } from "@/hooks/use-is-game-weekly";
 
 interface GameHistoryProps {
   recentGames: Doc<"leaderboardEntries">[] | undefined | null;
@@ -77,7 +78,11 @@ const GameHistory = ({ recentGames, isCurrentUser }: GameHistoryProps) => {
                   recentGames.map((game, index) => (
                     <TableRow key={index}>
                       <TableCell className="text-start font-bold">
-                        Singleplayer {/* TODO: Implement game type recognition */}
+                        {game.gameType === "weekly"
+                          ? "Weekly Challenge"
+                          : game.gameType === "multiplayer"
+                            ? "Multiplayer"
+                            : "Singleplayer"}
                       </TableCell>
                       <TableCell className="text-start">{calculateGameTotalScore(game)}</TableCell>
                       <TableCell className="text-start hidden md:table-cell">{game.xpGained}</TableCell>
