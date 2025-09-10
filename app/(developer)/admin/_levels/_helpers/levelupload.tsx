@@ -52,49 +52,43 @@ const LevelUpload = () => {
   }, [selectedImage, description, localMarkerPosition]);
 
   async function handleImageSubmission() {
-    const description = document.getElementById("description") as HTMLInputElement;
-    const markerPosition = localMarkerPosition;
+    const descriptionInput = document.getElementById("description") as HTMLInputElement;
 
     // check if form has all required fields
-    if (!selectedImage || !description || !markerPosition) {
+    if (!selectedImage || !descriptionInput.value || !localMarkerPosition) {
       alert("Please fill out all required fields.");
       return;
-    } else {
-      setIsSubmitting(true);
-      setSubmitButtonDisabled(true);
+    }
 
+    setIsSubmitting(true);
+    setSubmitButtonDisabled(true);
+
+    try {
       // get authenticated user's username
       const username = user.user?.username || "developer";
+      let fileToProcess = selectedImage;
+      const fileName = selectedImage.name.toLowerCase();
 
-      // create buffers for HEIC to JPEG conversion
-      const imageBuffer = await selectedImage.arrayBuffer();
-      let convertedBuffer: ArrayBuffer | undefined;
-      let imageConverted = false;
-      let chosenImage = selectedImage;
+      // Check for HEIC/HEIF by both MIME type and file extension for reliability
+      const isHeicOrHeif =
+        selectedImage.type === "image/heic" ||
+        selectedImage.type === "image/heif" ||
+        fileName.endsWith(".heic") ||
+        fileName.endsWith(".heif");
 
-      // Convert HEIC to JPEG or PNG if necessary
-      if (selectedImage.type === "image/heic" || selectedImage.type === "image/heif") {
-        imageConverted = true;
+      if (isHeicOrHeif) {
         const convertedBlob = await heic2any({
           blob: selectedImage,
           toType: "image/jpeg",
           quality: 0.9,
         });
-        // checks to see if blobs may be an array (should not be but here for safety)
+
         const finalBlob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
-        // creates chosen image file
-        chosenImage = new File([finalBlob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), { type: "image/jpeg" });
+
+        fileToProcess = new File([finalBlob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), { type: "image/jpeg" });
       }
 
-      // only change the file if it was converted
-      if (imageConverted && convertedBuffer) {
-        // convert buffer to a Blob
-        const blob = new Blob([convertedBuffer], { type: "image/jpeg" });
-        // convert Blob to File
-        chosenImage = new File([blob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), { type: "image/jpeg" });
-      }
-
-      // image compression options regardless of conversion
+      // image compression options
       const imageCompressionOptions = {
         maxSizeMB: 1.0,
         maxWidthOrHeight: 1920,
@@ -102,41 +96,40 @@ const LevelUpload = () => {
       };
 
       // gets compressed file
-      const compressedFile = await imageCompression(chosenImage, imageCompressionOptions);
+      const compressedFile = await imageCompression(fileToProcess, imageCompressionOptions);
 
       // uploads the image to convex and then creates a new level with the image
-      // Step 1: Get a short-lived upload URL
       const postUrl = await generateUploadUrl();
-      // Step 2: POST the file to the URL
       const result = await fetch(postUrl, {
         method: "POST",
-        headers: {
-          "Content-Type":
-            selectedImage.type === "image/heic" || selectedImage.type === "image/heif"
-              ? "image/jpeg"
-              : selectedImage.type,
-        },
+        headers: { "Content-Type": compressedFile.type },
         body: compressedFile,
       });
       const { storageId } = await result.json();
-      // Step 3: Save the newly allocated storage id to the database
+
       await createLevelWithImageStorageId({
         storageId,
-        description: description.value,
-        latitude: markerPosition.lat,
-        longitude: markerPosition.lng,
+        description: descriptionInput.value,
+        latitude: localMarkerPosition.lat,
+        longitude: localMarkerPosition.lng,
         authorUsername: username,
         tags: selectedTags,
       });
 
       // reset form and close dialog
       setSelectedImage(null);
-      imageInput.current!.value = "";
+      if (imageInput.current) {
+        imageInput.current.value = "";
+      }
       setDescription("");
       setSelectedTags([]);
-      setSubmitButtonDisabled(false);
       setLevelCreatorDialogOpen(false);
+    } catch (error) {
+      console.error("Failed to process or upload image:", error);
+      alert("An error occurred during image processing. The file might not be a valid image. Please try another file.");
+    } finally {
       setIsSubmitting(false);
+      setSubmitButtonDisabled(false);
     }
   }
 
@@ -165,7 +158,7 @@ const LevelUpload = () => {
                 type="file"
                 accept="image/png, image/jpg, image/jpeg, image/heic, image/heif"
                 ref={imageInput}
-                onChange={(event) => setSelectedImage(event.target.files![0])}
+                onChange={(event) => setSelectedImage(event.target.files?.[0] || null)}
               />
             </div>
             <div className="grid w-full items-center gap-1.5 py-2">
