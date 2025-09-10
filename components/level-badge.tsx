@@ -20,7 +20,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({ level }) => {
     >
       <Image
         draggable={false}
-        className="select-none"
+        className="select-none cursor-default drop-shadow transform-gpu"
         src="/badges/level_badge.svg"
         alt={`Account Level of ${level}`}
         width="25"

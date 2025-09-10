@@ -46,7 +46,7 @@ const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => 
     >
       <Image
         draggable={false}
-        className="select-none"
+        className="select-none cursor-default drop-shadow transform-gpu"
         src="/badges/streak_badge.svg"
         alt={`Daily Streak Badge of ${streak} Days`}
         width="25"

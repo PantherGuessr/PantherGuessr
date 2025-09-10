@@ -73,7 +73,7 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
                   {isDeveloperRole && (
                     <Image
                       draggable={false}
-                      className="select-none cursor-default"
+                      className="select-none cursor-default drop-shadow transform-gpu"
                       src="/badges/developer_badge.svg"
                       width="15"
                       height="15"
@@ -83,7 +83,7 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
                   {isModeratorRole && (
                     <Image
                       draggable={false}
-                      className="select-none cursor-default"
+                      className="select-none cursor-default drop-shadow transform-gpu"
                       src="/badges/moderator_badge.svg"
                       width="15"
                       height="15"
@@ -93,7 +93,7 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
                   {isContributorRole && (
                     <Image
                       draggable={false}
-                      className="select-none cursor-default"
+                      className="select-none cursor-default drop-shadow transform-gpu"
                       src="/badges/contributor_badge.svg"
                       width="15"
                       height="15"
@@ -103,7 +103,7 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
                   {isTopPlayer && (
                     <Image
                       draggable={false}
-                      className="select-none cursor-default"
+                      className="select-none cursor-default drop-shadow transform-gpu"
                       src="/badges/top_player_badge.svg"
                       width="15"
                       height="15"
@@ -113,7 +113,7 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
                   {isFriendRole && (
                     <Image
                       draggable={false}
-                      className="select-none cursor-default"
+                      className="select-none cursor-default drop-shadow transform-gpu"
                       src="/badges/friend_badge.svg"
                       alt="Friend Badge"
                       width="15"
@@ -123,7 +123,7 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
                   {isChapmanStudent && (
                     <Image
                       draggable={false}
-                      className="select-none cursor-default"
+                      className="select-none cursor-default drop-shadow transform-gpu"
                       src="/badges/chapman_badge.svg"
                       alt="Chapman Student Badge"
                       width="15"

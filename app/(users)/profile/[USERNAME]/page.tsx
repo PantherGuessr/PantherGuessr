@@ -340,7 +340,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default"
+                                    className="select-none cursor-default drop-shadow transform-gpu"
                                     src="/badges/developer_badge.svg"
                                     width="25"
                                     height="25"
@@ -359,7 +359,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default"
+                                    className="select-none cursor-default drop-shadow transform-gpu"
                                     src="/badges/moderator_badge.svg"
                                     width="25"
                                     height="25"
@@ -378,7 +378,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default"
+                                    className="select-none cursor-default drop-shadow transform-gpu"
                                     src="/badges/contributor_badge.svg"
                                     width="25"
                                     height="25"
@@ -397,7 +397,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default"
+                                    className="select-none cursor-default drop-shadow transform-gpu"
                                     src="/badges/top_player_badge.svg"
                                     width="25"
                                     height="25"
@@ -416,7 +416,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default"
+                                    className="select-none cursor-default drop-shadow transform-gpu"
                                     src="/badges/friend_badge.svg"
                                     alt="Friend Badge"
                                     width="25"
@@ -435,7 +435,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default"
+                                    className="select-none cursor-default drop-shadow transform-gpu"
                                     src="/badges/chapman_badge.svg"
                                     alt="Chapman Student Badge"
                                     width="25"
