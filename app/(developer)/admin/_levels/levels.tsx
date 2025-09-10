@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "convex/react";
@@ -40,6 +41,10 @@ type Level = {
   timesPlayed: bigint;
   tags?: string[];
 };
+
+const LevelUpload = dynamic(() => import("./_helpers/levelupload").then((mod) => mod.default), {
+  ssr: false,
+});
 
 const Levels = () => {
   // get marker context positions
@@ -264,6 +269,7 @@ const Levels = () => {
 
   return (
     <>
+      <LevelUpload />
       <DataTable columns={columns} data={tableData || []} />
     </>
   );
