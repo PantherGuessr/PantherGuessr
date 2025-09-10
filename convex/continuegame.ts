@@ -61,7 +61,7 @@ export const updateOngoingGame = mutation({
       currentRound,
       timeLeftInRound,
       totalTimeTaken,
-      gameType
+      gameType,
     });
   },
 });

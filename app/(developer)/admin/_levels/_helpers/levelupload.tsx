@@ -82,7 +82,7 @@ const LevelUpload = () => {
         });
         // checks to see if blobs may be an array (should not be but here for safety)
         const finalBlob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
-        // creates chosen image file 
+        // creates chosen image file
         chosenImage = new File([finalBlob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), { type: "image/jpeg" });
       }
 
