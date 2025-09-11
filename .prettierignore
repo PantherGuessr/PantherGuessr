@@ -3,3 +3,12 @@
 /out
 /build
 /convex/_generated
+
+# Convex
+convex/
+convex/_generated/
+
+# Other
+dist
+build
+coverage

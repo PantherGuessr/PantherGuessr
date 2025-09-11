@@ -65,4 +65,7 @@ export default [
       "@typescript-eslint/no-use-before-define": "off",
     },
   },
+  {
+    ignores: [".next/", "convex/_generated"],
+  },
 ];
