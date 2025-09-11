@@ -31,56 +31,38 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
         <div className="flex flex-col gap-y-4 pt-4">
           {hasOngoingGame ? (
             <>
-              <Card className="bg-primary text-primary-foreground cursor-pointer">
-                <CardContent
-                  className="p-4"
-                  onClick={() => {
-                    document.body.classList.add("animate-body-opacity-scale");
-                    setTimeout(() => {
-                      router.push("/game/continue");
-                    }, 800);
-                  }}
-                >
-                  <div className="flex flex-col gap-x-2 align-center text-center justify-center">
-                    <h1 className="text-xl font-bold">Continue Game</h1>
-                    <p className="italic text-sm">Pick up where you left off!</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-primary text-primary-foreground cursor-pointer">
-                <CardContent
-                  className="p-4"
-                  onClick={() => {
-                    document.body.classList.add("animate-body-opacity-scale");
-                    setTimeout(() => {
-                      router.push("/game");
-                    }, 800);
-                  }}
-                >
-                  <div className="flex flex-col gap-x-2 align-center text-center justify-center">
-                    <h1 className="text-xl font-bold">New Game</h1>
-                    <p className="italic text-sm">Start a new classic PantherGuessr game</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <Link href="/game/continue">
+                <Card className="bg-primary text-primary-foreground cursor-pointer">
+                  <CardContent className="p-4">
+                    <div className="flex flex-col gap-x-2 align-center text-center justify-center">
+                      <h1 className="text-xl font-bold">Continue Game</h1>
+                      <p className="italic text-sm">Pick up where you left off!</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+              <Link href="/game">
+                <Card className="bg-primary text-primary-foreground cursor-pointer">
+                  <CardContent className="p-4">
+                    <div className="flex flex-col gap-x-2 align-center text-center justify-center">
+                      <h1 className="text-xl font-bold">New Game</h1>
+                      <p className="italic text-sm">Start a new classic PantherGuessr game</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             </>
           ) : (
-            <Card className="bg-primary text-primary-foreground cursor-pointer">
-              <CardContent
-                className="p-4"
-                onClick={() => {
-                  document.body.classList.add("animate-body-opacity-scale");
-                  setTimeout(() => {
-                    router.push("/game");
-                  }, 800);
-                }}
-              >
-                <div className="flex flex-col gap-x-2 align-center text-center justify-center">
-                  <h1 className="text-xl font-bold">Singleplayer</h1>
-                  <p className="italic text-sm">The classic way to play PantherGuessr</p>
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/game">
+              <Card className="bg-primary text-primary-foreground cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex flex-col gap-x-2 align-center text-center justify-center">
+                    <h1 className="text-xl font-bold">Singleplayer</h1>
+                    <p className="italic text-sm">The classic way to play PantherGuessr</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           )}
           {/* <!-- Multiplayer link -->
           <Link href="/play">
