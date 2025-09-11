@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 import { createClerkClient, UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
 

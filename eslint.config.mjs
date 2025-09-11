@@ -5,6 +5,7 @@ import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import typescriptEslintEslintPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+import importPlugin from "eslint-plugin-import";
 import prettier from "eslint-plugin-prettier";
 import reactUseProps from "eslint-plugin-react-use-props";
 
@@ -22,6 +23,7 @@ export default [
     plugins: {
       prettier,
       "react-use-props": reactUseProps,
+      import: importPlugin,
     },
     rules: {
       "prettier/prettier": "error",
@@ -42,6 +44,18 @@ export default [
           jsx: "never",
         },
       ],
+      "import/order": [
+        "error",
+        {
+          groups: ["builtin", "external", "internal", ["parent", "sibling", "index"]],
+          "newlines-between": "always",
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+        },
+      ],
+      "import/newline-after-import": "error",
     },
   },
   ...compat.extends("plugin:@typescript-eslint/recommended", "prettier").map((config) => ({
@@ -66,6 +80,6 @@ export default [
     },
   },
   {
-    ignores: [".next/", "convex/_generated"],
+    ignores: [".next/", "convex/_generated/"],
   },
 ];
