@@ -1,11 +1,27 @@
 {
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "editor.codeActionsOnSave": {
+    "source.organizeImports": "always",
     "source.fixAll.eslint": "always"
   },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "editor.wordWrap": "on",
-  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
-  "files.eol": "\n",
-  "git.branchProtection": ["main"]
+  "eslint.validate": [
+    "javascript",
+    "typescript"
+  ],
+  "prettier.ignorePath": ".prettierignore",
+  "prettier.semi": true,
+  "prettier.singleQuote": false,
+  "prettier.trailingComma": "es5"
 }
