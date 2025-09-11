@@ -2,7 +2,7 @@
 Please follow this checklist and put an x in each of the boxes, like this: [x]. It will ensure that our team takes your pull request seriously.
 -->
 
-- [ ] I have read and followed the [contribution guidelines](pantherguessr.com/contibuting).
+- [ ] I have read and followed the [contribution guidelines](https://github.com/PantherGuessr/PantherGuessr/blob/main/CONTRIBUTING.md).
 - [ ] My pull request targets the `main` branch of PantherGuessr.
 - [ ] I have tested these changes locally on my machine.
 
