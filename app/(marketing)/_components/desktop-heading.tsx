@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
-
-import { WelcomeMessage } from "@/components/text/welcomemessage";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 import "../../(users)/profile/[USERNAME]/backgrounds.css";
 import "./heading.css";
 
 import { Logo } from "@/components/logo";
 import ProfileHoverCard from "@/components/profile-hover-card";
+import { WelcomeMessage } from "@/components/text/welcomemessage";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+
 import LargeStreakBadge from "./_panels/large-streak-badge";
 
 interface DesktopHeadingProps {

@@ -1,13 +1,14 @@
 "use client";
 
-import { Suspense } from "react";
-import { redirect, useSearchParams } from "next/navigation";
 import { RedirectToSignIn } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
+import { redirect, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import { Navbar } from "@/components/navbar/navbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRoleCheck } from "@/hooks/use-role-check";
+
 import { AdminProvider } from "./admin/_components/adminprovider";
 
 const AdminLayoutInner = ({ children }: { children: React.ReactNode }) => {

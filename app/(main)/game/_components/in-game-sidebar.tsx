@@ -1,9 +1,9 @@
 "use client";
 
-import { ElementRef, useEffect, useRef, useState } from "react";
+import { Calendar, Hash, Loader2, LogOut, Medal, User } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Calendar, Hash, Loader2, LogOut, Medal, User } from "lucide-react";
+import { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import {
@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+
 import { useGame } from "../_context/GameContext";
 
 import "./sidebar-cursor.css";

@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,8 +12,6 @@ interface MobileDrawerProps {
 }
 
 const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
-  const router = useRouter();
-
   return (
     <Sheet>
       <SheetTrigger asChild>

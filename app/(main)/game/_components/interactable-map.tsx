@@ -2,8 +2,8 @@
 
 import "leaflet/dist/leaflet.css";
 
-import { MutableRefObject, useEffect, useRef, useState } from "react";
 import L, { LatLng } from "leaflet";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from "react-leaflet";
 
 import { useGame } from "../_context/GameContext";

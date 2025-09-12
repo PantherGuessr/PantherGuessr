@@ -1,4 +1,5 @@
 import { Footer } from "@/components/footer";
+
 import MaintainerCard from "./_components/maintainer-card";
 
 const CreditsPage = () => {

@@ -1,11 +1,11 @@
 "use client";
 
-import { use, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { use, useEffect, useMemo, useState } from "react";
 
 import { Footer } from "@/components/footer";
 import ProfileHoverCard from "@/components/profile-hover-card";

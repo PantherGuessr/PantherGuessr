@@ -11,7 +11,7 @@ export function getNextWeeklyResetUTC(now: Date = new Date()): Date {
   // Find this week's reset
   const dayOfWeek = now.getUTCDay();
   // Calculate days until next reset day
-  let daysUntilReset = (WEEKLY_RESET_DAY_UTC - dayOfWeek + 7) % 7;
+  const daysUntilReset = (WEEKLY_RESET_DAY_UTC - dayOfWeek + 7) % 7;
   // If today is reset day but time has passed, go to next week
   const resetThisWeek = new Date(
     Date.UTC(

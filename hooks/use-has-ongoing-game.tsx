@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
+import { useEffect, useState } from "react";
 
 import { api } from "@/convex/_generated/api";
 

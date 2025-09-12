@@ -1,8 +1,9 @@
-import Link from "next/link";
 import { GitBranch, GlobeLock, Heart, Menu, Scale } from "lucide-react";
+import Link from "next/link";
 
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
+
 import pk from "../package.json";
 import {
   DropdownMenu,

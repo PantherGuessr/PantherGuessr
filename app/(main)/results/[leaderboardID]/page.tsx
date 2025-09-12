@@ -1,12 +1,12 @@
 "use client";
 
-import { use, useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import html2canvas from "html2canvas-pro";
 import { ArrowRight, Download, Gamepad2, Home, ListOrdered, Loader2, Share, Share2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { use, useEffect, useRef, useState } from "react";
 
 import { Footer } from "@/components/footer";
 import { Logo } from "@/components/logo";

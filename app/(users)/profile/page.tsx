@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { Loader2, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { useBanCheck } from "@/hooks/use-ban-check";
 import { useGetListOfProfiles } from "@/hooks/userProfiles/use-get-list-of-profiles";
 import { cn } from "@/lib/utils";
+
 import Levenshtein from "./helpers/levenshtein";
 
 const ProfileSearchPage = () => {

@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useClerk, useUser } from "@clerk/clerk-react";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { useConvexAuth, useQuery } from "convex/react";
 import { Bug, Copy, LogOut, Settings, Shield, User, UserRoundSearch, Wrench } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,6 +17,7 @@ import { useScrollTop } from "@/hooks/use-scroll-top";
 import { toast } from "@/hooks/use-toast";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
 import { cn } from "@/lib/utils";
+
 import LevelBadge from "../level-badge";
 import { Logo } from "../logo";
 import StreakBadge from "../streak-badge";

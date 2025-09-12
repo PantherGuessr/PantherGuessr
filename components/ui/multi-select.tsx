@@ -1,7 +1,7 @@
-import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { cva, type VariantProps } from "class-variance-authority";
 import { CheckIcon, ChevronDown, WandSparkles, XCircle, XIcon } from "lucide-react";
+import * as React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

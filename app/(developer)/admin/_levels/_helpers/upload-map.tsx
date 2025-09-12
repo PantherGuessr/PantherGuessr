@@ -1,7 +1,7 @@
 import "leaflet/dist/leaflet.css";
 
-import { useEffect, useState } from "react";
 import L from "leaflet";
+import { useEffect, useState } from "react";
 import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 
 import { useMarker } from "./MarkerContext"; // Adjust the path as needed

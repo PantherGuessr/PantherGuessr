@@ -1,8 +1,8 @@
 "use client";
 
+import { ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Home } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar/navbar";

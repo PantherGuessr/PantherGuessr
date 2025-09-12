@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMutation, useQuery } from "convex/react";
 import { LatLng } from "leaflet";
 import { MoreHorizontal } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,9 +28,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
+
+import { DataTable } from "./helpers/datatable";
 import { useMarker } from "../_levels/_helpers/MarkerContext";
 import PreviewMap from "../_levels/_helpers/preview-map";
-import { DataTable } from "./helpers/datatable";
 
 type Level = {
   _id: Id<"levels">;
