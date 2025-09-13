@@ -3,7 +3,9 @@ import { Dispatch, SetStateAction } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Id } from "@/convex/_generated/dataModel";
+
 import { cn } from "@/lib/utils";
 
 interface ProfileBackgroundProps {

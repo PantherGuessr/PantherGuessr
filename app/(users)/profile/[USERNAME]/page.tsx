@@ -3,9 +3,6 @@
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
 import { Check, ChevronsUpDown, Loader2, Save, SearchX, ShieldX, SquarePen, UserSearch, X } from "lucide-react";
-
-import "./backgrounds.css";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,7 +17,9 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Toaster } from "@/components/ui/toaster";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 import { api } from "@/convex/_generated/api";
+
 import { useBanCheck } from "@/hooks/use-ban-check";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { useRoleCheck } from "@/hooks/use-role-check";
@@ -30,6 +29,7 @@ import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tag
 import { useAchievementCheck } from "@/hooks/userProfiles/use-get-unlocked-achievements";
 import { useGetUnlockedBackgrounds } from "@/hooks/userProfiles/use-get-unlocked-backgrounds";
 import { useGetUnlockedTaglines } from "@/hooks/userProfiles/use-get-unlocked-taglines";
+
 import { cn } from "@/lib/utils";
 
 import ProfileAdministrativeActions from "./_components/AdministrativeActions";
@@ -39,6 +39,7 @@ import { LevelProgress } from "./_components/LevelProgress";
 import ProfileAchievements from "./_components/ProfileAchievements";
 import ProfileActions from "./_components/ProfileActions";
 import ProfileBackground from "./_components/ProfileBackground";
+import "./backgrounds.css";
 
 type Props = {
   params: Promise<{ USERNAME: string }>;

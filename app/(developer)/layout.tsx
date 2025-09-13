@@ -7,6 +7,7 @@ import { Suspense } from "react";
 
 import { Navbar } from "@/components/navbar/navbar";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import { useRoleCheck } from "@/hooks/use-role-check";
 
 import { AdminProvider } from "./admin/_components/adminprovider";

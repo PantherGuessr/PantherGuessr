@@ -1,19 +1,18 @@
 "use client";
 
+import { NewUserHeading } from "@/app/(marketing)/_components/new-user-heading";
 import { useUser } from "@clerk/clerk-react";
 import { useConvexAuth, useQuery } from "convex/react";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
-import { useMediaQuery } from "usehooks-ts";
-
-import "./header-animation.css";
-
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useMediaQuery } from "usehooks-ts";
 
-import { NewUserHeading } from "@/app/(marketing)/_components/new-user-heading";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
+
 import { api } from "@/convex/_generated/api";
+
 import { useBanCheck } from "@/hooks/use-ban-check";
 import { useHasOngoingGame } from "@/hooks/use-has-ongoing-game";
 import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
@@ -21,6 +20,7 @@ import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tag
 
 import DesktopHeading from "./desktop-heading";
 import DesktopHeadingLoading from "./desktop-heading-loading";
+import "./header-animation.css";
 import MobileDrawer from "./mobiledrawer";
 
 export const Heading = () => {

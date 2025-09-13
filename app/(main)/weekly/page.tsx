@@ -7,6 +7,7 @@ import { useEffect } from "react";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+
 import { useLeaderboardByGameUser } from "@/hooks/use-leaderboard-by-game-user";
 import { useWeeklyChallengeGameId } from "@/hooks/use-weekly-challenge-id";
 

@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { api } from "@/convex/_generated/api";
+
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
+
 import { cn } from "@/lib/utils";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";

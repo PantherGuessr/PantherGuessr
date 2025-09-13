@@ -10,12 +10,15 @@ import React, { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import { api } from "@/convex/_generated/api";
+
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { toast } from "@/hooks/use-toast";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
+
 import { cn } from "@/lib/utils";
 
 import LevelBadge from "../level-badge";
@@ -25,7 +28,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "../ui/menubar";
 import { Toaster } from "../ui/toaster";
-
 import "./navbar.css";
 
 export const Navbar = () => {

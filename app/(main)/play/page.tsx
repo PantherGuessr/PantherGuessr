@@ -8,7 +8,9 @@ import { useEffect } from "react";
 
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
+
 import { api } from "@/convex/_generated/api";
+
 import { useBanCheck } from "@/hooks/use-ban-check";
 
 const PlayPage = () => {

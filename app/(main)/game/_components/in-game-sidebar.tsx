@@ -19,10 +19,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import { cn } from "@/lib/utils";
 
 import { useGame } from "../_context/GameContext";
-
 import "./sidebar-cursor.css";
 
 const InGameSidebar = () => {

@@ -9,10 +9,13 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
+
 import { useBanCheck } from "@/hooks/use-ban-check";
 import { useGetListOfProfiles } from "@/hooks/userProfiles/use-get-list-of-profiles";
+
 import { cn } from "@/lib/utils";
 
 import Levenshtein from "./helpers/levenshtein";

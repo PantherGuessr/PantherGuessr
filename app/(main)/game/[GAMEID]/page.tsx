@@ -6,13 +6,14 @@ import { useRouter } from "next/navigation";
 import { use, useEffect } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
-import "../_components/game-animations.css";
-
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+
 import { useBanCheck } from "@/hooks/use-ban-check";
+
 import { cn } from "@/lib/utils";
 
+import "../_components/game-animations.css";
 import InGameSidebar from "../_components/in-game-sidebar";
 import DynamicInteractableMap from "../_components/map-wrapper";
 import { GameProvider, useGame } from "../_context/GameContext";

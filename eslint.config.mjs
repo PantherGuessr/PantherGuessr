@@ -1,6 +1,4 @@
 /* eslint-disable import/no-anonymous-default-export */
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import typescriptEslintEslintPlugin from "@typescript-eslint/eslint-plugin";
@@ -8,6 +6,8 @@ import tsParser from "@typescript-eslint/parser";
 import importPlugin from "eslint-plugin-import";
 import prettier from "eslint-plugin-prettier";
 import reactUseProps from "eslint-plugin-react-use-props";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,17 +44,7 @@ export default [
           jsx: "never",
         },
       ],
-      "import/order": [
-        "error",
-        {
-          groups: ["builtin", "external", "internal", ["parent", "sibling", "index"]],
-          "newlines-between": "always",
-          alphabetize: {
-            order: "asc",
-            caseInsensitive: true,
-          },
-        },
-      ],
+      "import/order": "off",
       "import/newline-after-import": "error",
     },
   },
@@ -80,6 +70,6 @@ export default [
     },
   },
   {
-    ignores: [".next/", "convex/_generated/"],
+    ignores: [".next/", "convex/_generated/", "next-env.d.ts"],
   },
 ];
