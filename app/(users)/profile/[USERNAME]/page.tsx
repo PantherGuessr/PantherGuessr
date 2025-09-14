@@ -296,7 +296,7 @@ const ProfilePage = ({ params }: Props) => {
                                   type="text"
                                   value={usernameForUpdate}
                                   onChange={(e) => setUsernameForUpdate(e.target.value)}
-                                  className="text-4xl font-bold md:ml-4 mt-2 md:mt-0 transition-all duration-[25] ease-in-out"
+                                  className="text-4xl font-bold md:ml-4 mt-2 md:mt-0 transition-all duration-200 ease-in-out"
                                   style={{ width: userNameInputWidth }}
                                   onKeyDown={(e) => {
                                     if (e.key === "Escape") {
