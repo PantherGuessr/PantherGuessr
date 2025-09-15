@@ -2,7 +2,9 @@ import Image from "next/image";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import { cn } from "@/lib/utils";
+
 import LargeStreakBadge from "./_panels/large-streak-badge";
 
 const DesktopHeadingLoading = () => {

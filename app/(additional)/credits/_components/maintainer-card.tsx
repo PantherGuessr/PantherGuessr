@@ -1,8 +1,8 @@
 "use client";
 
+import { GithubIcon, Globe, LinkedinIcon, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { GithubIcon, Globe, LinkedinIcon, Mail } from "lucide-react";
 
 import ProfileHoverCard from "@/components/profile-hover-card";
 import { Button } from "@/components/ui/button";

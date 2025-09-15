@@ -1,9 +1,9 @@
 "use client";
 
-import { ElementRef, useEffect, useRef, useState } from "react";
+import { Calendar, Hash, Loader2, LogOut, Medal, User } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Calendar, Hash, Loader2, LogOut, Medal, User } from "lucide-react";
+import { ElementRef, useCallback, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import {
@@ -19,9 +19,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { useGame } from "../_context/GameContext";
 
+import { cn } from "@/lib/utils";
+
+import { useGame } from "../_context/GameContext";
 import "./sidebar-cursor.css";
 
 const InGameSidebar = () => {
@@ -63,20 +64,20 @@ const InGameSidebar = () => {
    * Handles submitting a guess for the current round
    * Only submits if a marker has been placed and there is a valid marker position
    */
-  const handleSubmittingGuess = () => {
+  const handleSubmittingGuess = useCallback(() => {
     if (!markerHasBeenPlaced || !markerPosition) return;
 
     const { lat, lng } = markerPosition;
     submitGuess(lat, lng);
-  };
+  }, [markerHasBeenPlaced, markerPosition, submitGuess]);
 
   /**
    * Handles advancing to the next round
    * Calls the nextRound function from GameContext
    */
-  const handleNextRound = () => {
+  const handleNextRound = useCallback(() => {
     nextRound();
-  };
+  }, [nextRound]);
 
   /**
    * Handles displaying the magnifier when hovering over the image

@@ -1,9 +1,10 @@
-import { useState } from "react";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-
 import DemoRoundPanel from "@/app/(marketing)/_components/_panels/demo-round-panel";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+
 import { Logo } from "@/components/logo";
+
 import { cn } from "@/lib/utils";
 
 export const NewUserHeading = () => {

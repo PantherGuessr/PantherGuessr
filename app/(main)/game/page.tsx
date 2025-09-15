@@ -1,20 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useConvexAuth, useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
+import { api } from "@/convex/_generated/api";
+
+import { useBanCheck } from "@/hooks/use-ban-check";
+
 import { cn } from "@/lib/utils";
-import InGameSidebar from "./_components/in-game-sidebar";
-import { GameProvider } from "./_context/GameContext";
 
 import "./_components/game-animations.css";
-
-import { api } from "@/convex/_generated/api";
-import { useBanCheck } from "@/hooks/use-ban-check";
+import InGameSidebar from "./_components/in-game-sidebar";
 import DynamicInteractableMap from "./_components/map-wrapper";
+import { GameProvider } from "./_context/GameContext";
 
 const GamePage = () => {
   const { isLoading: isConvexLoading, isAuthenticated: isConvexAuthenticated } = useConvexAuth();

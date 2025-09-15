@@ -3,25 +3,23 @@
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
 import { Check, ChevronsUpDown, Loader2, Save, SearchX, ShieldX, SquarePen, UserSearch, X } from "lucide-react";
-
-import { Footer } from "@/components/footer";
-import { Button } from "@/components/ui/button";
-import { api } from "@/convex/_generated/api";
-
-import "./backgrounds.css";
-
-import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
+import { Footer } from "@/components/footer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Toaster } from "@/components/ui/toaster";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+import { api } from "@/convex/_generated/api";
+
 import { useBanCheck } from "@/hooks/use-ban-check";
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { useRoleCheck } from "@/hooks/use-role-check";
@@ -31,7 +29,9 @@ import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tag
 import { useAchievementCheck } from "@/hooks/userProfiles/use-get-unlocked-achievements";
 import { useGetUnlockedBackgrounds } from "@/hooks/userProfiles/use-get-unlocked-backgrounds";
 import { useGetUnlockedTaglines } from "@/hooks/userProfiles/use-get-unlocked-taglines";
+
 import { cn } from "@/lib/utils";
+
 import ProfileAdministrativeActions from "./_components/AdministrativeActions";
 import BanAppeal from "./_components/BanAppeal";
 import GameHistory from "./_components/GameHistory";
@@ -39,6 +39,7 @@ import { LevelProgress } from "./_components/LevelProgress";
 import ProfileAchievements from "./_components/ProfileAchievements";
 import ProfileActions from "./_components/ProfileActions";
 import ProfileBackground from "./_components/ProfileBackground";
+import "./backgrounds.css";
 
 type Props = {
   params: Promise<{ USERNAME: string }>;
@@ -295,7 +296,7 @@ const ProfilePage = ({ params }: Props) => {
                                   type="text"
                                   value={usernameForUpdate}
                                   onChange={(e) => setUsernameForUpdate(e.target.value)}
-                                  className="text-4xl font-bold md:ml-4 mt-2 md:mt-0 transition-all duration-[25] ease-in-out"
+                                  className="text-4xl font-bold md:ml-4 mt-2 md:mt-0 transition-all duration-200 ease-in-out"
                                   style={{ width: userNameInputWidth }}
                                   onKeyDown={(e) => {
                                     if (e.key === "Escape") {

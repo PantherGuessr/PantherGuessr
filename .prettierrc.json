@@ -1,14 +1,15 @@
 {
   "importOrder": [
-    "^(react/(.*)$)|^(react$)",
-    "^(next/(.*)$)|^(next$)",
     "<THIRD_PARTY_MODULES>",
-    "",
-    "^@/(.*)$",
+    "^@/components/(.*)$",
+    "^@/convex/(.*)$",
+    "^@/hooks/(.*)$",
+    "^@/lib/(.*)$",
     "^[./]"
   ],
-  "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"],
-  "plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-sort-json"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"],
   "printWidth": 120,
   "singleQuote": false,
   "tabWidth": 2,

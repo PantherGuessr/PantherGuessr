@@ -1,9 +1,10 @@
-import "leaflet/dist/leaflet.css";
-
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { CircleMarker, MapContainer, Marker, TileLayer } from "react-leaflet";
 
-import { useMarker } from "./MarkerContext"; // Adjust the path as needed
+import { useMarker } from "./MarkerContext";
+
+// Adjust the path as needed
 
 const PreviewMap = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

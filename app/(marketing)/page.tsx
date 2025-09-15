@@ -1,5 +1,6 @@
 import { Footer } from "@/components/footer";
 import { BackgroundGradient } from "@/components/ui/backgroundgradient";
+
 import { Heading } from "./_components/heading";
 
 const MarketingPage = () => {

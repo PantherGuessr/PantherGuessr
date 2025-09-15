@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import imageCompression from "browser-image-compression";
 import { useMutation } from "convex/react";
 import heic2any from "heic2any";
 import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,9 +17,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
+
 import { api } from "@/convex/_generated/api";
-import DynamicUploadMap from "./dynamic-upload-map";
+
 import { useMarker } from "./MarkerContext";
+import DynamicUploadMap from "./dynamic-upload-map";
 
 const tagsList = [
   { value: "Standard", label: "Standard", icon: University },

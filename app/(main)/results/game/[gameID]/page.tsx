@@ -1,22 +1,22 @@
 "use client";
 
-import { use, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { use, useEffect, useMemo, useState } from "react";
 
 import { Footer } from "@/components/footer";
 import ProfileHoverCard from "@/components/profile-hover-card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+
 import { useGameType } from "@/hooks/use-game-type";
+
 import { getTotalScore } from "@/lib/utils";
-import { getNextWeeklyResetTimestamp, getNextWeeklyResetUTC } from "@/lib/weeklytimes";
+import { getNextWeeklyResetTimestamp } from "@/lib/weeklytimes";
 
 type GameLeaderboardProps = {
   params: Promise<{ gameID: string }>;

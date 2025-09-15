@@ -1,21 +1,22 @@
 "use client";
 
-import { use, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { use, useEffect } from "react";
 import { useMediaQuery } from "usehooks-ts";
-
-import { cn } from "@/lib/utils";
-import InGameSidebar from "../_components/in-game-sidebar";
-import { GameProvider, useGame } from "../_context/GameContext";
-
-import "../_components/game-animations.css";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+
 import { useBanCheck } from "@/hooks/use-ban-check";
+
+import { cn } from "@/lib/utils";
+
+import "../_components/game-animations.css";
+import InGameSidebar from "../_components/in-game-sidebar";
 import DynamicInteractableMap from "../_components/map-wrapper";
+import { GameProvider, useGame } from "../_context/GameContext";
 
 type Props = {
   params: Promise<{ GAMEID: string }>;

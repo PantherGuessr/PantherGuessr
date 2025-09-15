@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { Endpoints } from "@octokit/types";
 import { Loader2 } from "lucide-react";
 import { Octokit } from "octokit";
+import { useEffect, useState } from "react";
 
 import { Footer } from "@/components/footer";
 import { Separator } from "@/components/ui/separator";
+
 import ReleaseCard from "./_components/release-card";
 
 type Release = Endpoints["GET /repos/{owner}/{repo}/releases"]["response"]["data"][number];
