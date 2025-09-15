@@ -20,6 +20,7 @@ import { api } from "@/convex/_generated/api";
 import { useBanCheck } from "@/hooks/use-ban-check";
 
 import { cn } from "@/lib/utils";
+import useUserById from "@/hooks/use-user-by-id";
 
 type Props = {
   params: Promise<{ leaderboardID: string }>;
@@ -63,6 +64,7 @@ const ResultPage = ({ params }: Props) => {
 
   useEffect(() => {
     if (leaderboardEntry) {
+
       setDistances([
         Number(leaderboardEntry.round_1_distance),
         Number(leaderboardEntry.round_2_distance),
@@ -84,7 +86,7 @@ const ResultPage = ({ params }: Props) => {
         Number(leaderboardEntry.round_4) +
         Number(leaderboardEntry.round_5);
       setFinalScore(totalScore);
-      setUsername(leaderboardEntry.username);
+      setUsername(user ? user.username : "Unknown Player");
       setOldLevel(Number(leaderboardEntry.oldLevel));
       setNewLevel(Number(leaderboardEntry.newLevel));
     }
