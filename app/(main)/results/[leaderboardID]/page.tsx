@@ -18,9 +18,9 @@ import { Separator } from "@/components/ui/separator";
 import { api } from "@/convex/_generated/api";
 
 import { useBanCheck } from "@/hooks/use-ban-check";
+import useUserById from "@/hooks/use-user-by-id";
 
 import { cn } from "@/lib/utils";
-import useUserById from "@/hooks/use-user-by-id";
 
 type Props = {
   params: Promise<{ leaderboardID: string }>;
@@ -33,6 +33,8 @@ const ResultPage = ({ params }: Props) => {
   const searchParams = useSearchParams();
   const { leaderboardID } = use(params);
   const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardID });
+  // fetch the user document for this leaderboard entry by userId
+  const user = useUserById(leaderboardEntry?.userId);
   const [distances, setDistances] = useState<number[]>([]);
   const [scores, setScores] = useState<number[]>([]);
   const [finalScore, setFinalScore] = useState<number>(0);
@@ -64,7 +66,6 @@ const ResultPage = ({ params }: Props) => {
 
   useEffect(() => {
     if (leaderboardEntry) {
-
       setDistances([
         Number(leaderboardEntry.round_1_distance),
         Number(leaderboardEntry.round_2_distance),
@@ -86,11 +87,12 @@ const ResultPage = ({ params }: Props) => {
         Number(leaderboardEntry.round_4) +
         Number(leaderboardEntry.round_5);
       setFinalScore(totalScore);
-      setUsername(user ? user.username : "Unknown Player");
+      // prefer fetching username from the user document referenced by userId
+      setUsername(user?.username ?? "");
       setOldLevel(Number(leaderboardEntry.oldLevel));
       setNewLevel(Number(leaderboardEntry.newLevel));
     }
-  }, [leaderboardEntry]);
+  }, [leaderboardEntry, user]);
 
   useEffect(() => {
     if (isFromGame && leaderboardEntry) {
