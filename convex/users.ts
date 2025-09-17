@@ -197,12 +197,12 @@ export const isUserBanned = query({
  */
 export const awardUserXP = internalMutation({
   args: {
-    username: v.string(),
+    userID: v.id("users"),
     earnedXP: v.number(),
   },
   async handler(ctx, args) {
-    // Retrieve the user by their username
-    const user = await userByUsername(ctx, args.username);
+    // Retrieve the user by their ID
+    const user = await ctx.db.get(args.userID);
     if (!user) {
       throw new Error("User not found");
     }
@@ -233,7 +233,7 @@ export const awardUserXP = internalMutation({
       }
     } while (canLevelUp);
 
-    console.log(`Awarded @${args.username} ${args.earnedXP} XP`);
+    console.log(`Awarded @${args.userID} ${args.earnedXP} XP`);
 
     // Update the user's level and current XP in the database
     await ctx.db.patch(user._id, { level, currentXP });

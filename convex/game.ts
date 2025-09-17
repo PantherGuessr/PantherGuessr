@@ -250,7 +250,6 @@ export const getGameById = query({
 export const addLeaderboardEntryToGame = mutation({
   args: {
     gameId: v.id("games"),
-    username: v.string(),
     userId: v.id("users"),
     round_1: v.int64(),
     round_1_distance: v.int64(),
@@ -278,14 +277,13 @@ export const addLeaderboardEntryToGame = mutation({
     );
 
     const xpResult: { newLevel: bigint; oldLevel: bigint } = await ctx.runMutation(internal.users.awardUserXP, {
-      username: args.username,
+      userID: args.userId,
       earnedXP: newXP,
     });
 
     // make leaderboard entry
     const leaderboardEntry = await ctx.db.insert("leaderboardEntries", {
       game: args.gameId,
-      username: args.username,
       oldLevel: xpResult.oldLevel,
       newLevel: xpResult.newLevel,
       userId: args.userId,

@@ -193,9 +193,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
         userClerkId: user?.user?.id ?? "",
       });
 
-      // gets username for leaderboard entry
-      const username = user.user?.username ? user.user.username : "Anonymous";
-
       // !!! it may be a bad idea to assume this is never null but, ya know, YOLO! - Dylan
       updateStreak({ clerkId: currentUser!.clerkId });
 
@@ -203,7 +200,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
 
       addLeaderboardEntryToGame({
         gameId: gameData!.gameContent!._id,
-        username: username,
         userId: currentUser!._id,
         round_1: BigInt(allScores[0]),
         round_1_distance: BigInt(allDistances[0]),
