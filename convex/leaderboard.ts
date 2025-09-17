@@ -4,7 +4,7 @@ import { query } from "./_generated/server";
 export type LeaderboardType = "streak" | "level" | "totalPoints";
 
 /**
- * Get the top 25 users by current streak.
+ * Gets the top 25 users by current streak.
  */
 export const getTopUsersByStreak = query({
   args: {},
