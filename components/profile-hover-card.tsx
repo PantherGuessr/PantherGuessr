@@ -136,10 +136,10 @@ const ProfileHoverCard = ({ userID, username, hasAtSymbol = true, isUnderlined =
                 </div>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground italic">{profileTagline?.tagline}</p>
+            <p className="text-sm font-bold text-muted-foreground italic">{profileTagline?.tagline}</p>
             <div className="flex items-center pt-2">
               <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs font-bold text-muted-foreground">
                 Joined{" "}
                 {new Date(user?._creationTime ?? "").toLocaleDateString("en-US", {
                   year: "numeric",
