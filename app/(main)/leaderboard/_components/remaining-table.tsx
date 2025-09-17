@@ -102,7 +102,7 @@ export function RemainingTable({ users, type, currentUser, userRank }: Remaining
                     rank
                   )}
                 </TableCell>
-                <TableCell className="p-2">
+                <TableCell className="p-2 text-start">
                   <ProfileHoverCard userID={user._id} isUnderlined={true} />
                 </TableCell>
                 <TableCell className="p-2 text-center font-semibold">

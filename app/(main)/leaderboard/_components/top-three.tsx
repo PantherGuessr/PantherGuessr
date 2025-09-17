@@ -51,13 +51,13 @@ export function TopThree({ users, type }: TopThreeProps) {
 
   return (
     <div className="hidden md:block w-full max-w-4xl mx-auto mb-8">
-      <h2 className="text-2xl font-bold text-center mb-6">Top 3 - {statLabel}</h2>
+      {/* <h2 className="text-2xl font-bold text-center mb-6">Top 3 - {statLabel}</h2> */}
       <div className="hidden md:flex md:flex-row items-end justify-center gap-4 mt-20">
         {/* Second Place */}
         {topThree[1] && (
           <Card className="flex flex-col items-center p-6 w-full md:w-64 h-48 justify-start bg-slate-100 dark:bg-slate-800">
             <div className="flex flex-col items-center -translate-y-20">
-              <Avatar className="w-20 h-20 mb-4 ring-4 ring-slate-400">
+              <Avatar className="w-20 h-20 mb-4 ring-4 ring-slate-300 dark:ring-slate-600">
                 <AvatarImage className="object-cover" src={topThree[1].picture} alt={topThree[1].username} />
                 <AvatarFallback>{topThree[1].username.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
@@ -93,7 +93,7 @@ export function TopThree({ users, type }: TopThreeProps) {
         {topThree[2] && (
           <Card className="flex flex-col items-center p-6 w-full md:w-64 h-44 justify-start bg-orange-100 dark:bg-orange-900">
             <div className="flex flex-col items-center -translate-y-20">
-              <Avatar className="w-20 h-20 mb-4 ring-4 ring-orange-400">
+              <Avatar className="w-20 h-20 mb-4 ring-4 ring-orange-400 dark:ring-orange-700">
                 <AvatarImage className="object-cover" src={topThree[2].picture} alt={topThree[2].username} />
                 <AvatarFallback>{topThree[2].username.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
