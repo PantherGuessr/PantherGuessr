@@ -5,6 +5,7 @@ export type LeaderboardType = "streak" | "level" | "totalPoints";
 
 /**
  * Gets the top 25 users by current streak.
+ * Tiebreakers: level, then currentXP
  */
 export const getTopUsersByStreak = query({
   args: {},
@@ -34,6 +35,7 @@ export const getTopUsersByStreak = query({
 
 /**
  * Get the top 25 users by level and XP.
+ * Tiebreakers: currentXP, then currentStreak
  */
 export const getTopUsersByLevel = query({
   args: {},
@@ -63,6 +65,7 @@ export const getTopUsersByLevel = query({
 
 /**
  * Get the top 25 users by total points earned.
+ * Tiebreakers: level, then currentXP
  */
 export const getTopUsersByTotalPoints = query({
   args: {},

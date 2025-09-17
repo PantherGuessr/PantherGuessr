@@ -51,7 +51,7 @@ export function TopThree({ users, type }: TopThreeProps) {
 
   return (
     <div className="hidden md:block w-full max-w-4xl mx-auto mb-8">
-      {/* <h2 className="text-2xl font-bold text-center mb-6">Top 3 - {statLabel}</h2> */}
+      <h2 className="text-2xl font-bold text-center mb-6">Top 3 - {statLabel}</h2>
       <div className="hidden md:flex md:flex-row items-end justify-center gap-4 mt-20">
         {/* Second Place */}
         {topThree[1] && (

@@ -65,7 +65,7 @@ const PlayPage = () => {
             <h1>Singleplayer</h1>
           </div>
         </Link>
-        <Link
+        {/* <Link
           href="#"
           onClick={(e) => {
             e.preventDefault();
@@ -76,7 +76,7 @@ const PlayPage = () => {
             <Users className="mb-2" />
             <h1>Multiplayer</h1>
           </div>
-        </Link>
+        </Link> */}
       </div>
       <Footer />
     </div>
