@@ -235,8 +235,13 @@ export const awardUserXP = internalMutation({
 
     console.log(`Awarded @${args.userID} ${args.earnedXP} XP`);
 
-    // Update the user's level and current XP in the database
-    await ctx.db.patch(user._id, { level, currentXP });
+    // Update the user's level, current XP, and total points earned in the database
+    const currentTotalPoints = user.totalPointsEarned || 0n;
+    await ctx.db.patch(user._id, { 
+      level, 
+      currentXP,
+      totalPointsEarned: currentTotalPoints + BigInt(args.earnedXP)
+    });
 
     return {
       oldLevel,
