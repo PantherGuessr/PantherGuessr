@@ -84,7 +84,7 @@ export function RemainingTable({ users, type, description, currentUser, userRank
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <h3 className="text-xl font-semibold mb-2">Full Rankings</h3>
+      <h3 className="hidden md:block text-xl font-semibold mb-2">Full Rankings</h3>
       <p className="text-muted-foreground mb-4">{description}</p>
       
       <Table className="w-full border-collapse">
