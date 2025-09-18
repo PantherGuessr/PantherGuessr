@@ -15,7 +15,7 @@ type RemainingTableProps = {
 const getStatValue = (user: Doc<"users">, type: LeaderboardType): string => {
   switch (type) {
     case "streak":
-      return `${user.currentStreak} day${user.currentStreak === 1n ? '' : 's'}`;
+      return `${user.currentStreak} day${user.currentStreak === 1n ? "" : "s"}`;
     case "level":
       return `Level ${user.level}`;
     case "totalPoints":
@@ -78,7 +78,7 @@ const getAlignmentClass = (type: LeaderboardType): [string, string] => {
 };
 
 export function RemainingTable({ users, type, description, currentUser, userRank }: RemainingTableProps) {
-  const remainingUsers = users.slice(3); // Skip top 3 for the table
+  // const remainingUsers = users.slice(3); // Skip top 3 for the table
   const statHeader = getStatHeader(type);
   const secondaryStatHeader = getSecondaryStatHeader(type);
 
@@ -86,7 +86,7 @@ export function RemainingTable({ users, type, description, currentUser, userRank
     <div className="w-full max-w-4xl mx-auto">
       <h3 className="hidden md:block text-xl font-semibold mb-2">Full Rankings</h3>
       <p className="text-muted-foreground mb-4">{description}</p>
-      
+
       <Table className="w-full border-collapse">
         <TableHeader>
           <TableRow>
@@ -100,12 +100,9 @@ export function RemainingTable({ users, type, description, currentUser, userRank
           {users.map((user, index) => {
             const rank = index + 1;
             const isCurrentUser = currentUser && user._id === currentUser._id;
-            
+
             return (
-              <TableRow 
-                key={user._id} 
-                className={isCurrentUser ? "bg-red-600/10 dark:bg-red-600/30" : ""}
-              >
+              <TableRow key={user._id} className={isCurrentUser ? "bg-red-600/10 dark:bg-red-600/30" : ""}>
                 <TableCell className="p-2 text-center font-semibold">
                   {rank <= 3 ? (
                     <span className="text-lg">

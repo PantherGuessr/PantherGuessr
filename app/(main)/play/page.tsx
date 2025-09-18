@@ -1,7 +1,7 @@
 "use client";
 
 import { useConvexAuth, useQuery } from "convex/react";
-import { ArrowLeft, CalendarClock, Loader2, User, Users } from "lucide-react";
+import { ArrowLeft, CalendarClock, Loader2, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

@@ -12,7 +12,10 @@ export function useLeaderboard(type: LeaderboardType) {
   // Get top 25 users based on type
   const topUsersByStreak = useQuery(api.leaderboard.getTopUsersByStreak, type === "streak" ? {} : "skip");
   const topUsersByLevel = useQuery(api.leaderboard.getTopUsersByLevel, type === "level" ? {} : "skip");
-  const topUsersByTotalPoints = useQuery(api.leaderboard.getTopUsersByTotalPoints, type === "totalPoints" ? {} : "skip");
+  const topUsersByTotalPoints = useQuery(
+    api.leaderboard.getTopUsersByTotalPoints,
+    type === "totalPoints" ? {} : "skip"
+  );
 
   // Get user rank
   const userRank = useQuery(
@@ -44,7 +47,7 @@ export function useLeaderboard(type: LeaderboardType) {
   const displayEntries = useMemo(() => {
     if (!topUsers) return [];
     if (!currentUser || userInTop25) return topUsers;
-    
+
     // Add current user to the list if not in top 25
     return [...topUsers, currentUser];
   }, [topUsers, currentUser, userInTop25]);

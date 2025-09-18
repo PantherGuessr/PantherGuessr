@@ -1,3 +1,4 @@
+import { Calendar, Trophy, User } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
@@ -13,7 +14,6 @@ import { cn } from "@/lib/utils";
 import "../../(users)/profile/[USERNAME]/backgrounds.css";
 import LargeStreakBadge from "./_panels/large-streak-badge";
 import "./heading.css";
-import { Calendar, Trophy, User } from "lucide-react";
 
 interface DesktopHeadingProps {
   username: string;

@@ -7,30 +7,31 @@ import Spinner from "@/components/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { LeaderboardType } from "@/convex/leaderboard";
+
 import { useLeaderboard } from "@/hooks/use-leaderboard";
 
 import { RemainingTable } from "./_components/remaining-table";
 import { TopThree } from "./_components/top-three";
 
-const LEADERBOARD_TYPES: { 
-  key: LeaderboardType; 
-  label: string; 
-  description: string; 
+const LEADERBOARD_TYPES: {
+  key: LeaderboardType;
+  label: string;
+  description: string;
 }[] = [
-  { 
-    key: "streak", 
-    label: "Longest Streak", 
-    description: "Users with the longest current daily streaks" 
+  {
+    key: "streak",
+    label: "Longest Streak",
+    description: "Users with the longest current daily streaks",
   },
-  { 
-    key: "level", 
-    label: "Level & XP", 
-    description: "Users with the highest levels and experience points" 
+  {
+    key: "level",
+    label: "Level & XP",
+    description: "Users with the highest levels and experience points",
   },
-  { 
-    key: "totalPoints", 
-    label: "Total Points", 
-    description: "Users with the most total points earned across all games" 
+  {
+    key: "totalPoints",
+    label: "Total Points",
+    description: "Users with the most total points earned across all games",
   },
 ];
 
@@ -38,31 +39,30 @@ export default function LeaderboardPage() {
   const [selectedType, setSelectedType] = useState<LeaderboardType>("level");
   const { topUsers, currentUser, userRank, displayEntries, isLoading } = useLeaderboard(selectedType);
 
-  const selectedTypeInfo = LEADERBOARD_TYPES.find(t => t.key === selectedType);
+  const selectedTypeInfo = LEADERBOARD_TYPES.find((t) => t.key === selectedType);
 
   return (
     <div className="flex flex-col w-screen h-full min-h-screen justify-between">
       <div className="w-full max-w-6xl mx-auto py-8 px-4">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">Global Leaderboard</h1>
-          
+
           {/* Leaderboard Type Selection Tabs */}
-          <Tabs value={selectedType} onValueChange={(value) => setSelectedType(value as LeaderboardType)} className="w-full">
+          <Tabs
+            value={selectedType}
+            onValueChange={(value) => setSelectedType(value as LeaderboardType)}
+            className="w-full"
+          >
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-3">
               {LEADERBOARD_TYPES.map((type) => (
-                <TabsTrigger
-                  key={type.key}
-                  value={type.key}
-                  className="text-sm"
-                >
+                <TabsTrigger key={type.key} value={type.key} className="text-sm">
                   {type.label}
                 </TabsTrigger>
               ))}
             </TabsList>
-            
+
             {LEADERBOARD_TYPES.map((type) => (
               <TabsContent key={type.key} value={type.key} className="mt-6">
-                
                 {isLoading ? (
                   <div className="flex flex-col justify-center items-center py-12">
                     <Spinner />
@@ -72,10 +72,10 @@ export default function LeaderboardPage() {
                   <>
                     {/* Top 3 Users Display */}
                     <TopThree users={topUsers} type={selectedType} />
-                    
+
                     {/* Full Rankings Table */}
-                    <RemainingTable 
-                      users={displayEntries} 
+                    <RemainingTable
+                      users={displayEntries}
                       description={selectedTypeInfo?.description || ""}
                       type={selectedType}
                       currentUser={currentUser}
@@ -109,7 +109,7 @@ export default function LeaderboardPage() {
           </Tabs>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );
