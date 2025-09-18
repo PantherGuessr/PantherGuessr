@@ -56,7 +56,7 @@ const GameIdPage = ({ params }: Props) => {
     return (
       <div className="h-full">
         <div className="min-h-full flex flex-col">
-          <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
             <NotFoundContent
               title="Invalid Game ID"
               description="The game ID you provided is not valid. Please check the URL and try again."

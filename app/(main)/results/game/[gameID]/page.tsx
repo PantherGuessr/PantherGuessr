@@ -110,8 +110,8 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
   // Handle validation errors after all hooks are called
   if (!isValidId) {
     return (
-      <div className="flex flex-col w-screen h-full min-h-screen justify-between">
-        <div className="w-full max-w-5xl mx-auto py-8">
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
           <NotFoundContent
             title="Invalid Game ID"
             description="The game ID you provided is not valid. Please check the URL and try again."
@@ -125,8 +125,8 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
   // Show not found if game doesn't exist
   if (gameExists === false) {
     return (
-      <div className="flex flex-col w-screen h-full min-h-screen justify-between">
-        <div className="w-full max-w-5xl mx-auto py-8">
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
           <NotFoundContent
             title="Game Not Found"
             description="The game you're looking for doesn't exist or has been removed."

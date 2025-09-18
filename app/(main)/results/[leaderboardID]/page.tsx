@@ -212,7 +212,7 @@ const ResultPage = ({ params }: Props) => {
   if (leaderboardEntry === null) {
     return (
       <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+        <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
           <NotFoundContent
             title="Results Not Found"
             description="The game results you're looking for don't exist or have been removed."
