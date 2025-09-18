@@ -70,7 +70,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                   background
                 )}
               >
-                <Avatar className="rounded-full transition-all border-primary bg-primary border-4 inset-2 hover:scale-105 my-10 drop-shadow-md cursor-pointer w-28 h-28">
+                <Avatar className="rounded-full transition-all border-primary bg-primary border-4 hover:scale-105 my-10 drop-shadow-md cursor-pointer w-28 h-28">
                   <AvatarImage
                     src={picture}
                     className="object-cover"
@@ -199,7 +199,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                   background
                 )}
               >
-                <Avatar className="rounded-full transition-all border-primary bg-primary border-4 inset-2 hover:scale-105 my-10 drop-shadow-md cursor-pointer w-28 h-28">
+                <Avatar className="rounded-full transition-all border-primary bg-primary border-4 hover:scale-105 my-10 drop-shadow-md cursor-pointer w-28 h-28">
                   <AvatarImage
                     src={picture}
                     className="object-cover"
