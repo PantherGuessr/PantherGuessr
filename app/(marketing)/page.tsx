@@ -7,7 +7,7 @@ const MarketingPage = () => {
   return (
     <>
       <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-center justify-center md:justify-start text-center gap-y-8 flex-1 px-0 pb-10">
+        <div className="flex flex-col h-full items-center justify-center md:justify-start text-center gap-y-8 flex-1 px-0">
           <Heading />
         </div>
         <Footer />

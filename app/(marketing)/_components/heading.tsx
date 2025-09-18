@@ -49,7 +49,7 @@ export const Heading = () => {
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   return (
-    <div className="space-y-4 w-full">
+    <div className="flex flex-col flex-grow space-y-4 w-full">
       {!isAuthenticated && isLoading && (
         <>
           <div className="flex flex-col w-full h-full justify-center items-center pt-48">
