@@ -50,11 +50,11 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
 
   if (isLargeDesktop) {
     return (
-      <>
+      <div className="flex flex-col flex-grow w-full h-full items-center justify-center">
         <div className="flex items-center justify-center gap-x-4 w-full">
           <Logo badge={false} logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
         </div>
-        <div className="flex flex-row justify-center items-stretch lg:gap-x-10 sm:gap-x-5 mt-20 pt-4 sm:pt-8 px-20">
+        <div className="flex flex-row justify-center items-stretch lg:gap-x-10 sm:gap-x-5 mt-10 pt-4 sm:pt-8 px-20">
           <div
             className={cn(
               "flex flex-col justify-between h-full items-center basis-1/3 transition-all drop-shadow-lg",
@@ -175,15 +175,15 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
             <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
           </div>
         </div>
-      </>
+      </div>
     );
   } else {
     return (
-      <>
+      <div className="flex flex-col flex-grow w-full h-full items-center justify-center">
         <div className="flex items-center justify-center gap-x-4 w-full">
           <Logo badge={false} logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
         </div>
-        <div className="flex flex-row justify-center gap-x-6 mt-20 px-12 w-full pt-4">
+        <div className="flex flex-row justify-center gap-x-6 mt-10 px-12 w-full pt-4">
           <div
             className={cn(
               "flex flex-col justify-between h-full items-center basis-1/2 transition-all drop-shadow-lg",
@@ -281,7 +281,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
             <div className={"w-[90%] h-4 mt-20 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 };

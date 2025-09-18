@@ -21,7 +21,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
       </SheetTrigger>
       <SheetContent side={"bottom"}>
         <SheetHeader>
-          <SheetTitle className="text-2xl">Gamemode Selection</SheetTitle>
+          <SheetTitle className="text-2xl">Play PantherGuessr</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-y-4 pt-4">
           {hasOngoingGame ? (
@@ -59,23 +59,22 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
               </Card>
             </Link>
           )}
-          {/* <!-- Multiplayer link -->
-          <Link href="/play">
-            <Card className="bg-primary text-primary-foreground">
-              <CardContent className="p-4">
-                <div className="flex flex-col gap-x-2 align-center text-center justify-center">
-                  <h1 className="text-xl font-bold">Multiplayer</h1>
-                  <p className="italic text-sm">Play with friends!</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link> */}
           <Link href="/weekly">
             <Card className="bg-primary text-primary-foreground">
               <CardContent className="p-4">
                 <div className="flex flex-col gap-x-2 align-center text-center justify-center">
                   <h1 className="text-xl font-bold">Weekly Challenge</h1>
                   <p className="italic text-sm">Compete in the weekly challenge</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/leaderboard">
+            <Card className="bg-primary text-primary-foreground">
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-x-2 align-center text-center justify-center">
+                  <h1 className="text-xl font-bold">Leaderboard</h1>
+                  <p className="italic text-sm">View where you stand amongst others</p>
                 </div>
               </CardContent>
             </Card>

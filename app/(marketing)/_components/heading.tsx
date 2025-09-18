@@ -49,7 +49,7 @@ export const Heading = () => {
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   return (
-    <div className="space-y-4 w-full">
+    <div className="flex flex-col flex-grow space-y-4 w-full">
       {!isAuthenticated && isLoading && (
         <>
           <div className="flex flex-col w-full h-full justify-center items-center pt-48">
@@ -107,7 +107,7 @@ export const Heading = () => {
                 lastPlayedTime={Number(user.lastPlayedTimestamp)}
               />
             ) : (
-              <>
+              <div className="flex flex-col flex-grow w-full h-full items-center justify-center pt-10 px-4">
                 <div className="flex flex-col justify-center items-center basis-1/2 px-8 mb-4">
                   <Image
                     src="/logo.svg"
@@ -134,7 +134,7 @@ export const Heading = () => {
                 <div className="flex justify-center items-center px-8 animate-fly-in-from-top-delay-1000ms">
                   <MobileDrawer hasOngoingGame={hasOngoingGame ?? false} />
                 </div>
-              </>
+              </div>
             )}
           </>
         )}
