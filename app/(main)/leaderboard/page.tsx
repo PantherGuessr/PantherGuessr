@@ -35,7 +35,7 @@ const LEADERBOARD_TYPES: {
 ];
 
 export default function LeaderboardPage() {
-  const [selectedType, setSelectedType] = useState<LeaderboardType>("streak");
+  const [selectedType, setSelectedType] = useState<LeaderboardType>("level");
   const { topUsers, currentUser, userRank, displayEntries, isLoading } = useLeaderboard(selectedType);
 
   const selectedTypeInfo = LEADERBOARD_TYPES.find(t => t.key === selectedType);
@@ -62,9 +62,6 @@ export default function LeaderboardPage() {
             
             {LEADERBOARD_TYPES.map((type) => (
               <TabsContent key={type.key} value={type.key} className="mt-6">
-                <p className="text-muted-foreground mb-6">
-                  {type.description}
-                </p>
                 
                 {isLoading ? (
                   <div className="flex flex-col justify-center items-center py-12">
@@ -79,6 +76,7 @@ export default function LeaderboardPage() {
                     {/* Full Rankings Table */}
                     <RemainingTable 
                       users={displayEntries} 
+                      description={selectedTypeInfo?.description || ""}
                       type={selectedType}
                       currentUser={currentUser}
                       userRank={userRank}

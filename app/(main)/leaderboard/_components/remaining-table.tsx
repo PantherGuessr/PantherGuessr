@@ -6,6 +6,7 @@ import { LeaderboardType } from "@/convex/leaderboard";
 
 type RemainingTableProps = {
   users: Doc<"users">[];
+  description: string;
   type: LeaderboardType;
   currentUser?: Doc<"users"> | null;
   userRank?: number | null;
@@ -63,22 +64,36 @@ const getSecondaryStatHeader = (type: LeaderboardType): string => {
   }
 };
 
-export function RemainingTable({ users, type, currentUser, userRank }: RemainingTableProps) {
+const getAlignmentClass = (type: LeaderboardType): [string, string] => {
+  switch (type) {
+    case "streak":
+      return ["text-center", "text-start"];
+    case "level":
+      return ["text-start", "text-center"];
+    case "totalPoints":
+      return ["text-center", "text-start"];
+    default:
+      return ["text-start", "text-start"];
+  }
+};
+
+export function RemainingTable({ users, type, description, currentUser, userRank }: RemainingTableProps) {
   const remainingUsers = users.slice(3); // Skip top 3 for the table
   const statHeader = getStatHeader(type);
   const secondaryStatHeader = getSecondaryStatHeader(type);
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <h3 className="text-xl font-semibold mb-4">Full Rankings</h3>
+      <h3 className="text-xl font-semibold mb-2">Full Rankings</h3>
+      <p className="text-muted-foreground mb-4">{description}</p>
       
       <Table className="w-full border-collapse">
         <TableHeader>
           <TableRow>
             <TableHead className="p-2 text-center">Rank</TableHead>
             <TableHead className="p-2">User</TableHead>
-            <TableHead className="p-2 text-center">{statHeader}</TableHead>
-            <TableHead className="p-2 text-center">{secondaryStatHeader}</TableHead>
+            <TableHead className={`p-2 ${getAlignmentClass(type)[0]}`}>{statHeader}</TableHead>
+            <TableHead className={`p-2 ${getAlignmentClass(type)[1]}`}>{secondaryStatHeader}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -105,10 +120,10 @@ export function RemainingTable({ users, type, currentUser, userRank }: Remaining
                 <TableCell className="p-2 text-start">
                   <ProfileHoverCard userID={user._id} isUnderlined={true} />
                 </TableCell>
-                <TableCell className="p-2 text-center font-semibold">
+                <TableCell className={`p-2 font-semibold ${getAlignmentClass(type)[0]}`}>
                   {getStatValue(user, type)}
                 </TableCell>
-                <TableCell className="p-2 text-center text-muted-foreground">
+                <TableCell className={`p-2 text-muted-foreground ${getAlignmentClass(type)[1]}`}>
                   {getSecondaryStatValue(user, type)}
                 </TableCell>
               </TableRow>

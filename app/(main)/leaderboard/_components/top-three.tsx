@@ -51,8 +51,8 @@ export function TopThree({ users, type }: TopThreeProps) {
 
   return (
     <div className="hidden md:block w-full max-w-4xl mx-auto mb-8">
-      <h2 className="text-2xl font-bold text-center mb-6">Top 3 - {statLabel}</h2>
-      <div className="hidden md:flex md:flex-row items-end justify-center gap-4 mt-20">
+      {/* <h2 className="text-2xl font-bold text-center mb-6">Top 3 - {statLabel}</h2> */}
+      <div className="hidden md:flex md:flex-row items-end justify-center gap-4 mt-24">
         {/* Second Place */}
         {topThree[1] && (
           <Card className="flex flex-col items-center p-6 w-full md:w-64 h-48 justify-start bg-slate-100 dark:bg-slate-800">
