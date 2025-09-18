@@ -6,6 +6,7 @@ import Link from "next/link";
 import { use, useEffect, useMemo, useState } from "react";
 
 import { Footer } from "@/components/footer";
+import { NotFoundContent } from "@/components/not-found-content";
 import ProfileHoverCard from "@/components/profile-hover-card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -15,7 +16,7 @@ import { Id } from "@/convex/_generated/dataModel";
 
 import { useGameType } from "@/hooks/use-game-type";
 
-import { getTotalScore } from "@/lib/utils";
+import { getTotalScore, isValidConvexId } from "@/lib/utils";
 import { getNextWeeklyResetTimestamp } from "@/lib/weeklytimes";
 
 type GameLeaderboardProps = {
@@ -24,25 +25,23 @@ type GameLeaderboardProps = {
 
 export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
   const { gameID } = use(params) as { gameID: string };
-  const gameIdAsId = gameID as Id<"games">;
 
-  // Get game type
+  // Validate gameID format first using util
+  const isValidId = isValidConvexId(gameID);
+  const gameIdAsId = isValidId ? (gameID as Id<"games">) : undefined;
+
+  // Get game type and fetch data (skip if invalid ID)
   const { gameType, loading: gameTypeLoading } = useGameType(gameIdAsId);
-
-  // Fetch all necessary data
   const currentUser = useQuery(api.users.current);
-  const leaderboardEntries = useQuery(api.game.getLeaderboardEntriesForGame, gameID ? { gameId: gameIdAsId } : "skip");
+  const gameExists = useQuery(api.game.gameExists, gameIdAsId ? { gameId: gameIdAsId } : "skip");
+  const leaderboardEntries = useQuery(
+    api.game.getLeaderboardEntriesForGame,
+    gameIdAsId ? { gameId: gameIdAsId } : "skip"
+  );
   const userEntry = useQuery(
     api.game.getLeaderboardEntryByGameAndUser,
-    gameID && currentUser?._id ? { gameId: gameIdAsId, userId: currentUser._id } : "skip"
+    gameIdAsId && currentUser?._id ? { gameId: gameIdAsId, userId: currentUser._id } : "skip"
   );
-
-  // isLoading state
-  const isLoading =
-    gameTypeLoading ||
-    leaderboardEntries === undefined ||
-    currentUser === undefined ||
-    (currentUser && userEntry === undefined);
 
   // Countdown state
   const [countdown, setCountdown] = useState<string>("");
@@ -69,6 +68,14 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
   }, [gameType]);
+
+  // isLoading state
+  const isLoading =
+    gameTypeLoading ||
+    gameExists === undefined ||
+    leaderboardEntries === undefined ||
+    currentUser === undefined ||
+    (currentUser && userEntry === undefined);
 
   // Top 25 entries
   const topEntries = useMemo(() => {
@@ -99,6 +106,36 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
     // add in user's entry if not in top
     return inTop ? topEntries : [...topEntries, userEntry];
   }, [topEntries, userEntry]);
+
+  // Handle validation errors after all hooks are called
+  if (!isValidId) {
+    return (
+      <div className="flex flex-col w-screen h-full min-h-screen justify-between">
+        <div className="w-full max-w-5xl mx-auto py-8">
+          <NotFoundContent
+            title="Invalid Game ID"
+            description="The game ID you provided is not valid. Please check the URL and try again."
+          />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show not found if game doesn't exist
+  if (gameExists === false) {
+    return (
+      <div className="flex flex-col w-screen h-full min-h-screen justify-between">
+        <div className="w-full max-w-5xl mx-auto py-8">
+          <NotFoundContent
+            title="Game Not Found"
+            description="The game you're looking for doesn't exist or has been removed."
+          />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col w-screen h-full min-h-screen justify-between">

@@ -6,12 +6,15 @@ import { useRouter } from "next/navigation";
 import { use, useEffect } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
+import { Footer } from "@/components/footer";
+import { NotFoundContent } from "@/components/not-found-content";
+
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { useBanCheck } from "@/hooks/use-ban-check";
 
-import { cn } from "@/lib/utils";
+import { cn, isValidConvexId } from "@/lib/utils";
 
 import "../_components/game-animations.css";
 import InGameSidebar from "../_components/in-game-sidebar";
@@ -25,10 +28,13 @@ type Props = {
 const GameIdPage = ({ params }: Props) => {
   const router = useRouter();
   const { GAMEID } = use(params);
-  const gameIdAsId = GAMEID as Id<"games">;
   const isMobile = useMediaQuery("(max-width: 600px)");
 
-  const gameExists = useQuery(api.game.gameExists, { gameId: gameIdAsId });
+  // validate convex ID format
+  const isValidId = isValidConvexId(GAMEID);
+  const gameIdAsId = isValidId ? (GAMEID as Id<"games">) : undefined;
+
+  const gameExists = useQuery(api.game.gameExists, gameIdAsId ? { gameId: gameIdAsId } : "skip");
 
   const currentUser = useQuery(api.users.current);
   const { result: isBanned } = useBanCheck(currentUser?.clerkId);
@@ -45,8 +51,25 @@ const GameIdPage = ({ params }: Props) => {
     }
   }, [gameExists, router]);
 
+  // Handle validation errors for game IDs
+  if (!isValidId) {
+    return (
+      <div className="h-full">
+        <div className="min-h-full flex flex-col">
+          <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+            <NotFoundContent
+              title="Invalid Game ID"
+              description="The game ID you provided is not valid. Please check the URL and try again."
+            />
+          </div>
+          <Footer />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <GameProvider gameId={gameIdAsId}>
+    <GameProvider gameId={gameIdAsId!}>
       <GameContent isMobile={isMobile} />
     </GameProvider>
   );
