@@ -73,21 +73,7 @@ const ResultPage = ({ params }: Props) => {
   }>({ title: "", description: "" });
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // throw invalid ID error if format is wrong
-  if (!isValidId) {
-    return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-          <NotFoundContent
-            title="Invalid Results ID"
-            description="The results ID you provided is not valid. Please check the URL and try again."
-          />
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
+  // All useEffect hooks must be called before any conditional returns
   useEffect(() => {
     if (searchParams.get("fromGame") === "true") {
       setIsFromGame(true);
@@ -138,6 +124,21 @@ const ResultPage = ({ params }: Props) => {
       window.history.pushState({}, "", newUrl.toString());
     }
   }, [isFromGame, leaderboardEntry]);
+
+  // Handle validation errors after all hooks are called
+  if (!isValidId) {
+    return (
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <NotFoundContent
+            title="Invalid Results ID"
+            description="The results ID you provided is not valid. Please check the URL and try again."
+          />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   const handleShareClick = async () => {
     const canvas = await html2canvas(cardRef.current!, {
