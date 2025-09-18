@@ -276,9 +276,13 @@ export const addLeaderboardEntryToGame = mutation({
       ]
     );
 
+    // calculate total points to update user points earned
+    const totalPointsEarned = args.round_1 + args.round_2 + args.round_3 + args.round_4 + args.round_5;
+
     const xpResult: { newLevel: bigint; oldLevel: bigint } = await ctx.runMutation(internal.users.awardUserXP, {
       userID: args.userId,
       earnedXP: newXP,
+      totalPointsEarned: BigInt(totalPointsEarned || 0n),
     });
 
     // make leaderboard entry

@@ -1,3 +1,4 @@
+import { Calendar, Trophy, User } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
@@ -117,23 +118,26 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               ) : (
                 <li className="row-span-2 col-span-2">
                   <Link href="/game">
-                    <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                      <User className="w-5 h-5" />
                       Singleplayer
                     </div>
                   </Link>
                 </li>
               )}
-              {/* <li className="row-span-2 col-span-2">
-                <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                    Multiplayer
-                  </div>
-                </Link>
-              </li> */}
               <li className="row-span-2 col-span-2">
                 <Link href="/weekly">
                   <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <Calendar className="w-5 h-5" />
                     Weekly Challenge
+                  </div>
+                </Link>
+              </li>
+              <li className="row-span-2 col-span-2">
+                <Link href="/leaderboard">
+                  <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <Trophy className="w-5 h-5" />
+                    Leaderboard
                   </div>
                 </Link>
               </li>
@@ -243,23 +247,26 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               ) : (
                 <li className="row-span-2 col-span-2">
                   <Link href="/game">
-                    <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                      <User className="w-5 h-5" />
                       Singleplayer
                     </div>
                   </Link>
                 </li>
               )}
-              {/* <li className="row-span-2 col-span-2">
-                <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                    Multiplayer
-                  </div>
-                </Link>
-              </li> */}
               <li className="row-span-2 col-span-2">
                 <Link href="/weekly">
                   <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <Calendar className="w-5 h-5" />
                     Weekly Challenge
+                  </div>
+                </Link>
+              </li>
+              <li className="row-span-2 col-span-2">
+                <Link href="/leaderboard">
+                  <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <Trophy className="w-5 h-5" />
+                    Leaderboard
                   </div>
                 </Link>
               </li>

@@ -9,6 +9,7 @@ export default defineSchema({
     level: v.int64(),
     currentXP: v.int64(),
     currentStreak: v.int64(),
+    totalPointsEarned: v.optional(v.int64()),
     lastPlayedTimestamp: v.optional(v.number()),
     roles: v.optional(v.array(v.string())),
     isBanned: v.boolean(),

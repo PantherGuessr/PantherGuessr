@@ -1,7 +1,7 @@
 "use client";
 
 import { useConvexAuth, useQuery } from "convex/react";
-import { ArrowLeft, CalendarClock, Loader2, User, Users } from "lucide-react";
+import { ArrowLeft, CalendarClock, Loader2, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -65,7 +65,7 @@ const PlayPage = () => {
             <h1>Singleplayer</h1>
           </div>
         </Link>
-        <Link
+        {/* <Link
           href="#"
           onClick={(e) => {
             e.preventDefault();
@@ -76,7 +76,7 @@ const PlayPage = () => {
             <Users className="mb-2" />
             <h1>Multiplayer</h1>
           </div>
-        </Link>
+        </Link> */}
       </div>
       <Footer />
     </div>
