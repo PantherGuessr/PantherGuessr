@@ -2,7 +2,18 @@
 
 import { useQuery } from "convex/react";
 import html2canvas from "html2canvas-pro";
-import { ArrowRight, Download, Gamepad2, Home, ListOrdered, Loader2, Share, Share2 } from "lucide-react";
+import {
+  ArrowRight,
+  Calendar,
+  Download,
+  Gamepad2,
+  Home,
+  ListOrdered,
+  Loader2,
+  Share,
+  Share2,
+  User,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -38,6 +49,7 @@ const ResultPage = ({ params }: Props) => {
   const [distances, setDistances] = useState<number[]>([]);
   const [scores, setScores] = useState<number[]>([]);
   const [finalScore, setFinalScore] = useState<number>(0);
+  const [gameType, setGameType] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [oldLevel, setOldLevel] = useState<number>(0);
   const [newLevel, setNewLevel] = useState<number>(0);
@@ -91,6 +103,7 @@ const ResultPage = ({ params }: Props) => {
       setUsername(user?.username ?? "");
       setOldLevel(Number(leaderboardEntry.oldLevel));
       setNewLevel(Number(leaderboardEntry.newLevel));
+      setGameType(leaderboardEntry.gameType);
     }
   }, [leaderboardEntry, user]);
 
@@ -160,7 +173,7 @@ const ResultPage = ({ params }: Props) => {
     }
   };
 
-  if (!leaderboardEntry || isBanCheckLoading) {
+  if (!leaderboardEntry || isBanCheckLoading || !username) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -198,7 +211,22 @@ const ResultPage = ({ params }: Props) => {
               <Separator />
               <div className="flex flex-col space-y-4">
                 <div className="p-2">
-                  <div className="flex flex-row justify-between">
+                  <div className="text-lg flex flex-row bg-secondary justify-items-center justify-center items-center p-2 w-full rounded-md gap-x-2">
+                    {gameType === "weekly" ? (
+                      <Calendar className="w-5 h-5" />
+                    ) : gameType === "singleplayer" ? (
+                      <User className="w-5 h-5" />
+                    ) : null}
+                    <div className="">
+                      {gameType === "weekly" ? "Weekly Challenge" : gameType === "singleplayer" ? "Singleplayer" : null}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <Separator />
+              <div className="flex flex-col space-y-4">
+                <div className="p-2">
+                  <div className="flex flex-row justify-between pb-2">
                     <h2 className="font-bold">Guessr Information</h2>
                   </div>
                   <div className="flex flex-row justify-between">
