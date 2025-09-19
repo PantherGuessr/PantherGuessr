@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
+import ProfileHoverCard from "@/components/profile-hover-card";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
 
 import { api } from "@/convex/_generated/api";
@@ -128,7 +129,7 @@ export const Heading = () => {
                       "text-2xl sm:text-3xl md:text-3xl font-bold transition-all drop-shadow-lg px-2 mb-3 mt-6 animate-fly-in-from-top-delay-500ms"
                     }
                   >
-                    Welcome back, <span className="underline">{user.username}</span>. {welcomeMessage}
+                    Welcome back, <ProfileHoverCard username={user.username} showHoverCard={false} />. {welcomeMessage}
                   </h1>
                 </div>
                 <div className="flex justify-center items-center px-8 animate-fly-in-from-top-delay-1000ms">

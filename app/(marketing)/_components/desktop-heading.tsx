@@ -80,7 +80,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                 </Avatar>
               </div>
               <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold hover:scale-105 transition-all cursor-default">
-                Welcome back, <ProfileHoverCard username={username} isUnderlined={true} />.{" " + welcomeMessage}
+                Welcome back, <ProfileHoverCard username={username} />.{" " + welcomeMessage}
               </h1>
             </div>
             <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
@@ -209,7 +209,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                 </Avatar>
               </div>
               <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold cursor-default hover:scale-105 transition-all">
-                Welcome back, <ProfileHoverCard username={username} isUnderlined={true} />.{" " + welcomeMessage}
+                Welcome back, <ProfileHoverCard username={username} />.{" " + welcomeMessage}
               </h1>
             </div>
             <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
