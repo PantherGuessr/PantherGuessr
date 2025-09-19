@@ -7,6 +7,7 @@ import { use, useEffect } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar/navbar";
 import { NotFoundContent } from "@/components/not-found-content";
 
 import { api } from "@/convex/_generated/api";
@@ -20,8 +21,6 @@ import "../_components/game-animations.css";
 import InGameSidebar from "../_components/in-game-sidebar";
 import DynamicInteractableMap from "../_components/map-wrapper";
 import { GameProvider, useGame } from "../_context/GameContext";
-import { Button } from "@/components/ui/button";
-import { Navbar } from "@/components/navbar/navbar";
 
 type Props = {
   params: Promise<{ GAMEID: string }>;
