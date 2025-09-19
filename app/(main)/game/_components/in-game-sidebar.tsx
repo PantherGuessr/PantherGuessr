@@ -315,7 +315,8 @@ const InGameSidebar = () => {
               onMouseEnter={handleMouseEnter}
               onMouseMove={handleMouseMoveMagnifier}
               onMouseLeave={handleMouseLeave}
-              className="rounded-md"
+              draggable={false}
+              className="rounded-md select-none"
             />
           )}
         </div>
