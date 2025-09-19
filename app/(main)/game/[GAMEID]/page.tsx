@@ -20,6 +20,8 @@ import "../_components/game-animations.css";
 import InGameSidebar from "../_components/in-game-sidebar";
 import DynamicInteractableMap from "../_components/map-wrapper";
 import { GameProvider, useGame } from "../_context/GameContext";
+import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/navbar/navbar";
 
 type Props = {
   params: Promise<{ GAMEID: string }>;
@@ -45,21 +47,15 @@ const GameIdPage = ({ params }: Props) => {
     }
   }, [currentUser?.username, isBanned, router]);
 
-  useEffect(() => {
-    if (gameExists === false) {
-      router.push("/game");
-    }
-  }, [gameExists, router]);
-
-  // Handle validation errors for game IDs
-  if (!isValidId) {
+  if (!gameExists || !isValidId) {
     return (
       <div className="h-full">
+        <Navbar />
         <div className="min-h-full flex flex-col">
-          <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pt-24">
             <NotFoundContent
-              title="Invalid Game ID"
-              description="The game ID you provided is not valid. Please check the URL and try again."
+              title="Game Not Found"
+              description="The game you are looking for does not exist. It may have been deleted or the ID is incorrect."
             />
           </div>
           <Footer />
