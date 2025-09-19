@@ -70,13 +70,13 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
   }
 
   return (
-    <HoverCard openDelay={0} closeDelay={25} onOpenChange={setIsOpen}>
+    <HoverCard openDelay={0} closeDelay={100} onOpenChange={setIsOpen}>
       <HoverCardTrigger asChild>
         <Link href={"/profile/" + user?.username}>
           <span
             className={cn(
               "font-bold bg-background outline outline-[#3E0000] dark:outline-white rounded-lg px-1 py-[0.2rem] mx-0.5 transition-colors duration-200 select-none",
-              isOpen ? "bg-[#3E0000]/20 dark:bg-white/20" : "hover:bg-[#3E0000]/20 hover:dark:bg-white/20"
+              isOpen ? "bg-[#3E0000]/5 dark:bg-white/10" : "hover:bg-[#3E0000]/5 hover:dark:bg-white/10"
             )}
           >
             @{user?.username}
@@ -84,7 +84,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
         </Link>
       </HoverCardTrigger>
       <Link href={"/profile/" + user?.username}>
-        <HoverCardContent className="w-80 z-[9999] select-none" align="center">
+        <HoverCardContent className="w-80 z-[9999] select-none my-2" align="center">
           <div className="flex space-x-4">
             <Avatar className="select-none">
               <AvatarImage src={user?.picture} />
