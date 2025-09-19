@@ -21,6 +21,7 @@ import { use, useEffect, useRef, useState } from "react";
 
 import { Footer } from "@/components/footer";
 import { Logo } from "@/components/logo";
+import { NotFoundContent } from "@/components/not-found-content";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -31,7 +32,7 @@ import { api } from "@/convex/_generated/api";
 import { useBanCheck } from "@/hooks/use-ban-check";
 import useUserById from "@/hooks/use-user-by-id";
 
-import { cn } from "@/lib/utils";
+import { cn, isValidConvexId } from "@/lib/utils";
 
 type Props = {
   params: Promise<{ leaderboardID: string }>;
@@ -43,7 +44,15 @@ const ResultPage = ({ params }: Props) => {
   const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
   const searchParams = useSearchParams();
   const { leaderboardID } = use(params);
-  const leaderboardEntry = useQuery(api.game.getPersonalLeaderboardEntryById, { id: leaderboardID });
+
+  // Validate leaderboardID format
+  const isValidId = isValidConvexId(leaderboardID);
+
+  // fetch leaderboard entry or skip if invalid ID
+  const leaderboardEntry = useQuery(
+    api.game.getPersonalLeaderboardEntryById,
+    isValidId ? { id: leaderboardID } : "skip"
+  );
   // fetch the user document for this leaderboard entry by userId
   const user = useUserById(leaderboardEntry?.userId);
   const [distances, setDistances] = useState<number[]>([]);
@@ -64,6 +73,7 @@ const ResultPage = ({ params }: Props) => {
   }>({ title: "", description: "" });
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // All useEffect hooks must be called before any conditional returns
   useEffect(() => {
     if (searchParams.get("fromGame") === "true") {
       setIsFromGame(true);
@@ -114,6 +124,21 @@ const ResultPage = ({ params }: Props) => {
       window.history.pushState({}, "", newUrl.toString());
     }
   }, [isFromGame, leaderboardEntry]);
+
+  // Handle validation errors after all hooks are called
+  if (!isValidId) {
+    return (
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <NotFoundContent
+            title="Invalid Results ID"
+            description="The results ID you provided is not valid. Please check the URL and try again."
+          />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   const handleShareClick = async () => {
     const canvas = await html2canvas(cardRef.current!, {
@@ -173,7 +198,7 @@ const ResultPage = ({ params }: Props) => {
     }
   };
 
-  if (!leaderboardEntry || isBanCheckLoading || !username) {
+  if (leaderboardEntry === undefined || isBanCheckLoading || (leaderboardEntry && !username)) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -186,14 +211,14 @@ const ResultPage = ({ params }: Props) => {
 
   if (leaderboardEntry === null) {
     return (
-      <div className="min-h-full flex flex-col items-center justify-center text-center px-6 pb-10">
-        <h1 className="text-2xl font-bold">Invalid or Expired Results ID</h1>
-        <p>Please check the URL or go back to the main menu.</p>
-        <Link href="/">
-          <Button variant="default" className="mt-4">
-            <Home className="mr-2 w-4 h-4" /> Go To Home Page
-          </Button>
-        </Link>
+      <div className="min-h-full flex flex-col">
+        <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+          <NotFoundContent
+            title="Results Not Found"
+            description="The game results you're looking for don't exist or have been removed."
+          />
+        </div>
+        <Footer />
       </div>
     );
   }
