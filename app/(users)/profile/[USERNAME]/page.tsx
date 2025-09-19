@@ -320,7 +320,7 @@ const ProfilePage = ({ params }: Props) => {
                               </>
                             ) : (
                               <>
-                                <h1 className="text-4xl font-bold md:pl-4 cursor-default">{user.username}</h1>
+                                <h1 className="text-4xl font-bold md:pl-4 cursor-default">@{user.username}</h1>
                                 {/* //TODO: make username editing possible with clerk hook, then uncomment the code below
                                         <SquarePen className="h-7 w-7 ml-1 mt-1 cursor-pointer" onClick={() => {
                                             // setIsEditingUsername(true)
@@ -331,7 +331,7 @@ const ProfilePage = ({ params }: Props) => {
                               </>
                             )
                           ) : (
-                            <h1 className="text-4xl font-bold md:pl-4">{user.username}</h1>
+                            <h1 className="text-4xl font-bold md:pl-4">@{user.username}</h1>
                           )}
                         </div>
                         <div className="flex flex-row items-center lg:items-start gap-x-2 pl-0 pt-2 sm:md:pl-3 sm:md:pt-2">

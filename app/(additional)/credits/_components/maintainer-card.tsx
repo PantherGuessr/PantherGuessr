@@ -35,7 +35,9 @@ const MaintainerCard = ({
         <Image className="rounded-lg mx-auto" src={profilePicture} width={100} height={100} alt="Dylan" />
         <CardTitle className="pt-2">{name}</CardTitle>
         <p>{role}</p>
-        <ProfileHoverCard userID={userId} isUnderlined={true} />
+        <div>
+          <ProfileHoverCard userID={userId} />
+        </div>
         <div className="flex justify-center space-x-2 pt-2">
           {websiteLink && (
             <Link href={websiteLink} target="blank">

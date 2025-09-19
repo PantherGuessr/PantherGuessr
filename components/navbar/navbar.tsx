@@ -6,7 +6,7 @@ import { useConvexAuth, useQuery } from "convex/react";
 import { Bug, Copy, LogOut, Settings, Shield, User, UserRoundSearch, Wrench } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -135,7 +135,7 @@ export const Navbar = () => {
                             lastPlayedTime={Number(user.lastPlayedTimestamp)}
                           />
                           <LevelBadge level={Number(user.level)} />
-                          <p className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
+                          <p className="hidden sm:flex mr-2 font-bold">@{user?.username}</p>
                           <Avatar className="w-[25px] h-[25px] overflow-hidden">
                             <AvatarFallback>{user?.username[0].toUpperCase()}</AvatarFallback>
                             <AvatarImage
