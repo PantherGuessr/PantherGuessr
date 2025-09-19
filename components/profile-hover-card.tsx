@@ -76,7 +76,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
           <span
             className={cn(
               "font-bold bg-background outline outline-[#3E0000] dark:outline-white rounded-lg px-1 py-[0.2rem] mx-0.5 transition-colors duration-200 select-none",
-              isOpen ? "bg-[#3E0000]/5 dark:bg-white/10" : "hover:bg-[#3E0000]/5 hover:dark:bg-white/10"
+              isOpen ? "bg-[#eaeaea] dark:bg-[#330707]" : "hover:bg-[#eaeaea] dark:hover:bg-[#330707]"
             )}
           >
             @{user?.username}
