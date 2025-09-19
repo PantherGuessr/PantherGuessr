@@ -132,7 +132,7 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
                 <TableRow key={entry._id} className={isCurrentUser ? "bg-red-600/10 dark:bg-red-600/30" : ""}>
                   <TableCell className="p-2 text-center">{rank}</TableCell>
                   <TableCell className="p-2 text-start align-middle">
-                    <ProfileHoverCard userID={entry.userId} isUnderlined={true} />
+                    <ProfileHoverCard userID={entry.userId} />
                   </TableCell>
                   <TableCell className="p-2 text-start">
                     <p className="font-bold">{entry.round_1} pts</p>

@@ -129,7 +129,7 @@ export const Heading = () => {
                       "text-2xl sm:text-3xl md:text-3xl font-bold transition-all drop-shadow-lg px-2 mb-3 mt-6 animate-fly-in-from-top-delay-500ms"
                     }
                   >
-                    Welcome back, <ProfileHoverCard username={user.username} />. {welcomeMessage}
+                    Welcome back, <ProfileHoverCard username={user.username} showHoverCard={false} />. {welcomeMessage}
                   </h1>
                 </div>
                 <div className="flex justify-center items-center px-8 animate-fly-in-from-top-delay-1000ms">

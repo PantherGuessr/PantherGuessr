@@ -15,9 +15,11 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
-type IProfileHoverCard = { userID: string; username?: never } | { username: string; userID?: never };
+type IProfileHoverCard =
+  | { userID: string; username?: never; showHoverCard?: boolean }
+  | { username: string; userID?: never; showHoverCard?: boolean };
 
-const ProfileHoverCard = ({ userID, username }: IProfileHoverCard) => {
+const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHoverCard) => {
   const user = useQuery(
     username ? api.users.getUserByUsername : api.users.getUserById,
     username ? { username } : userID ? { id: userID } : "skip"
@@ -55,6 +57,14 @@ const ProfileHoverCard = ({ userID, username }: IProfileHoverCard) => {
     return (
       <span className="font-bold bg-background outline outline-[#3E0000] dark:outline-white rounded-lg px-1 py-[0.2rem] mx-0.5 transition-colors duration-200 select-none">
         {"USER NOT FOUND"}
+      </span>
+    );
+  }
+
+  if (!showHoverCard) {
+    return (
+      <span className="font-bold bg-background outline outline-[#3E0000] dark:outline-white rounded-lg px-1 py-[0.2rem] mx-0.5 transition-colors duration-200 select-none">
+        @{user?.username}
       </span>
     );
   }
