@@ -46,7 +46,7 @@ const GameIdPage = ({ params }: Props) => {
     }
   }, [currentUser?.username, isBanned, router]);
 
-  if (!gameExists || !isValidId) {
+  if (gameExists === false || !isValidId) {
     return (
       <div className="h-full">
         <Navbar />
