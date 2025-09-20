@@ -243,15 +243,15 @@ const Levels = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(level._id)}>
+              <DropdownMenuItem onClick={() => typeof navigator !== 'undefined' && navigator.clipboard.writeText(level._id)}>
                 Copy Level ID
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(level.imageId)}>
+              <DropdownMenuItem onClick={() => typeof navigator !== 'undefined' && navigator.clipboard.writeText(level.imageId)}>
                 Copy Image ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText("(" + level.latitude + ", " + level.longitude + ")")}
+                onClick={() => typeof navigator !== 'undefined' && navigator.clipboard.writeText("(" + level.latitude + ", " + level.longitude + ")")}
               >
                 Copy Coordinates
               </DropdownMenuItem>
