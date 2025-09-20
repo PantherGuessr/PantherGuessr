@@ -1,7 +1,7 @@
+"use client";
+
 import { useUser } from "@clerk/nextjs";
-import imageCompression from "browser-image-compression";
 import { useMutation } from "convex/react";
-import heic2any from "heic2any";
 import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -54,7 +54,14 @@ const LevelUpload = () => {
   }, [selectedImage, description, localMarkerPosition]);
 
   async function handleImageSubmission() {
-    const descriptionInput = document.getElementById("description") as HTMLInputElement;
+    // Dynamically import browser-only libraries to avoid SSR window/document references
+    const [{ default: imageCompression }, { default: heic2any }] = await Promise.all([
+      import("browser-image-compression"),
+      import("heic2any"),
+    ]);
+    const descriptionInput = (typeof document !== "undefined"
+      ? (document.getElementById("description") as HTMLInputElement)
+      : { value: "" }) as HTMLInputElement;
 
     // check if form has all required fields
     if (!selectedImage || !descriptionInput.value || !localMarkerPosition) {
