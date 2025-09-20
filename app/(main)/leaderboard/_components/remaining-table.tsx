@@ -115,7 +115,7 @@ export function RemainingTable({ users, type, description, currentUser, userRank
                   )}
                 </TableCell>
                 <TableCell className="p-2 text-start">
-                  <ProfileHoverCard userID={user._id} isUnderlined={true} />
+                  <ProfileHoverCard userID={user._id} />
                 </TableCell>
                 <TableCell className={`p-2 font-semibold ${getAlignmentClass(type)[0]}`}>
                   {getStatValue(user, type)}

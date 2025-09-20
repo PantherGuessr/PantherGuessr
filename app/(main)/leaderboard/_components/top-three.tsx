@@ -67,7 +67,7 @@ export function TopThree({ users, type }: TopThreeProps) {
               >
                 2nd Place
               </Badge>
-              <ProfileHoverCard userID={topThree[1]._id} isUnderlined={true} />
+              <ProfileHoverCard userID={topThree[1]._id} />
               <p className="text-lg font-semibold text-center mt-2">{getStatValue(topThree[1], type)}</p>
             </div>
           </Card>
@@ -86,7 +86,7 @@ export function TopThree({ users, type }: TopThreeProps) {
             >
               🏆 1st Place
             </Badge>
-            <ProfileHoverCard userID={topThree[0]._id} isUnderlined={true} />
+            <ProfileHoverCard userID={topThree[0]._id} />
             <p className="text-xl font-bold text-center mt-2">{getStatValue(topThree[0], type)}</p>
           </div>
         </Card>
@@ -105,7 +105,7 @@ export function TopThree({ users, type }: TopThreeProps) {
               >
                 3rd Place
               </Badge>
-              <ProfileHoverCard userID={topThree[2]._id} isUnderlined={true} />
+              <ProfileHoverCard userID={topThree[2]._id} />
               <p className="text-lg font-semibold text-center mt-2">{getStatValue(topThree[2], type)}</p>
             </div>
           </Card>
