@@ -1,21 +1,26 @@
 "use client";
 
-import { use, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { use, useEffect } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
-import { cn } from "@/lib/utils";
-import InGameSidebar from "../_components/in-game-sidebar";
-import { GameProvider, useGame } from "../_context/GameContext";
-
-import "../_components/game-animations.css";
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar/navbar";
+import { NotFoundContent } from "@/components/not-found-content";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+
 import { useBanCheck } from "@/hooks/use-ban-check";
+
+import { cn, isValidConvexId } from "@/lib/utils";
+
+import "../_components/game-animations.css";
+import InGameSidebar from "../_components/in-game-sidebar";
 import DynamicInteractableMap from "../_components/map-wrapper";
+import { GameProvider, useGame } from "../_context/GameContext";
 
 type Props = {
   params: Promise<{ GAMEID: string }>;
@@ -24,10 +29,13 @@ type Props = {
 const GameIdPage = ({ params }: Props) => {
   const router = useRouter();
   const { GAMEID } = use(params);
-  const gameIdAsId = GAMEID as Id<"games">;
   const isMobile = useMediaQuery("(max-width: 600px)");
 
-  const gameExists = useQuery(api.game.gameExists, { gameId: gameIdAsId });
+  // validate convex ID format
+  const isValidId = isValidConvexId(GAMEID);
+  const gameIdAsId = isValidId ? (GAMEID as Id<"games">) : undefined;
+
+  const gameExists = useQuery(api.game.gameExists, gameIdAsId ? { gameId: gameIdAsId } : "skip");
 
   const currentUser = useQuery(api.users.current);
   const { result: isBanned } = useBanCheck(currentUser?.clerkId);
@@ -38,14 +46,25 @@ const GameIdPage = ({ params }: Props) => {
     }
   }, [currentUser?.username, isBanned, router]);
 
-  useEffect(() => {
-    if (gameExists === false) {
-      router.push("/game");
-    }
-  }, [gameExists, router]);
+  if (gameExists === false || !isValidId) {
+    return (
+      <div className="h-full">
+        <Navbar />
+        <div className="min-h-full flex flex-col">
+          <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pt-24">
+            <NotFoundContent
+              title="Game Not Found"
+              description="The game you are looking for does not exist. It may have been deleted or the ID is incorrect."
+            />
+          </div>
+          <Footer />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <GameProvider gameId={gameIdAsId}>
+    <GameProvider gameId={gameIdAsId!}>
       <GameContent isMobile={isMobile} />
     </GameProvider>
   );

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
 import type { LatLng } from "leaflet";
+import React, { createContext, useContext, useState } from "react";
 
 interface MarkerContextType {
   localMarkerPosition: LatLng | null;

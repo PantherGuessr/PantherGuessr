@@ -1,5 +1,3 @@
-import { v } from "convex/values";
-
 import { getNextWeeklyResetTimestamp } from "../lib/weeklytimes";
 import { internalMutation, mutation, query } from "./_generated/server";
 

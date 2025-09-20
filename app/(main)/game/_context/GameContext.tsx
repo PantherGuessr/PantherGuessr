@@ -1,11 +1,12 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
 import type { LatLng } from "leaflet";
+import { useRouter } from "next/navigation";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
+
 import useGameById from "@/hooks/use-game-by-id";
 
 interface GameData {
@@ -192,9 +193,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
         userClerkId: user?.user?.id ?? "",
       });
 
-      // gets username for leaderboard entry
-      const username = user.user?.username ? user.user.username : "Anonymous";
-
       // !!! it may be a bad idea to assume this is never null but, ya know, YOLO! - Dylan
       updateStreak({ clerkId: currentUser!.clerkId });
 
@@ -202,7 +200,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
 
       addLeaderboardEntryToGame({
         gameId: gameData!.gameContent!._id,
-        username: username,
         userId: currentUser!._id,
         round_1: BigInt(allScores[0]),
         round_1_distance: BigInt(allDistances[0]),

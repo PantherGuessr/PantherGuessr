@@ -1,22 +1,26 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useClerk, useUser } from "@clerk/clerk-react";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { useConvexAuth, useQuery } from "convex/react";
 import { Bug, Copy, LogOut, Settings, Shield, User, UserRoundSearch, Wrench } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import { api } from "@/convex/_generated/api";
+
 import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
 import { useRoleCheck } from "@/hooks/use-role-check";
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { toast } from "@/hooks/use-toast";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
+
 import { cn } from "@/lib/utils";
+
 import LevelBadge from "../level-badge";
 import { Logo } from "../logo";
 import StreakBadge from "../streak-badge";
@@ -24,7 +28,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "../ui/menubar";
 import { Toaster } from "../ui/toaster";
-
 import "./navbar.css";
 
 export const Navbar = () => {
@@ -132,7 +135,7 @@ export const Navbar = () => {
                             lastPlayedTime={Number(user.lastPlayedTimestamp)}
                           />
                           <LevelBadge level={Number(user.level)} />
-                          <p className="hidden sm:flex mr-2 font-bold">{user?.username}</p>
+                          <p className="hidden sm:flex mr-2 font-bold">@{user?.username}</p>
                           <Avatar className="w-[25px] h-[25px] overflow-hidden">
                             <AvatarFallback>{user?.username[0].toUpperCase()}</AvatarFallback>
                             <AvatarImage

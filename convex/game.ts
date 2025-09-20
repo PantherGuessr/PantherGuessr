@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 import { v } from "convex/values";
 
 import { internal } from "./_generated/api";
@@ -252,7 +250,6 @@ export const getGameById = query({
 export const addLeaderboardEntryToGame = mutation({
   args: {
     gameId: v.id("games"),
-    username: v.string(),
     userId: v.id("users"),
     round_1: v.int64(),
     round_1_distance: v.int64(),
@@ -279,15 +276,18 @@ export const addLeaderboardEntryToGame = mutation({
       ]
     );
 
+    // calculate total points to update user points earned
+    const totalPointsEarned = args.round_1 + args.round_2 + args.round_3 + args.round_4 + args.round_5;
+
     const xpResult: { newLevel: bigint; oldLevel: bigint } = await ctx.runMutation(internal.users.awardUserXP, {
-      username: args.username,
+      userID: args.userId,
       earnedXP: newXP,
+      totalPointsEarned: BigInt(totalPointsEarned || 0n),
     });
 
     // make leaderboard entry
     const leaderboardEntry = await ctx.db.insert("leaderboardEntries", {
       game: args.gameId,
-      username: args.username,
       oldLevel: xpResult.oldLevel,
       newLevel: xpResult.newLevel,
       userId: args.userId,

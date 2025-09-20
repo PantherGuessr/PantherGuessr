@@ -1,14 +1,14 @@
 "use client";
 
-import "../_components/game-animations.css";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useConvexAuth, useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import { api } from "@/convex/_generated/api";
+
+import "../_components/game-animations.css";
 
 const GameContinuePage = () => {
   const router = useRouter();

@@ -1,12 +1,12 @@
-import Image from "next/image";
-
-import "./flipcard.css";
-
-import { useState } from "react";
 import { ImageIcon, MapPin } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+
 import { cn } from "@/lib/utils";
+
+import "./flipcard.css";
 
 const DemoRoundPanel = () => {
   const lightHintIcon = "/new-user-heading/HintCircle.svg";

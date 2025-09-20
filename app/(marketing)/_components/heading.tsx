@@ -1,27 +1,28 @@
 "use client";
 
-import Image from "next/image";
+import { NewUserHeading } from "@/app/(marketing)/_components/new-user-heading";
 import { useUser } from "@clerk/clerk-react";
 import { useConvexAuth, useQuery } from "convex/react";
 import { LoaderCircle } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
-import MobileDrawer from "./mobiledrawer";
-
-import "./header-animation.css";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
-import { NewUserHeading } from "@/app/(marketing)/_components/new-user-heading";
+import ProfileHoverCard from "@/components/profile-hover-card";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
+
 import { api } from "@/convex/_generated/api";
+
 import { useBanCheck } from "@/hooks/use-ban-check";
 import { useHasOngoingGame } from "@/hooks/use-has-ongoing-game";
 import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
 import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
+
 import DesktopHeading from "./desktop-heading";
 import DesktopHeadingLoading from "./desktop-heading-loading";
+import "./header-animation.css";
+import MobileDrawer from "./mobiledrawer";
 
 export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -49,7 +50,7 @@ export const Heading = () => {
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   return (
-    <div className="space-y-4 w-full">
+    <div className="flex flex-col flex-grow space-y-4 w-full">
       {!isAuthenticated && isLoading && (
         <>
           <div className="flex flex-col w-full h-full justify-center items-center pt-48">
@@ -107,7 +108,7 @@ export const Heading = () => {
                 lastPlayedTime={Number(user.lastPlayedTimestamp)}
               />
             ) : (
-              <>
+              <div className="flex flex-col flex-grow w-full h-full items-center justify-center pt-10 px-4">
                 <div className="flex flex-col justify-center items-center basis-1/2 px-8 mb-4">
                   <Image
                     src="/logo.svg"
@@ -128,13 +129,13 @@ export const Heading = () => {
                       "text-2xl sm:text-3xl md:text-3xl font-bold transition-all drop-shadow-lg px-2 mb-3 mt-6 animate-fly-in-from-top-delay-500ms"
                     }
                   >
-                    Welcome back, <span className="underline">{user.username}</span>. {welcomeMessage}
+                    Welcome back, <ProfileHoverCard username={user.username} showHoverCard={false} />. {welcomeMessage}
                   </h1>
                 </div>
                 <div className="flex justify-center items-center px-8 animate-fly-in-from-top-delay-1000ms">
                   <MobileDrawer hasOngoingGame={hasOngoingGame ?? false} />
                 </div>
-              </>
+              </div>
             )}
           </>
         )}

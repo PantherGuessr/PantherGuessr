@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 interface LevelBadgeProps {
   level: number;
@@ -20,7 +20,7 @@ const LevelBadge: React.FC<LevelBadgeProps> = ({ level }) => {
     >
       <Image
         draggable={false}
-        className="select-none"
+        className="select-none cursor-default drop-shadow transform-gpu"
         src="/badges/level_badge.svg"
         alt={`Account Level of ${level}`}
         width="25"

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 import { createClerkClient, UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
 
@@ -184,6 +182,7 @@ export const isUserBanned = query({
  * @param args - The arguments for the mutation.
  * @param args.username - The username of the user to award XP to.
  * @param args.earnedXP - The amount of XP earned by the user.
+ * @param args.totalPointsEarned - (Optional) The total points earned by the user in the game to be added to their total.
  *
  * @throws {Error} If the user is not found.
  *
@@ -194,17 +193,18 @@ export const isUserBanned = query({
  *
  * @example
  * ```typescript
- * await awardUserXP({ username: "john_doe", earnedXP: 150 });
+ * await awardUserXP({ username: "john_doe", earnedXP: 150, totalPointsEarned: 1250 });
  * ```
  */
 export const awardUserXP = internalMutation({
   args: {
-    username: v.string(),
+    userID: v.id("users"),
     earnedXP: v.number(),
+    totalPointsEarned: v.optional(v.int64()),
   },
   async handler(ctx, args) {
-    // Retrieve the user by their username
-    const user = await userByUsername(ctx, args.username);
+    // Retrieve the user by their ID
+    const user = await ctx.db.get(args.userID);
     if (!user) {
       throw new Error("User not found");
     }
@@ -235,10 +235,15 @@ export const awardUserXP = internalMutation({
       }
     } while (canLevelUp);
 
-    console.log(`Awarded @${args.username} ${args.earnedXP} XP`);
+    console.log(`Awarded @${args.userID} ${args.earnedXP} XP`);
 
-    // Update the user's level and current XP in the database
-    await ctx.db.patch(user._id, { level, currentXP });
+    // Update the user's level, current XP, and total points earned in the database
+    const currentTotalPoints = user.totalPointsEarned || 0n;
+    await ctx.db.patch(user._id, { 
+      level, 
+      currentXP,
+      totalPointsEarned: currentTotalPoints + BigInt(args.totalPointsEarned || 0n),
+    });
 
     return {
       oldLevel,

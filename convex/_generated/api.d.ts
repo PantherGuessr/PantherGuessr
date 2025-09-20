@@ -19,6 +19,7 @@ import type * as crons from "../crons.js";
 import type * as game from "../game.js";
 import type * as gamestats from "../gamestats.js";
 import type * as http from "../http.js";
+import type * as leaderboard from "../leaderboard.js";
 import type * as levelcreator from "../levelcreator.js";
 import type * as users from "../users.js";
 import type * as weeklychallenge from "../weeklychallenge.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   game: typeof game;
   gamestats: typeof gamestats;
   http: typeof http;
+  leaderboard: typeof leaderboard;
   levelcreator: typeof levelcreator;
   users: typeof users;
   weeklychallenge: typeof weeklychallenge;

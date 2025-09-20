@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { Calendar, Trophy, User } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
-
-import { WelcomeMessage } from "@/components/text/welcomemessage";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-
-import "../../(users)/profile/[USERNAME]/backgrounds.css";
-import "./heading.css";
 
 import { Logo } from "@/components/logo";
 import ProfileHoverCard from "@/components/profile-hover-card";
+import { WelcomeMessage } from "@/components/text/welcomemessage";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { cn } from "@/lib/utils";
+
+import "../../(users)/profile/[USERNAME]/backgrounds.css";
 import LargeStreakBadge from "./_panels/large-streak-badge";
+import "./heading.css";
 
 interface DesktopHeadingProps {
   username: string;
@@ -50,11 +50,11 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
 
   if (isLargeDesktop) {
     return (
-      <>
+      <div className="flex flex-col flex-grow w-full h-full items-center justify-center">
         <div className="flex items-center justify-center gap-x-4 w-full">
           <Logo badge={false} logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
         </div>
-        <div className="flex flex-row justify-center items-stretch lg:gap-x-10 sm:gap-x-5 mt-20 pt-4 sm:pt-8 px-20">
+        <div className="flex flex-row justify-center items-stretch lg:gap-x-10 sm:gap-x-5 mt-10 pt-4 sm:pt-8 px-20">
           <div
             className={cn(
               "flex flex-col justify-between h-full items-center basis-1/3 transition-all drop-shadow-lg",
@@ -70,7 +70,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                   background
                 )}
               >
-                <Avatar className="rounded-full transition-all border-primary bg-primary border-4 inset-2 hover:scale-105 my-10 drop-shadow-md cursor-pointer w-28 h-28">
+                <Avatar className="rounded-full transition-all border-primary bg-primary border-4 hover:scale-105 my-10 drop-shadow-md cursor-pointer w-28 h-28">
                   <AvatarImage
                     src={picture}
                     className="object-cover"
@@ -80,7 +80,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                 </Avatar>
               </div>
               <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold hover:scale-105 transition-all cursor-default">
-                Welcome back, <ProfileHoverCard username={username} isUnderlined={true} />.{" " + welcomeMessage}
+                Welcome back, <ProfileHoverCard username={username} />.{" " + welcomeMessage}
               </h1>
             </div>
             <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
@@ -118,23 +118,26 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               ) : (
                 <li className="row-span-2 col-span-2">
                   <Link href="/game">
-                    <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                      <User className="w-5 h-5" />
                       Singleplayer
                     </div>
                   </Link>
                 </li>
               )}
-              {/* <li className="row-span-2 col-span-2">
-                <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                    Multiplayer
-                  </div>
-                </Link>
-              </li> */}
               <li className="row-span-2 col-span-2">
                 <Link href="/weekly">
                   <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <Calendar className="w-5 h-5" />
                     Weekly Challenge
+                  </div>
+                </Link>
+              </li>
+              <li className="row-span-2 col-span-2">
+                <Link href="/leaderboard">
+                  <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <Trophy className="w-5 h-5" />
+                    Leaderboard
                   </div>
                 </Link>
               </li>
@@ -172,15 +175,15 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
             <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
           </div>
         </div>
-      </>
+      </div>
     );
   } else {
     return (
-      <>
+      <div className="flex flex-col flex-grow w-full h-full items-center justify-center">
         <div className="flex items-center justify-center gap-x-4 w-full">
           <Logo badge={false} logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
         </div>
-        <div className="flex flex-row justify-center gap-x-6 mt-20 px-12 w-full pt-4">
+        <div className="flex flex-row justify-center gap-x-6 mt-10 px-12 w-full pt-4">
           <div
             className={cn(
               "flex flex-col justify-between h-full items-center basis-1/2 transition-all drop-shadow-lg",
@@ -196,7 +199,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                   background
                 )}
               >
-                <Avatar className="rounded-full transition-all border-primary bg-primary border-4 inset-2 hover:scale-105 my-10 drop-shadow-md cursor-pointer w-28 h-28">
+                <Avatar className="rounded-full transition-all border-primary bg-primary border-4 hover:scale-105 my-10 drop-shadow-md cursor-pointer w-28 h-28">
                   <AvatarImage
                     src={picture}
                     className="object-cover"
@@ -206,7 +209,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                 </Avatar>
               </div>
               <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold cursor-default hover:scale-105 transition-all">
-                Welcome back, <ProfileHoverCard username={username} isUnderlined={true} />.{" " + welcomeMessage}
+                Welcome back, <ProfileHoverCard username={username} />.{" " + welcomeMessage}
               </h1>
             </div>
             <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
@@ -244,23 +247,26 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               ) : (
                 <li className="row-span-2 col-span-2">
                   <Link href="/game">
-                    <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                      <User className="w-5 h-5" />
                       Singleplayer
                     </div>
                   </Link>
                 </li>
               )}
-              {/* <li className="row-span-2 col-span-2">
-                <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                    Multiplayer
-                  </div>
-                </Link>
-              </li> */}
               <li className="row-span-2 col-span-2">
                 <Link href="/weekly">
                   <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <Calendar className="w-5 h-5" />
                     Weekly Challenge
+                  </div>
+                </Link>
+              </li>
+              <li className="row-span-2 col-span-2">
+                <Link href="/leaderboard">
+                  <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                    <Trophy className="w-5 h-5" />
+                    Leaderboard
                   </div>
                 </Link>
               </li>
@@ -275,7 +281,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
             <div className={"w-[90%] h-4 mt-20 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 };

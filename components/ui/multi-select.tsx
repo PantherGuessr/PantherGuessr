@@ -1,7 +1,7 @@
-import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 import { CheckIcon, ChevronDown, WandSparkles, XCircle, XIcon } from "lucide-react";
+import * as React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverTrigger, PopoverContent as PortaledPopoverContent } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+
 import { cn } from "@/lib/utils";
 
 const NonPortalPopoverContent = React.forwardRef<
