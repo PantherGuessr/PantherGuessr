@@ -75,11 +75,18 @@ const InteractableMap = () => {
 
     useEffect(() => {
       if (localMarkerPosition && correctLocation) {
-        const midpoint = new LatLng(
-          (localMarkerPosition.lat + correctLocation.lat) / 2,
-          (localMarkerPosition.lng + correctLocation.lng) / 2
+        map.fitBounds(
+          [
+            [localMarkerPosition.lat, localMarkerPosition.lng],
+            [correctLocation.lat, correctLocation.lng],
+          ],
+          {
+            padding: [50, 50],
+            maxZoom: 18,
+            animate: true,
+            duration: 0.5,
+          }
         );
-        map.setView(midpoint, map.getZoom());
       }
     }, [localMarkerPosition, correctLocation, map]);
 
