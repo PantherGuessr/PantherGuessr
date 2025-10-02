@@ -75,7 +75,7 @@ const InteractableMap = () => {
 
     useEffect(() => {
       if (localMarkerPosition && correctLocation) {
-        map.fitBounds(
+        map.flyToBounds(
           [
             [localMarkerPosition.lat, localMarkerPosition.lng],
             [correctLocation.lat, correctLocation.lng],
