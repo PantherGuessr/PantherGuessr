@@ -30,11 +30,29 @@ const ProfileActions = ({ username, userClerkId, isCurrentUser }: ProfileActions
   const { openUserProfile } = useClerk();
   const reportUser = useMutation(api.users.reportUser);
 
+  const handleSocialShareClick = async () => {
+    const webShareData = {
+      url: new URL(location.pathname, location.origin).href,
+      text: `Checkout @${username} on PantherGuessr!`,
+    };
+
+    if (navigator.canShare(webShareData)) {
+      await navigator.share(webShareData);
+    } else {
+      await navigator.clipboard.writeText(webShareData.url);
+      toast({ description: "Profile URL copied to clipboard." });
+    }
+  };
+
   const handleReportSubmission = () => {
     reportUser({
       offenderClerkId: userClerkId,
       reportReason: "Reason Coming Soon (Dropdown Menu)",
       reporterMessage: "Reporter Message Coming Soon (User write in)",
+    });
+
+    toast({
+      description: `@${username} has been reported to the developers. Thank you for helping keep PantherGuessr safe.`,
     });
   };
 
@@ -71,15 +89,7 @@ const ProfileActions = ({ username, userClerkId, isCurrentUser }: ProfileActions
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              size="icon"
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                toast({
-                  description: `@${username} profile URL has been copied to clipboard!`,
-                });
-              }}
-            >
+            <Button size="icon" onClick={handleSocialShareClick}>
               <Share className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
