@@ -39,3 +39,20 @@ export const createLevelWithImageStorageId = mutation({
     });
   },
 });
+
+/**
+ * Deletes a level by its ID and the associated image from storage
+ * @param args.levelId - The ID of the level to delete
+ */
+export const deleteLevelById = mutation({
+  args: {
+    levelId: v.id("levels"),
+  },
+  handler: async (ctx, args) => {
+    const level = await ctx.db.get(args.levelId);
+    if (level) {
+      await ctx.storage.delete(level.imageId);
+      await ctx.db.delete(args.levelId);
+    }
+  },
+});
