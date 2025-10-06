@@ -3,7 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "convex/react";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -43,10 +42,6 @@ type Level = {
   timesPlayed: bigint;
   tags?: string[];
 };
-
-const LevelUpload = dynamic(() => import("./_helpers/levelupload").then((mod) => mod.default), {
-  ssr: false,
-});
 
 const Levels = () => {
   // get marker context positions
