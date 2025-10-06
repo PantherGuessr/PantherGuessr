@@ -91,6 +91,7 @@ export const deleteLevelById = mutation({
         await ctx.db.delete(game._id);
       }
 
+      // delete the level and image in storage
       await ctx.storage.delete(level.imageId);
       await ctx.db.delete(args.levelId);
     }
