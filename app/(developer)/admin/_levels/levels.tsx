@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { useMutation, useQuery } from "convex/react";
-import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -183,7 +183,7 @@ const Levels = () => {
       accessorKey: "title",
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className={column.getIsSorted() ? "font-bold text-primary" : ""}>
             Title
             {column.getIsSorted() === "asc" ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />}
           </Button>
@@ -194,7 +194,7 @@ const Levels = () => {
       accessorKey: "tags",
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className={column.getIsSorted() ? "font-bold text-primary" : ""}>
             Tags
             {column.getIsSorted() === "asc" ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />}
           </Button>
@@ -208,7 +208,7 @@ const Levels = () => {
       accessorKey: "_creationTime",
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className={column.getIsSorted() ? "font-bold text-primary" : ""}>
             Created
             {column.getIsSorted() === "asc" ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />}
           </Button>
@@ -294,7 +294,7 @@ const Levels = () => {
   return (
     <>
       <p className="text-start">{tableData?.length || 0} total levels.</p>
-      <DataTable columns={columns} data={tableData || []} />
+      <DataTable columns={columns} data={tableData || []} initialSorting={[{ id: "_creationTime", desc: true }]} />
     </>
   );
 };
