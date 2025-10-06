@@ -8,7 +8,9 @@ import { query } from "./_generated/server";
  */
 export const getAllLevels = query({
   handler: async (ctx) => {
+    // get levels and sort from newest to oldest
     const levels = await ctx.db.query("levels").collect();
+    levels.sort((a, b) => (a._creationTime > b._creationTime ? -1 : 1));
 
     return levels;
   },
