@@ -1,6 +1,6 @@
 {
   "name": "pantherguessr",
-  "version": "0.3.2-beta",
+  "version": "0.3.3-beta",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -12,7 +12,7 @@
     "format:check": "prettier . --check"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.27.1",
+    "@clerk/nextjs": "^6.32.2",
     "@octokit/rest": "^21.1.1",
     "@octokit/types": "^14.1.0",
     "@radix-ui/react-alert-dialog": "^1.1.2",
@@ -39,13 +39,13 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "convex": "^1.25.4",
+    "convex": "^1.27.2",
     "date-fns": "^4.1.0",
     "heic2any": "^0.0.4",
     "html2canvas-pro": "^1.5.8",
-    "leaflet": "^2.0.0-alpha",
+    "leaflet": "^2.0.0-alpha.1",
     "lucide-react": "^0.447.0",
-    "next": "^15.5.2",
+    "next": "^15.5.4",
     "next-themes": "^0.4.6",
     "octokit": "^4.1.2",
     "react": "^19",
@@ -62,17 +62,14 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "@types/js-cookie": "^3.0.6",
-    "@types/negotiator": "^0.6.4",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-react-use-props": "^1.0.0",
-    "tw-animate-css": "^1.3.2",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.20.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/heic-convert": "^2.1.0",
+    "@types/js-cookie": "^3.0.6",
     "@types/leaflet": "^1.9.12",
+    "@types/negotiator": "^0.6.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -81,11 +78,14 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.14",
     "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-react-use-props": "^1.0.0",
     "postcss": "^8",
     "prettier": "^3.5.1",
     "prettier-plugin-sort-json": "^4.1.1",
     "tailwindcss": "^3.4.1",
+    "tw-animate-css": "^1.3.2",
     "typescript": "^5"
   }
 }

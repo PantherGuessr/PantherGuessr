@@ -1,9 +1,8 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { useQuery } from "convex/react";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import dynamic from "next/dynamic";
+import { useMutation, useQuery } from "convex/react";
+import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -44,10 +43,6 @@ type Level = {
   tags?: string[];
 };
 
-const LevelUpload = dynamic(() => import("./_helpers/levelupload").then((mod) => mod.default), {
-  ssr: false,
-});
-
 const Levels = () => {
   // get marker context positions
   const { setLocalMarkerPosition } = useMarker();
@@ -63,6 +58,7 @@ const Levels = () => {
   // convex api functions
   const tableData = useQuery(api.admin.getAllLevels);
   const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
+  const deleteLevel = useMutation(api.levelcreator.deleteLevelById);
 
   // sets the image source to default on table data load
   useEffect(() => {
@@ -182,9 +178,17 @@ const Levels = () => {
       accessorKey: "title",
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className={column.getIsSorted() ? "font-bold text-primary" : ""}
+          >
             Title
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            )}
           </Button>
         );
       },
@@ -193,9 +197,17 @@ const Levels = () => {
       accessorKey: "tags",
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className={column.getIsSorted() ? "font-bold text-primary" : ""}
+          >
             Tags
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            )}
           </Button>
         );
       },
@@ -204,14 +216,32 @@ const Levels = () => {
       },
     },
     {
-      accessorKey: "timesPlayed",
+      accessorKey: "_creationTime",
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-            Times Played
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className={column.getIsSorted() ? "font-bold text-primary" : ""}
+          >
+            Created
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            )}
           </Button>
         );
+      },
+      cell: (cell) => {
+        const date = new Date(cell.row.original._creationTime);
+        return date.toLocaleString(undefined, {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
       },
     },
     {
@@ -243,22 +273,34 @@ const Levels = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => typeof navigator !== 'undefined' && navigator.clipboard.writeText(level._id)}>
+              <DropdownMenuItem
+                onClick={() => typeof navigator !== "undefined" && navigator.clipboard.writeText(level._id)}
+              >
                 Copy Level ID
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => typeof navigator !== 'undefined' && navigator.clipboard.writeText(level.imageId)}>
+              <DropdownMenuItem
+                onClick={() => typeof navigator !== "undefined" && navigator.clipboard.writeText(level.imageId)}
+              >
                 Copy Image ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => typeof navigator !== 'undefined' && navigator.clipboard.writeText("(" + level.latitude + ", " + level.longitude + ")")}
+                onClick={() =>
+                  typeof navigator !== "undefined" &&
+                  navigator.clipboard.writeText("(" + level.latitude + ", " + level.longitude + ")")
+                }
               >
                 Copy Coordinates
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-red-600 dark:text-red-500"
-                onClick={() => alert("Sorry, delete level action not implemented yet.")}
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to delete this level?")) {
+                    setClickedLevelId(null);
+                    deleteLevel({ levelId: level._id });
+                  }
+                }}
               >
                 Delete
               </DropdownMenuItem>
@@ -271,8 +313,8 @@ const Levels = () => {
 
   return (
     <>
-      <LevelUpload />
-      <DataTable columns={columns} data={tableData || []} />
+      <p className="text-start">{tableData?.length || 0} total levels.</p>
+      <DataTable columns={columns} data={tableData || []} initialSorting={[{ id: "_creationTime", desc: true }]} />
     </>
   );
 };

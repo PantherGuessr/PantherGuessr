@@ -59,9 +59,9 @@ const LevelUpload = () => {
       import("browser-image-compression"),
       import("heic2any"),
     ]);
-    const descriptionInput = (typeof document !== "undefined"
-      ? (document.getElementById("description") as HTMLInputElement)
-      : { value: "" }) as HTMLInputElement;
+    const descriptionInput = (
+      typeof document !== "undefined" ? (document.getElementById("description") as HTMLInputElement) : { value: "" }
+    ) as HTMLInputElement;
 
     // check if form has all required fields
     if (!selectedImage || !descriptionInput.value || !localMarkerPosition) {

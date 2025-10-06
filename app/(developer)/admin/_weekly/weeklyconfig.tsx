@@ -242,16 +242,23 @@ const WeeklyChallengeConfig = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => typeof navigator !== 'undefined' && navigator.clipboard.writeText(level?._id ?? "")}> 
+                <DropdownMenuItem
+                  onClick={() => typeof navigator !== "undefined" && navigator.clipboard.writeText(level?._id ?? "")}
+                >
                   Copy Level ID
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => typeof navigator !== 'undefined' && navigator.clipboard.writeText(level?.imageId ?? "")}> 
+                <DropdownMenuItem
+                  onClick={() =>
+                    typeof navigator !== "undefined" && navigator.clipboard.writeText(level?.imageId ?? "")
+                  }
+                >
                   Copy Image ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
-                    typeof navigator !== 'undefined' && navigator.clipboard.writeText("(" + (level?.latitude ?? 0) + ", " + (level?.longitude ?? 0) + ")")
+                    typeof navigator !== "undefined" &&
+                    navigator.clipboard.writeText("(" + (level?.latitude ?? 0) + ", " + (level?.longitude ?? 0) + ")")
                   }
                 >
                   Copy Coordinates
