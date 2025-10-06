@@ -183,9 +183,17 @@ const Levels = () => {
       accessorKey: "title",
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className={column.getIsSorted() ? "font-bold text-primary" : ""}>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className={column.getIsSorted() ? "font-bold text-primary" : ""}
+          >
             Title
-            {column.getIsSorted() === "asc" ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />}
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            )}
           </Button>
         );
       },
@@ -194,9 +202,17 @@ const Levels = () => {
       accessorKey: "tags",
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className={column.getIsSorted() ? "font-bold text-primary" : ""}>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className={column.getIsSorted() ? "font-bold text-primary" : ""}
+          >
             Tags
-            {column.getIsSorted() === "asc" ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />}
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            )}
           </Button>
         );
       },
@@ -208,22 +224,30 @@ const Levels = () => {
       accessorKey: "_creationTime",
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className={column.getIsSorted() ? "font-bold text-primary" : ""}>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className={column.getIsSorted() ? "font-bold text-primary" : ""}
+          >
             Created
-            {column.getIsSorted() === "asc" ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />}
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            )}
           </Button>
         );
       },
       cell: (cell) => {
         const date = new Date(cell.row.original._creationTime);
-        return date.toLocaleString(
-          undefined,
-          {
-            year: "numeric", month: "numeric", day: "numeric",
-            hour: "2-digit", minute: "2-digit"
-          }
-        );
-      }
+        return date.toLocaleString(undefined, {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      },
     },
     {
       accessorKey: "imageId",
