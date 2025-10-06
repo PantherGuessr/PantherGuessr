@@ -506,41 +506,16 @@ export const checkGuess = mutation({
     console.log("Correct: " + correctLat + " " + correctLng);
     console.log("User Guess: " + args.guessLatitude + " " + args.guessLongitude);
 
+    await ctx.db.patch(args.id, {
+      timesPlayed: (level.timesPlayed ?? BigInt(0)) + BigInt(1)
+    });
+
     return {
       correctLat,
       correctLng,
       distanceAway,
       score,
     };
-  },
-});
-
-/**
- * Updates the timesPlayed field for a level //TODO: Fix this to enable it to work
- *
- * @param args.id - The ID of the level to update
- * @returns Object indicating success/failure of updating the timesPlayed field
- */
-export const updateTimesPlayed = mutation({
-  args: { id: v.id("levels") },
-  handler: async (ctx, args) => {
-    const level = await ctx.db.get(args.id);
-
-    if (!level) {
-      throw new Error("No levels exist");
-    }
-
-    const timesPlayed = (level.timesPlayed ?? BigInt(0)) + BigInt(1);
-
-    // update level
-    const newLevel = {
-      ...level,
-      timesPlayed,
-    };
-
-    await ctx.db.replace(args.id, newLevel);
-
-    return { success: true };
   },
 });
 
