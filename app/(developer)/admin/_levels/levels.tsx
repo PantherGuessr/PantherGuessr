@@ -278,7 +278,7 @@ const Levels = () => {
 
   return (
     <>
-      <LevelUpload />
+      <p className="text-start">{tableData?.length || 0} total levels.</p>
       <DataTable columns={columns} data={tableData || []} />
     </>
   );
