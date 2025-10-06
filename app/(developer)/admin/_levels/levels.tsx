@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -63,6 +63,7 @@ const Levels = () => {
   // convex api functions
   const tableData = useQuery(api.admin.getAllLevels);
   const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
+  const deleteLevel = useMutation(api.levelcreator.deleteLevelById);
 
   // sets the image source to default on table data load
   useEffect(() => {
@@ -265,7 +266,11 @@ const Levels = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-red-600 dark:text-red-500"
-                onClick={() => alert("Sorry, delete level action not implemented yet.")}
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to delete this level?")) {
+                    deleteLevel({ levelId: level._id });
+                  }
+                }}
               >
                 Delete
               </DropdownMenuItem>
