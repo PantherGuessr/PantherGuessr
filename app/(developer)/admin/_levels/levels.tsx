@@ -302,6 +302,7 @@ const Levels = () => {
                 className="text-red-600 dark:text-red-500"
                 onClick={() => {
                   if (window.confirm("Are you sure you want to delete this level?")) {
+                    setClickedLevelId(null);
                     deleteLevel({ levelId: level._id });
                   }
                 }}
