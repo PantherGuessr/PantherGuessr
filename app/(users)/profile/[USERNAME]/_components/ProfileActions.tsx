@@ -36,12 +36,11 @@ const ProfileActions = ({ username, userClerkId, isCurrentUser }: ProfileActions
       text: `Checkout @${username} on PantherGuessr!`,
     };
 
-    try {
-      if (navigator.canShare(webShareData)) {
-        await navigator.share(webShareData);
-      }
-    } catch {
-      console.error("There was an error sharing user profile.");
+    if (navigator.canShare(webShareData)) {
+      await navigator.share(webShareData);
+    } else {
+      await navigator.clipboard.writeText(webShareData.url);
+      toast({ description: "Profile URL copied to clipboard." });
     }
   };
 
