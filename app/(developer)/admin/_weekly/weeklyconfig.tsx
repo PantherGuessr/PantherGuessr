@@ -7,7 +7,14 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,11 +27,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
+import { useToast } from "@/hooks/use-toast";
 import useUpcomingWeeklyChallenge from "@/hooks/use-upcoming-weekly-challenge";
 import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
 
@@ -66,7 +73,6 @@ const WeeklyChallengeConfig = () => {
   const [editLevelId, setEditLevelId] = useState<string>("");
   const [editingRound, setEditingRound] = useState<number | null>(null);
   const [editingChallengeId, setEditingChallengeId] = useState<Id<"weeklyChallenges"> | null>(null);
-  const [activeTab, setActiveTab] = useState<"current" | "upcoming">("current");
   const [weeklyChallengeStartDate, setWeeklyChallengeStartDate] = useState<string>("");
   const [weeklyChallengeEndDate, setWeeklyChallengeEndDate] = useState<string>("");
   const [upcomingChallengeStartDate, setUpcomingChallengeStartDate] = useState<string>("");
@@ -141,7 +147,7 @@ const WeeklyChallengeConfig = () => {
   // opens dialog
   const handleDialogOpen = (levelId: Id<"levels">) => {
     setClickedLevelId(levelId);
-    setDialogOpenCounter(prev => prev + 1);
+    setDialogOpenCounter((prev) => prev + 1);
   };
 
   // closes map dialog
@@ -222,8 +228,7 @@ const WeeklyChallengeConfig = () => {
       });
 
       handleEditDialogClose();
-    } catch (error) {
-
+    } catch {
       toast({
         title: "Error",
         description: "Failed to update level. Check the level ID and try again.",
@@ -401,7 +406,7 @@ const WeeklyChallengeConfig = () => {
   const currentEditingLevel = useMemo(() => {
     if (!openEditDialogId) return null;
     const allLevels = [...tableData, ...upcomingTableData];
-    return allLevels.find(level => level?._id === openEditDialogId) || null;
+    return allLevels.find((level) => level?._id === openEditDialogId) || null;
   }, [openEditDialogId, tableData, upcomingTableData]);
 
   return (
@@ -423,9 +428,7 @@ const WeeklyChallengeConfig = () => {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="levelId">
-                New Level ID
-              </Label>
+              <Label htmlFor="levelId">New Level ID</Label>
               <Input
                 id="levelId"
                 value={editLevelId}
@@ -450,12 +453,12 @@ const WeeklyChallengeConfig = () => {
         </DialogContent>
       </Dialog>
 
-      <Tabs defaultValue="current" className="w-full" onValueChange={(value) => setActiveTab(value as "current" | "upcoming")}>
+      <Tabs defaultValue="current" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="current">Current Week</TabsTrigger>
           <TabsTrigger value="upcoming">Next Week (Preview)</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="current" className="space-y-2">
           <p className="text-lg text-left justify-start w-full px-2 mb-1">
             <span className="font-bold">{weeklyChallengeStartDate}</span> -{" "}
@@ -463,7 +466,7 @@ const WeeklyChallengeConfig = () => {
           </p>
           <DataTable columns={createColumns(weeklyChallenge?._id ?? null)} data={tableData || []} />
         </TabsContent>
-        
+
         <TabsContent value="upcoming" className="space-y-2">
           <p className="text-lg text-left justify-start w-full px-2 mb-1">
             <span className="font-bold">{upcomingChallengeStartDate}</span> -{" "}

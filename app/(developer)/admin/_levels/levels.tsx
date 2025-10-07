@@ -90,7 +90,7 @@ const Levels = () => {
   // opens dialog
   const handleDialogOpen = (levelId: Id<"levels">) => {
     setClickedLevelId(levelId);
-    setDialogOpenCounter(prev => prev + 1); // force state change
+    setDialogOpenCounter((prev) => prev + 1); // force state change
   };
 
   // closes map dialog
