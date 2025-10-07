@@ -55,8 +55,12 @@ const WeeklyChallengeConfig = () => {
   // accessors and mutators for states
   const [clickedLevelId, setClickedLevelId] = useState<Id<"levels"> | null>(null);
   const [currentImageSrcUrl, setCurrentSrcUrl] = useState(defaultImageSource);
+  const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const [openDialogId, setOpenDialogId] = useState<Id<"levels"> | null>(null);
+  const [isMapDialogOpen, setIsMapDialogOpen] = useState(false);
   const [openMapDialogId, setOpenMapDialogId] = useState<Id<"levels"> | null>(null);
+  // necessary to force re-fetching image source when dialog is opened multiple times for the same level
+  const [dialogOpenCounter, setDialogOpenCounter] = useState(0);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [openEditDialogId, setOpenEditDialogId] = useState<Id<"levels"> | null>(null);
   const [editLevelId, setEditLevelId] = useState<string>("");
@@ -120,26 +124,30 @@ const WeeklyChallengeConfig = () => {
 
   // updates image source state and open dialog id on dialog trigger
   useEffect(() => {
-    if (imageSrc) {
+    if (imageSrc && clickedLevelId) {
       setCurrentSrcUrl(imageSrc);
       setOpenDialogId(clickedLevelId);
+      setIsImageDialogOpen(true);
     }
-  }, [imageSrc, clickedLevelId]);
+  }, [imageSrc, clickedLevelId, dialogOpenCounter]);
 
   // closes dialog
   const handleDialogClose = () => {
     setCurrentSrcUrl(defaultImageSource);
+    setIsImageDialogOpen(false);
     setOpenDialogId(null);
   };
 
   // opens dialog
   const handleDialogOpen = (levelId: Id<"levels">) => {
     setClickedLevelId(levelId);
+    setDialogOpenCounter(prev => prev + 1);
   };
 
   // closes map dialog
   const handleMapDialogClose = () => {
     setLocalMarkerPosition(null);
+    setIsMapDialogOpen(false);
     setOpenMapDialogId(null);
   };
 
@@ -149,6 +157,7 @@ const WeeklyChallengeConfig = () => {
     const latlng = new LatLng(latitude, longitude);
     setLocalMarkerPosition(latlng);
     setOpenMapDialogId(levelId);
+    setIsMapDialogOpen(true);
   };
 
   // closes edit dialog
@@ -229,7 +238,7 @@ const WeeklyChallengeConfig = () => {
 
     return (
       <Dialog
-        open={openDialogId === row._id}
+        open={isImageDialogOpen && openDialogId === row._id}
         onOpenChange={(open) => {
           if (!open) {
             handleDialogClose();
@@ -271,7 +280,7 @@ const WeeklyChallengeConfig = () => {
 
     return (
       <Dialog
-        open={openMapDialogId === row._id}
+        open={isMapDialogOpen && openMapDialogId === row._id}
         onOpenChange={(open) => {
           if (!open) {
             handleMapDialogClose();
