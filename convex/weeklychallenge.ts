@@ -1,3 +1,5 @@
+import { v } from "convex/values";
+
 import { getNextWeeklyResetTimestamp } from "../lib/weeklytimes";
 import { internalMutation, mutation, query } from "./_generated/server";
 
@@ -286,6 +288,63 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
         gameId: gameId,
         isActive: false,
       });
+    }
+  },
+});
+
+/**
+ * Updates a specific round in a weekly challenge game
+ * @param weeklyChallengeId - The ID of the weekly challenge
+ * @param roundNumber - The round number (1-5)
+ * @param newLevelId - The new level ID to use for this round
+ */
+export const updateWeeklyChallengeRound = mutation({
+  args: {
+    weeklyChallengeId: v.id("weeklyChallenges"),
+    roundNumber: v.number(),
+    newLevelId: v.id("levels"),
+  },
+  handler: async (ctx, args) => {
+    const { weeklyChallengeId, roundNumber, newLevelId } = args;
+
+    try {
+      // Validate round number
+      if (roundNumber < 1 || roundNumber > 5) {
+        throw new Error("Round number must be between 1 and 5");
+      }
+
+      // Get the weekly challenge
+      const weeklyChallenge = await ctx.db.get(weeklyChallengeId);
+      if (!weeklyChallenge) {
+        throw new Error("Weekly challenge not found");
+      }
+
+      // Verify the level exists
+      const level = await ctx.db.get(newLevelId);
+      if (!level) {
+        throw new Error("Level not found with the provided ID");
+      }
+
+      // Get the game
+      const game = await ctx.db.get(weeklyChallenge.gameId);
+      if (!game) {
+        throw new Error("Game not found");
+      }
+
+      // Update the appropriate round
+      const roundKey = `round_${roundNumber}` as "round_1" | "round_2" | "round_3" | "round_4" | "round_5";
+      await ctx.db.patch(weeklyChallenge.gameId, {
+        [roundKey]: newLevelId,
+      });
+
+      return { success: true, message: `Round ${roundNumber} updated to level: ${level.title}` };
+    } catch (error) {
+      // Re-throw with more context if it's our custom error
+      if (error instanceof Error) {
+        throw error;
+      }
+      // Handle unexpected errors
+      throw new Error("An unexpected error occurred while updating the weekly challenge");
     }
   },
 });

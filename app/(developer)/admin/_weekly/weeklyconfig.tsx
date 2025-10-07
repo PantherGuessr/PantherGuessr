@@ -1,13 +1,13 @@
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { LatLng } from "leaflet";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,14 +16,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import useUpcomingWeeklyChallenge from "@/hooks/use-upcoming-weekly-challenge";
 import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
+
+import { isValidConvexId } from "@/lib/utils";
 
 import { useMarker } from "../_levels/_helpers/MarkerContext";
 import PreviewMap from "../_levels/_helpers/preview-map";
@@ -52,6 +57,11 @@ const WeeklyChallengeConfig = () => {
   const [currentImageSrcUrl, setCurrentSrcUrl] = useState(defaultImageSource);
   const [openDialogId, setOpenDialogId] = useState<Id<"levels"> | null>(null);
   const [openMapDialogId, setOpenMapDialogId] = useState<Id<"levels"> | null>(null);
+  const [openEditDialogId, setOpenEditDialogId] = useState<Id<"levels"> | null>(null);
+  const [editLevelId, setEditLevelId] = useState<string>("");
+  const [editingRound, setEditingRound] = useState<number | null>(null);
+  const [editingChallengeId, setEditingChallengeId] = useState<Id<"weeklyChallenges"> | null>(null);
+  const [activeTab, setActiveTab] = useState<"current" | "upcoming">("current");
   const [weeklyChallengeStartDate, setWeeklyChallengeStartDate] = useState<string>("");
   const [weeklyChallengeEndDate, setWeeklyChallengeEndDate] = useState<string>("");
   const [upcomingChallengeStartDate, setUpcomingChallengeStartDate] = useState<string>("");
@@ -61,7 +71,9 @@ const WeeklyChallengeConfig = () => {
   const weeklyChallenge = useWeeklyChallenge();
   const upcomingWeeklyChallenge = useUpcomingWeeklyChallenge();
 
-  // TODO: add an option to reroll weekly challenge
+  // mutation for updating weekly challenge round
+  const updateWeeklyChallengeRound = useMutation(api.weeklychallenge.updateWeeklyChallengeRound);
+  const { toast } = useToast();
 
   // fetch image source
   const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
@@ -136,6 +148,76 @@ const WeeklyChallengeConfig = () => {
     const latlng = new LatLng(latitude, longitude);
     setLocalMarkerPosition(latlng);
     setOpenMapDialogId(levelId);
+  };
+
+  // closes edit dialog
+  const handleEditDialogClose = () => {
+    setOpenEditDialogId(null);
+    setEditLevelId("");
+    setEditingRound(null);
+    setEditingChallengeId(null);
+  };
+
+  // opens edit dialog
+  const handleEditDialogOpen = (levelId: Id<"levels">, roundNumber: number, challengeId: Id<"weeklyChallenges">) => {
+    setOpenEditDialogId(levelId);
+    setEditLevelId("");
+    setEditingRound(roundNumber);
+    setEditingChallengeId(challengeId);
+  };
+
+  // handles saving the edited level
+  const handleSaveEditedLevel = async () => {
+    if (!editLevelId || !editingRound || !editingChallengeId) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid level ID",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Basic validation for Convex ID format (starts with a table prefix)
+    if (!editLevelId.trim()) {
+      toast({
+        title: "Error",
+        description: "Level ID cannot be empty",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if it looks like a Convex ID (basic format check)
+    if (!isValidConvexId(editLevelId.trim())) {
+      toast({
+        title: "Invalid Level ID Format",
+        description: "The level ID format is invalid. It should look like 'k17abc123def456' or similar.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await updateWeeklyChallengeRound({
+        weeklyChallengeId: editingChallengeId,
+        roundNumber: editingRound,
+        newLevelId: editLevelId.trim() as Id<"levels">,
+      });
+
+      toast({
+        title: "Success",
+        description: `Round ${editingRound} updated successfully!`,
+      });
+
+      handleEditDialogClose();
+    } catch (error) {
+
+      toast({
+        title: "Error",
+        description: "Failed to update level. Check the level ID and try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // creates image dialog button
@@ -215,7 +297,7 @@ const WeeklyChallengeConfig = () => {
   }
 
   // columns key value pairs for shadcn DataTable component
-  const columns: ColumnDef<Level | null>[] = [
+  const createColumns = (challengeId: Id<"weeklyChallenges"> | null): ColumnDef<Level | null>[] => [
     {
       header: "Round #",
       cell: (cell) => {
@@ -252,6 +334,7 @@ const WeeklyChallengeConfig = () => {
       header: "Actions",
       cell: ({ row }) => {
         const level = row.original;
+        const roundNumber = row.index + 1;
         return (
           <>
             <DropdownMenu>
@@ -285,6 +368,15 @@ const WeeklyChallengeConfig = () => {
                   Copy Coordinates
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (level && challengeId) {
+                      handleEditDialogOpen(level._id, roundNumber, challengeId);
+                    }
+                  }}
+                >
+                  Edit Level ID
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </>
@@ -293,29 +385,83 @@ const WeeklyChallengeConfig = () => {
     },
   ];
 
+  // Get the current level being edited for display in the dialog
+  const currentEditingLevel = useMemo(() => {
+    if (!openEditDialogId) return null;
+    const allLevels = [...tableData, ...upcomingTableData];
+    return allLevels.find(level => level?._id === openEditDialogId) || null;
+  }, [openEditDialogId, tableData, upcomingTableData]);
+
   return (
-    <Tabs defaultValue="current" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="current">Current Week</TabsTrigger>
-        <TabsTrigger value="upcoming">Next Week (Preview)</TabsTrigger>
-      </TabsList>
-      
-      <TabsContent value="current" className="space-y-2">
-        <p className="text-lg text-left justify-start w-full px-2 mb-1">
-          <span className="font-bold">{weeklyChallengeStartDate}</span> -{" "}
-          <span className="font-bold">{weeklyChallengeEndDate}</span>
-        </p>
-        <DataTable columns={columns} data={tableData || []} />
-      </TabsContent>
-      
-      <TabsContent value="upcoming" className="space-y-2">
-        <p className="text-lg text-left justify-start w-full px-2 mb-1">
-          <span className="font-bold">{upcomingChallengeStartDate}</span> -{" "}
-          <span className="font-bold">{upcomingChallengeEndDate}</span>
-        </p>
-        <DataTable columns={columns} data={upcomingTableData || []} />
-      </TabsContent>
-    </Tabs>
+    <>
+      {/* Single Edit Dialog - outside the table to prevent re-renders */}
+      <Dialog
+        open={!!openEditDialogId}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleEditDialogClose();
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Level for Round {editingRound}</DialogTitle>
+            <DialogDescription>
+              Current Level: {currentEditingLevel?.title ?? "Loading..."} ({openEditDialogId})
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="levelId">
+                New Level ID
+              </Label>
+              <Input
+                id="levelId"
+                value={editLevelId}
+                onChange={(e) => setEditLevelId(e.target.value)}
+                placeholder="Paste level ID here..."
+                className="font-mono text-sm"
+                autoFocus
+              />
+              <p className="text-xs text-muted-foreground">
+                Tip: Use &quot;Copy Level ID&quot; from another level&apos;s menu
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleEditDialogClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEditedLevel} disabled={!editLevelId.trim()}>
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Tabs defaultValue="current" className="w-full" onValueChange={(value) => setActiveTab(value as "current" | "upcoming")}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="current">Current Week</TabsTrigger>
+          <TabsTrigger value="upcoming">Next Week (Preview)</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="current" className="space-y-2">
+          <p className="text-lg text-left justify-start w-full px-2 mb-1">
+            <span className="font-bold">{weeklyChallengeStartDate}</span> -{" "}
+            <span className="font-bold">{weeklyChallengeEndDate}</span>
+          </p>
+          <DataTable columns={createColumns(weeklyChallenge?._id ?? null)} data={tableData || []} />
+        </TabsContent>
+        
+        <TabsContent value="upcoming" className="space-y-2">
+          <p className="text-lg text-left justify-start w-full px-2 mb-1">
+            <span className="font-bold">{upcomingChallengeStartDate}</span> -{" "}
+            <span className="font-bold">{upcomingChallengeEndDate}</span>
+          </p>
+          <DataTable columns={createColumns(upcomingWeeklyChallenge?._id ?? null)} data={upcomingTableData || []} />
+        </TabsContent>
+      </Tabs>
+    </>
   );
 };
 
