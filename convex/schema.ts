@@ -63,7 +63,9 @@ export default defineSchema({
     gameId: v.id("games"),
     firstPlayedByClerkId: v.optional(v.string()),
     leaderboard: v.optional(v.array(v.id("leaderboardEntries"))),
-  }),
+    isActive: v.boolean(), // true if currently active, false if upcoming
+  }).index("byIsActive", ["isActive"])
+    .index("byStartDate", ["startDate"]),
 
   leaderboardEntries: defineTable({
     game: v.union(v.id("games"), v.id("weeklyChallenges")),
