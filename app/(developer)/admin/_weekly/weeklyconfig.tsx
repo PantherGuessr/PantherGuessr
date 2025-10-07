@@ -57,6 +57,7 @@ const WeeklyChallengeConfig = () => {
   const [currentImageSrcUrl, setCurrentSrcUrl] = useState(defaultImageSource);
   const [openDialogId, setOpenDialogId] = useState<Id<"levels"> | null>(null);
   const [openMapDialogId, setOpenMapDialogId] = useState<Id<"levels"> | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [openEditDialogId, setOpenEditDialogId] = useState<Id<"levels"> | null>(null);
   const [editLevelId, setEditLevelId] = useState<string>("");
   const [editingRound, setEditingRound] = useState<number | null>(null);
@@ -152,6 +153,7 @@ const WeeklyChallengeConfig = () => {
 
   // closes edit dialog
   const handleEditDialogClose = () => {
+    setIsEditDialogOpen(false);
     setOpenEditDialogId(null);
     setEditLevelId("");
     setEditingRound(null);
@@ -164,6 +166,7 @@ const WeeklyChallengeConfig = () => {
     setEditLevelId("");
     setEditingRound(roundNumber);
     setEditingChallengeId(challengeId);
+    setIsEditDialogOpen(true);
   };
 
   // handles saving the edited level
@@ -394,9 +397,8 @@ const WeeklyChallengeConfig = () => {
 
   return (
     <>
-      {/* Single Edit Dialog - outside the table to prevent re-renders */}
       <Dialog
-        open={!!openEditDialogId}
+        open={isEditDialogOpen}
         onOpenChange={(open) => {
           if (!open) {
             handleEditDialogClose();
