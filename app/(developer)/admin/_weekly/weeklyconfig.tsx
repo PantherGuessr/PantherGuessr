@@ -17,10 +17,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
+import useUpcomingWeeklyChallenge from "@/hooks/use-upcoming-weekly-challenge";
 import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
 
 import { useMarker } from "../_levels/_helpers/MarkerContext";
@@ -52,16 +54,19 @@ const WeeklyChallengeConfig = () => {
   const [openMapDialogId, setOpenMapDialogId] = useState<Id<"levels"> | null>(null);
   const [weeklyChallengeStartDate, setWeeklyChallengeStartDate] = useState<string>("");
   const [weeklyChallengeEndDate, setWeeklyChallengeEndDate] = useState<string>("");
+  const [upcomingChallengeStartDate, setUpcomingChallengeStartDate] = useState<string>("");
+  const [upcomingChallengeEndDate, setUpcomingChallengeEndDate] = useState<string>("");
 
   // fetch weekly challenge data
   const weeklyChallenge = useWeeklyChallenge();
+  const upcomingWeeklyChallenge = useUpcomingWeeklyChallenge();
 
   // TODO: add an option to reroll weekly challenge
 
   // fetch image source
   const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
 
-  // memoize table data
+  // memoize table data for current week
   const tableData = useMemo(() => {
     if (weeklyChallenge) {
       setWeeklyChallengeStartDate(new Date(Number(weeklyChallenge.startDate)).toLocaleDateString());
@@ -76,6 +81,22 @@ const WeeklyChallengeConfig = () => {
     }
     return [];
   }, [weeklyChallenge]);
+
+  // memoize table data for upcoming week
+  const upcomingTableData = useMemo(() => {
+    if (upcomingWeeklyChallenge) {
+      setUpcomingChallengeStartDate(new Date(Number(upcomingWeeklyChallenge.startDate)).toLocaleDateString());
+      setUpcomingChallengeEndDate(new Date(Number(upcomingWeeklyChallenge.endDate)).toLocaleDateString());
+      return [
+        upcomingWeeklyChallenge.game.round_1,
+        upcomingWeeklyChallenge.game.round_2,
+        upcomingWeeklyChallenge.game.round_3,
+        upcomingWeeklyChallenge.game.round_4,
+        upcomingWeeklyChallenge.game.round_5,
+      ];
+    }
+    return [];
+  }, [upcomingWeeklyChallenge]);
 
   // sets the image source to default on table data load
   useEffect(() => {
@@ -273,13 +294,28 @@ const WeeklyChallengeConfig = () => {
   ];
 
   return (
-    <>
-      <p className="text-lg text-left justify-start w-full px-2 mb-1">
-        <span className="font-bold">{weeklyChallengeStartDate}</span> -{" "}
-        <span className="font-bold">{weeklyChallengeEndDate}</span>
-      </p>
-      <DataTable columns={columns} data={tableData || []} />
-    </>
+    <Tabs defaultValue="current" className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="current">Current Week</TabsTrigger>
+        <TabsTrigger value="upcoming">Next Week (Preview)</TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="current" className="space-y-2">
+        <p className="text-lg text-left justify-start w-full px-2 mb-1">
+          <span className="font-bold">{weeklyChallengeStartDate}</span> -{" "}
+          <span className="font-bold">{weeklyChallengeEndDate}</span>
+        </p>
+        <DataTable columns={columns} data={tableData || []} />
+      </TabsContent>
+      
+      <TabsContent value="upcoming" className="space-y-2">
+        <p className="text-lg text-left justify-start w-full px-2 mb-1">
+          <span className="font-bold">{upcomingChallengeStartDate}</span> -{" "}
+          <span className="font-bold">{upcomingChallengeEndDate}</span>
+        </p>
+        <DataTable columns={columns} data={upcomingTableData || []} />
+      </TabsContent>
+    </Tabs>
   );
 };
 
