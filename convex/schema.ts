@@ -63,7 +63,7 @@ export default defineSchema({
     gameId: v.id("games"),
     firstPlayedByClerkId: v.optional(v.string()),
     leaderboard: v.optional(v.array(v.id("leaderboardEntries"))),
-    isActive: v.boolean(), // true if currently active, false if upcoming
+    isActive: v.optional(v.boolean()), // true if currently active, false if upcoming; optional for migration safety
   }).index("byIsActive", ["isActive"])
     .index("byStartDate", ["startDate"]),
 

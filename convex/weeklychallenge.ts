@@ -1,7 +1,31 @@
 import { v } from "convex/values";
 
 import { getNextWeeklyResetTimestamp } from "../lib/weeklytimes";
-import { internalMutation, mutation, query } from "./_generated/server";
+import { api } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
+import { internalMutation, MutationCtx, mutation, query } from "./_generated/server";
+import { getCurrentUser } from "./users";
+
+/**
+ * Selects `count` unique random level IDs from the database.
+ * Throws if there are fewer than `count` levels available.
+ */
+async function pickRandomLevelIds(ctx: MutationCtx, count: number): Promise<Id<"levels">[]> {
+  const levels = await ctx.db.query("levels").collect();
+  if (levels.length < count) {
+    throw new Error(`Not enough levels in the database. Need at least ${count}, found ${levels.length}.`);
+  }
+  const selected: Id<"levels">[] = [];
+  const usedIndices: number[] = [];
+  while (selected.length < count) {
+    const idx = Math.floor(Math.random() * levels.length);
+    if (!usedIndices.includes(idx)) {
+      usedIndices.push(idx);
+      selected.push(levels[idx]._id);
+    }
+  }
+  return selected;
+}
 
 /**
  * Retrieves the weekly challenge that is currently active
@@ -157,22 +181,9 @@ export const createWeeklyChallenge = internalMutation({
     // Step 3: Create a new upcoming challenge for next week
     const nextResetDate = getNextWeeklyResetTimestamp(now);
     const weekAfterNextResetDate = getNextWeeklyResetTimestamp(new Date(nextResetDate));
-    
-    const levels = await ctx.db.query("levels").collect();
-    const randomLevels = [];
-    const randomIndices: number[] = [];
-    
-    // Select 5 random unique levels
-    for (let i = 0; i < 5; i++) {
-      const randomIndex = Math.floor(Math.random() * levels.length);
-      if (randomIndices.includes(randomIndex)) {
-        i--;
-        continue;
-      }
-      randomIndices.push(randomIndex);
-      randomLevels.push(levels[randomIndex]._id);
-    }
-    
+
+    const randomLevels = await pickRandomLevelIds(ctx, 5);
+
     // Create the game for the upcoming challenge
     const gameId = await ctx.db.insert("games", {
       round_1: randomLevels[0],
@@ -215,20 +226,8 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
     // Create active challenge if it doesn't exist
     if (!existingActive) {
       const endDate = getNextWeeklyResetTimestamp(now);
-      const levels = await ctx.db.query("levels").collect();
-      const randomLevels = [];
-      const randomIndices: number[] = [];
-      
-      for (let i = 0; i < 5; i++) {
-        const randomIndex = Math.floor(Math.random() * levels.length);
-        if (randomIndices.includes(randomIndex)) {
-          i--;
-          continue;
-        }
-        randomIndices.push(randomIndex);
-        randomLevels.push(levels[randomIndex]._id);
-      }
-      
+      const randomLevels = await pickRandomLevelIds(ctx, 5);
+
       const gameId = await ctx.db.insert("games", {
         round_1: randomLevels[0],
         round_2: randomLevels[1],
@@ -258,20 +257,8 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
     if (!existingUpcoming) {
       const nextResetDate = getNextWeeklyResetTimestamp(now);
       const weekAfterNextResetDate = getNextWeeklyResetTimestamp(new Date(nextResetDate));
-      const levels = await ctx.db.query("levels").collect();
-      const randomLevels = [];
-      const randomIndices: number[] = [];
-      
-      for (let i = 0; i < 5; i++) {
-        const randomIndex = Math.floor(Math.random() * levels.length);
-        if (randomIndices.includes(randomIndex)) {
-          i--;
-          continue;
-        }
-        randomIndices.push(randomIndex);
-        randomLevels.push(levels[randomIndex]._id);
-      }
-      
+      const randomLevels = await pickRandomLevelIds(ctx, 5);
+
       const gameId = await ctx.db.insert("games", {
         round_1: randomLevels[0],
         round_2: randomLevels[1],
@@ -305,46 +292,41 @@ export const updateWeeklyChallengeRound = mutation({
     newLevelId: v.id("levels"),
   },
   handler: async (ctx, args) => {
+    const callUser = await getCurrentUser(ctx);
+    if (!callUser) {
+      throw new Error("Unauthorized");
+    }
+    const isDeveloper = await ctx.runQuery(api.users.hasRole, { clerkId: callUser.clerkId, role: "developer" });
+    if (!isDeveloper) {
+      throw new Error("Unauthorized");
+    }
+
     const { weeklyChallengeId, roundNumber, newLevelId } = args;
 
-    try {
-      // Validate round number
-      if (roundNumber < 1 || roundNumber > 5) {
-        throw new Error("Round number must be between 1 and 5");
-      }
-
-      // Get the weekly challenge
-      const weeklyChallenge = await ctx.db.get(weeklyChallengeId);
-      if (!weeklyChallenge) {
-        throw new Error("Weekly challenge not found");
-      }
-
-      // Verify the level exists
-      const level = await ctx.db.get(newLevelId);
-      if (!level) {
-        throw new Error("Level not found with the provided ID");
-      }
-
-      // Get the game
-      const game = await ctx.db.get(weeklyChallenge.gameId);
-      if (!game) {
-        throw new Error("Game not found");
-      }
-
-      // Update the appropriate round
-      const roundKey = `round_${roundNumber}` as "round_1" | "round_2" | "round_3" | "round_4" | "round_5";
-      await ctx.db.patch(weeklyChallenge.gameId, {
-        [roundKey]: newLevelId,
-      });
-
-      return { success: true, message: `Round ${roundNumber} updated to level: ${level.title}` };
-    } catch (error) {
-      // Re-throw with more context if it's our custom error
-      if (error instanceof Error) {
-        throw error;
-      }
-      // Handle unexpected errors
-      throw new Error("An unexpected error occurred while updating the weekly challenge");
+    if (roundNumber < 1 || roundNumber > 5) {
+      throw new Error("Round number must be between 1 and 5");
     }
+
+    const weeklyChallenge = await ctx.db.get(weeklyChallengeId);
+    if (!weeklyChallenge) {
+      throw new Error("Weekly challenge not found");
+    }
+
+    const level = await ctx.db.get(newLevelId);
+    if (!level) {
+      throw new Error("Level not found with the provided ID");
+    }
+
+    const game = await ctx.db.get(weeklyChallenge.gameId);
+    if (!game) {
+      throw new Error("Game not found");
+    }
+
+    const roundKey = `round_${roundNumber}` as "round_1" | "round_2" | "round_3" | "round_4" | "round_5";
+    await ctx.db.patch(weeklyChallenge.gameId, {
+      [roundKey]: newLevelId,
+    });
+
+    return { success: true, message: `Round ${roundNumber} updated to level: ${level.title}` };
   },
 });

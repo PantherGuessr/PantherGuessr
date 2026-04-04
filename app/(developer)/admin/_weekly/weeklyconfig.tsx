@@ -195,16 +195,6 @@ const WeeklyChallengeConfig = () => {
       return;
     }
 
-    // Basic validation for Convex ID format (starts with a table prefix)
-    if (!editLevelId.trim()) {
-      toast({
-        title: "Error",
-        description: "Level ID cannot be empty",
-        variant: "destructive",
-      });
-      return;
-    }
-
     // Check if it looks like a Convex ID (basic format check)
     if (!isValidConvexId(editLevelId.trim())) {
       toast({
