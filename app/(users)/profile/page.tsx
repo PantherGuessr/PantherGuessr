@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import { Loader2, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -10,10 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
-import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 
-import { useBanCheck } from "@/hooks/use-ban-check";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { useGetListOfProfiles } from "@/hooks/userProfiles/use-get-list-of-profiles";
 
 import { cn } from "@/lib/utils";
@@ -21,8 +19,7 @@ import { cn } from "@/lib/utils";
 import Levenshtein from "./helpers/levenshtein";
 
 const ProfileSearchPage = () => {
-  const currentUser = useQuery(api.users.current);
-  const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
+  const { data: currentUser, isLoading: currentUserLoading } = useCurrentUser();
   const { result: usernames, isLoading: isUsernamesLoading } = useGetListOfProfiles();
   const [searchedUsername, setSearchedUsername] = useState("");
   const router = useRouter();
@@ -31,10 +28,10 @@ const ProfileSearchPage = () => {
   const [suggestedUsernames, setSuggestedUsernames] = useState<Doc<"users">[] | []>([]);
 
   useEffect(() => {
-    if (isBanned) {
-      router.push(`/profile/${currentUser?.username}`);
+    if (currentUser?.isBanned) {
+      router.push(`/profile/${currentUser.user.username}`);
     }
-  }, [currentUser?.username, isBanned, router]);
+  }, [currentUser, router]);
 
   const handleSubmit = () => {
     if (filteredUsernames.length > 0) {
@@ -56,7 +53,6 @@ const ProfileSearchPage = () => {
     if (e.key === "Enter") {
       handleSubmit();
     } else if (e.key === "Tab") {
-      // autofills the search input
       e.preventDefault();
       if (filteredUsernames.length > 0) {
         setSearchedUsername(filteredUsernames[selectedIndex].username);
@@ -65,9 +61,7 @@ const ProfileSearchPage = () => {
         setSearchedUsername(suggestedUsernames[selectedIndex].username);
         setSelectedIndex(0);
       }
-    }
-    // handles arrow key navigation
-    else if (e.key === "ArrowDown") {
+    } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (filteredUsernames.length > 0) {
         setSelectedIndex((prev) => (prev + 1) % filteredUsernames.length);
@@ -84,17 +78,14 @@ const ProfileSearchPage = () => {
     }
   };
 
-  // updates the filtered usernames based on search input
   useEffect(() => {
     if (usernames && searchedUsername) {
-      // gets suggested usernames from distance
       setSuggestedUsernames(
         usernames.filter((user) => {
           const distance = Levenshtein(user.username, searchedUsername);
           return distance! <= 2;
         })
       );
-      // gets filtered usernames from search input
       setFilteredUsernames(
         usernames.filter((user) => user.username.toLowerCase().includes(searchedUsername.toLowerCase()))
       );
@@ -105,7 +96,7 @@ const ProfileSearchPage = () => {
     }
   }, [usernames, searchedUsername, setFilteredUsernames]);
 
-  if (isUsernamesLoading || isBanCheckLoading) {
+  if (isUsernamesLoading || currentUserLoading) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -150,7 +141,7 @@ const ProfileSearchPage = () => {
                       key={user.username}
                       onClick={() => {
                         setSearchedUsername(user.username);
-                        router.push(`/profile/${user.username}`); // redirect
+                        router.push(`/profile/${user.username}`);
                       }}
                       className={cn(
                         "text-left py-1 pl-2 text-sm cursor-pointer",
@@ -174,7 +165,7 @@ const ProfileSearchPage = () => {
                         key={user.username}
                         onClick={() => {
                           setSearchedUsername(user.username);
-                          router.push(`/profile/${user.username}`); // redirect
+                          router.push(`/profile/${user.username}`);
                         }}
                         className={cn(
                           "text-left py-1 pl-2 text-sm cursor-pointer",

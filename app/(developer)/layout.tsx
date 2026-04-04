@@ -1,25 +1,22 @@
 "use client";
 
 import { RedirectToSignIn } from "@clerk/nextjs";
-import { useConvexAuth } from "convex/react";
 import { redirect, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 import { Navbar } from "@/components/navbar/navbar";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { useRoleCheck } from "@/hooks/use-role-check";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 import { AdminProvider } from "./admin/_components/adminprovider";
 
 const AdminLayoutInner = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
-  const { result: isDeveloper, isLoading: isDeveloperLoading } = useRoleCheck("developer");
+  const { data: currentUser, isLoading, isAuthenticated } = useCurrentUser();
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") || "analytics";
 
-  // If they are loading
-  if (authLoading || isDeveloperLoading) {
+  if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
         <Skeleton className="w-[240px] h-[40px] translate-y-[40%]" />
@@ -27,13 +24,11 @@ const AdminLayoutInner = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // If they aren't authenticated
   if (!isAuthenticated) {
     return <RedirectToSignIn />;
   }
 
-  // If they are not an admin
-  if (!isDeveloper) {
+  if (!currentUser?.roles.isDeveloper) {
     return redirect("/");
   }
 

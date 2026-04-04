@@ -13,7 +13,7 @@ import { NotFoundContent } from "@/components/not-found-content";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
-import { useBanCheck } from "@/hooks/use-ban-check";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 import { cn, isValidConvexId } from "@/lib/utils";
 
@@ -31,20 +31,18 @@ const GameIdPage = ({ params }: Props) => {
   const { GAMEID } = use(params);
   const isMobile = useMediaQuery("(max-width: 600px)");
 
-  // validate convex ID format
   const isValidId = isValidConvexId(GAMEID);
   const gameIdAsId = isValidId ? (GAMEID as Id<"games">) : undefined;
 
   const gameExists = useQuery(api.game.gameExists, gameIdAsId ? { gameId: gameIdAsId } : "skip");
 
-  const currentUser = useQuery(api.users.current);
-  const { result: isBanned } = useBanCheck(currentUser?.clerkId);
+  const { data: currentUser } = useCurrentUser();
 
   useEffect(() => {
-    if (isBanned) {
-      router.push(`/profile/${currentUser?.username}`);
+    if (currentUser?.isBanned) {
+      router.push(`/profile/${currentUser.user.username}`);
     }
-  }, [currentUser?.username, isBanned, router]);
+  }, [currentUser, router]);
 
   if (gameExists === false || !isValidId) {
     return (

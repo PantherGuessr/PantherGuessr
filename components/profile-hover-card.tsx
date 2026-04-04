@@ -6,9 +6,7 @@ import { useState } from "react";
 
 import { api } from "@/convex/_generated/api";
 
-import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
-import { useRoleCheck } from "@/hooks/use-role-check";
-import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 import { cn } from "@/lib/utils";
 
@@ -25,27 +23,11 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
     username ? { username } : userID ? { id: userID } : "skip"
   );
 
-  const isUserLoading = user === undefined;
-
-  const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
-  const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
-  const { result: isContributorRole, isLoading: contributorRoleLoading } = useRoleCheck("contributor", user?.clerkId);
-  const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
-  const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
-  const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
-  const { result: profileTagline } = useGetSelectedTagline(user?.clerkId);
+  const { data: profile, isLoading: profileLoading } = useUserProfile(user?.clerkId);
 
   const [isOpen, setIsOpen] = useState(false);
 
-  if (
-    isUserLoading ||
-    isChapmanStudentLoading ||
-    developerRoleLoading ||
-    contributorRoleLoading ||
-    topPlayerIsLoading ||
-    moderatorRoleLoading ||
-    friendRoleLoading
-  ) {
+  if (user === undefined || profileLoading) {
     return (
       <span className={"font-bold flex justify-center items-center"}>
         <Loader2 className="w-4 h-4 animate-spin" />
@@ -95,7 +77,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                 <div className="flex flex-row items-left">
                   <h4 className="text-sm font-semibold">@{user?.username}</h4>
                   <div className="flex flex-row items-center gap-x-2 pl-2">
-                    {isDeveloperRole && (
+                    {profile?.roles.isDeveloper && (
                       <Image
                         draggable={false}
                         className="select-none drop-shadow transform-gpu"
@@ -105,7 +87,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                         alt="Developer Badge"
                       />
                     )}
-                    {isModeratorRole && (
+                    {profile?.roles.isModerator && (
                       <Image
                         draggable={false}
                         className="select-none drop-shadow transform-gpu"
@@ -115,7 +97,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                         alt="Moderator Badge"
                       />
                     )}
-                    {isContributorRole && (
+                    {profile?.roles.isContributor && (
                       <Image
                         draggable={false}
                         className="select-none drop-shadow transform-gpu"
@@ -125,7 +107,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                         alt="Contributor Badge"
                       />
                     )}
-                    {isTopPlayer && (
+                    {profile?.roles.isTopPlayer && (
                       <Image
                         draggable={false}
                         className="select-none drop-shadow transform-gpu"
@@ -135,7 +117,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                         alt="Top Ranked Player Badge"
                       />
                     )}
-                    {isFriendRole && (
+                    {profile?.roles.isFriend && (
                       <Image
                         draggable={false}
                         className="select-none drop-shadow transform-gpu"
@@ -145,7 +127,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                         height="15"
                       />
                     )}
-                    {isChapmanStudent && (
+                    {profile?.hasChapmanEmail && (
                       <Image
                         draggable={false}
                         className="select-none drop-shadow transform-gpu"
@@ -158,7 +140,9 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                   </div>
                 </div>
               </div>
-              <p className="text-sm font-bold text-muted-foreground italic select-none">{profileTagline?.tagline}</p>
+              <p className="text-sm font-bold text-muted-foreground italic select-none">
+                {profile?.selectedTagline?.tagline}
+              </p>
               <div className="flex items-center pt-2">
                 <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
                 <span className="text-xs font-bold text-muted-foreground select-none">

@@ -1,6 +1,5 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
 import { Check, ChevronsUpDown, Loader2, Save, SearchX, ShieldX, SquarePen, UserSearch, X } from "lucide-react";
 import Image from "next/image";
@@ -20,13 +19,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 import { api } from "@/convex/_generated/api";
 
-import { useBanCheck } from "@/hooks/use-ban-check";
-import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
-import { useRoleCheck } from "@/hooks/use-role-check";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useUserProfile } from "@/hooks/use-user-profile";
 import { useGetRecentGames } from "@/hooks/userProfiles/use-get-recent-games";
-import { useGetSelectedBackground } from "@/hooks/userProfiles/use-get-selected-background";
-import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
-import { useAchievementCheck } from "@/hooks/userProfiles/use-get-unlocked-achievements";
 import { useGetUnlockedBackgrounds } from "@/hooks/userProfiles/use-get-unlocked-backgrounds";
 import { useGetUnlockedTaglines } from "@/hooks/userProfiles/use-get-unlocked-taglines";
 
@@ -53,61 +48,24 @@ const ProfilePage = ({ params }: Props) => {
     router.push(`/profile/${usernameSubPage.toLowerCase()}`);
   }
 
-  const clerkUser = useUser();
-  const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
-  const viewingUser = useQuery(api.users.current);
-  const { result: isBanned, banReason, appealActive, isLoading: isBanCheckLoading } = useBanCheck(user?.clerkId);
-  const { result: isViewerDeveloperRole, isLoading: viewerDeveloperRoleLoading } = useRoleCheck(
-    "developer",
-    viewingUser?.clerkId
-  );
-  const { result: isViewerModeratorRole, isLoading: viewerModeratorRoleLoading } = useRoleCheck(
-    "moderator",
-    viewingUser?.clerkId
-  );
-  const { result: isChapmanStudent, isLoading: isChapmanStudentLoading } = useHasChapmanEmail(user?.clerkId);
-  const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer", user?.clerkId);
-  const { result: isContributorRole, isLoading: contributorRoleLoading } = useRoleCheck("contributor", user?.clerkId);
-  const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
-  const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator", user?.clerkId);
-  const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend", user?.clerkId);
-  const { result: unlockedProfileTaglines, isLoading: unlockedProfileTaglinesLoading } = useGetUnlockedTaglines();
-  const { result: profileTagline, isLoading: profileTaglineLoading } = useGetSelectedTagline(user?.clerkId);
-  const { result: unlockedProfileBackgrounds, isLoading: unlockedProfileBackgroundsLoading } =
-    useGetUnlockedBackgrounds();
-  const { result: profileBackground, isLoading: profileBackgroundLoading } = useGetSelectedBackground(user?.clerkId);
+  // Current viewer's data from context (1 query, shared)
+  const { data: viewerProfile, isLoading: viewerLoading } = useCurrentUser();
 
-  // gets profile achievements
-  const {
-    result: hasEarlyAdopter,
-    description: earlyAdopterDescription,
-    isLoading: isEarlyAdopterLoading,
-  } = useAchievementCheck("Early Adopter", user?.clerkId);
-  const {
-    result: hasFirstSteps,
-    description: firstStepsDescription,
-    isLoading: isFirstStepsLoading,
-  } = useAchievementCheck("First Steps", user?.clerkId);
-  const {
-    result: hasMapMaster,
-    description: mapMasterDescription,
-    isLoading: isMapMasterLoading,
-  } = useAchievementCheck("Map Master", user?.clerkId);
-  const {
-    result: hasOnFire,
-    description: onFireDescription,
-    isLoading: isOnFireLoading,
-  } = useAchievementCheck("On Fire", user?.clerkId);
-  const {
-    result: hasSniped,
-    description: snipedDescription,
-    isLoading: isSnipedLoading,
-  } = useAchievementCheck("Sniped", user?.clerkId);
-  const {
-    result: hasPhotoScout,
-    description: photoScoutDescription,
-    isLoading: isPhotoScoutLoading,
-  } = useAchievementCheck("Photo Scout", user?.clerkId);
+  // Viewed user's basic doc (needed to get clerkId for profile query)
+  const user = useQuery(api.users.getUserByUsername, { username: usernameSubPage });
+
+  // Viewed user's full profile (1 consolidated query)
+  const { data: profile, isLoading: profileLoading } = useUserProfile(user?.clerkId);
+
+  // Editing data — only needed for current user's own profile
+  const isCurrentUser = viewerProfile?.user.clerkId === user?.clerkId;
+  const { result: unlockedProfileTaglines, isLoading: unlockedProfileTaglinesLoading } = useGetUnlockedTaglines(
+    isCurrentUser ? user?.clerkId : undefined
+  );
+  const { result: unlockedProfileBackgrounds, isLoading: unlockedProfileBackgroundsLoading } = useGetUnlockedBackgrounds(
+    isCurrentUser ? user?.clerkId : undefined
+  );
+  const { result: recentGames, isLoading: recentGamesLoading } = useGetRecentGames(user?.clerkId);
 
   // mutations for updating user data
   const updateSelectedTagline = useMutation(api.users.updateSelectedTagline);
@@ -119,18 +77,17 @@ const ProfilePage = ({ params }: Props) => {
   const [userNameInputWidth, setUserNameInputWidth] = useState(0);
 
   // tagline editing
-  const [taglineForUpdate, setTaglineForUpdate] = useState(profileTagline?.tagline);
-  const [taglineIdForUpdate, setTaglineIdForUpdate] = useState(profileTagline?._id);
+  const [taglineForUpdate, setTaglineForUpdate] = useState(profile?.selectedTagline?.tagline);
+  const [taglineIdForUpdate, setTaglineIdForUpdate] = useState(profile?.selectedTagline?._id);
   const [isEditingTagline, setIsEditingTagline] = useState(false);
   const [taglinePopoverOpen, setTaglinePopoverOpen] = useState(false);
 
   // background editing
   const [isEditingBackground, setIsEditingBackground] = useState(false);
-  const [backgroundCSSValue, setBackgroundCSSValue] = useState<string | undefined>(profileBackground?.backgroundCSS);
-  const [backgroundIdForUpdate, setBackgroundIdForUpdate] = useState(profileBackground?._id);
-
-  // recent games
-  const { result: recentGames, isLoading: recentGamesLoading } = useGetRecentGames(user?.clerkId);
+  const [backgroundCSSValue, setBackgroundCSSValue] = useState<string | undefined>(
+    profile?.selectedBackground?.backgroundCSS
+  );
+  const [backgroundIdForUpdate, setBackgroundIdForUpdate] = useState(profile?.selectedBackground?._id);
 
   // page reloading effect that is just a CSS class change
   const [taglineReloadingEffect, setTaglineReloadingEffect] = useState(false);
@@ -152,42 +109,24 @@ const ProfilePage = ({ params }: Props) => {
     }
   }, [usernameForUpdate]);
 
-  // useEffect to select the user's current background to ensure that the selected text is correct
+  // sync background state when profile loads
   useEffect(() => {
-    if (profileBackground) {
-      setBackgroundCSSValue(profileBackground.backgroundCSS);
-      setBackgroundIdForUpdate(profileBackground._id);
+    if (profile?.selectedBackground) {
+      setBackgroundCSSValue(profile.selectedBackground.backgroundCSS);
+      setBackgroundIdForUpdate(profile.selectedBackground._id);
     }
-  }, [profileBackground]);
+  }, [profile?.selectedBackground]);
 
-  // get media query screen size
   const isLargerScreen = useMediaQuery("(min-width: 1024px)");
 
-  if (
-    // All the following elements need to load before
-    // rendering page.
+  const isLoading =
     user === undefined ||
-    isBanCheckLoading ||
-    viewerDeveloperRoleLoading ||
-    viewerModeratorRoleLoading ||
-    isChapmanStudentLoading ||
-    developerRoleLoading ||
-    contributorRoleLoading ||
-    topPlayerIsLoading ||
-    moderatorRoleLoading ||
-    friendRoleLoading ||
-    unlockedProfileTaglinesLoading ||
-    profileTaglineLoading ||
-    unlockedProfileBackgroundsLoading ||
-    profileBackgroundLoading ||
-    isEarlyAdopterLoading ||
-    isFirstStepsLoading ||
-    isMapMasterLoading ||
-    isOnFireLoading ||
-    isSnipedLoading ||
-    isPhotoScoutLoading ||
-    recentGamesLoading
-  ) {
+    profileLoading ||
+    viewerLoading ||
+    recentGamesLoading ||
+    (isCurrentUser && (unlockedProfileTaglinesLoading || unlockedProfileBackgroundsLoading));
+
+  if (isLoading) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -198,7 +137,11 @@ const ProfilePage = ({ params }: Props) => {
     );
   }
 
-  if (isBanned && user?.clerkId !== viewingUser?.clerkId && !isViewerDeveloperRole && !isViewerModeratorRole) {
+  const isBanned = profile?.isBanned;
+  const banReason = profile?.banReason;
+  const appealActive = profile?.appealSubmitted;
+
+  if (isBanned && user?.clerkId !== viewerProfile?.user.clerkId && !viewerProfile?.roles.isDeveloper && !viewerProfile?.roles.isModerator) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -215,7 +158,7 @@ const ProfilePage = ({ params }: Props) => {
     );
   }
 
-  if (isBanned && user?.clerkId === viewingUser?.clerkId && !isViewerDeveloperRole && !isViewerModeratorRole) {
+  if (isBanned && user?.clerkId === viewerProfile?.user.clerkId && !viewerProfile?.roles.isDeveloper && !viewerProfile?.roles.isModerator) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -248,11 +191,28 @@ const ProfilePage = ({ params }: Props) => {
     );
   }
 
-  // checks if the current user is the same as the user being viewed
-  const isCurrentUser = clerkUser.user?.id === user.clerkId;
+  const isDeveloperRole = profile?.roles.isDeveloper;
+  const isContributorRole = profile?.roles.isContributor;
+  const isTopPlayer = profile?.roles.isTopPlayer;
+  const isModeratorRole = profile?.roles.isModerator;
+  const isFriendRole = profile?.roles.isFriend;
+  const isChapmanStudent = profile?.hasChapmanEmail;
+  const profileTagline = profile?.selectedTagline;
+  const profileBackground = profile?.selectedBackground;
 
-  // Determine the XP required for the next level
-  // !!! MAKE SURE THAT THIS MATCHES WHAT IS ON THE BACKEND
+  const hasEarlyAdopter = profile?.achievements["Early Adopter"]?.unlocked;
+  const earlyAdopterDescription = profile?.achievements["Early Adopter"]?.description;
+  const hasFirstSteps = profile?.achievements["First Steps"]?.unlocked;
+  const firstStepsDescription = profile?.achievements["First Steps"]?.description;
+  const hasMapMaster = profile?.achievements["Map Master"]?.unlocked;
+  const mapMasterDescription = profile?.achievements["Map Master"]?.description;
+  const hasOnFire = profile?.achievements["On Fire"]?.unlocked;
+  const onFireDescription = profile?.achievements["On Fire"]?.description;
+  const hasSniped = profile?.achievements["Sniped"]?.unlocked;
+  const snipedDescription = profile?.achievements["Sniped"]?.description;
+  const hasPhotoScout = profile?.achievements["Photo Scout"]?.unlocked;
+  const photoScoutDescription = profile?.achievements["Photo Scout"]?.description;
+
   const xpForLevels = [25, 50, 75, 100];
   const xpForMaxLevel = 100;
   const xpForNextLevel = user.level < xpForLevels.length + 1 ? xpForLevels[Number(user.level) - 1] : xpForMaxLevel;
@@ -313,7 +273,6 @@ const ProfilePage = ({ params }: Props) => {
                                 <Save
                                   className="h-7 w-7 ml-1 mt-1 cursor-pointer"
                                   onClick={() => {
-                                    // update username and close input
                                     setIsEditingUsername(false);
                                   }}
                                 />
@@ -325,7 +284,6 @@ const ProfilePage = ({ params }: Props) => {
                                         <SquarePen className="h-7 w-7 ml-1 mt-1 cursor-pointer" onClick={() => {
                                             // setIsEditingUsername(true)
                                             // setUsernameForUpdate(user.username);
-
                                         }} />
                                          */}
                               </>
@@ -517,8 +475,6 @@ const ProfilePage = ({ params }: Props) => {
                               <Save
                                 className="h-5 w-5 ml-1 mt-1 cursor-pointer"
                                 onClick={() => {
-                                  // update tagline and close input
-                                  // Checks if IDs are not the same to avoid unnecessary updates
                                   if (taglineIdForUpdate !== profileTagline?._id) {
                                     updateSelectedTagline({
                                       clerkId: user.clerkId,
@@ -602,8 +558,8 @@ const ProfilePage = ({ params }: Props) => {
                     profileUsername={user.username}
                     isProfileDeveloper={!!isDeveloperRole}
                     isProfileModerator={!!isModeratorRole}
-                    isViewerDeveloper={!!isViewerDeveloperRole}
-                    isViewerModerator={!!isViewerModeratorRole}
+                    isViewerDeveloper={!!viewerProfile?.roles.isDeveloper}
+                    isViewerModerator={!!viewerProfile?.roles.isModerator}
                     isUserBanned={!!isBanned}
                     banReason={banReason}
                   />

@@ -1,6 +1,5 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { useConvexAuth, useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -8,19 +7,18 @@ import { useEffect } from "react";
 
 import { api } from "@/convex/_generated/api";
 
+import { useCurrentUser } from "@/hooks/use-current-user";
+
 import "../_components/game-animations.css";
 
 const GameContinuePage = () => {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const { user } = useUser();
+  const { data: currentUser } = useCurrentUser();
 
-  /**
-   * Attempts to fetch the ongoing game for the user
-   */
   const getOngoingGame = useQuery(
     api.continuegame.getOngoingGameFromUser,
-    isAuthenticated && !isLoading ? { userClerkId: user?.id ?? "" } : "skip"
+    isAuthenticated && !isLoading && currentUser ? { userClerkId: currentUser.user.clerkId } : "skip"
   );
 
   useEffect(() => {
@@ -29,7 +27,7 @@ const GameContinuePage = () => {
     }
     if (isAuthenticated && !isLoading) {
       if (getOngoingGame === null) {
-        router.push("/game"); // If there is no ongoing game, redirect to make a new one.
+        router.push("/game");
       } else if (getOngoingGame) {
         router.push(`/game/${getOngoingGame.game}`);
       }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -20,6 +19,8 @@ import { MultiSelect } from "@/components/ui/multi-select";
 
 import { api } from "@/convex/_generated/api";
 
+import { useCurrentUser } from "@/hooks/use-current-user";
+
 import { useMarker } from "./MarkerContext";
 import DynamicUploadMap from "./dynamic-upload-map";
 
@@ -31,7 +32,7 @@ const tagsList = [
 ];
 
 const LevelUpload = () => {
-  const user = useUser();
+  const { data: currentUser } = useCurrentUser();
 
   const { localMarkerPosition } = useMarker();
   const imageInput = useRef<HTMLInputElement>(null);
@@ -74,7 +75,7 @@ const LevelUpload = () => {
 
     try {
       // get authenticated user's username
-      const username = user.user?.username || "developer";
+      const username = currentUser?.user.username || "developer";
       let fileToProcess = selectedImage;
       const fileName = selectedImage.name.toLowerCase();
 

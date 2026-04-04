@@ -29,7 +29,7 @@ import { Separator } from "@/components/ui/separator";
 
 import { api } from "@/convex/_generated/api";
 
-import { useBanCheck } from "@/hooks/use-ban-check";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import useUserById from "@/hooks/use-user-by-id";
 
 import { cn, isValidConvexId } from "@/lib/utils";
@@ -39,21 +39,16 @@ type Props = {
 };
 
 const ResultPage = ({ params }: Props) => {
-  // All hooks must be called before any return statements
-  const currentUser = useQuery(api.users.current);
-  const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
+  const { data: currentUser } = useCurrentUser();
   const searchParams = useSearchParams();
   const { leaderboardID } = use(params);
 
-  // Validate leaderboardID format
   const isValidId = isValidConvexId(leaderboardID);
 
-  // fetch leaderboard entry or skip if invalid ID
   const leaderboardEntry = useQuery(
     api.game.getPersonalLeaderboardEntryById,
     isValidId ? { id: leaderboardID } : "skip"
   );
-  // fetch the user document for this leaderboard entry by userId
   const user = useUserById(leaderboardEntry?.userId);
   const [distances, setDistances] = useState<number[]>([]);
   const [scores, setScores] = useState<number[]>([]);
@@ -73,7 +68,6 @@ const ResultPage = ({ params }: Props) => {
   }>({ title: "", description: "" });
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // All useEffect hooks must be called before any conditional returns
   useEffect(() => {
     if (searchParams.get("fromGame") === "true") {
       setIsFromGame(true);
@@ -81,10 +75,10 @@ const ResultPage = ({ params }: Props) => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (isBanned) {
-      router.push(`/profile/${currentUser?.username}`);
+    if (currentUser?.isBanned) {
+      router.push(`/profile/${currentUser.user.username}`);
     }
-  }, [currentUser?.username, isBanned, router]);
+  }, [currentUser, router]);
 
   useEffect(() => {
     if (leaderboardEntry) {
@@ -109,7 +103,6 @@ const ResultPage = ({ params }: Props) => {
         Number(leaderboardEntry.round_4) +
         Number(leaderboardEntry.round_5);
       setFinalScore(totalScore);
-      // prefer fetching username from the user document referenced by userId
       setUsername(user?.username ?? "");
       setOldLevel(Number(leaderboardEntry.oldLevel));
       setNewLevel(Number(leaderboardEntry.newLevel));
@@ -125,7 +118,6 @@ const ResultPage = ({ params }: Props) => {
     }
   }, [isFromGame, leaderboardEntry]);
 
-  // Handle validation errors after all hooks are called
   if (!isValidId) {
     return (
       <div className="min-h-full flex flex-col">
@@ -198,7 +190,7 @@ const ResultPage = ({ params }: Props) => {
     }
   };
 
-  if (leaderboardEntry === undefined || isBanCheckLoading || (leaderboardEntry && !username)) {
+  if (leaderboardEntry === undefined || (leaderboardEntry && !username)) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
