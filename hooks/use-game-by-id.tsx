@@ -1,4 +1,3 @@
-import { useUser } from "@clerk/nextjs";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -12,8 +11,7 @@ interface GameData {
   startingDistances?: number[];
 }
 
-const useGameById = (gameId?: Id<"games">) => {
-  const { user } = useUser();
+const useGameById = (gameId?: Id<"games">, clerkId?: string) => {
   const { isAuthenticated } = useConvexAuth();
 
   const [createdGameId, setCreatedGameId] = useState<Id<"games"> | null>(null);
@@ -42,7 +40,7 @@ const useGameById = (gameId?: Id<"games">) => {
   // Fetch the ongoing game for the user
   const ongoingGame = useQuery(
     api.continuegame.getOngoingGameFromUser,
-    isAuthenticated && user ? { userClerkId: user?.id } : "skip"
+    isAuthenticated && clerkId ? { userClerkId: clerkId } : "skip"
   );
 
   // Fetch the game data by ID

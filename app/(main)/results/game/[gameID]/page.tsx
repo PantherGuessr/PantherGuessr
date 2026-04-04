@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { useGameType } from "@/hooks/use-game-type";
 
 import { getTotalScore, isValidConvexId } from "@/lib/utils";
@@ -26,13 +27,11 @@ type GameLeaderboardProps = {
 export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
   const { gameID } = use(params) as { gameID: string };
 
-  // Validate gameID format first using util
   const isValidId = isValidConvexId(gameID);
   const gameIdAsId = isValidId ? (gameID as Id<"games">) : undefined;
 
-  // Get game type and fetch data (skip if invalid ID)
   const { gameType, loading: gameTypeLoading } = useGameType(gameIdAsId);
-  const currentUser = useQuery(api.users.current);
+  const { data: currentUser } = useCurrentUser();
   const gameExists = useQuery(api.game.gameExists, gameIdAsId ? { gameId: gameIdAsId } : "skip");
   const leaderboardEntries = useQuery(
     api.game.getLeaderboardEntriesForGame,
@@ -40,13 +39,11 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
   );
   const userEntry = useQuery(
     api.game.getLeaderboardEntryByGameAndUser,
-    gameIdAsId && currentUser?._id ? { gameId: gameIdAsId, userId: currentUser._id } : "skip"
+    gameIdAsId && currentUser?.user._id ? { gameId: gameIdAsId, userId: currentUser.user._id } : "skip"
   );
 
-  // Countdown state
   const [countdown, setCountdown] = useState<string>("");
 
-  // updates the countdown for weekly challenge refresh
   useEffect(() => {
     if (gameType !== "weekly") return;
 
@@ -69,45 +66,30 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
     return () => clearInterval(interval);
   }, [gameType]);
 
-  // isLoading state
   const isLoading =
     gameTypeLoading ||
     gameExists === undefined ||
     leaderboardEntries === undefined ||
-    currentUser === undefined ||
     (currentUser && userEntry === undefined);
 
-  // Top 25 entries
   const topEntries = useMemo(() => {
     if (!leaderboardEntries) return [];
     return leaderboardEntries.slice(0, 25);
   }, [leaderboardEntries]);
 
-  // find user rank
   const userRank = useMemo(() => {
-    // return null if still loading
-    if (leaderboardEntries === undefined || userEntry === undefined) {
-      return null;
-    }
-    // if done loading but there's no entry for user return -1.
-    if (userEntry === null) {
-      return -1;
-    }
-    // find rank of entry
+    if (leaderboardEntries === undefined || userEntry === undefined) return null;
+    if (userEntry === null) return -1;
     const idx = leaderboardEntries.findIndex((e) => e._id === userEntry._id);
     return idx >= 0 ? idx + 1 : -1;
   }, [leaderboardEntries, userEntry]);
 
-  // If user is not in top 25, add their entry to the table
   const displayEntries = useMemo(() => {
-    // return top entries if not loaded or no user entry
     if (!topEntries || !userEntry) return topEntries;
     const inTop = topEntries.some((e) => e._id === userEntry._id);
-    // add in user's entry if not in top
     return inTop ? topEntries : [...topEntries, userEntry];
   }, [topEntries, userEntry]);
 
-  // Handle validation errors after all hooks are called
   if (!isValidId) {
     return (
       <div className="min-h-full flex flex-col">
@@ -122,7 +104,6 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
     );
   }
 
-  // Show not found if game doesn't exist
   if (gameExists === false) {
     return (
       <div className="min-h-full flex flex-col">
@@ -197,7 +178,6 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
             })}
           </TableBody>
         </Table>
-        {/* This JSX now correctly handles the three states for userRank */}
         {!isLoading && (
           <>
             {userRank && userRank > 0 ? (

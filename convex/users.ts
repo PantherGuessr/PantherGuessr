@@ -960,6 +960,92 @@ export const modifyRolesAdministrativeAction = mutation({
 });
 
 /**
+ * Internal helper that builds a full user profile object from a user document.
+ * Used by both getUserProfile and getCurrentUserProfile to avoid duplication.
+ */
+async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnType<typeof userByClerkId>>>) {
+  // Derive roles from the user.roles array
+  const roles = user.roles ?? [];
+  const roleFlags = {
+    isDeveloper: roles.includes("developer"),
+    isContributor: roles.includes("contributor"),
+    isTopPlayer: roles.includes("top_player"),
+    isModerator: roles.includes("moderator"),
+    isFriend: roles.includes("friend"),
+  };
+
+  // Check chapman email
+  const hasChapmanEmail = user.emails.some((email) => email.endsWith("@chapman.edu"));
+
+  // Ban status
+  const appealSubmitted = user.banAppeal ? ((await ctx.db.get(user.banAppeal)) ? true : false) : false;
+
+  // Selected tagline and background
+  const selectedTagline = await ctx.db.get(user.profileTagline);
+  const selectedBackground = await ctx.db.get(user.profileBackground);
+
+  // Ongoing game check
+  const ongoingGame = await ctx.db
+    .query("ongoingGames")
+    .withIndex("byUserClerkId", (q) => q.eq("userClerkId", user.clerkId))
+    .first();
+
+  // Resolve achievements
+  const achievements: Record<string, { unlocked: boolean; description: string }> = {};
+  for (const achievementId of user.achievements ?? []) {
+    const achievement = await ctx.db.get(achievementId);
+    if (achievement) {
+      achievements[achievement.name] = { unlocked: true, description: achievement.description };
+    }
+  }
+
+  return {
+    user,
+    roles: roleFlags,
+    hasChapmanEmail,
+    isBanned: user.isBanned,
+    banReason: user.banReason,
+    appealSubmitted,
+    selectedTagline,
+    selectedBackground,
+    hasOngoingGame: ongoingGame !== null,
+    achievements,
+  };
+}
+
+/**
+ * Retrieves a full user profile by Clerk ID in a single query.
+ * Consolidates roles, badges, ban status, tagline, background, ongoing game, and achievements.
+ */
+export const getUserProfile = query({
+  args: {
+    clerkId: v.string(),
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
+    if (!user) {
+      return null;
+    }
+    return await buildUserProfile(ctx, user);
+  },
+});
+
+/**
+ * Retrieves the current authenticated user's full profile in a single query.
+ * Same data as getUserProfile but resolves the user via the auth token.
+ */
+export const getCurrentUserProfile = query({
+  args: {},
+  async handler(ctx) {
+    const user = await getCurrentUser(ctx);
+    if (!user) {
+      return null;
+    }
+    return await buildUserProfile(ctx, user);
+  },
+});
+
+/**
  * Retrieves the current user record or throws an error if the user is not found.
  *
  * @param ctx - The context for the query.

@@ -5,11 +5,12 @@ import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { LeaderboardType } from "@/convex/leaderboard";
 
-export function useLeaderboard(type: LeaderboardType) {
-  // Get current user
-  const currentUser = useQuery(api.users.current);
+import { useCurrentUser } from "./use-current-user";
 
-  // Get top 25 users based on type
+export function useLeaderboard(type: LeaderboardType) {
+  const { data: currentUserProfile } = useCurrentUser();
+  const currentUser = currentUserProfile?.user ?? null;
+
   const topUsersByStreak = useQuery(api.leaderboard.getTopUsersByStreak, type === "streak" ? {} : "skip");
   const topUsersByLevel = useQuery(api.leaderboard.getTopUsersByLevel, type === "level" ? {} : "skip");
   const topUsersByTotalPoints = useQuery(
@@ -17,13 +18,11 @@ export function useLeaderboard(type: LeaderboardType) {
     type === "totalPoints" ? {} : "skip"
   );
 
-  // Get user rank
   const userRank = useQuery(
     api.leaderboard.getUserRank,
     currentUser?.clerkId ? { clerkId: currentUser.clerkId, type } : "skip"
   );
 
-  // Determine the correct data based on type
   const topUsers = useMemo(() => {
     switch (type) {
       case "streak":
@@ -37,22 +36,18 @@ export function useLeaderboard(type: LeaderboardType) {
     }
   }, [type, topUsersByStreak, topUsersByLevel, topUsersByTotalPoints]);
 
-  // Check if user is in top 25
   const userInTop25 = useMemo(() => {
     if (!topUsers || !currentUser) return false;
     return topUsers.some((user: Doc<"users">) => user._id === currentUser._id);
   }, [topUsers, currentUser]);
 
-  // Create display entries (top 25 + current user if not in top 25)
   const displayEntries = useMemo(() => {
     if (!topUsers) return [];
     if (!currentUser || userInTop25) return topUsers;
-
-    // Add current user to the list if not in top 25
     return [...topUsers, currentUser];
   }, [topUsers, currentUser, userInTop25]);
 
-  const isLoading = topUsers === undefined || currentUser === undefined || userRank === undefined;
+  const isLoading = topUsers === undefined || currentUserProfile === undefined || userRank === undefined;
 
   return {
     topUsers: topUsers || [],
