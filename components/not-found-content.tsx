@@ -1,8 +1,8 @@
 "use client";
 
-import { ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowLeft, Home } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -20,19 +20,19 @@ export function NotFoundContent({
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center justify-center text-center gap-y-4 flex-1 px-6 pb-10">
+    <div className="flex flex-1 flex-col items-center justify-center gap-y-4 px-6 pb-10 text-center">
       <h1 className="text-8xl">404</h1>
       <h2 className="text-2xl font-bold">{title}</h2>
-      <p className="text-lg text-muted-foreground max-w-md">{description}</p>
-      <div className="flex gap-4 mt-4">
+      <p className="max-w-md text-lg text-muted-foreground">{description}</p>
+      <div className="mt-4 flex gap-4">
         {showBackButton && (
           <Button variant="outline" onClick={() => router.back()}>
-            <ArrowLeft className="mr-2 w-4 h-4" /> Go Back
+            <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
           </Button>
         )}
         <Link href="/">
           <Button variant="default">
-            <Home className="mr-2 w-4 h-4" /> Home
+            <Home className="mr-2 h-4 w-4" /> Home
           </Button>
         </Link>
       </div>

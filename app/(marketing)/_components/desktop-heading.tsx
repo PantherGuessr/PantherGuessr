@@ -1,6 +1,6 @@
-import { Calendar, Trophy, User } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Calendar, Trophy, User } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 
 import { Logo } from "@/components/logo";
@@ -8,11 +8,12 @@ import ProfileHoverCard from "@/components/profile-hover-card";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 import { cn } from "@/lib/utils";
 
 import "../../(users)/profile/[USERNAME]/backgrounds.css";
+
 import LargeStreakBadge from "./_panels/large-streak-badge";
+
 import "./heading.css";
 
 interface DesktopHeadingProps {
@@ -50,27 +51,27 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
 
   if (isLargeDesktop) {
     return (
-      <div className="flex flex-col flex-grow w-full h-full items-center justify-center">
-        <div className="flex items-center justify-center gap-x-4 w-full">
+      <div className="flex h-full w-full flex-grow flex-col items-center justify-center">
+        <div className="flex w-full items-center justify-center gap-x-4">
           <Logo badge={false} logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
         </div>
-        <div className="flex flex-row justify-center items-stretch lg:gap-x-10 sm:gap-x-5 mt-10 pt-4 sm:pt-8 px-20">
+        <div className="mt-10 flex flex-row items-stretch justify-center px-20 pt-4 sm:gap-x-5 sm:pt-8 lg:gap-x-10">
           <div
             className={cn(
-              "flex flex-col justify-between h-full items-center basis-1/3 transition-all drop-shadow-lg",
-              hoveredLeftMain ? "skew-y-0 translate-x-0 scale-100" : "-skew-y-3 -translate-x-4 scale-90"
+              "flex h-full basis-1/3 flex-col items-center justify-between drop-shadow-lg transition-all",
+              hoveredLeftMain ? "translate-x-0 skew-y-0 scale-100" : "-translate-x-4 -skew-y-3 scale-90"
             )}
             onMouseEnter={() => setHoveredLeftMain(true)}
             onMouseLeave={() => setHoveredLeftMain(false)}
           >
-            <div className="flex flex-col justify-center items-center">
+            <div className="flex flex-col items-center justify-center">
               <div
                 className={cn(
-                  "flex flex-col transition-all justify-center align-center items-center drop-shadow-lg rounded-lg mb-6 hover:scale-105 cursor-default w-full border-4 border-primary aspect-video",
+                  "align-center mb-6 flex aspect-video w-full cursor-default flex-col items-center justify-center rounded-lg border-4 border-primary drop-shadow-lg transition-all hover:scale-105",
                   background
                 )}
               >
-                <Avatar className="rounded-full transition-all border-primary bg-primary border-4 hover:scale-105 my-10 drop-shadow-md cursor-pointer w-28 h-28">
+                <Avatar className="my-10 h-28 w-28 cursor-pointer rounded-full border-4 border-primary bg-primary drop-shadow-md transition-all hover:scale-105">
                   <AvatarImage
                     src={picture}
                     className="object-cover"
@@ -79,15 +80,15 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                   />
                 </Avatar>
               </div>
-              <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold hover:scale-105 transition-all cursor-default">
+              <h1 className="cursor-default text-3xl font-bold transition-all hover:scale-105 sm:text-3xl md:text-3xl">
                 Welcome back, <ProfileHoverCard username={username} />.{" " + welcomeMessage}
               </h1>
             </div>
-            <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
+            <div className={"mt-12 h-4 w-[90%] rounded-[50%] bg-black/30 blur-lg transition-all"}></div>
           </div>
           <div
             className={cn(
-              "flex flex-col justify-between items-center basis-1/3 transition-all h-full",
+              "flex h-full basis-1/3 flex-col items-center justify-between transition-all",
               hoveredCenterMain ? "" : "-translate-y-8 scale-90"
             )}
             onMouseEnter={() => setHoveredCenterMain(true)}
@@ -95,55 +96,55 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
           >
             <ul
               className={cn(
-                "grid grid-rows-8 grid-cols-2 p-2 grid-flow-row gap-2 w-full duration-150 transition-all drop-shadow-lg"
+                "grid w-full grid-flow-row grid-cols-2 grid-rows-8 gap-2 p-2 drop-shadow-lg transition-all duration-150"
               )}
             >
               {hasOngoingGame ? (
                 <>
-                  <li className="row-span-2 col-span-1">
+                  <li className="col-span-1 row-span-2">
                     <Link href="/game/continue">
-                      <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                      <div className="flex h-full w-full items-center justify-center rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
                         Continue
                       </div>
                     </Link>
                   </li>
-                  <li className="row-span-2 col-span-1">
+                  <li className="col-span-1 row-span-2">
                     <Link href="/game">
-                      <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                      <div className="flex h-full w-full items-center justify-center rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
                         New Game
                       </div>
                     </Link>
                   </li>
                 </>
               ) : (
-                <li className="row-span-2 col-span-2">
+                <li className="col-span-2 row-span-2">
                   <Link href="/game">
-                    <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                      <User className="w-5 h-5" />
+                    <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                      <User className="h-5 w-5" />
                       Singleplayer
                     </div>
                   </Link>
                 </li>
               )}
-              <li className="row-span-2 col-span-2">
+              <li className="col-span-2 row-span-2">
                 <Link href="/weekly">
-                  <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                    <Calendar className="w-5 h-5" />
+                  <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                    <Calendar className="h-5 w-5" />
                     Weekly Challenge
                   </div>
                 </Link>
               </li>
-              <li className="row-span-2 col-span-2">
+              <li className="col-span-2 row-span-2">
                 <Link href="/leaderboard">
-                  <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                    <Trophy className="w-5 h-5" />
+                  <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                    <Trophy className="h-5 w-5" />
                     Leaderboard
                   </div>
                 </Link>
               </li>
-              <li className="row-span-2 col-span-2">
+              <li className="col-span-2 row-span-2">
                 <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-secondary rounded-md">
+                  <div className="flex h-full w-full items-center justify-center rounded-md bg-secondary px-8 py-5 text-center transition-all hover:scale-105">
                     All Gamemodes
                   </div>
                 </Link>
@@ -151,20 +152,20 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
             </ul>
             <div
               className={cn(
-                "w-[90%] h-4 rounded-[50%] blur-lg transition-all",
+                "h-4 w-[90%] rounded-[50%] blur-lg transition-all",
                 hoveredCenterMain ? "mt-16 bg-black/20" : "mt-16 bg-black/30"
               )}
             ></div>
           </div>
           <div
             className={cn(
-              "flex flex-col justify-between flex-grow h-full items-center basis-1/3 transition-all",
-              hoveredRightMain ? "skew-y-0 translate-x-0 scale-100" : "skew-y-3 translate-x-4 scale-90"
+              "flex h-full flex-grow basis-1/3 flex-col items-center justify-between transition-all",
+              hoveredRightMain ? "translate-x-0 skew-y-0 scale-100" : "translate-x-4 skew-y-3 scale-90"
             )}
             onMouseEnter={() => setHoveredRightMain(true)}
             onMouseLeave={() => setHoveredRightMain(false)}
           >
-            <Card className="w-full h-full py-7 flex-grow dropshadow-lg cursor-default">
+            <Card className="dropshadow-lg h-full w-full flex-grow cursor-default py-7">
               <CardHeader>
                 <CardTitle>Your Streak</CardTitle>
               </CardHeader>
@@ -172,34 +173,34 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                 <LargeStreakBadge streak={streak} lastPlayedTime={lastPlayedTime || 0} />
               </CardContent>
             </Card>
-            <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
+            <div className={"mt-12 h-4 w-[90%] rounded-[50%] bg-black/30 blur-lg transition-all"}></div>
           </div>
         </div>
       </div>
     );
   } else {
     return (
-      <div className="flex flex-col flex-grow w-full h-full items-center justify-center">
-        <div className="flex items-center justify-center gap-x-4 w-full">
+      <div className="flex h-full w-full flex-grow flex-col items-center justify-center">
+        <div className="flex w-full items-center justify-center gap-x-4">
           <Logo badge={false} logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
         </div>
-        <div className="flex flex-row justify-center gap-x-6 mt-10 px-12 w-full pt-4">
+        <div className="mt-10 flex w-full flex-row justify-center gap-x-6 px-12 pt-4">
           <div
             className={cn(
-              "flex flex-col justify-between h-full items-center basis-1/2 transition-all drop-shadow-lg",
-              hoveredLeftMain ? "skew-y-0 translate-x-0 scale-100" : "-skew-y-3 -translate-x-4 scale-90"
+              "flex h-full basis-1/2 flex-col items-center justify-between drop-shadow-lg transition-all",
+              hoveredLeftMain ? "translate-x-0 skew-y-0 scale-100" : "-translate-x-4 -skew-y-3 scale-90"
             )}
             onMouseEnter={() => setHoveredLeftMain(true)}
             onMouseLeave={() => setHoveredLeftMain(false)}
           >
-            <div className="flex flex-col justify-center items-center">
+            <div className="flex flex-col items-center justify-center">
               <div
                 className={cn(
-                  "flex flex-col transition-all justify-center align-center items-center drop-shadow-lg rounded-lg mb-6 hover:scale-105 cursor-default w-full h-75 border-4 border-primary",
+                  "align-center h-75 mb-6 flex w-full cursor-default flex-col items-center justify-center rounded-lg border-4 border-primary drop-shadow-lg transition-all hover:scale-105",
                   background
                 )}
               >
-                <Avatar className="rounded-full transition-all border-primary bg-primary border-4 hover:scale-105 my-10 drop-shadow-md cursor-pointer w-28 h-28">
+                <Avatar className="my-10 h-28 w-28 cursor-pointer rounded-full border-4 border-primary bg-primary drop-shadow-md transition-all hover:scale-105">
                   <AvatarImage
                     src={picture}
                     className="object-cover"
@@ -208,77 +209,77 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                   />
                 </Avatar>
               </div>
-              <h1 className="text-3xl sm:text-3xl md:text-3xl font-bold cursor-default hover:scale-105 transition-all">
+              <h1 className="cursor-default text-3xl font-bold transition-all hover:scale-105 sm:text-3xl md:text-3xl">
                 Welcome back, <ProfileHoverCard username={username} />.{" " + welcomeMessage}
               </h1>
             </div>
-            <div className={"w-[90%] h-4 mt-12 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
+            <div className={"mt-12 h-4 w-[90%] rounded-[50%] bg-black/30 blur-lg transition-all"}></div>
           </div>
           <div
             className={cn(
-              "flex flex-col justify-between items-center basis-1/2 transition-all h-full",
-              hoveredRightMain ? "skew-y-0 translate-x-0 scale-100" : "skew-y-3 translate-x-4 scale-90"
+              "flex h-full basis-1/2 flex-col items-center justify-between transition-all",
+              hoveredRightMain ? "translate-x-0 skew-y-0 scale-100" : "translate-x-4 skew-y-3 scale-90"
             )}
             onMouseEnter={() => setHoveredRightMain(true)}
             onMouseLeave={() => setHoveredRightMain(false)}
           >
             <ul
               className={cn(
-                "grid grid-rows-8 p-2 grid-flow-row gap-2 w-full duration-150 transition-all drop-shadow-lg"
+                "grid w-full grid-flow-row grid-rows-8 gap-2 p-2 drop-shadow-lg transition-all duration-150"
               )}
             >
               {hasOngoingGame ? (
                 <>
-                  <li className="row-span-2 col-span-1">
+                  <li className="col-span-1 row-span-2">
                     <Link href="/game/continue">
-                      <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-5 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                      <div className="flex h-full w-full items-center justify-center rounded-md bg-primary px-5 py-5 text-center text-primary-foreground transition-all hover:scale-105">
                         Continue
                       </div>
                     </Link>
                   </li>
-                  <li className="row-span-2 col-span-1">
+                  <li className="col-span-1 row-span-2">
                     <Link href="/game">
-                      <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
+                      <div className="flex h-full w-full items-center justify-center rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
                         New
                       </div>
                     </Link>
                   </li>
                 </>
               ) : (
-                <li className="row-span-2 col-span-2">
+                <li className="col-span-2 row-span-2">
                   <Link href="/game">
-                    <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                      <User className="w-5 h-5" />
+                    <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                      <User className="h-5 w-5" />
                       Singleplayer
                     </div>
                   </Link>
                 </li>
               )}
-              <li className="row-span-2 col-span-2">
+              <li className="col-span-2 row-span-2">
                 <Link href="/weekly">
-                  <div className="gap-x-2 flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                    <Calendar className="w-5 h-5" />
+                  <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                    <Calendar className="h-5 w-5" />
                     Weekly Challenge
                   </div>
                 </Link>
               </li>
-              <li className="row-span-2 col-span-2">
+              <li className="col-span-2 row-span-2">
                 <Link href="/leaderboard">
-                  <div className="flex gap-x-2 text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-primary text-primary-foreground rounded-md">
-                    <Trophy className="w-5 h-5" />
+                  <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                    <Trophy className="h-5 w-5" />
                     Leaderboard
                   </div>
                 </Link>
               </li>
-              <li className="row-span-2 col-span-2">
+              <li className="col-span-2 row-span-2">
                 <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-105 transition-all px-8 py-5 w-full h-full bg-secondary rounded-md">
+                  <div className="flex h-full w-full items-center justify-center rounded-md bg-secondary px-8 py-5 text-center transition-all hover:scale-105">
                     All Gamemodes
                   </div>
                 </Link>
               </li>
             </ul>
-            <div className={"w-[90%] h-4 mt-20 bg-black/30 rounded-[50%] blur-lg transition-all"}></div>
+            <div className={"mt-20 h-4 w-[90%] rounded-[50%] bg-black/30 blur-lg transition-all"}></div>
           </div>
         </div>
       </div>

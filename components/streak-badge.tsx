@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
@@ -41,19 +41,19 @@ const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => 
 
   return (
     <div
-      className={cn("hidden xs:flex xs:justify-center items-center mr-1 relative", badgeStyle)}
+      className={cn("relative mr-1 hidden items-center xs:flex xs:justify-center", badgeStyle)}
       style={{ width: streakBadgeWidth }}
     >
       <Image
         draggable={false}
-        className="select-none cursor-default drop-shadow transform-gpu"
+        className="transform-gpu cursor-default select-none drop-shadow"
         src="/badges/streak_badge.svg"
         alt={`Daily Streak Badge of ${streak} Days`}
         width="25"
         height="25"
       />
       <p
-        className="absolute top-1/2 left-1/2 transform -translate-x-[51%] -translate-y-[45%] text-white rounded-full text-sm font-bold drop-shadow-md"
+        className="absolute left-1/2 top-1/2 -translate-x-[51%] -translate-y-[45%] transform rounded-full text-sm font-bold text-white drop-shadow-md"
         style={{ textShadow: "1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000" }}
       >
         {streak}

@@ -1,10 +1,10 @@
+import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMutation, useQuery } from "convex/react";
 import { LatLng } from "leaflet";
 import { MoreHorizontal } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,16 +27,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-
 import { useToast } from "@/hooks/use-toast";
 import useUpcomingWeeklyChallenge from "@/hooks/use-upcoming-weekly-challenge";
 import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
-
 import { isValidConvexId } from "@/lib/utils";
-
 import { useMarker } from "../_levels/_helpers/MarkerContext";
 import PreviewMap from "../_levels/_helpers/preview-map";
 import { DataTable } from "./helpers/datatable";
@@ -253,7 +249,7 @@ const WeeklyChallengeConfig = () => {
           </DialogHeader>
           <div className="flex justify-center">
             {currentImageSrcUrl === "/Invalid-Image.jpg" ? (
-              <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
+              <Skeleton className="aspect-4/3 w-full bg-zinc-400 dark:bg-red-900" />
             ) : (
               <Image
                 className="w-full"
@@ -295,7 +291,7 @@ const WeeklyChallengeConfig = () => {
               (Latitude: {row.latitude}, Longitude: {row.longitude})
             </DialogDescription>
           </DialogHeader>
-          <div className="flex w-full h-80 grow py-2">
+          <div className="flex h-80 w-full grow py-2">
             <PreviewMap />
           </div>
         </DialogContent>
@@ -450,7 +446,7 @@ const WeeklyChallengeConfig = () => {
         </TabsList>
 
         <TabsContent value="current" className="space-y-2">
-          <p className="text-lg text-left justify-start w-full px-2 mb-1">
+          <p className="mb-1 w-full justify-start px-2 text-left text-lg">
             <span className="font-bold">{weeklyChallengeStartDate}</span> -{" "}
             <span className="font-bold">{weeklyChallengeEndDate}</span>
           </p>
@@ -458,7 +454,7 @@ const WeeklyChallengeConfig = () => {
         </TabsContent>
 
         <TabsContent value="upcoming" className="space-y-2">
-          <p className="text-lg text-left justify-start w-full px-2 mb-1">
+          <p className="mb-1 w-full justify-start px-2 text-left text-lg">
             <span className="font-bold">{upcomingChallengeStartDate}</span> -{" "}
             <span className="font-bold">{upcomingChallengeEndDate}</span>
           </p>

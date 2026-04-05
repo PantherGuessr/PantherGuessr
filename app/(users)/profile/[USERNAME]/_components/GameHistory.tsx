@@ -1,11 +1,10 @@
-import { ArrowRight, ReceiptText } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowRight, ReceiptText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
 import { Doc } from "@/convex/_generated/dataModel";
 
 interface GameHistoryProps {
@@ -57,9 +56,9 @@ const GameHistory = ({ recentGames, isCurrentUser }: GameHistoryProps) => {
 
   return (
     <>
-      <Card className="w-full mt-4 md:mt-2">
+      <Card className="mt-4 w-full md:mt-2">
         <CardHeader>
-          <CardTitle className="text-xl text-primary text-start font-bold">Game History</CardTitle>
+          <CardTitle className="text-start text-xl font-bold text-primary">Game History</CardTitle>
         </CardHeader>
         <CardContent>
           {recentGames && recentGames.length > 0 ? (
@@ -85,8 +84,8 @@ const GameHistory = ({ recentGames, isCurrentUser }: GameHistoryProps) => {
                             : "Singleplayer"}
                       </TableCell>
                       <TableCell className="text-start">{calculateGameTotalScore(game)}</TableCell>
-                      <TableCell className="text-start hidden md:table-cell">{game.xpGained}</TableCell>
-                      <TableCell className="text-start hidden sm:table-cell">
+                      <TableCell className="hidden text-start md:table-cell">{game.xpGained}</TableCell>
+                      <TableCell className="hidden text-start sm:table-cell">
                         {calculateTimeSince(game._creationTime)}
                       </TableCell>
                       <TableCell>
@@ -104,8 +103,8 @@ const GameHistory = ({ recentGames, isCurrentUser }: GameHistoryProps) => {
                 <>
                   <p className="text-center">You don&apos;t have any recent games...</p>
                   <Link href="/">
-                    <Button className="mt-4 mb-2 px-8">
-                      Let&apos;s change that! <ArrowRight className="h-4 w-4 ml-2" />
+                    <Button className="mb-2 mt-4 px-8">
+                      Let&apos;s change that! <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
                 </>

@@ -1,11 +1,10 @@
 "use client";
 
-import { LoaderCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { LoaderCircle } from "lucide-react";
 
 import { Id } from "@/convex/_generated/dataModel";
-
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useLeaderboardByGameUser } from "@/hooks/use-leaderboard-by-game-user";
 import { useWeeklyChallengeGameId } from "@/hooks/use-weekly-challenge-id";
@@ -33,7 +32,7 @@ export default function WeeklyPage() {
 
   if (!gameId || !currentUserId || leaderboardEntry === undefined) {
     return (
-      <div className="w-full h-full min-h-screen flex flex-col p-8 text-center items-center justify-center gap-4">
+      <div className="flex h-full min-h-screen w-full flex-col items-center justify-center gap-4 p-8 text-center">
         <p className="text-xl">Loading weekly challenge...</p>
         <LoaderCircle className="animate-spin" size={72} />
       </div>

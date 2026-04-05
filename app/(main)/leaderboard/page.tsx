@@ -5,11 +5,8 @@ import { useState } from "react";
 import { Footer } from "@/components/footer";
 import Spinner from "@/components/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import { LeaderboardType } from "@/convex/leaderboard";
-
 import { useLeaderboard } from "@/hooks/use-leaderboard";
-
 import { RemainingTable } from "./_components/remaining-table";
 import { TopThree } from "./_components/top-three";
 
@@ -42,10 +39,10 @@ export default function LeaderboardPage() {
   const selectedTypeInfo = LEADERBOARD_TYPES.find((t) => t.key === selectedType);
 
   return (
-    <div className="flex flex-col w-screen h-full min-h-screen justify-between">
-      <div className="w-full max-w-6xl mx-auto py-8 px-4">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4">Global Leaderboard</h1>
+    <div className="flex h-full min-h-screen w-screen flex-col justify-between">
+      <div className="mx-auto w-full max-w-6xl px-4 py-8">
+        <div className="mb-8 text-center">
+          <h1 className="mb-4 text-4xl font-bold">Global Leaderboard</h1>
 
           {/* Leaderboard Type Selection Tabs */}
           <Tabs
@@ -53,7 +50,7 @@ export default function LeaderboardPage() {
             onValueChange={(value) => setSelectedType(value as LeaderboardType)}
             className="w-full"
           >
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3">
+            <TabsList className="mx-auto grid w-full max-w-md grid-cols-3">
               {LEADERBOARD_TYPES.map((type) => (
                 <TabsTrigger key={type.key} value={type.key} className="text-sm">
                   {type.label}
@@ -64,7 +61,7 @@ export default function LeaderboardPage() {
             {LEADERBOARD_TYPES.map((type) => (
               <TabsContent key={type.key} value={type.key} className="mt-6">
                 {isLoading ? (
-                  <div className="flex flex-col justify-center items-center py-12">
+                  <div className="flex flex-col items-center justify-center py-12">
                     <Spinner />
                     <p className="mt-4 text-muted-foreground">Loading leaderboard...</p>
                   </div>
@@ -85,8 +82,8 @@ export default function LeaderboardPage() {
                     {/* User's Current Rank Display */}
                     {userRank !== null && userRank > 0 && (
                       <div className="mt-6 text-center">
-                        <div className="inline-block p-4 bg-muted rounded-lg">
-                          <p className="text-sm text-muted-foreground mb-1">Your Current Rank</p>
+                        <div className="inline-block rounded-lg bg-muted p-4">
+                          <p className="mb-1 text-sm text-muted-foreground">Your Current Rank</p>
                           <p className="text-2xl font-bold">#{userRank}</p>
                         </div>
                       </div>
@@ -95,7 +92,7 @@ export default function LeaderboardPage() {
                     {/* No rank message */}
                     {userRank === -1 && (
                       <div className="mt-6 text-center">
-                        <div className="inline-block p-4 bg-muted rounded-lg">
+                        <div className="inline-block rounded-lg bg-muted p-4">
                           <p className="text-sm text-muted-foreground">
                             You're not ranked on this leaderboard yet. Play some games to get started!
                           </p>

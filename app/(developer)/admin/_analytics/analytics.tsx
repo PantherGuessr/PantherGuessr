@@ -12,7 +12,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-
 import AnalyticsHelper from "./_helpers/analyticshelper";
 
 const Analytics = () => {
@@ -29,9 +28,9 @@ const Analytics = () => {
 
   return (
     <>
-      <div className="flex text-start flex-wrap justify-items-center">
-        <div className="md:basis-1/3 w-full my-4 flex-grow">
-          <Card className="p-2 m-2 h-full">
+      <div className="flex flex-wrap justify-items-center text-start">
+        <div className="my-4 w-full flex-grow md:basis-1/3">
+          <Card className="m-2 h-full p-2">
             <CardHeader>
               <h2 className="text-2xl">User Data</h2>
             </CardHeader>
@@ -55,8 +54,8 @@ const Analytics = () => {
             </CardContent>
           </Card>
         </div>
-        <div className="md:basis-1/3 w-full my-4 flex-grow">
-          <Card className="p-2 m-2 h-full">
+        <div className="my-4 w-full flex-grow md:basis-1/3">
+          <Card className="m-2 h-full p-2">
             <CardHeader>Past 7 Days</CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
@@ -81,8 +80,8 @@ const Analytics = () => {
             </CardContent>
           </Card>
         </div>
-        <div className="md:basis-1/3 w-full my-4 flex-grow">
-          <Card className="p-2 m-2 h-full">
+        <div className="my-4 w-full flex-grow md:basis-1/3">
+          <Card className="m-2 h-full p-2">
             <CardHeader>Games Played By Month</CardHeader>
             <CardContent>
               <ChartContainer config={chartConfig} className="min-h-[200px] w-full">

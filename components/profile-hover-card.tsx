@@ -1,15 +1,12 @@
-import { useQuery } from "convex/react";
-import { CalendarDays, Loader2 } from "lucide-react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useQuery } from "convex/react";
+import { CalendarDays, Loader2 } from "lucide-react";
 
 import { api } from "@/convex/_generated/api";
-
 import { useUserProfile } from "@/hooks/use-user-profile";
-
 import { cn } from "@/lib/utils";
-
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
@@ -29,15 +26,15 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
 
   if (user === undefined || profileLoading) {
     return (
-      <span className={"font-bold flex justify-center items-center"}>
-        <Loader2 className="w-4 h-4 animate-spin" />
+      <span className={"flex items-center justify-center font-bold"}>
+        <Loader2 className="h-4 w-4 animate-spin" />
       </span>
     );
   }
 
   if (!user) {
     return (
-      <span className="font-bold bg-background outline outline-[#3E0000] dark:outline-white rounded-lg px-1 py-[0.2rem] mx-0.5 transition-colors duration-200 select-none">
+      <span className="mx-0.5 select-none rounded-lg bg-background px-1 py-[0.2rem] font-bold outline outline-[#3E0000] transition-colors duration-200 dark:outline-white">
         {"USER NOT FOUND"}
       </span>
     );
@@ -45,7 +42,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
 
   if (!showHoverCard) {
     return (
-      <span className="font-bold bg-background outline outline-[#3E0000] dark:outline-white rounded-lg px-1 py-[0.2rem] mx-0.5 transition-colors duration-200 select-none">
+      <span className="mx-0.5 select-none rounded-lg bg-background px-1 py-[0.2rem] font-bold outline outline-[#3E0000] transition-colors duration-200 dark:outline-white">
         @{user?.username}
       </span>
     );
@@ -57,7 +54,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
         <Link href={"/profile/" + user?.username}>
           <span
             className={cn(
-              "font-bold bg-background outline outline-[#3E0000] dark:outline-white rounded-lg px-1 py-[0.2rem] mx-0.5 transition-colors duration-200 select-none",
+              "mx-0.5 select-none rounded-lg bg-background px-1 py-[0.2rem] font-bold outline outline-[#3E0000] transition-colors duration-200 dark:outline-white",
               isOpen ? "bg-[#eaeaea] dark:bg-[#330707]" : "hover:bg-[#eaeaea] dark:hover:bg-[#330707]"
             )}
           >
@@ -66,21 +63,21 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
         </Link>
       </HoverCardTrigger>
       <Link href={"/profile/" + user?.username}>
-        <HoverCardContent className="w-80 z-[9999] select-none my-2" align="center">
+        <HoverCardContent className="z-[9999] my-2 w-80 select-none" align="center">
           <div className="flex space-x-4">
             <Avatar className="select-none">
               <AvatarImage src={user?.picture} />
               <AvatarFallback>{user?.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className="space-y-1 text-left">
-              <div className="flex md:flex-row flex-col items-start">
-                <div className="flex flex-row items-left">
+              <div className="flex flex-col items-start md:flex-row">
+                <div className="items-left flex flex-row">
                   <h4 className="text-sm font-semibold">@{user?.username}</h4>
                   <div className="flex flex-row items-center gap-x-2 pl-2">
                     {profile?.roles.isDeveloper && (
                       <Image
                         draggable={false}
-                        className="select-none drop-shadow transform-gpu"
+                        className="transform-gpu select-none drop-shadow"
                         src="/badges/developer_badge.svg"
                         width="15"
                         height="15"
@@ -90,7 +87,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.roles.isModerator && (
                       <Image
                         draggable={false}
-                        className="select-none drop-shadow transform-gpu"
+                        className="transform-gpu select-none drop-shadow"
                         src="/badges/moderator_badge.svg"
                         width="15"
                         height="15"
@@ -100,7 +97,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.roles.isContributor && (
                       <Image
                         draggable={false}
-                        className="select-none drop-shadow transform-gpu"
+                        className="transform-gpu select-none drop-shadow"
                         src="/badges/contributor_badge.svg"
                         width="15"
                         height="15"
@@ -110,7 +107,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.roles.isTopPlayer && (
                       <Image
                         draggable={false}
-                        className="select-none drop-shadow transform-gpu"
+                        className="transform-gpu select-none drop-shadow"
                         src="/badges/top_player_badge.svg"
                         width="15"
                         height="15"
@@ -120,7 +117,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.roles.isFriend && (
                       <Image
                         draggable={false}
-                        className="select-none drop-shadow transform-gpu"
+                        className="transform-gpu select-none drop-shadow"
                         src="/badges/friend_badge.svg"
                         alt="Friend Badge"
                         width="15"
@@ -130,7 +127,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.hasChapmanEmail && (
                       <Image
                         draggable={false}
-                        className="select-none drop-shadow transform-gpu"
+                        className="transform-gpu select-none drop-shadow"
                         src="/badges/chapman_badge.svg"
                         alt="Chapman Student Badge"
                         width="15"
@@ -140,12 +137,12 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                   </div>
                 </div>
               </div>
-              <p className="text-sm font-bold text-muted-foreground italic select-none">
+              <p className="select-none text-sm font-bold italic text-muted-foreground">
                 {profile?.selectedTagline?.tagline}
               </p>
               <div className="flex items-center pt-2">
                 <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-                <span className="text-xs font-bold text-muted-foreground select-none">
+                <span className="select-none text-xs font-bold text-muted-foreground">
                   Joined{" "}
                   {new Date(user?._creationTime ?? "").toLocaleDateString("en-US", {
                     year: "numeric",

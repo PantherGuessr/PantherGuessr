@@ -1,10 +1,9 @@
-import { useQuery } from "convex/react";
 import { useMemo } from "react";
+import { useQuery } from "convex/react";
 
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { LeaderboardType } from "@/convex/leaderboard";
-
 import { useCurrentUser } from "./use-current-user";
 
 export function useLeaderboard(type: LeaderboardType) {

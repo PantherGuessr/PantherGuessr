@@ -17,33 +17,33 @@ const NavbarMain = () => {
             Play
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid grid-rows-6 p-2 grid-flow-col gap-2 w-[350px]">
+            <ul className="grid w-[350px] grid-flow-col grid-rows-6 gap-2 p-2">
               <li className="row-span-4">
                 <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-95 transition-all h-full px-10 py-10 bg-primary text-primary-foreground rounded-md">
+                  <div className="flex h-full items-center justify-center rounded-md bg-primary px-10 py-10 text-center text-primary-foreground transition-all hover:scale-95">
                     Weekly
                     <br />
                     Challenge
                   </div>
                 </Link>
               </li>
-              <li className="row-span-2 col-span-2 w-full">
+              <li className="col-span-2 row-span-2 w-full">
                 <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 bg-secondary rounded-md">
+                  <div className="flex items-center justify-center rounded-md bg-secondary px-8 py-5 text-center transition-all hover:scale-95">
                     All Gamemodes
                   </div>
                 </Link>
               </li>
               <li className="row-span-2">
                 <Link href="/game">
-                  <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 bg-primary text-primary-foreground rounded-md">
+                  <div className="flex items-center justify-center rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-95">
                     Singleplayer
                   </div>
                 </Link>
               </li>
               <li className="row-span-2">
                 <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-95 transition-all px-8 py-5 bg-primary text-primary-foreground  rounded-md">
+                  <div className="flex items-center justify-center rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-95">
                     Multiplayer
                   </div>
                 </Link>
@@ -56,24 +56,24 @@ const NavbarMain = () => {
             Stats
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid grid-rows-6 p-2 grid-flow-col gap-2 w-[350px]">
+            <ul className="grid w-[350px] grid-flow-col grid-rows-6 gap-2 p-2">
               <li className="col-span-2 row-span-2">
                 <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-95 transition-all w-full py-5 bg-secondary text-secondary-foreground rounded-md">
+                  <div className="flex w-full items-center justify-center rounded-md bg-secondary py-5 text-center text-secondary-foreground transition-all hover:scale-95">
                     Leaderboards
                   </div>
                 </Link>
               </li>
-              <li className="row-span-2 col-span-2 w-full">
+              <li className="col-span-2 row-span-2 w-full">
                 <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-95 transition-all w-full py-5 bg-secondary text-secondary-foreground rounded-md">
+                  <div className="flex w-full items-center justify-center rounded-md bg-secondary py-5 text-center text-secondary-foreground transition-all hover:scale-95">
                     Weekly Challenge Results
                   </div>
                 </Link>
               </li>
-              <li className="row-span-2 col-span-2 w-full">
+              <li className="col-span-2 row-span-2 w-full">
                 <Link href="/play">
-                  <div className="flex text-center justify-center items-center hover:scale-95 transition-all w-full py-5 bg-secondary text-secondary-foreground rounded-md">
+                  <div className="flex w-full items-center justify-center rounded-md bg-secondary py-5 text-center text-secondary-foreground transition-all hover:scale-95">
                     Your Profile
                   </div>
                 </Link>

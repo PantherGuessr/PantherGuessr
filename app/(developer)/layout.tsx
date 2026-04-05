@@ -1,14 +1,12 @@
 "use client";
 
-import { RedirectToSignIn } from "@clerk/nextjs";
-import { redirect, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { redirect, useSearchParams } from "next/navigation";
+import { RedirectToSignIn } from "@clerk/nextjs";
 
 import { Navbar } from "@/components/navbar/navbar";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { useCurrentUser } from "@/hooks/use-current-user";
-
 import { AdminProvider } from "./admin/_components/adminprovider";
 
 const AdminLayoutInner = ({ children }: { children: React.ReactNode }) => {
@@ -18,8 +16,8 @@ const AdminLayoutInner = ({ children }: { children: React.ReactNode }) => {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center">
-        <Skeleton className="w-[240px] h-[40px] translate-y-[40%]" />
+      <div className="flex h-full items-center justify-center">
+        <Skeleton className="h-[40px] w-[240px] translate-y-[40%]" />
       </div>
     );
   }
@@ -43,7 +41,7 @@ const AdminLayoutInner = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<Skeleton className="w-[240px] h-[40px] translate-y-[40%]" />}>
+  <Suspense fallback={<Skeleton className="h-[40px] w-[240px] translate-y-[40%]" />}>
     <AdminLayoutInner>{children}</AdminLayoutInner>
   </Suspense>
 );

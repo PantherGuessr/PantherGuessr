@@ -1,8 +1,8 @@
 "use client";
 
-import { GithubIcon, Globe, LinkedinIcon, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { GithubIcon, Globe, LinkedinIcon, Mail } from "lucide-react";
 
 import ProfileHoverCard from "@/components/profile-hover-card";
 import { Button } from "@/components/ui/button";
@@ -30,9 +30,9 @@ const MaintainerCard = ({
   professionalEmailUsername,
 }: IMaintainerCard) => {
   return (
-    <Card className="hover:bg-[rgba(35,22,22,0.07)] transition-all backdrop-blur-sm drop-shadow-lg bg-[rgba(35,22,22,0.03)]">
+    <Card className="bg-[rgba(35,22,22,0.03)] drop-shadow-lg backdrop-blur-sm transition-all hover:bg-[rgba(35,22,22,0.07)]">
       <CardHeader>
-        <Image className="rounded-lg mx-auto" src={profilePicture} width={100} height={100} alt="Dylan" />
+        <Image className="mx-auto rounded-lg" src={profilePicture} width={100} height={100} alt="Dylan" />
         <CardTitle className="pt-2">{name}</CardTitle>
         <p>{role}</p>
         <div>

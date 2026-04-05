@@ -1,23 +1,21 @@
 "use client";
 
+import { use, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { use, useEffect } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar/navbar";
 import { NotFoundContent } from "@/components/not-found-content";
-
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-
 import { useCurrentUser } from "@/hooks/use-current-user";
-
 import { cn, isValidConvexId } from "@/lib/utils";
 
 import "../_components/game-animations.css";
+
 import InGameSidebar from "../_components/in-game-sidebar";
 import DynamicInteractableMap from "../_components/map-wrapper";
 import { GameProvider, useGame } from "../_context/GameContext";
@@ -48,8 +46,8 @@ const GameIdPage = ({ params }: Props) => {
     return (
       <div className="h-full">
         <Navbar />
-        <div className="min-h-full flex flex-col">
-          <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pt-24">
+        <div className="flex min-h-full flex-col">
+          <div className="flex flex-1 flex-grow flex-col items-center justify-center gap-y-8 px-6 pt-24 text-center">
             <NotFoundContent
               title="Game Not Found"
               description="The game you are looking for does not exist. It may have been deleted or the ID is incorrect."
@@ -74,8 +72,8 @@ const GameContent = ({ isMobile }: { isMobile: boolean }) => {
   return (
     <>
       {isModalVisible && (
-        <div className="fixed z-[9999] inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="flex flex-col items-center bg-card text-card-foreground p-6 rounded-md">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
+          <div className="flex flex-col items-center rounded-md bg-card p-6 text-card-foreground">
             <Loader2 className="mr-2 h-6 w-6 animate-spin" />
             <p>Loading results...</p>
           </div>
@@ -83,12 +81,12 @@ const GameContent = ({ isMobile }: { isMobile: boolean }) => {
       )}
       <div
         className={cn(
-          "h-full w-full flex overflow-y-auto",
+          "flex h-full w-full overflow-y-auto",
           isMobile ? "animate-body-opacity-scale-in flex-col" : "flex-row"
         )}
       >
         <InGameSidebar />
-        <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pr-4 pl-0")}>
+        <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pl-0 pr-4")}>
           <DynamicInteractableMap />
         </div>
       </div>

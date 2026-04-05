@@ -1,20 +1,20 @@
 "use client";
 
-import { NewUserHeading } from "@/app/(marketing)/_components/new-user-heading";
-import { LoaderCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { LoaderCircle } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 
+import { NewUserHeading } from "@/app/(marketing)/_components/new-user-heading";
 import ProfileHoverCard from "@/components/profile-hover-card";
 import { WelcomeMessage } from "@/components/text/welcomemessage";
-
 import { useCurrentUser } from "@/hooks/use-current-user";
-
 import DesktopHeading from "./desktop-heading";
 import DesktopHeadingLoading from "./desktop-heading-loading";
+
 import "./header-animation.css";
+
 import MobileDrawer from "./mobiledrawer";
 
 export const Heading = () => {
@@ -37,22 +37,22 @@ export const Heading = () => {
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   return (
-    <div className="flex flex-col flex-grow space-y-4 w-full">
+    <div className="flex w-full flex-grow flex-col space-y-4">
       {!isAuthenticated && isLoading && (
         <>
-          <div className="flex flex-col w-full h-full justify-center items-center pt-48">
+          <div className="flex h-full w-full flex-col items-center justify-center pt-48">
             <LoaderCircle className="animate-spin-quick-load h-20 w-20" />
           </div>
         </>
       )}
       {isLoading && isAuthenticated && (
         <>
-          <div className="hidden md:flex flex-col w-full">
+          <div className="hidden w-full flex-col md:flex">
             <DesktopHeadingLoading />
           </div>
           {/* mobile loading */}
-          <div className={"md:hidden flex flex-col justify-center items-center"}>
-            <LoaderCircle className="h-20 w-20 animate-spin-quick-load" />
+          <div className={"flex flex-col items-center justify-center md:hidden"}>
+            <LoaderCircle className="animate-spin-quick-load h-20 w-20" />
           </div>
         </>
       )}
@@ -68,32 +68,32 @@ export const Heading = () => {
               lastPlayedTime={Number(currentUser.user.lastPlayedTimestamp)}
             />
           ) : (
-            <div className="flex flex-col flex-grow w-full h-full items-center justify-center pt-10 px-4">
-              <div className="flex flex-col justify-center items-center basis-1/2 px-8 mb-4">
+            <div className="flex h-full w-full flex-grow flex-col items-center justify-center px-4 pt-10">
+              <div className="mb-4 flex basis-1/2 flex-col items-center justify-center px-8">
                 <Image
                   src="/logo.svg"
                   height="120"
                   width="120"
                   alt="Logo"
-                  className="dark:hidden animate-fly-in-from-top-delay-0ms"
+                  className="animate-fly-in-from-top-delay-0ms dark:hidden"
                 />
                 <Image
                   src="/logo-dark.svg"
                   height="120"
                   width="120"
                   alt="Logo"
-                  className="hidden dark:block animate-fly-in-from-top-delay-0ms"
+                  className="animate-fly-in-from-top-delay-0ms hidden dark:block"
                 />
                 <h1
                   className={
-                    "text-2xl sm:text-3xl md:text-3xl font-bold transition-all drop-shadow-lg px-2 mb-3 mt-6 animate-fly-in-from-top-delay-500ms"
+                    "animate-fly-in-from-top-delay-500ms mb-3 mt-6 px-2 text-2xl font-bold drop-shadow-lg transition-all sm:text-3xl md:text-3xl"
                   }
                 >
                   Welcome back, <ProfileHoverCard username={currentUser.user.username} showHoverCard={false} />.{" "}
                   {welcomeMessage}
                 </h1>
               </div>
-              <div className="flex justify-center items-center px-8 animate-fly-in-from-top-delay-1000ms">
+              <div className="animate-fly-in-from-top-delay-1000ms flex items-center justify-center px-8">
                 <MobileDrawer hasOngoingGame={currentUser.hasOngoingGame} />
               </div>
             </div>
