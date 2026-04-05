@@ -1,7 +1,6 @@
 "use client";
 
-import { useClerk } from "@clerk/clerk-react";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { SignInButton, SignUpButton, useClerk } from "@clerk/nextjs";
 import { Bug, Copy, LogOut, Settings, Shield, User, UserRoundSearch, Wrench } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

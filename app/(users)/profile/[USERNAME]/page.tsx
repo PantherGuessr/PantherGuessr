@@ -62,9 +62,8 @@ const ProfilePage = ({ params }: Props) => {
   const { result: unlockedProfileTaglines, isLoading: unlockedProfileTaglinesLoading } = useGetUnlockedTaglines(
     isCurrentUser ? user?.clerkId : undefined
   );
-  const { result: unlockedProfileBackgrounds, isLoading: unlockedProfileBackgroundsLoading } = useGetUnlockedBackgrounds(
-    isCurrentUser ? user?.clerkId : undefined
-  );
+  const { result: unlockedProfileBackgrounds, isLoading: unlockedProfileBackgroundsLoading } =
+    useGetUnlockedBackgrounds(isCurrentUser ? user?.clerkId : undefined);
   const { result: recentGames, isLoading: recentGamesLoading } = useGetRecentGames(user?.clerkId);
 
   // mutations for updating user data
@@ -141,7 +140,12 @@ const ProfilePage = ({ params }: Props) => {
   const banReason = profile?.banReason;
   const appealActive = profile?.appealSubmitted;
 
-  if (isBanned && user?.clerkId !== viewerProfile?.user.clerkId && !viewerProfile?.roles.isDeveloper && !viewerProfile?.roles.isModerator) {
+  if (
+    isBanned &&
+    user?.clerkId !== viewerProfile?.user.clerkId &&
+    !viewerProfile?.roles.isDeveloper &&
+    !viewerProfile?.roles.isModerator
+  ) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
@@ -158,7 +162,12 @@ const ProfilePage = ({ params }: Props) => {
     );
   }
 
-  if (isBanned && user?.clerkId === viewerProfile?.user.clerkId && !viewerProfile?.roles.isDeveloper && !viewerProfile?.roles.isModerator) {
+  if (
+    isBanned &&
+    user?.clerkId === viewerProfile?.user.clerkId &&
+    !viewerProfile?.roles.isDeveloper &&
+    !viewerProfile?.roles.isModerator
+  ) {
     return (
       <div className="min-h-full flex flex-col">
         <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
