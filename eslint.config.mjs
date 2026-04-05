@@ -5,7 +5,9 @@ import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import typescriptEslintEslintPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
-import prettier from "eslint-plugin-prettier";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import eslintConfigPrettier from "eslint-config-prettier";
+import prettierPlugin from "eslint-plugin-prettier";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,10 +18,11 @@ const compat = new FlatCompat({
 });
 
 export default [
-  ...compat.extends("next", "next/core-web-vitals", "prettier"),
+  ...nextVitals,
+  eslintConfigPrettier,
   {
     plugins: {
-      prettier,
+      prettier: prettierPlugin,
     },
     rules: {
       "prettier/prettier": "error",
@@ -42,7 +45,7 @@ export default [
       ],
     },
   },
-  ...compat.extends("plugin:@typescript-eslint/recommended", "prettier").map((config) => ({
+  ...compat.extends("plugin:@typescript-eslint/recommended").map((config) => ({
     ...config,
     files: ["**/*.+(ts|tsx)"],
   })),
