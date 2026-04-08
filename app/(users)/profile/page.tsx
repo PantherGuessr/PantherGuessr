@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Search } from "lucide-react";
 
@@ -20,14 +20,29 @@ const ProfileSearchPage = () => {
   const [searchedUsername, setSearchedUsername] = useState("");
   const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [filteredUsernames, setFilteredUsernames] = useState<Doc<"users">[] | []>([]);
-  const [suggestedUsernames, setSuggestedUsernames] = useState<Doc<"users">[] | []>([]);
 
   useEffect(() => {
     if (currentUser?.isBanned) {
       router.push(`/profile/${currentUser.user.username}`);
     }
   }, [currentUser, router]);
+
+  const filteredUsernames = useMemo<Doc<"users">[]>(() => {
+    if (usernames && searchedUsername) {
+      return usernames.filter((user) => user.username.toLowerCase().includes(searchedUsername.toLowerCase()));
+    }
+    return [];
+  }, [usernames, searchedUsername]);
+
+  const suggestedUsernames = useMemo<Doc<"users">[]>(() => {
+    if (usernames && searchedUsername) {
+      return usernames.filter((user) => {
+        const distance = Levenshtein(user.username, searchedUsername);
+        return distance! <= 2;
+      });
+    }
+    return [];
+  }, [usernames, searchedUsername]);
 
   const handleSubmit = () => {
     if (filteredUsernames.length > 0) {
@@ -73,24 +88,6 @@ const ProfileSearchPage = () => {
       }
     }
   };
-
-  useEffect(() => {
-    if (usernames && searchedUsername) {
-      setSuggestedUsernames(
-        usernames.filter((user) => {
-          const distance = Levenshtein(user.username, searchedUsername);
-          return distance! <= 2;
-        })
-      );
-      setFilteredUsernames(
-        usernames.filter((user) => user.username.toLowerCase().includes(searchedUsername.toLowerCase()))
-      );
-    } else {
-      setFilteredUsernames([]);
-      setSuggestedUsernames([]);
-      setSelectedIndex(0);
-    }
-  }, [usernames, searchedUsername, setFilteredUsernames]);
 
   if (isUsernamesLoading || currentUserLoading) {
     return (

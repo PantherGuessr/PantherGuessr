@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 
 import { api } from "@/convex/_generated/api";
@@ -16,7 +16,6 @@ const useGameById = (gameId?: Id<"games">, clerkId?: string) => {
 
   const [createdGameId, setCreatedGameId] = useState<Id<"games"> | null>(null);
   const isCreatingGame = useRef(false);
-  const [gameData, setGameData] = useState<GameData | null>(null);
 
   const createGame = useMutation(api.game.createNewGame);
 
@@ -49,21 +48,19 @@ const useGameById = (gameId?: Id<"games">, clerkId?: string) => {
     gameId ? { gameId } : createdGameId ? { gameId: createdGameId } : "skip"
   );
 
-  // Update gameData when gameContent or ongoingGame changes
-  useEffect(() => {
-    if (gameContent) {
-      const data: GameData = {
-        gameContent,
-      };
+  // Derive gameData from gameContent and ongoingGame
+  const gameData = useMemo<GameData | null>(() => {
+    if (!gameContent) return null;
 
-      if (ongoingGame && ongoingGame.game === gameContent._id) {
-        data.startingRound = Number(ongoingGame.currentRound);
-        data.startingScores = ongoingGame.scores?.map((score) => Number(score));
-        data.startingDistances = ongoingGame.distances?.map((distance) => Number(distance));
-      }
+    const data: GameData = { gameContent };
 
-      setGameData(data);
+    if (ongoingGame && ongoingGame.game === gameContent._id) {
+      data.startingRound = Number(ongoingGame.currentRound);
+      data.startingScores = ongoingGame.scores?.map((score) => Number(score));
+      data.startingDistances = ongoingGame.distances?.map((distance) => Number(distance));
     }
+
+    return data;
   }, [gameContent, ongoingGame]);
 
   return gameData;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import {
   BookHeart,
@@ -63,6 +63,7 @@ const ProfileAdministrativeActions = ({
   // Delete User Action
   const [deleteUserDialogOpen, setDeleteUserDialogOpen] = useState(false);
   const [deleteCountdown, setDeleteCountdown] = useState(3);
+  const deleteCountdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Ban User Action
   const [banUserDialogOpen, setBanUserDialogOpen] = useState(false);
@@ -87,22 +88,31 @@ const ProfileAdministrativeActions = ({
   const modifyLevelAndXP = useMutation(api.users.modifyLevelAndXPAdministrativeAction);
   const modifyRoles = useMutation(api.users.modifyRolesAdministrativeAction);
 
+  // Cleanup timer on unmount
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (deleteUserDialogOpen) {
+    return () => {
+      if (deleteCountdownTimerRef.current) clearInterval(deleteCountdownTimerRef.current);
+    };
+  }, []);
+
+  const handleDeleteDialogOpenChange = (open: boolean) => {
+    if (open) {
       setDeleteCountdown(3);
-      timer = setInterval(() => {
+      deleteCountdownTimerRef.current = setInterval(() => {
         setDeleteCountdown((prev) => {
           if (prev <= 1) {
-            clearInterval(timer);
+            if (deleteCountdownTimerRef.current) clearInterval(deleteCountdownTimerRef.current);
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
+    } else {
+      if (deleteCountdownTimerRef.current) clearInterval(deleteCountdownTimerRef.current);
+      setDeleteCountdown(3);
     }
-    return () => clearInterval(timer);
-  }, [deleteUserDialogOpen]);
+    setDeleteUserDialogOpen(open);
+  };
 
   if (!profileUser) {
     return;
@@ -193,7 +203,7 @@ const ProfileAdministrativeActions = ({
             (!isProfileDeveloper && isProfileModerator && isViewerDeveloper)) && (
             <>
               {isViewerDeveloper && (
-                <Dialog open={deleteUserDialogOpen} onOpenChange={setDeleteUserDialogOpen}>
+                <Dialog open={deleteUserDialogOpen} onOpenChange={handleDeleteDialogOpenChange}>
                   <DialogTrigger asChild>
                     <Button className="flex w-full" variant="destructive">
                       <Trash2 className="mr-2 h-4 w-4" />
@@ -215,7 +225,7 @@ const ProfileAdministrativeActions = ({
                         </Button>
                       ) : (
                         <>
-                          <Button variant="outline" onClick={() => setDeleteUserDialogOpen(false)}>
+                          <Button variant="outline" onClick={() => handleDeleteDialogOpenChange(false)}>
                             Cancel
                           </Button>
                           <Button

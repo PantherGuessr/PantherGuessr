@@ -24,6 +24,34 @@ type Props = {
   params: Promise<{ GAMEID: string }>;
 };
 
+const GameContent = ({ isMobile }: { isMobile: boolean }) => {
+  const { isModalVisible } = useGame()!;
+
+  return (
+    <>
+      {isModalVisible && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
+          <div className="flex flex-col items-center rounded-md bg-card p-6 text-card-foreground">
+            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+            <p>Loading results...</p>
+          </div>
+        </div>
+      )}
+      <div
+        className={cn(
+          "flex h-full w-full overflow-y-auto",
+          isMobile ? "animate-body-opacity-scale-in flex-col" : "flex-row"
+        )}
+      >
+        <InGameSidebar />
+        <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pl-0 pr-4")}>
+          <DynamicInteractableMap />
+        </div>
+      </div>
+    </>
+  );
+};
+
 const GameIdPage = ({ params }: Props) => {
   const router = useRouter();
   const { GAMEID } = use(params);
@@ -63,34 +91,6 @@ const GameIdPage = ({ params }: Props) => {
     <GameProvider gameId={gameIdAsId!}>
       <GameContent isMobile={isMobile} />
     </GameProvider>
-  );
-};
-
-const GameContent = ({ isMobile }: { isMobile: boolean }) => {
-  const { isModalVisible } = useGame()!;
-
-  return (
-    <>
-      {isModalVisible && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
-          <div className="flex flex-col items-center rounded-md bg-card p-6 text-card-foreground">
-            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-            <p>Loading results...</p>
-          </div>
-        </div>
-      )}
-      <div
-        className={cn(
-          "flex h-full w-full overflow-y-auto",
-          isMobile ? "animate-body-opacity-scale-in flex-col" : "flex-row"
-        )}
-      >
-        <InGameSidebar />
-        <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pl-0 pr-4")}>
-          <DynamicInteractableMap />
-        </div>
-      </div>
-    </>
   );
 };
 

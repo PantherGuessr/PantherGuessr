@@ -247,6 +247,52 @@ export const getGameById = query({
  * 3. Adds the new entry ID to the game's leaderboard array
  * 4. Returns success status
  */
+/**
+ * Calculates the total earned experience points (XP) based on the points and distances provided.
+ *
+ * @param {bigint[]} allPoints - An array of points earned in each game.
+ * @param {bigint[]} allDistances - An array of distances for each game.
+ * @returns {number} The total earned XP.
+ *
+ * @remarks
+ * - Adds a base score of 10 XP for playing a game.
+ * - Add 10 XP if it is the first game of the day.
+ * - For every 25 points earned, 1 XP is awarded.
+ * - For every "Spot On" game (distance <= 20), an additional 5 XP bonus is awarded.
+ * - If every round was "Spot On", the total XP is doubled.
+ */
+function getTotalEarnedXP(allPoints: bigint[], allDistances: bigint[]): number {
+  let earnedXP = 0;
+
+  // TODO: Add 10xp if first game of the day
+
+  // * Add score for playing a game
+  earnedXP += 10;
+
+  // * For every 25 points you get 1xp
+  let totalPointsEarned = 0;
+  for (let i = 0; i < allPoints.length; ++i) {
+    totalPointsEarned += Number(allPoints[i]);
+  }
+  earnedXP += Math.floor(totalPointsEarned / 25);
+
+  // * For every "Spot On" (distance away <= 20) add 5xp bonus
+  let numberOfSpotOnGames = 0;
+  for (let i = 0; i < allDistances.length; ++i) {
+    if (allDistances[i] <= 20) {
+      earnedXP += 5;
+      numberOfSpotOnGames++;
+    }
+  }
+
+  // * If every round was spot on, double their score
+  if (numberOfSpotOnGames == allPoints.length) {
+    earnedXP *= 2;
+  }
+
+  return earnedXP;
+}
+
 export const addLeaderboardEntryToGame = mutation({
   args: {
     gameId: v.id("games"),
@@ -518,52 +564,6 @@ export const checkGuess = mutation({
     };
   },
 });
-
-/**
- * Calculates the total earned experience points (XP) based on the points and distances provided.
- *
- * @param {bigint[]} allPoints - An array of points earned in each game.
- * @param {bigint[]} allDistances - An array of distances for each game.
- * @returns {number} The total earned XP.
- *
- * @remarks
- * - Adds a base score of 10 XP for playing a game.
- * - Add 10 XP if it is the first game of the day.
- * - For every 25 points earned, 1 XP is awarded.
- * - For every "Spot On" game (distance <= 20), an additional 5 XP bonus is awarded.
- * - If every round was "Spot On", the total XP is doubled.
- */
-function getTotalEarnedXP(allPoints: bigint[], allDistances: bigint[]): number {
-  let earnedXP = 0;
-
-  // TODO: Add 10xp if first game of the day
-
-  // * Add score for playing a game
-  earnedXP += 10;
-
-  // * For every 25 points you get 1xp
-  let totalPointsEarned = 0;
-  for (let i = 0; i < allPoints.length; ++i) {
-    totalPointsEarned += Number(allPoints[i]);
-  }
-  earnedXP += Math.floor(totalPointsEarned / 25);
-
-  // * For every "Spot On" (distance away <= 20) add 5xp bonus
-  let numberOfSpotOnGames = 0;
-  for (let i = 0; i < allDistances.length; ++i) {
-    if (allDistances[i] <= 20) {
-      earnedXP += 5;
-      numberOfSpotOnGames++;
-    }
-  }
-
-  // * If every round was spot on, double their score
-  if (numberOfSpotOnGames == allPoints.length) {
-    earnedXP *= 2;
-  }
-
-  return earnedXP;
-}
 
 /**
  * Gets the game type for a given game ID.

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation } from "convex/react";
 import { LoaderCircle, ShieldX } from "lucide-react";
 
@@ -26,19 +26,12 @@ interface BanAppealsProps {
 
 const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal }: BanAppealsProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [canSubmit, setCanSubmit] = useState(false);
   const [banAppealDialogOpen, setBanAppealDialogOpen] = useState(false);
   const [appealMessage, setAppealMessage] = useState("");
   const [agreementCheck, setAgreementCheck] = useState(false);
   const submitAppeal = useMutation(api.users.appealBan);
 
-  useEffect(() => {
-    if (!appealMessage || !agreementCheck) {
-      setCanSubmit(true);
-    } else {
-      setCanSubmit(false);
-    }
-  }, [agreementCheck, appealMessage]);
+  const canSubmit = !appealMessage || !agreementCheck;
 
   async function handleSubmitAppeal() {
     setIsSubmitting(true);

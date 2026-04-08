@@ -20,11 +20,7 @@ import MobileDrawer from "./mobiledrawer";
 export const Heading = () => {
   const { data: currentUser, isLoading, isAuthenticated } = useCurrentUser();
 
-  const [welcomeMessage, setWelcomeMessage] = useState("");
-
-  useEffect(() => {
-    setWelcomeMessage(WelcomeMessage());
-  }, []);
+  const [welcomeMessage] = useState(() => WelcomeMessage());
 
   const router = useRouter();
 

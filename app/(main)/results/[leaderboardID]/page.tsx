@@ -47,14 +47,39 @@ const ResultPage = ({ params }: Props) => {
     isValidId ? { id: leaderboardID } : "skip"
   );
   const user = useUserById(leaderboardEntry?.userId);
-  const [distances, setDistances] = useState<number[]>([]);
-  const [scores, setScores] = useState<number[]>([]);
-  const [finalScore, setFinalScore] = useState<number>(0);
-  const [gameType, setGameType] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
-  const [oldLevel, setOldLevel] = useState<number>(0);
-  const [newLevel, setNewLevel] = useState<number>(0);
-  const [isFromGame, setIsFromGame] = useState<boolean>(false);
+
+  // Derive values from leaderboardEntry during render
+  const isFromGame = searchParams.get("fromGame") === "true";
+  const distances = leaderboardEntry
+    ? [
+        Number(leaderboardEntry.round_1_distance),
+        Number(leaderboardEntry.round_2_distance),
+        Number(leaderboardEntry.round_3_distance),
+        Number(leaderboardEntry.round_4_distance),
+        Number(leaderboardEntry.round_5_distance),
+      ]
+    : [];
+  const scores = leaderboardEntry
+    ? [
+        Number(leaderboardEntry.round_1),
+        Number(leaderboardEntry.round_2),
+        Number(leaderboardEntry.round_3),
+        Number(leaderboardEntry.round_4),
+        Number(leaderboardEntry.round_5),
+      ]
+    : [];
+  const finalScore = leaderboardEntry
+    ? Number(leaderboardEntry.round_1) +
+      Number(leaderboardEntry.round_2) +
+      Number(leaderboardEntry.round_3) +
+      Number(leaderboardEntry.round_4) +
+      Number(leaderboardEntry.round_5)
+    : 0;
+  const username = user?.username ?? "";
+  const oldLevel = leaderboardEntry ? Number(leaderboardEntry.oldLevel) : 0;
+  const newLevel = leaderboardEntry ? Number(leaderboardEntry.newLevel) : 0;
+  const gameType = leaderboardEntry?.gameType ?? "";
+
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState<{
@@ -66,46 +91,10 @@ const ResultPage = ({ params }: Props) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (searchParams.get("fromGame") === "true") {
-      setIsFromGame(true);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
     if (currentUser?.isBanned) {
       router.push(`/profile/${currentUser.user.username}`);
     }
   }, [currentUser, router]);
-
-  useEffect(() => {
-    if (leaderboardEntry) {
-      setDistances([
-        Number(leaderboardEntry.round_1_distance),
-        Number(leaderboardEntry.round_2_distance),
-        Number(leaderboardEntry.round_3_distance),
-        Number(leaderboardEntry.round_4_distance),
-        Number(leaderboardEntry.round_5_distance),
-      ]);
-      setScores([
-        Number(leaderboardEntry.round_1),
-        Number(leaderboardEntry.round_2),
-        Number(leaderboardEntry.round_3),
-        Number(leaderboardEntry.round_4),
-        Number(leaderboardEntry.round_5),
-      ]);
-      const totalScore =
-        Number(leaderboardEntry.round_1) +
-        Number(leaderboardEntry.round_2) +
-        Number(leaderboardEntry.round_3) +
-        Number(leaderboardEntry.round_4) +
-        Number(leaderboardEntry.round_5);
-      setFinalScore(totalScore);
-      setUsername(user?.username ?? "");
-      setOldLevel(Number(leaderboardEntry.oldLevel));
-      setNewLevel(Number(leaderboardEntry.newLevel));
-      setGameType(leaderboardEntry.gameType);
-    }
-  }, [leaderboardEntry, user]);
 
   useEffect(() => {
     if (isFromGame && leaderboardEntry) {

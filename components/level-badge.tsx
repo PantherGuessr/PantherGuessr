@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Image from "next/image";
 
 interface LevelBadgeProps {
@@ -6,12 +5,8 @@ interface LevelBadgeProps {
 }
 
 const LevelBadge: React.FC<LevelBadgeProps> = ({ level }) => {
-  const [levelBadgeWidth, setLevelBadgeWidth] = useState(0);
-
-  useEffect(() => {
-    const textWidth = level.toString().length * 8;
-    setLevelBadgeWidth(textWidth > 25 ? textWidth : 25);
-  }, [level]);
+  const textWidth = level.toString().length * 8;
+  const levelBadgeWidth = textWidth > 25 ? textWidth : 25;
 
   return (
     <div

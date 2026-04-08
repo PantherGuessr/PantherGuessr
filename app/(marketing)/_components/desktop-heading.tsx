@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Calendar, Trophy, User } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
@@ -37,15 +37,11 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
   const [hoveredCenterMain, setHoveredCenterMain] = useState(false);
   const [hoveredRightMain, setHoveredRightMain] = useState(false);
 
-  const [welcomeMessage, setWelcomeMessage] = useState("");
+  const [welcomeMessage] = useState(() => WelcomeMessage());
 
   const handleGoToUserProfile = () => {
     window.location.href = "/profile/" + username;
   };
-
-  useEffect(() => {
-    setWelcomeMessage(WelcomeMessage());
-  }, []);
 
   const isLargeDesktop = useMediaQuery("(min-width: 1024px)");
 

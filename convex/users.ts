@@ -6,6 +6,96 @@ import { Id } from "./_generated/dataModel";
 import { internalAction, internalMutation, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 
 /**
+ * Retrieves a user from the database using their Convex ID.
+ *
+ * @param ctx - The query context containing the database connection.
+ * @param convexId - The Convex users table ID of the user to be retrieved.
+ * @returns A promise that resolves to the user object if found, otherwise null.
+ */
+async function userById(ctx: QueryCtx | MutationCtx, convexId: Id<"users">) {
+  return await ctx.db
+    .query("users")
+    .withIndex("by_id", (q) => q.eq("_id", convexId))
+    .unique();
+}
+
+/**
+ * Retrieves a user from the database using their Clerk ID.
+ *
+ * @param ctx - The query context containing the database connection.
+ * @param clerkId - The Clerk ID of the user to be retrieved.
+ * @returns A promise that resolves to the user object if found, otherwise null.
+ */
+async function userByClerkId(ctx: QueryCtx | MutationCtx, clerkId: string) {
+  return await ctx.db
+    .query("users")
+    .withIndex("byClerkId", (q) => q.eq("clerkId", clerkId))
+    .unique();
+}
+
+/**
+ * Retrieves a user by their username from the database.
+ *
+ * @param ctx - The context object containing the database connection.
+ * @param username - The username of the user to retrieve.
+ * @returns A promise that resolves to the user object if found, otherwise null.
+ */
+async function userByUsername(ctx: QueryCtx | MutationCtx, username: string) {
+  return await ctx.db
+    .query("users")
+    .withIndex("byUsername", (q) => q.eq("username", username))
+    .unique();
+}
+
+/**
+ * Retrieves an achievement by its id.
+ *
+ * @param ctx - The query context used to interact with the database.
+ * @param id - The id of the achievement to retrieve.
+ * @returns A promise that resolves to the unique achievement with the specified id.
+ */
+async function achievementById(ctx: QueryCtx, id: Id<"achievements">) {
+  return await ctx.db
+    .query("achievements")
+    .withIndex("by_id", (q) => q.eq("_id", id))
+    .unique();
+}
+
+/**
+ * Retrieves an achievement by its name.
+ *
+ * @param ctx - The query context used to interact with the database.
+ * @param name - The name of the achievement to retrieve.
+ * @returns A promise that resolves to the unique achievement with the specified name.
+ */
+async function achievementByName(ctx: QueryCtx, name: string) {
+  return await ctx.db
+    .query("achievements")
+    .withIndex("byName", (q) => q.eq("name", name))
+    .unique();
+}
+
+/**
+ * Retrieves the current user based on the authentication context.
+ *
+ * @param ctx - The query context containing authentication information.
+ * @returns A promise that resolves to the current user or null if no user is authenticated.
+ */
+export async function getCurrentUser(ctx: QueryCtx | MutationCtx) {
+  const identity = await ctx.auth.getUserIdentity();
+  if (identity === null) {
+    return null;
+  }
+  return await userByClerkId(ctx, identity.subject);
+}
+
+export async function getCurrentUserOrThrow(ctx: QueryCtx | MutationCtx) {
+  const userRecord = await getCurrentUser(ctx);
+  if (!userRecord) throw new Error("Can't get current user");
+  return userRecord;
+}
+
+/**
  * Query to get the current user.
  *
  * @constant
@@ -1045,99 +1135,3 @@ export const getCurrentUserProfile = query({
   },
 });
 
-/**
- * Retrieves the current user record or throws an error if the user is not found.
- *
- * @param ctx - The context for the query.
- * @returns The current user record.
- * @throws Will throw an error if the current user cannot be retrieved.
- */
-export async function getCurrentUserOrThrow(ctx: QueryCtx | MutationCtx) {
-  const userRecord = await getCurrentUser(ctx);
-  if (!userRecord) throw new Error("Can't get current user");
-  return userRecord;
-}
-
-/**
- * Retrieves the current user based on the authentication context.
- *
- * @param ctx - The query context containing authentication information.
- * @returns A promise that resolves to the current user or null if no user is authenticated.
- */
-export async function getCurrentUser(ctx: QueryCtx | MutationCtx) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (identity === null) {
-    return null;
-  }
-  return await userByClerkId(ctx, identity.subject);
-}
-
-/**
- * Retrieves a user from the database using their Convex ID.
- *
- * @param ctx - The query context containing the database connection.
- * @param convexId - The Convex users table ID of the user to be retrieved.
- * @returns A promise that resolves to the user object if found, otherwise null.
- */
-async function userById(ctx: QueryCtx | MutationCtx, convexId: Id<"users">) {
-  return await ctx.db
-    .query("users")
-    .withIndex("by_id", (q) => q.eq("_id", convexId))
-    .unique();
-}
-
-/**
- * Retrieves a user from the database using their Clerk ID.
- *
- * @param ctx - The query context containing the database connection.
- * @param clerkId - The Clerk ID of the user to be retrieved.
- * @returns A promise that resolves to the user object if found, otherwise null.
- */
-async function userByClerkId(ctx: QueryCtx | MutationCtx, clerkId: string) {
-  return await ctx.db
-    .query("users")
-    .withIndex("byClerkId", (q) => q.eq("clerkId", clerkId))
-    .unique();
-}
-
-/**
- * Retrieves a user by their username from the database.
- *
- * @param ctx - The context object containing the database connection.
- * @param username - The username of the user to retrieve.
- * @returns A promise that resolves to the user object if found, otherwise null.
- */
-async function userByUsername(ctx: QueryCtx | MutationCtx, username: string) {
-  return await ctx.db
-    .query("users")
-    .withIndex("byUsername", (q) => q.eq("username", username))
-    .unique();
-}
-
-/**
- * Retrieves an achievement by its id.
- *
- * @param ctx - The query context used to interact with the database.
- * @param id - The id of the achievement to retrieve.
- * @returns A promise that resolves to the unique achievement with the specified id.
- */
-async function achievementById(ctx: QueryCtx, id: Id<"achievements">) {
-  return await ctx.db
-    .query("achievements")
-    .withIndex("by_id", (q) => q.eq("_id", id))
-    .unique();
-}
-
-/**
- * Retrieves an achievement by its name.
- *
- * @param ctx - The query context used to interact with the database.
- * @param name - The name of the achievement to retrieve.
- * @returns A promise that resolves to the unique achievement with the specified name.
- */
-async function achievementByName(ctx: QueryCtx, name: string) {
-  return await ctx.db
-    .query("achievements")
-    .withIndex("byName", (q) => q.eq("name", name))
-    .unique();
-}

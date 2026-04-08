@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useMutation, useQuery } from "convex/react";
 
 import { api } from "@/convex/_generated/api";
@@ -11,20 +11,14 @@ import { Id } from "@/convex/_generated/dataModel";
 export function useWeeklyChallengeGameId(): Id<"games"> | null {
   const weeklyChallenge = useQuery(api.weeklychallenge.getWeeklyChallenge, {});
   const createWeeklyChallenge = useMutation(api.weeklychallenge.makeWeeklyChallengeIfNonexistent);
-  const [gameId, setGameId] = useState<Id<"games"> | null>(null);
-  const [challengeCreated, setChallengeCreated] = useState(false);
+  const challengeCreated = useRef(false);
 
   useEffect(() => {
-    if (weeklyChallenge && weeklyChallenge.gameId) {
-      setGameId(weeklyChallenge.gameId);
-    } else {
-      setGameId(null);
-      if (!challengeCreated) {
-        createWeeklyChallenge();
-        setChallengeCreated(true);
-      }
+    if (!weeklyChallenge?.gameId && !challengeCreated.current) {
+      createWeeklyChallenge();
+      challengeCreated.current = true;
     }
-  }, [weeklyChallenge, challengeCreated, createWeeklyChallenge]);
+  }, [weeklyChallenge, createWeeklyChallenge]);
 
-  return gameId;
+  return weeklyChallenge?.gameId ?? null;
 }

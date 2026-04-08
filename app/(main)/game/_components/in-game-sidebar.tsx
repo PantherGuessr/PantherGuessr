@@ -156,24 +156,6 @@ const InGameSidebar = () => {
   };
 
   /**
-   * Handles starting the resizing of the sidebar when clicking on the right side of the sidebar
-   * Only works on desktop
-   */
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (isMobile) return; // Prevent resizing on mobile
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    isResizingRef.current = true;
-    setIsResizing(true);
-    document.body.classList.add("inheritCursorOverride");
-    document.body.style.cursor = "ew-resize";
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
-
-  /**
    * Handles resizing the sidebar when clicking and dragging on the right side of the sidebar
    * Only works on desktop
    */
@@ -198,9 +180,27 @@ const InGameSidebar = () => {
     isResizingRef.current = false;
     setIsResizing(false);
     document.body.classList.remove("inheritCursorOverride");
-    document.body.style.cursor = "unset";
+    document.body.style.setProperty("cursor", "unset");
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  /**
+   * Handles starting the resizing of the sidebar when clicking on the right side of the sidebar
+   * Only works on desktop
+   */
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (isMobile) return; // Prevent resizing on mobile
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    isResizingRef.current = true;
+    setIsResizing(true);
+    document.body.classList.add("inheritCursorOverride");
+    document.body.style.setProperty("cursor", "ew-resize");
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
   useEffect(() => {

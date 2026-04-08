@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
@@ -9,13 +8,8 @@ interface StreakBadgeProps {
 }
 
 const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => {
-  const [streakBadgeWidth, setStreakBadgeWidth] = useState(0);
-
-  useEffect(() => {
-    // update streak badge width based on text width
-    const textWidth = streak.toString().length * 8;
-    setStreakBadgeWidth(textWidth > 25 ? textWidth : 25);
-  }, [streak]);
+  const textWidth = streak.toString().length * 8;
+  const streakBadgeWidth = textWidth > 25 ? textWidth : 25;
 
   // If the user has not played today, the streak badge will be greyed out and pulse
   function isStreakActive() {

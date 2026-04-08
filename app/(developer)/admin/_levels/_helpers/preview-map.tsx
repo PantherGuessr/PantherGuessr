@@ -8,24 +8,26 @@ import { useMarker } from "./MarkerContext";
 
 // Adjust the path as needed
 
+const pantherGuessrMarkerIcon = new L.Icon({
+  iconUrl: "/PantherGuessrPin.svg",
+  iconSize: [48, 48],
+  iconAnchor: [24, 48],
+});
+
+const LocationMarker = () => {
+  const { localMarkerPosition } = useMarker();
+
+  return localMarkerPosition === null ? null : (
+    <>
+      <Marker icon={pantherGuessrMarkerIcon} position={localMarkerPosition} />
+      <CircleMarker center={localMarkerPosition} pathOptions={{ color: "#a50034" }} radius={3} />
+    </>
+  );
+};
+
 const PreviewMap = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { localMarkerPosition, setLocalMarkerPosition } = useMarker();
-
-  const pantherGuessrMarkerIcon = new L.Icon({
-    iconUrl: "/PantherGuessrPin.svg",
-    iconSize: [48, 48],
-    iconAnchor: [24, 48],
-  });
-
-  function LocationMarker() {
-    return localMarkerPosition === null ? null : (
-      <>
-        <Marker icon={pantherGuessrMarkerIcon} position={localMarkerPosition} />
-        <CircleMarker center={localMarkerPosition} pathOptions={{ color: "#a50034" }} radius={3} />
-      </>
-    );
-  }
 
   return (
     <div className="flex min-h-full min-w-full grow">

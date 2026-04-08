@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -70,7 +70,7 @@ const ProfilePage = ({ params }: Props) => {
   // username editing
   const [usernameForUpdate, setUsernameForUpdate] = useState(user?.username);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
-  const [userNameInputWidth, setUserNameInputWidth] = useState(0);
+  const userNameInputWidth = usernameForUpdate ? Math.max(48, usernameForUpdate.length * 19 + 48) : 48;
 
   // tagline editing
   const [taglineForUpdate, setTaglineForUpdate] = useState(profile?.selectedTagline?.tagline);
@@ -84,34 +84,19 @@ const ProfilePage = ({ params }: Props) => {
     profile?.selectedBackground?.backgroundCSS
   );
   const [backgroundIdForUpdate, setBackgroundIdForUpdate] = useState(profile?.selectedBackground?._id);
+  const [prevSelectedBackground, setPrevSelectedBackground] = useState(profile?.selectedBackground);
 
   // page reloading effect that is just a CSS class change
   const [taglineReloadingEffect, setTaglineReloadingEffect] = useState(false);
 
-  // recalculate the width of the input based on the username length
-  useEffect(() => {
-    if (!usernameForUpdate) {
-      setUserNameInputWidth(48);
-    } else {
-      if (usernameForUpdate.length > 32) {
-        setUsernameForUpdate(usernameForUpdate.slice(0, 32));
-      }
-      const width = usernameForUpdate.length * 19 + 48;
-      if (width < 48) {
-        setUserNameInputWidth(48);
-      } else {
-        setUserNameInputWidth(width);
-      }
-    }
-  }, [usernameForUpdate]);
-
-  // sync background state when profile loads
-  useEffect(() => {
-    if (profile?.selectedBackground) {
+  // sync background state when profile loads (update during render to avoid cascading effect)
+  if (prevSelectedBackground !== profile?.selectedBackground) {
+    setPrevSelectedBackground(profile?.selectedBackground);
+    if (profile?.selectedBackground && !isEditingBackground) {
       setBackgroundCSSValue(profile.selectedBackground.backgroundCSS);
       setBackgroundIdForUpdate(profile.selectedBackground._id);
     }
-  }, [profile?.selectedBackground]);
+  }
 
   const isLargerScreen = useMediaQuery("(min-width: 1024px)");
 
@@ -204,7 +189,6 @@ const ProfilePage = ({ params }: Props) => {
   const isFriendRole = profile?.roles.isFriend;
   const isChapmanStudent = profile?.hasChapmanEmail;
   const profileTagline = profile?.selectedTagline;
-  const profileBackground = profile?.selectedBackground;
 
   const hasEarlyAdopter = profile?.achievements["Early Adopter"]?.unlocked;
   const earlyAdopterDescription = profile?.achievements["Early Adopter"]?.description;
@@ -261,7 +245,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <Input
                                   type="text"
                                   value={usernameForUpdate}
-                                  onChange={(e) => setUsernameForUpdate(e.target.value)}
+                                  onChange={(e) => setUsernameForUpdate(e.target.value.slice(0, 32))}
                                   className="mt-2 text-4xl font-bold transition-all duration-200 ease-in-out md:ml-4 md:mt-0"
                                   style={{ width: userNameInputWidth }}
                                   onKeyDown={(e) => {
