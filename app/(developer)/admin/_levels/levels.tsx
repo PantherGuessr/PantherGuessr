@@ -1,10 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMutation, useQuery } from "convex/react";
 import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,13 +24,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-
-import { useMarker } from "./_helpers/MarkerContext";
 import { DataTable } from "./_helpers/datatable";
 import DynamicPreviewMap from "./_helpers/dynamic-preview-map";
+import { useMarker } from "./_helpers/MarkerContext";
 
 type Level = {
   _id: Id<"levels">;
@@ -133,7 +131,7 @@ const Levels = () => {
           </DialogHeader>
           <div className="flex justify-center">
             {currentImageSrcUrl === "/Invalid-Image.jpg" ? (
-              <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
+              <Skeleton className="aspect-4/3 w-full bg-zinc-400 dark:bg-red-900" />
             ) : (
               <Image
                 className="w-full"
@@ -173,7 +171,7 @@ const Levels = () => {
               (Latitude: {row.latitude}, Longitude: {row.longitude})
             </DialogDescription>
           </DialogHeader>
-          <div className="flex w-full h-80 grow py-2">
+          <div className="flex h-80 w-full grow py-2">
             <DynamicPreviewMap />
           </div>
         </DialogContent>

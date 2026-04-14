@@ -1,11 +1,10 @@
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import type { LatLng } from "leaflet";
-import { useRouter } from "next/navigation";
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
-
 import { useCurrentUser } from "@/hooks/use-current-user";
 import useGameById from "@/hooks/use-game-by-id";
 

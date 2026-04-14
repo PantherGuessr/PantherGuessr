@@ -1,10 +1,10 @@
+import { useMemo, useState } from "react";
+import Image from "next/image";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMutation, useQuery } from "convex/react";
 import { LatLng } from "leaflet";
 import { MoreHorizontal } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,16 +27,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-
 import { useToast } from "@/hooks/use-toast";
 import useUpcomingWeeklyChallenge from "@/hooks/use-upcoming-weekly-challenge";
 import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
-
 import { isValidConvexId } from "@/lib/utils";
-
 import { useMarker } from "../_levels/_helpers/MarkerContext";
 import PreviewMap from "../_levels/_helpers/preview-map";
 import { DataTable } from "./helpers/datatable";
@@ -61,22 +57,13 @@ const WeeklyChallengeConfig = () => {
 
   // accessors and mutators for states
   const [clickedLevelId, setClickedLevelId] = useState<Id<"levels"> | null>(null);
-  const [currentImageSrcUrl, setCurrentSrcUrl] = useState(defaultImageSource);
-  const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
-  const [openDialogId, setOpenDialogId] = useState<Id<"levels"> | null>(null);
   const [isMapDialogOpen, setIsMapDialogOpen] = useState(false);
   const [openMapDialogId, setOpenMapDialogId] = useState<Id<"levels"> | null>(null);
-  // necessary to force re-fetching image source when dialog is opened multiple times for the same level
-  const [dialogOpenCounter, setDialogOpenCounter] = useState(0);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [openEditDialogId, setOpenEditDialogId] = useState<Id<"levels"> | null>(null);
   const [editLevelId, setEditLevelId] = useState<string>("");
   const [editingRound, setEditingRound] = useState<number | null>(null);
   const [editingChallengeId, setEditingChallengeId] = useState<Id<"weeklyChallenges"> | null>(null);
-  const [weeklyChallengeStartDate, setWeeklyChallengeStartDate] = useState<string>("");
-  const [weeklyChallengeEndDate, setWeeklyChallengeEndDate] = useState<string>("");
-  const [upcomingChallengeStartDate, setUpcomingChallengeStartDate] = useState<string>("");
-  const [upcomingChallengeEndDate, setUpcomingChallengeEndDate] = useState<string>("");
 
   // fetch weekly challenge data
   const weeklyChallenge = useWeeklyChallenge();
@@ -89,11 +76,26 @@ const WeeklyChallengeConfig = () => {
   // fetch image source
   const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
 
+  // derive dialog state from query results
+  const currentImageSrcUrl = imageSrc && clickedLevelId ? imageSrc : defaultImageSource;
+  const isImageDialogOpen = !!(imageSrc && clickedLevelId);
+  const openDialogId = clickedLevelId;
+
+  // derive date strings from weekly challenge data
+  const weeklyChallengeStartDate = weeklyChallenge
+    ? new Date(Number(weeklyChallenge.startDate)).toLocaleDateString()
+    : "";
+  const weeklyChallengeEndDate = weeklyChallenge ? new Date(Number(weeklyChallenge.endDate)).toLocaleDateString() : "";
+  const upcomingChallengeStartDate = upcomingWeeklyChallenge
+    ? new Date(Number(upcomingWeeklyChallenge.startDate)).toLocaleDateString()
+    : "";
+  const upcomingChallengeEndDate = upcomingWeeklyChallenge
+    ? new Date(Number(upcomingWeeklyChallenge.endDate)).toLocaleDateString()
+    : "";
+
   // memoize table data for current week
   const tableData = useMemo(() => {
     if (weeklyChallenge) {
-      setWeeklyChallengeStartDate(new Date(Number(weeklyChallenge.startDate)).toLocaleDateString());
-      setWeeklyChallengeEndDate(new Date(Number(weeklyChallenge.endDate)).toLocaleDateString());
       return [
         weeklyChallenge.game.round_1,
         weeklyChallenge.game.round_2,
@@ -108,8 +110,6 @@ const WeeklyChallengeConfig = () => {
   // memoize table data for upcoming week
   const upcomingTableData = useMemo(() => {
     if (upcomingWeeklyChallenge) {
-      setUpcomingChallengeStartDate(new Date(Number(upcomingWeeklyChallenge.startDate)).toLocaleDateString());
-      setUpcomingChallengeEndDate(new Date(Number(upcomingWeeklyChallenge.endDate)).toLocaleDateString());
       return [
         upcomingWeeklyChallenge.game.round_1,
         upcomingWeeklyChallenge.game.round_2,
@@ -121,33 +121,23 @@ const WeeklyChallengeConfig = () => {
     return [];
   }, [upcomingWeeklyChallenge]);
 
-  // sets the image source to default on table data load
-  useEffect(() => {
+  // reset clicked level when table data first loads (render-time state sync)
+  const [prevTableData, setPrevTableData] = useState(tableData);
+  if (prevTableData !== tableData) {
+    setPrevTableData(tableData);
     if (tableData && tableData.length > 0) {
       setClickedLevelId(null);
     }
-  }, [tableData]);
-
-  // updates image source state and open dialog id on dialog trigger
-  useEffect(() => {
-    if (imageSrc && clickedLevelId) {
-      setCurrentSrcUrl(imageSrc);
-      setOpenDialogId(clickedLevelId);
-      setIsImageDialogOpen(true);
-    }
-  }, [imageSrc, clickedLevelId, dialogOpenCounter]);
+  }
 
   // closes dialog
   const handleDialogClose = () => {
-    setCurrentSrcUrl(defaultImageSource);
-    setIsImageDialogOpen(false);
-    setOpenDialogId(null);
+    setClickedLevelId(null);
   };
 
   // opens dialog
   const handleDialogOpen = (levelId: Id<"levels">) => {
     setClickedLevelId(levelId);
-    setDialogOpenCounter((prev) => prev + 1);
   };
 
   // closes map dialog
@@ -253,7 +243,7 @@ const WeeklyChallengeConfig = () => {
           </DialogHeader>
           <div className="flex justify-center">
             {currentImageSrcUrl === "/Invalid-Image.jpg" ? (
-              <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
+              <Skeleton className="aspect-4/3 w-full bg-zinc-400 dark:bg-red-900" />
             ) : (
               <Image
                 className="w-full"
@@ -295,7 +285,7 @@ const WeeklyChallengeConfig = () => {
               (Latitude: {row.latitude}, Longitude: {row.longitude})
             </DialogDescription>
           </DialogHeader>
-          <div className="flex w-full h-80 grow py-2">
+          <div className="flex h-80 w-full grow py-2">
             <PreviewMap />
           </div>
         </DialogContent>
@@ -450,7 +440,7 @@ const WeeklyChallengeConfig = () => {
         </TabsList>
 
         <TabsContent value="current" className="space-y-2">
-          <p className="text-lg text-left justify-start w-full px-2 mb-1">
+          <p className="mb-1 w-full justify-start px-2 text-left text-lg">
             <span className="font-bold">{weeklyChallengeStartDate}</span> -{" "}
             <span className="font-bold">{weeklyChallengeEndDate}</span>
           </p>
@@ -458,7 +448,7 @@ const WeeklyChallengeConfig = () => {
         </TabsContent>
 
         <TabsContent value="upcoming" className="space-y-2">
-          <p className="text-lg text-left justify-start w-full px-2 mb-1">
+          <p className="mb-1 w-full justify-start px-2 text-left text-lg">
             <span className="font-bold">{upcomingChallengeStartDate}</span> -{" "}
             <span className="font-bold">{upcomingChallengeEndDate}</span>
           </p>

@@ -1,22 +1,19 @@
 "use client";
 
+import { use, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useQuery } from "convex/react";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
-import { use, useEffect, useMemo, useState } from "react";
 
 import { Footer } from "@/components/footer";
 import { NotFoundContent } from "@/components/not-found-content";
 import ProfileHoverCard from "@/components/profile-hover-card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useGameType } from "@/hooks/use-game-type";
-
 import { getTotalScore, isValidConvexId } from "@/lib/utils";
 import { getNextWeeklyResetTimestamp } from "@/lib/weeklytimes";
 
@@ -92,8 +89,8 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
 
   if (!isValidId) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-grow flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
           <NotFoundContent
             title="Invalid Game ID"
             description="The game ID you provided is not valid. Please check the URL and try again."
@@ -106,8 +103,8 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
 
   if (gameExists === false) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-grow flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
           <NotFoundContent
             title="Game Not Found"
             description="The game you're looking for doesn't exist or has been removed."
@@ -119,9 +116,9 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
   }
 
   return (
-    <div className="flex flex-col w-screen h-full min-h-screen justify-between">
-      <div className="w-full max-w-5xl mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-6 text-center">
+    <div className="flex h-full min-h-screen w-screen flex-col justify-between">
+      <div className="mx-auto w-full max-w-5xl py-8">
+        <h1 className="mb-6 text-center text-3xl font-bold">
           {gameType === "weekly" ? "Weekly Challenge " : "Game "}Leaderboard
         </h1>
         {gameType === "weekly" && (
@@ -185,11 +182,11 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
                 <span className="font-semibold">Your Rank:</span> {userRank}
               </div>
             ) : userRank === -1 ? (
-              <div className="flex flex-col items-center justify-center mt-6">
+              <div className="mt-6 flex flex-col items-center justify-center">
                 <p className="mb-2">You are not ranked on this leaderboard.</p>
                 <Link href={`/game/${gameID}`}>
                   <Button>
-                    Let&apos;s change that! <ArrowRight className="h-4 w-4 ml-2" />
+                    Let&apos;s change that! <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>

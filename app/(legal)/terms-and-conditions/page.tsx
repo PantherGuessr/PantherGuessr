@@ -7,8 +7,8 @@ const TermsAndConditionsPage = () => {
   return (
     <>
       <BackgroundGradient />
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-start justify-start md:text-justify gap-y-8 md:mt-10 md:mx-40 flex-1 px-6 pb-10">
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-col items-start justify-start gap-y-8 px-6 pb-10 md:mx-40 md:mt-10 md:text-justify">
           <h1 className="text-5xl">Terms and Conditions</h1>
           <div className="space-y-4">
             <p>
@@ -91,10 +91,10 @@ const TermsAndConditionsPage = () => {
               If you have questions about these terms, please contact us at:{" "}
               <Link
                 href="mailto:tos@pantherguessr.com"
-                className="relative group text-muted-foreground hover:text-black hover:dark:text-white"
+                className="group relative text-muted-foreground hover:text-black hover:dark:text-white"
               >
                 tos@pantherguessr.com
-                <span className="absolute left-0 bottom-[-3px] w-0 h-[2px] bg-black dark:bg-white transition-all group-hover:w-full"></span>
+                <span className="absolute bottom-[-3px] left-0 h-[2px] w-0 bg-black transition-all group-hover:w-full dark:bg-white"></span>
               </Link>
             </p>
           </div>

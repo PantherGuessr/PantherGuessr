@@ -1,6 +1,5 @@
 import ProfileHoverCard from "@/components/profile-hover-card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
 import { Doc } from "@/convex/_generated/dataModel";
 import { LeaderboardType } from "@/convex/leaderboard";
 
@@ -83,9 +82,9 @@ export function RemainingTable({ users, type, description, currentUser, userRank
   const secondaryStatHeader = getSecondaryStatHeader(type);
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <h3 className="hidden md:block text-xl font-semibold mb-2">Full Rankings</h3>
-      <p className="text-muted-foreground mb-4">{description}</p>
+    <div className="mx-auto w-full max-w-4xl">
+      <h3 className="mb-2 hidden text-xl font-semibold md:block">Full Rankings</h3>
+      <p className="mb-4 text-muted-foreground">{description}</p>
 
       <Table className="w-full border-collapse">
         <TableHeader>
@@ -131,7 +130,7 @@ export function RemainingTable({ users, type, description, currentUser, userRank
 
       {/* Show user rank if they're not in the displayed list */}
       {currentUser && userRank && userRank > users.length && (
-        <div className="mt-4 p-3 bg-muted rounded-lg text-center">
+        <div className="mt-4 rounded-lg bg-muted p-3 text-center">
           <p className="text-sm text-muted-foreground">
             Your rank: <span className="font-semibold">{userRank}</span>
           </p>

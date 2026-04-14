@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import {
   BookHeart,
@@ -12,7 +13,6 @@ import {
   Trash2,
   Wrench,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +27,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
-
 import { api } from "@/convex/_generated/api";
 
 interface ProfileAdministrativeActionsProps {
@@ -64,6 +63,7 @@ const ProfileAdministrativeActions = ({
   // Delete User Action
   const [deleteUserDialogOpen, setDeleteUserDialogOpen] = useState(false);
   const [deleteCountdown, setDeleteCountdown] = useState(3);
+  const deleteCountdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Ban User Action
   const [banUserDialogOpen, setBanUserDialogOpen] = useState(false);
@@ -88,22 +88,31 @@ const ProfileAdministrativeActions = ({
   const modifyLevelAndXP = useMutation(api.users.modifyLevelAndXPAdministrativeAction);
   const modifyRoles = useMutation(api.users.modifyRolesAdministrativeAction);
 
+  // Cleanup timer on unmount
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (deleteUserDialogOpen) {
+    return () => {
+      if (deleteCountdownTimerRef.current) clearInterval(deleteCountdownTimerRef.current);
+    };
+  }, []);
+
+  const handleDeleteDialogOpenChange = (open: boolean) => {
+    if (open) {
       setDeleteCountdown(3);
-      timer = setInterval(() => {
+      deleteCountdownTimerRef.current = setInterval(() => {
         setDeleteCountdown((prev) => {
           if (prev <= 1) {
-            clearInterval(timer);
+            if (deleteCountdownTimerRef.current) clearInterval(deleteCountdownTimerRef.current);
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
+    } else {
+      if (deleteCountdownTimerRef.current) clearInterval(deleteCountdownTimerRef.current);
+      setDeleteCountdown(3);
     }
-    return () => clearInterval(timer);
-  }, [deleteUserDialogOpen]);
+    setDeleteUserDialogOpen(open);
+  };
 
   if (!profileUser) {
     return;
@@ -170,7 +179,7 @@ const ProfileAdministrativeActions = ({
 
   if (isViewerDeveloper || isViewerModerator) {
     return (
-      <div className="flex flex-col w-full items-start space-y-1">
+      <div className="flex w-full flex-col items-start space-y-1">
         {!(
           (isProfileDeveloper && isViewerModerator && !isViewerDeveloper) ||
           (isProfileModerator && isViewerModerator && !isViewerDeveloper)
@@ -182,22 +191,22 @@ const ProfileAdministrativeActions = ({
         {((isProfileDeveloper && isViewerModerator && !isViewerDeveloper) ||
           (isProfileModerator && isViewerModerator && !isViewerDeveloper)) && (
           <div className="flex flex-col items-center">
-            <ShieldX className="h-6 w-6 mb-2 text-muted-foreground/60" />
-            <p className="font-bold text-muted-foreground/60 italic">
+            <ShieldX className="mb-2 h-6 w-6 text-muted-foreground/60" />
+            <p className="font-bold italic text-muted-foreground/60">
               You have invalid permissions to modify this user.
             </p>
           </div>
         )}
-        <div className="space-y-2 flex-col w-full">
+        <div className="w-full flex-col space-y-2">
           {((isProfileDeveloper && isViewerDeveloper) ||
             (!isProfileDeveloper && !isProfileModerator && (isViewerDeveloper || isViewerModerator)) ||
             (!isProfileDeveloper && isProfileModerator && isViewerDeveloper)) && (
             <>
               {isViewerDeveloper && (
-                <Dialog open={deleteUserDialogOpen} onOpenChange={setDeleteUserDialogOpen}>
+                <Dialog open={deleteUserDialogOpen} onOpenChange={handleDeleteDialogOpenChange}>
                   <DialogTrigger asChild>
                     <Button className="flex w-full" variant="destructive">
-                      <Trash2 className="w-4 h-4 mr-2" />
+                      <Trash2 className="mr-2 h-4 w-4" />
                       Delete User
                     </Button>
                   </DialogTrigger>
@@ -211,12 +220,12 @@ const ProfileAdministrativeActions = ({
                     <DialogFooter>
                       {isSubmitting ? (
                         <Button variant="default" type="submit" disabled={true}>
-                          <LoaderCircle className="animate-spin mr-2" size={24} />
+                          <LoaderCircle className="mr-2 animate-spin" size={24} />
                           Deleting User
                         </Button>
                       ) : (
                         <>
-                          <Button variant="outline" onClick={() => setDeleteUserDialogOpen(false)}>
+                          <Button variant="outline" onClick={() => handleDeleteDialogOpenChange(false)}>
                             Cancel
                           </Button>
                           <Button
@@ -238,7 +247,7 @@ const ProfileAdministrativeActions = ({
                 <Dialog open={banUserDialogOpen} onOpenChange={setBanUserDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="flex w-full" variant="destructive">
-                      <Gavel className="w-4 h-4 mr-2" />
+                      <Gavel className="mr-2 h-4 w-4" />
                       {isUserBanned ? "Unban User" : "Ban User"}
                     </Button>
                   </DialogTrigger>
@@ -271,7 +280,7 @@ const ProfileAdministrativeActions = ({
                     <DialogFooter>
                       {isSubmitting ? (
                         <Button variant="default" type="submit" disabled={true}>
-                          <LoaderCircle className="animate-spin mr-2" size={24} />
+                          <LoaderCircle className="mr-2 animate-spin" size={24} />
                           Banning User
                         </Button>
                       ) : (
@@ -293,7 +302,7 @@ const ProfileAdministrativeActions = ({
                 <Dialog open={levelXPModifyDialogOpen} onOpenChange={setLevelXPModifyDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="flex w-full">
-                      <Hash className="w-4 h-4 mr-2" />
+                      <Hash className="mr-2 h-4 w-4" />
                       Modify Level/XP
                     </Button>
                   </DialogTrigger>
@@ -335,7 +344,7 @@ const ProfileAdministrativeActions = ({
                     <DialogFooter>
                       {isSubmitting ? (
                         <Button variant="default" type="submit" disabled={true}>
-                          <LoaderCircle className="animate-spin mr-2" size={24} />
+                          <LoaderCircle className="mr-2 animate-spin" size={24} />
                           Submitting Changes
                         </Button>
                       ) : (
@@ -363,7 +372,7 @@ const ProfileAdministrativeActions = ({
                 >
                   <DialogTrigger asChild>
                     <Button className="flex w-full">
-                      <BookHeart className="w-4 h-4 mr-2" />
+                      <BookHeart className="mr-2 h-4 w-4" />
                       Modify Role(s)
                     </Button>
                   </DialogTrigger>
@@ -392,7 +401,7 @@ const ProfileAdministrativeActions = ({
                     <DialogFooter>
                       {isSubmitting ? (
                         <Button variant="default" type="submit" disabled={true}>
-                          <LoaderCircle className="animate-spin mr-2" size={24} />
+                          <LoaderCircle className="mr-2 animate-spin" size={24} />
                           Submitting Changes
                         </Button>
                       ) : (
@@ -412,7 +421,7 @@ const ProfileAdministrativeActions = ({
 
               {(isViewerDeveloper || isViewerModerator) && (
                 <Button className="flex w-full" disabled={true}>
-                  <Send className="w-4 h-4 mr-2" />
+                  <Send className="mr-2 h-4 w-4" />
                   Review Submissions ({0})
                 </Button>
               )}

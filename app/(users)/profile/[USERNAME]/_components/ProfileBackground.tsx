@@ -1,11 +1,9 @@
-import { PenLine } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
+import { PenLine } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
 import { Id } from "@/convex/_generated/dataModel";
-
 import { cn } from "@/lib/utils";
 
 interface ProfileBackgroundProps {
@@ -42,8 +40,8 @@ const ProfileBackground = ({
   updateSelectedBackground,
 }: ProfileBackgroundProps) => {
   return (
-    <div className={cn("flex w-full lg:h-96 md:h-80 h-72", backgroundCSSValue ?? "bg-gradient-red-purple")}>
-      <div className="flex h-full w-full bg-gradient-to-b from-background to-transparent justify-center items-center md:justify-end md:items-end p-6">
+    <div className={cn("flex h-72 w-full md:h-80 lg:h-96", backgroundCSSValue ?? "bg-gradient-red-purple")}>
+      <div className="flex h-full w-full items-center justify-center bg-gradient-to-b from-background to-transparent p-6 md:items-end md:justify-end">
         {isCurrentUser &&
           (isEditingBackground ? (
             <>
@@ -53,12 +51,12 @@ const ProfileBackground = ({
                   <CardDescription>Select a new background for your profile</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-3 grid-flow-row gap-4 max-h-24 md:max-h-48 overflow-y-scroll">
+                  <div className="grid max-h-24 grid-flow-row grid-cols-2 gap-4 overflow-y-scroll md:max-h-48 md:grid-cols-3">
                     {unlockedProfileBackgrounds?.map((background) => (
                       <div
                         key={background?._id}
                         className={cn(
-                          "flex items-center justify-center h-20 w-32 rounded-md cursor-pointer bg-gradient-red-purple",
+                          "bg-gradient-red-purple flex h-20 w-32 cursor-pointer items-center justify-center rounded-md",
                           background?.backgroundCSS
                         )}
                         onClick={() => {
@@ -71,7 +69,7 @@ const ProfileBackground = ({
                           setIsEditingBackground(false);
                         }}
                       >
-                        {background?._id == backgroundIdForUpdate && <p className="text-white text-sm">Selected</p>}
+                        {background?._id == backgroundIdForUpdate && <p className="text-sm text-white">Selected</p>}
                       </div>
                     ))}
                   </div>
@@ -80,7 +78,7 @@ const ProfileBackground = ({
             </>
           ) : (
             <>
-              <div className="w-full h-full flex justify-end items-end">
+              <div className="flex h-full w-full items-end justify-end">
                 <Button onClick={() => setIsEditingBackground(true)} className="h-10 w-10 p-0" variant="secondary">
                   <PenLine className="h-4 w-4" />
                 </Button>

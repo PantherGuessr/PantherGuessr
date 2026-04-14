@@ -1,7 +1,7 @@
 "use client";
 
+import { createContext, ReactNode, useContext } from "react";
 import { useConvexAuth, useQuery } from "convex/react";
-import { ReactNode, createContext, useContext } from "react";
 
 import { api } from "@/convex/_generated/api";
 

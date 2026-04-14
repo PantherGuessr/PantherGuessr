@@ -30,11 +30,11 @@ const ProfileAchievements = ({
   photoScoutDescription,
 }: ProfileAchievementProps) => {
   return (
-    <div className="flex flex-col w-full items-start">
+    <div className="flex w-full flex-col items-start">
       <p className="text-md font-bold">Unlocked Achievements</p>
       {hasEarlyAdopter || hasFirstSteps || hasMapMaster || hasOnFire || hasSniped || hasPhotoScout ? (
         <>
-          <div className="flex justify-start flex-wrap gap-x-2 w-full lg:grid lg:grid-flow-row lg:grid-cols-3 lg:justify-start">
+          <div className="flex w-full flex-wrap justify-start gap-x-2 lg:grid lg:grid-flow-row lg:grid-cols-3 lg:justify-start">
             {hasEarlyAdopter && (
               <Achievement
                 name="Early Adopter"
@@ -85,7 +85,7 @@ const ProfileAchievements = ({
           </div>
         </>
       ) : (
-        <p className="font-bold text-muted-foreground/60 italic">None</p>
+        <p className="font-bold italic text-muted-foreground/60">None</p>
       )}
     </div>
   );

@@ -1,9 +1,9 @@
 "use client";
 
-import { Calendar, Hash, Loader2, LogOut, Medal, User } from "lucide-react";
+import { ElementRef, useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ElementRef, useCallback, useEffect, useRef, useState } from "react";
+import { Calendar, Hash, Loader2, LogOut, Medal, User } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 
 import {
@@ -19,10 +19,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { cn } from "@/lib/utils";
-
 import { useGame } from "../_context/GameContext";
+
 import "./sidebar-cursor.css";
 
 const InGameSidebar = () => {
@@ -157,24 +156,6 @@ const InGameSidebar = () => {
   };
 
   /**
-   * Handles starting the resizing of the sidebar when clicking on the right side of the sidebar
-   * Only works on desktop
-   */
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (isMobile) return; // Prevent resizing on mobile
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    isResizingRef.current = true;
-    setIsResizing(true);
-    document.body.classList.add("inheritCursorOverride");
-    document.body.style.cursor = "ew-resize";
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
-
-  /**
    * Handles resizing the sidebar when clicking and dragging on the right side of the sidebar
    * Only works on desktop
    */
@@ -199,9 +180,27 @@ const InGameSidebar = () => {
     isResizingRef.current = false;
     setIsResizing(false);
     document.body.classList.remove("inheritCursorOverride");
-    document.body.style.cursor = "unset";
+    document.body.style.setProperty("cursor", "unset");
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  /**
+   * Handles starting the resizing of the sidebar when clicking on the right side of the sidebar
+   * Only works on desktop
+   */
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (isMobile) return; // Prevent resizing on mobile
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    isResizingRef.current = true;
+    setIsResizing(true);
+    document.body.classList.add("inheritCursorOverride");
+    document.body.style.setProperty("cursor", "ew-resize");
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
   useEffect(() => {
@@ -231,12 +230,12 @@ const InGameSidebar = () => {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar h-full bg-background overflow-y-auto relative flex flex-col z-[999]",
-          isResetting && "transition-all ease-in-out duration-300",
-          isMobile ? "w-full h-auto" : "w-80 px-1"
+          "group/sidebar relative z-[999] flex h-full flex-col overflow-y-auto bg-background",
+          isResetting && "transition-all duration-300 ease-in-out",
+          isMobile ? "h-auto w-full" : "w-80 px-1"
         )}
       >
-        <div className="flex justify-center pt-4 px-3 pb-1">
+        <div className="flex justify-center px-3 pb-1 pt-4">
           <div className="flex flex-row pr-2">
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -266,7 +265,7 @@ const InGameSidebar = () => {
           </div>
           <div
             className={cn(
-              "text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center p-4 w-full rounded-md gap-x-2",
+              "flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md bg-secondary p-4 text-xl text-secondary-foreground",
               isMobile && "basis-1/5"
             )}
           >
@@ -275,7 +274,7 @@ const InGameSidebar = () => {
             ) : gameType === "singleplayer" ? (
               <User />
             ) : (
-              <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
+              <Skeleton className="h-6 w-6 bg-zinc-400 dark:bg-red-900" />
             )}
             <div className={isMobile ? "sr-only" : ""}>
               {gameType === "weekly" ? (
@@ -283,19 +282,19 @@ const InGameSidebar = () => {
               ) : gameType === "singleplayer" ? (
                 "Singleplayer"
               ) : (
-                <Skeleton className="w-20 h-6 bg-zinc-400 dark:bg-red-900" />
+                <Skeleton className="h-6 w-20 bg-zinc-400 dark:bg-red-900" />
               )}
             </div>
           </div>
           {isMobile && (
             <>
-              <div className="text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center mx-2 w-full rounded-md gap-x-2">
+              <div className="mx-2 flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md bg-secondary text-xl text-secondary-foreground">
                 <Hash />
                 <p className="pr-1">
                   {currentRound <= 5 ? currentRound : levels.length}/{levels.length}
                 </p>
               </div>
-              <div className="text-xl flex flex-row bg-secondary text-secondary-foreground justify-items-center justify-center items-center w-full rounded-md gap-x-2">
+              <div className="flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md bg-secondary text-xl text-secondary-foreground">
                 <Medal />
                 <p>{score}</p>
               </div>
@@ -304,7 +303,7 @@ const InGameSidebar = () => {
         </div>
         <div className="flex justify-center p-3">
           {isLoading || !currentImageSrcUrl ? (
-            <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
+            <Skeleton className="aspect-4/3 w-full bg-zinc-400 dark:bg-red-900" />
           ) : (
             <Image
               src={currentImageSrcUrl}
@@ -316,18 +315,18 @@ const InGameSidebar = () => {
               onMouseMove={handleMouseMoveMagnifier}
               onMouseLeave={handleMouseLeave}
               draggable={false}
-              className="rounded-md select-none"
+              className="select-none rounded-md"
             />
           )}
         </div>
         {!isMobile && (
           <div className="mt-4 flex flex-col items-center">
-            <div className="flex justify-center w-full">
-              <div className="text-xl flex flex-col items-center mx-4">
+            <div className="flex w-full justify-center">
+              <div className="mx-4 flex flex-col items-center text-xl">
                 {isLoading || !levels || !currentImageSrcUrl ? (
                   <>
-                    <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
-                    <Skeleton className="w-8 h-5 mt-1 bg-zinc-400 dark:bg-red-900" />
+                    <Skeleton className="h-6 w-6 bg-zinc-400 dark:bg-red-900" />
+                    <Skeleton className="mt-1 h-5 w-8 bg-zinc-400 dark:bg-red-900" />
                   </>
                 ) : (
                   <>
@@ -338,11 +337,11 @@ const InGameSidebar = () => {
                   </>
                 )}
               </div>
-              <div className="text-xl flex flex-col items-center mx-4">
+              <div className="mx-4 flex flex-col items-center text-xl">
                 {isLoading || !levels || !currentImageSrcUrl ? (
                   <>
-                    <Skeleton className="w-6 h-6 bg-zinc-400 dark:bg-red-900" />
-                    <Skeleton className="w-4 h-5 mt-1 bg-zinc-400 dark:bg-red-900" />
+                    <Skeleton className="h-6 w-6 bg-zinc-400 dark:bg-red-900" />
+                    <Skeleton className="mt-1 h-5 w-4 bg-zinc-400 dark:bg-red-900" />
                   </>
                 ) : (
                   <>
@@ -354,9 +353,9 @@ const InGameSidebar = () => {
             </div>
           </div>
         )}
-        <div className={cn("mt-auto px-3 w-full", isMobile ? "py-2" : "py-4")}>
+        <div className={cn("mt-auto w-full px-3", isMobile ? "py-2" : "py-4")}>
           {scoreAwarded !== null && distanceFromTarget !== null && (
-            <div className="text-lg flex flex-col bg-secondary text-center text-secondary-foreground justify-items-center justify-center items-center p-4 mb-3 w-full rounded-md gap-x-2">
+            <div className="mb-3 flex w-full flex-col items-center justify-center justify-items-center gap-x-2 rounded-md bg-secondary p-4 text-center text-lg text-secondary-foreground">
               {distanceFromTarget <= 20 ? (
                 <p>Spot on! You scored {scoreAwarded} points.</p>
               ) : (
@@ -384,7 +383,7 @@ const InGameSidebar = () => {
           <div
             onMouseDown={handleMouseDown}
             className={cn(
-              "absolute h-full w-3 right-0 top-0 flex items-center justify-center cursor-ew-resize z-10 group",
+              "group absolute right-0 top-0 z-10 flex h-full w-3 cursor-ew-resize items-center justify-center",
               "transition-all duration-200",
               isResizing ? "bg-primary/10" : "hover:bg-primary/10"
             )}
@@ -398,19 +397,19 @@ const InGameSidebar = () => {
             >
               <div
                 className={cn(
-                  "w-1 h-1 rounded-full transition-colors duration-200",
+                  "h-1 w-1 rounded-full transition-colors duration-200",
                   isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
                 )}
               />
               <div
                 className={cn(
-                  "w-1 h-1 rounded-full transition-colors duration-200",
+                  "h-1 w-1 rounded-full transition-colors duration-200",
                   isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
                 )}
               />
               <div
                 className={cn(
-                  "w-1 h-1 rounded-full transition-colors duration-200",
+                  "h-1 w-1 rounded-full transition-colors duration-200",
                   isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
                 )}
               />

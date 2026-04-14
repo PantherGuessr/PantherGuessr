@@ -1,21 +1,17 @@
 "use client";
 
-import { Loader2, Search } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { Loader2, Search } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-
 import { Doc } from "@/convex/_generated/dataModel";
-
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useGetListOfProfiles } from "@/hooks/userProfiles/use-get-list-of-profiles";
-
 import { cn } from "@/lib/utils";
-
 import Levenshtein from "./helpers/levenshtein";
 
 const ProfileSearchPage = () => {
@@ -24,14 +20,29 @@ const ProfileSearchPage = () => {
   const [searchedUsername, setSearchedUsername] = useState("");
   const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [filteredUsernames, setFilteredUsernames] = useState<Doc<"users">[] | []>([]);
-  const [suggestedUsernames, setSuggestedUsernames] = useState<Doc<"users">[] | []>([]);
 
   useEffect(() => {
     if (currentUser?.isBanned) {
       router.push(`/profile/${currentUser.user.username}`);
     }
   }, [currentUser, router]);
+
+  const filteredUsernames = useMemo<Doc<"users">[]>(() => {
+    if (usernames && searchedUsername) {
+      return usernames.filter((user) => user.username.toLowerCase().includes(searchedUsername.toLowerCase()));
+    }
+    return [];
+  }, [usernames, searchedUsername]);
+
+  const suggestedUsernames = useMemo<Doc<"users">[]>(() => {
+    if (usernames && searchedUsername) {
+      return usernames.filter((user) => {
+        const distance = Levenshtein(user.username, searchedUsername);
+        return distance! <= 2;
+      });
+    }
+    return [];
+  }, [usernames, searchedUsername]);
 
   const handleSubmit = () => {
     if (filteredUsernames.length > 0) {
@@ -78,28 +89,10 @@ const ProfileSearchPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (usernames && searchedUsername) {
-      setSuggestedUsernames(
-        usernames.filter((user) => {
-          const distance = Levenshtein(user.username, searchedUsername);
-          return distance! <= 2;
-        })
-      );
-      setFilteredUsernames(
-        usernames.filter((user) => user.username.toLowerCase().includes(searchedUsername.toLowerCase()))
-      );
-    } else {
-      setFilteredUsernames([]);
-      setSuggestedUsernames([]);
-      setSelectedIndex(0);
-    }
-  }, [usernames, searchedUsername, setFilteredUsernames]);
-
   if (isUsernamesLoading || currentUserLoading) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
           <Loader2 className="h-20 w-20 animate-spin" />
         </div>
         <Footer />
@@ -108,17 +101,17 @@ const ProfileSearchPage = () => {
   }
 
   return (
-    <div className="min-h-full flex flex-col pt-10">
-      <div className="flex flex-col items-center justify-start text-center gap-y-8 flex-1 px-6 pb-10 pt-40">
-        <h1 className="text-3xl sm:text-5xl font-bold">Find Profile</h1>
+    <div className="flex min-h-full flex-col pt-10">
+      <div className="flex flex-1 flex-col items-center justify-start gap-y-8 px-6 pb-10 pt-40 text-center">
+        <h1 className="text-3xl font-bold sm:text-5xl">Find Profile</h1>
         <div className="flex w-full max-w-sm items-center space-x-2">
-          <div className="card flex flex-col border rounded-lg p-2 w-full">
+          <div className="card flex w-full flex-col rounded-lg border p-2">
             <div className="flex flex-row items-start">
               <Input
                 type="text"
                 placeholder="Search by Username"
                 value={searchedUsername}
-                className="border-0 focus-visible:ring-0 m-0 py-0 h-8 mr-2 focus-visible:border-0 outline-none"
+                className="m-0 mr-2 h-8 border-0 py-0 outline-none focus-visible:border-0 focus-visible:ring-0"
                 onChange={(e) => setSearchedUsername(e.target.value)}
                 onKeyDown={(e) => handleInputKeyDown(e)}
               />
@@ -126,14 +119,14 @@ const ProfileSearchPage = () => {
                 onClick={handleSubmit}
                 disabled={!searchedUsername}
                 size="icon"
-                className="h-8 mt-0"
+                className="mt-0 h-8"
                 type="submit"
               >
                 <Search className="h-4 w-4" />
               </Button>
             </div>
             {filteredUsernames.length > 0 && (
-              <div className="flex flex-col gap-y-2 mt-2 max-h-60 overflow-y-auto">
+              <div className="mt-2 flex max-h-60 flex-col gap-y-2 overflow-y-auto">
                 {filteredUsernames.map((user, index) => (
                   <div key={user.username}>
                     <Separator className="" />
@@ -144,8 +137,8 @@ const ProfileSearchPage = () => {
                         router.push(`/profile/${user.username}`);
                       }}
                       className={cn(
-                        "text-left py-1 pl-2 text-sm cursor-pointer",
-                        index === selectedIndex ? "font-bold bg-secondary text-secondary-foreground rounded-md" : ""
+                        "cursor-pointer py-1 pl-2 text-left text-sm",
+                        index === selectedIndex ? "rounded-md bg-secondary font-bold text-secondary-foreground" : ""
                       )}
                     >
                       {user.username}
@@ -156,8 +149,8 @@ const ProfileSearchPage = () => {
             )}
             {!filteredUsernames ||
               (filteredUsernames.length === 0 && suggestedUsernames.length > 0 && (
-                <div className="flex flex-col gap-y-2 mt-2 max-h-60 overflow-y-auto">
-                  <div className="text-left py-1 pl-2 text-sm italic">No results found. Did you mean...</div>
+                <div className="mt-2 flex max-h-60 flex-col gap-y-2 overflow-y-auto">
+                  <div className="py-1 pl-2 text-left text-sm italic">No results found. Did you mean...</div>
                   {suggestedUsernames.map((user, index) => (
                     <>
                       <Separator className="" />
@@ -168,8 +161,8 @@ const ProfileSearchPage = () => {
                           router.push(`/profile/${user.username}`);
                         }}
                         className={cn(
-                          "text-left py-1 pl-2 text-sm cursor-pointer",
-                          index === selectedIndex ? "font-bold bg-secondary text-secondary-foreground rounded-md" : ""
+                          "cursor-pointer py-1 pl-2 text-left text-sm",
+                          index === selectedIndex ? "rounded-md bg-secondary font-bold text-secondary-foreground" : ""
                         )}
                       >
                         {user.username}

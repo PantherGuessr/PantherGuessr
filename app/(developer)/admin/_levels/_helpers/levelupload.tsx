@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "convex/react";
 import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,13 +16,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
-
 import { api } from "@/convex/_generated/api";
-
 import { useCurrentUser } from "@/hooks/use-current-user";
-
-import { useMarker } from "./MarkerContext";
 import DynamicUploadMap from "./dynamic-upload-map";
+import { useMarker } from "./MarkerContext";
 
 const tagsList = [
   { value: "Standard", label: "Standard", icon: University },
@@ -148,7 +145,7 @@ const LevelUpload = () => {
       <Dialog open={levelCreatorDialogOpen} onOpenChange={setLevelCreatorDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="default">
-            <Plus className="h-4 w-4 mr-2" /> Create Level
+            <Plus className="mr-2 h-4 w-4" /> Create Level
           </Button>
         </DialogTrigger>
         <DialogContent>
@@ -196,17 +193,17 @@ const LevelUpload = () => {
                 renderInPlace
               />
             </div>
-            <div className="flex w-full h-80 grow py-2">
+            <div className="flex h-80 w-full grow py-2">
               <DynamicUploadMap />
             </div>
             {isSubmitting ? (
-              <Button variant="default" className="w-full my-2 flex flex-row" disabled={true}>
-                <LoaderCircle className="animate-spin mr-2" size={24} /> Submitting
+              <Button variant="default" className="my-2 flex w-full flex-row" disabled={true}>
+                <LoaderCircle className="mr-2 animate-spin" size={24} /> Submitting
               </Button>
             ) : (
               <Button
                 variant="default"
-                className="w-full my-2"
+                className="my-2 w-full"
                 disabled={submitButtonDisabled}
                 onClick={handleImageSubmission}
               >

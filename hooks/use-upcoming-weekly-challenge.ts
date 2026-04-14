@@ -1,5 +1,5 @@
+import { useEffect, useRef } from "react";
 import { useMutation, useQuery } from "convex/react";
-import { useEffect, useState } from "react";
 
 import { api } from "@/convex/_generated/api";
 
@@ -14,16 +14,16 @@ const useUpcomingWeeklyChallenge = () => {
   // Mutation to create weekly challenges
   const createWeeklyChallenge = useMutation(api.weeklychallenge.makeWeeklyChallengeIfNonexistent);
 
-  // State to track if the challenge creation has been attempted
-  const [challengeCreated, setChallengeCreated] = useState(false);
+  // Ref to track if the challenge creation has been attempted (avoids triggering re-renders)
+  const challengeCreated = useRef(false);
 
   // Check if weekly challenges exist and create them if not
   useEffect(() => {
-    if (upcomingWeeklyChallengeData === null && !challengeCreated) {
+    if (upcomingWeeklyChallengeData === null && !challengeCreated.current) {
       createWeeklyChallenge();
-      setChallengeCreated(true);
+      challengeCreated.current = true;
     }
-  }, [upcomingWeeklyChallengeData, challengeCreated, createWeeklyChallenge]);
+  }, [upcomingWeeklyChallengeData, createWeeklyChallenge]);
 
   return upcomingWeeklyChallengeData;
 };

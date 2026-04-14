@@ -1,9 +1,8 @@
-import { GitBranch, GlobeLock, Heart, Menu, Scale } from "lucide-react";
 import Link from "next/link";
+import { GitBranch, GlobeLock, Heart, Menu, Scale } from "lucide-react";
 
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
-
 import pk from "../package.json";
 import {
   DropdownMenu,
@@ -18,35 +17,35 @@ import {
 
 export const Footer = () => {
   return (
-    <div className="flex items-center w-full p-6 bg-transparent z-5">
-      <div className="hidden md:flex md:ml-auto w-full justify-end items-center gap-x-2 text-muted-foreground">
-        <p className="text-sm mr-auto ml-2">© 2025 • PantherGuessr</p>
+    <div className="z-5 flex w-full items-center bg-transparent p-6">
+      <div className="hidden w-full items-center justify-end gap-x-2 text-muted-foreground md:ml-auto md:flex">
+        <p className="ml-2 mr-auto text-sm">© 2025 • PantherGuessr</p>
         <Link href="/credits">
           <Button variant="ghost" size="sm">
-            <Heart className="w-4 h-4 mr-2" />
+            <Heart className="mr-2 h-4 w-4" />
             Credits
           </Button>
         </Link>
         <Link href="/privacy-policy">
           <Button variant="ghost" size="sm">
-            <GlobeLock className="w-4 h-4 mr-2" />
+            <GlobeLock className="mr-2 h-4 w-4" />
             Privacy Policy
           </Button>
         </Link>
         <Link href="/terms-and-conditions">
           <Button variant="ghost" size="sm">
-            <Scale className="w-4 h-4 mr-2" />
+            <Scale className="mr-2 h-4 w-4" />
             Terms & Conditions
           </Button>
         </Link>
         <Link href="/release-notes">
           <Button variant="ghost" size="sm">
-            <GitBranch className="w-4 h-4 mr-2" /> {pk.version}
+            <GitBranch className="mr-2 h-4 w-4" /> {pk.version}
           </Button>
         </Link>
         <ModeToggle />
       </div>
-      <div className="flex md:hidden ml-auto w-full justify-between items-center text-muted-foreground">
+      <div className="ml-auto flex w-full items-center justify-between text-muted-foreground md:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon">
@@ -56,13 +55,13 @@ export const Footer = () => {
           <DropdownMenuContent align="start">
             <Link href="/credits">
               <DropdownMenuItem>
-                <Heart className="w-4 h-4 mr-2" />
+                <Heart className="mr-2 h-4 w-4" />
                 Credits
               </DropdownMenuItem>
             </Link>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
-                <Scale className="w-4 h-4 mr-2" />
+                <Scale className="mr-2 h-4 w-4" />
                 Legal
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
@@ -78,12 +77,12 @@ export const Footer = () => {
             </DropdownMenuSub>
             <Link href="/release-notes">
               <DropdownMenuItem>
-                <GitBranch className="w-4 h-4 mr-2" /> {pk.version}
+                <GitBranch className="mr-2 h-4 w-4" /> {pk.version}
               </DropdownMenuItem>
             </Link>
           </DropdownMenuContent>
         </DropdownMenu>
-        <p className="text-sm mx-auto">© 2025 • PantherGuessr</p>
+        <p className="mx-auto text-sm">© 2025 • PantherGuessr</p>
         <ModeToggle />
       </div>
     </div>

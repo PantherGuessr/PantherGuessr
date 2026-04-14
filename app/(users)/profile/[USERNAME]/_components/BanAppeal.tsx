@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { useMutation } from "convex/react";
 import { LoaderCircle, ShieldX } from "lucide-react";
-import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
 import { api } from "@/convex/_generated/api";
 
 interface BanAppealsProps {
@@ -27,19 +26,12 @@ interface BanAppealsProps {
 
 const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal }: BanAppealsProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [canSubmit, setCanSubmit] = useState(false);
   const [banAppealDialogOpen, setBanAppealDialogOpen] = useState(false);
   const [appealMessage, setAppealMessage] = useState("");
   const [agreementCheck, setAgreementCheck] = useState(false);
   const submitAppeal = useMutation(api.users.appealBan);
 
-  useEffect(() => {
-    if (!appealMessage || !agreementCheck) {
-      setCanSubmit(true);
-    } else {
-      setCanSubmit(false);
-    }
-  }, [agreementCheck, appealMessage]);
+  const canSubmit = !appealMessage || !agreementCheck;
 
   async function handleSubmitAppeal() {
     setIsSubmitting(true);
@@ -57,7 +49,7 @@ const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal }: BanAppealsPr
     <Dialog open={banAppealDialogOpen} onOpenChange={setBanAppealDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="default" disabled={hasActiveAppeal}>
-          <ShieldX className="h-4 w-4 mr-2" /> {hasActiveAppeal ? "Appeal Already Submitted" : "Submit Appeal"}
+          <ShieldX className="mr-2 h-4 w-4" /> {hasActiveAppeal ? "Appeal Already Submitted" : "Submit Appeal"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -114,7 +106,7 @@ const BanAppeal = ({ profileUsername, banReason, hasActiveAppeal }: BanAppealsPr
         <DialogFooter>
           {isSubmitting ? (
             <Button variant="default" type="submit" disabled={true}>
-              <LoaderCircle className="animate-spin mr-2" size={24} />
+              <LoaderCircle className="mr-2 animate-spin" size={24} />
               Submitting Appeal
             </Button>
           ) : (

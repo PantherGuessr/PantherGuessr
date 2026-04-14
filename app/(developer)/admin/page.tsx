@@ -3,11 +3,10 @@
 import { Footer } from "@/components/footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import Analytics from "./_analytics/analytics";
 import { useAdmin } from "./_components/adminprovider";
-import { MarkerProvider } from "./_levels/_helpers/MarkerContext";
 import LevelUpload from "./_levels/_helpers/levelupload";
+import { MarkerProvider } from "./_levels/_helpers/MarkerContext";
 import Levels from "./_levels/levels";
 import SiteSettings from "./_sitesettings/sitesettings";
 import WeeklyChallengeConfig from "./_weekly/weeklyconfig";
@@ -22,8 +21,8 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="min-h-full flex flex-col">
-      <div className="flex flex-col text-center gap-y-8 flex-1 px-6 pb-10">
+    <div className="flex min-h-full flex-col">
+      <div className="flex flex-1 flex-col gap-y-8 px-6 pb-10 text-center">
         <h1 className="text-4xl">Admin Dashboard</h1>
         <Tabs defaultValue={tab} onValueChange={handleTabChange}>
           <TabsList>
@@ -44,8 +43,8 @@ const AdminPage = () => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="analytics">
-            <Card className="mt-8 mx-10 p-2">
-              <CardHeader className="text-4xl ml-2 text-start">Analytics</CardHeader>
+            <Card className="mx-10 mt-8 p-2">
+              <CardHeader className="ml-2 text-start text-4xl">Analytics</CardHeader>
               <CardContent>
                 <Analytics />
               </CardContent>
@@ -53,9 +52,9 @@ const AdminPage = () => {
           </TabsContent>
           <TabsContent value="levels">
             <MarkerProvider>
-              <Card className="mt-8 mx-10 p-2">
+              <Card className="mx-10 mt-8 p-2">
                 <CardHeader className="flex flex-row justify-between">
-                  <p className="text-4xl ml-2 text-start ">Levels</p>
+                  <p className="ml-2 text-start text-4xl">Levels</p>
                   <LevelUpload />
                 </CardHeader>
                 <CardContent>
@@ -65,9 +64,9 @@ const AdminPage = () => {
             </MarkerProvider>
           </TabsContent>
           <TabsContent value="weekly">
-            <Card className="mt-8 mx-10 p-2">
+            <Card className="mx-10 mt-8 p-2">
               <MarkerProvider>
-                <CardHeader className="text-4xl ml-2 text-start">Weekly Challenges</CardHeader>
+                <CardHeader className="ml-2 text-start text-4xl">Weekly Challenges</CardHeader>
                 <CardContent>
                   <WeeklyChallengeConfig />
                 </CardContent>
@@ -75,8 +74,8 @@ const AdminPage = () => {
             </Card>
           </TabsContent>
           <TabsContent value="settings">
-            <Card className="mt-8 mx-10 p-2">
-              <CardHeader className="text-4xl ml-2 text-start">Site Settings</CardHeader>
+            <Card className="mx-10 mt-8 p-2">
+              <CardHeader className="ml-2 text-start text-4xl">Site Settings</CardHeader>
               <CardContent>
                 <SiteSettings />
               </CardContent>

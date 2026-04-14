@@ -1,11 +1,11 @@
 "use client";
 
-import { useMutation, useQuery } from "convex/react";
-import { Check, ChevronsUpDown, Loader2, Save, SearchX, ShieldX, SquarePen, UserSearch, X } from "lucide-react";
+import { use, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { Check, ChevronsUpDown, Loader2, Save, SearchX, ShieldX, SquarePen, UserSearch, X } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 
 import { Footer } from "@/components/footer";
@@ -16,17 +16,13 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Toaster } from "@/components/ui/toaster";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
 import { api } from "@/convex/_generated/api";
-
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useGetRecentGames } from "@/hooks/userProfiles/use-get-recent-games";
 import { useGetUnlockedBackgrounds } from "@/hooks/userProfiles/use-get-unlocked-backgrounds";
 import { useGetUnlockedTaglines } from "@/hooks/userProfiles/use-get-unlocked-taglines";
-
 import { cn } from "@/lib/utils";
-
 import ProfileAdministrativeActions from "./_components/AdministrativeActions";
 import BanAppeal from "./_components/BanAppeal";
 import GameHistory from "./_components/GameHistory";
@@ -34,6 +30,7 @@ import { LevelProgress } from "./_components/LevelProgress";
 import ProfileAchievements from "./_components/ProfileAchievements";
 import ProfileActions from "./_components/ProfileActions";
 import ProfileBackground from "./_components/ProfileBackground";
+
 import "./backgrounds.css";
 
 type Props = {
@@ -73,7 +70,7 @@ const ProfilePage = ({ params }: Props) => {
   // username editing
   const [usernameForUpdate, setUsernameForUpdate] = useState(user?.username);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
-  const [userNameInputWidth, setUserNameInputWidth] = useState(0);
+  const userNameInputWidth = usernameForUpdate ? Math.max(48, usernameForUpdate.length * 19 + 48) : 48;
 
   // tagline editing
   const [taglineForUpdate, setTaglineForUpdate] = useState(profile?.selectedTagline?.tagline);
@@ -87,34 +84,19 @@ const ProfilePage = ({ params }: Props) => {
     profile?.selectedBackground?.backgroundCSS
   );
   const [backgroundIdForUpdate, setBackgroundIdForUpdate] = useState(profile?.selectedBackground?._id);
+  const [prevSelectedBackground, setPrevSelectedBackground] = useState(profile?.selectedBackground);
 
   // page reloading effect that is just a CSS class change
   const [taglineReloadingEffect, setTaglineReloadingEffect] = useState(false);
 
-  // recalculate the width of the input based on the username length
-  useEffect(() => {
-    if (!usernameForUpdate) {
-      setUserNameInputWidth(48);
-    } else {
-      if (usernameForUpdate.length > 32) {
-        setUsernameForUpdate(usernameForUpdate.slice(0, 32));
-      }
-      const width = usernameForUpdate.length * 19 + 48;
-      if (width < 48) {
-        setUserNameInputWidth(48);
-      } else {
-        setUserNameInputWidth(width);
-      }
-    }
-  }, [usernameForUpdate]);
-
-  // sync background state when profile loads
-  useEffect(() => {
-    if (profile?.selectedBackground) {
+  // sync background state when profile loads (update during render to avoid cascading effect)
+  if (prevSelectedBackground !== profile?.selectedBackground) {
+    setPrevSelectedBackground(profile?.selectedBackground);
+    if (profile?.selectedBackground && !isEditingBackground) {
       setBackgroundCSSValue(profile.selectedBackground.backgroundCSS);
       setBackgroundIdForUpdate(profile.selectedBackground._id);
     }
-  }, [profile?.selectedBackground]);
+  }
 
   const isLargerScreen = useMediaQuery("(min-width: 1024px)");
 
@@ -127,9 +109,9 @@ const ProfilePage = ({ params }: Props) => {
 
   if (isLoading) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-          <Loader2 className="animate-spin w-20 h-20" />
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
+          <Loader2 className="h-20 w-20 animate-spin" />
         </div>
         <Footer />
       </div>
@@ -147,13 +129,13 @@ const ProfilePage = ({ params }: Props) => {
     !viewerProfile?.roles.isModerator
   ) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-          <ShieldX className="w-12 h-12 sm:w-24 sm:h-24" />
-          <h1 className="text-3xl sm:text-5xl font-bold">@{usernameSubPage} is suspended.</h1>
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
+          <ShieldX className="h-12 w-12 sm:h-24 sm:w-24" />
+          <h1 className="text-3xl font-bold sm:text-5xl">@{usernameSubPage} is suspended.</h1>
           <Button asChild>
             <Link href="/profile">
-              <UserSearch className="h-4 w-4 mr-2" /> Search Different User
+              <UserSearch className="mr-2 h-4 w-4" /> Search Different User
             </Link>
           </Button>
         </div>
@@ -169,10 +151,10 @@ const ProfilePage = ({ params }: Props) => {
     !viewerProfile?.roles.isModerator
   ) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-          <ShieldX className="w-12 h-12 sm:w-24 sm:h-24" />
-          <h1 className="text-3xl sm:text-5xl font-bold">Your account has been suspended.</h1>
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
+          <ShieldX className="h-12 w-12 sm:h-24 sm:w-24" />
+          <h1 className="text-3xl font-bold sm:text-5xl">Your account has been suspended.</h1>
           <p className="text-md sm:text-xl">
             <span className="font-semibold">Reason for Suspension:</span> {banReason ?? "None Provided"}
           </p>
@@ -185,13 +167,13 @@ const ProfilePage = ({ params }: Props) => {
 
   if (!user) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
-          <SearchX className="w-12 h-12 sm:w-24 sm:h-24" />
-          <h1 className="text-3xl sm:text-5xl font-bold">@{usernameSubPage} not found!</h1>
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
+          <SearchX className="h-12 w-12 sm:h-24 sm:w-24" />
+          <h1 className="text-3xl font-bold sm:text-5xl">@{usernameSubPage} not found!</h1>
           <Button asChild>
             <Link href="/profile">
-              <UserSearch className="h-4 w-4 mr-2" /> Search Different User
+              <UserSearch className="mr-2 h-4 w-4" /> Search Different User
             </Link>
           </Button>
         </div>
@@ -207,7 +189,6 @@ const ProfilePage = ({ params }: Props) => {
   const isFriendRole = profile?.roles.isFriend;
   const isChapmanStudent = profile?.hasChapmanEmail;
   const profileTagline = profile?.selectedTagline;
-  const profileBackground = profile?.selectedBackground;
 
   const hasEarlyAdopter = profile?.achievements["Early Adopter"]?.unlocked;
   const earlyAdopterDescription = profile?.achievements["Early Adopter"]?.description;
@@ -230,7 +211,7 @@ const ProfilePage = ({ params }: Props) => {
     <>
       <div className="flex flex-col">
         <div className="flex flex-col">
-          <div className={cn("h-full flex flex-col")}>
+          <div className={cn("flex h-full flex-col")}>
             <ProfileBackground
               backgroundCSSValue={backgroundCSSValue}
               isCurrentUser={isCurrentUser}
@@ -243,11 +224,11 @@ const ProfilePage = ({ params }: Props) => {
               backgroundIdForUpdate={backgroundIdForUpdate}
               updateSelectedBackground={updateSelectedBackground}
             />
-            <div className="flex flex-col items-center justify-center text-center gap-y-2 flex-1 px-6 pb-4 bg-background">
-              <div className="flex w-full lg:flex-row flex-col lg:items-start items-center justify-between px-4 lg:px-10 xl:px-20">
-                <div className="flex flex-col w-full lg:mr-8">
-                  <div className="flex lg:flex-row flex-col items-center lg:items-start lg:pt-4 lg:mb-[-4em]">
-                    <Avatar className="flex-col translate-y-[-5em] w-[200px] h-[200px] mb-[-5em] lg:mb-0 border-8 border-background bg-background overflow-hidden">
+            <div className="flex flex-1 flex-col items-center justify-center gap-y-2 bg-background px-6 pb-4 text-center">
+              <div className="flex w-full flex-col items-center justify-between px-4 lg:flex-row lg:items-start lg:px-10 xl:px-20">
+                <div className="flex w-full flex-col lg:mr-8">
+                  <div className="flex flex-col items-center lg:mb-[-4em] lg:flex-row lg:items-start lg:pt-4">
+                    <Avatar className="mb-[-5em] h-[200px] w-[200px] translate-y-[-5em] flex-col overflow-hidden border-8 border-background bg-background lg:mb-0">
                       <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
                       <AvatarImage
                         src={user.picture}
@@ -255,8 +236,8 @@ const ProfilePage = ({ params }: Props) => {
                         className="object-cover"
                       />
                     </Avatar>
-                    <div className="flex flex-col items-center text-center lg:text-start lg:items-start justify-center gap-y-1">
-                      <div className="flex lg:flex-row flex-col items-center lg:items-start">
+                    <div className="flex flex-col items-center justify-center gap-y-1 text-center lg:items-start lg:text-start">
+                      <div className="flex flex-col items-center lg:flex-row lg:items-start">
                         <div className="flex flex-row items-center">
                           {isCurrentUser ? (
                             isEditingUsername ? (
@@ -264,8 +245,8 @@ const ProfilePage = ({ params }: Props) => {
                                 <Input
                                   type="text"
                                   value={usernameForUpdate}
-                                  onChange={(e) => setUsernameForUpdate(e.target.value)}
-                                  className="text-4xl font-bold md:ml-4 mt-2 md:mt-0 transition-all duration-200 ease-in-out"
+                                  onChange={(e) => setUsernameForUpdate(e.target.value.slice(0, 32))}
+                                  className="mt-2 text-4xl font-bold transition-all duration-200 ease-in-out md:ml-4 md:mt-0"
                                   style={{ width: userNameInputWidth }}
                                   onKeyDown={(e) => {
                                     if (e.key === "Escape") {
@@ -274,13 +255,13 @@ const ProfilePage = ({ params }: Props) => {
                                   }}
                                 />
                                 <X
-                                  className="h-7 w-7 ml-1 mt-1 cursor-pointer"
+                                  className="ml-1 mt-1 h-7 w-7 cursor-pointer"
                                   onClick={() => {
                                     setIsEditingUsername(false);
                                   }}
                                 />
                                 <Save
-                                  className="h-7 w-7 ml-1 mt-1 cursor-pointer"
+                                  className="ml-1 mt-1 h-7 w-7 cursor-pointer"
                                   onClick={() => {
                                     setIsEditingUsername(false);
                                   }}
@@ -288,7 +269,7 @@ const ProfilePage = ({ params }: Props) => {
                               </>
                             ) : (
                               <>
-                                <h1 className="text-4xl font-bold md:pl-4 cursor-default">@{user.username}</h1>
+                                <h1 className="cursor-default text-4xl font-bold md:pl-4">@{user.username}</h1>
                                 {/* //TODO: make username editing possible with clerk hook, then uncomment the code below
                                         <SquarePen className="h-7 w-7 ml-1 mt-1 cursor-pointer" onClick={() => {
                                             // setIsEditingUsername(true)
@@ -301,14 +282,14 @@ const ProfilePage = ({ params }: Props) => {
                             <h1 className="text-4xl font-bold md:pl-4">@{user.username}</h1>
                           )}
                         </div>
-                        <div className="flex flex-row items-center lg:items-start gap-x-2 pl-0 pt-2 sm:md:pl-3 sm:md:pt-2">
+                        <div className="flex flex-row items-center gap-x-2 pl-0 pt-2 sm:md:pt-2 sm:md:pl-3 lg:items-start">
                           {isDeveloperRole && (
                             <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                               <Tooltip>
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default drop-shadow transform-gpu"
+                                    className="transform-gpu cursor-default select-none drop-shadow"
                                     src="/badges/developer_badge.svg"
                                     width="25"
                                     height="25"
@@ -316,7 +297,7 @@ const ProfilePage = ({ params }: Props) => {
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p className="text-sm p-1"> Developer </p>
+                                  <p className="p-1 text-sm"> Developer </p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -327,7 +308,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default drop-shadow transform-gpu"
+                                    className="transform-gpu cursor-default select-none drop-shadow"
                                     src="/badges/moderator_badge.svg"
                                     width="25"
                                     height="25"
@@ -335,7 +316,7 @@ const ProfilePage = ({ params }: Props) => {
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p className="text-sm p-1">Moderator</p>
+                                  <p className="p-1 text-sm">Moderator</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -346,7 +327,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default drop-shadow transform-gpu"
+                                    className="transform-gpu cursor-default select-none drop-shadow"
                                     src="/badges/contributor_badge.svg"
                                     width="25"
                                     height="25"
@@ -354,7 +335,7 @@ const ProfilePage = ({ params }: Props) => {
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p className="text-sm p-1">Contributor</p>
+                                  <p className="p-1 text-sm">Contributor</p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -365,7 +346,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default drop-shadow transform-gpu"
+                                    className="transform-gpu cursor-default select-none drop-shadow"
                                     src="/badges/top_player_badge.svg"
                                     width="25"
                                     height="25"
@@ -373,7 +354,7 @@ const ProfilePage = ({ params }: Props) => {
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p className="text-sm p-1"> Top Ranked Player </p>
+                                  <p className="p-1 text-sm"> Top Ranked Player </p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -384,7 +365,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default drop-shadow transform-gpu"
+                                    className="transform-gpu cursor-default select-none drop-shadow"
                                     src="/badges/friend_badge.svg"
                                     alt="Friend Badge"
                                     width="25"
@@ -392,7 +373,7 @@ const ProfilePage = ({ params }: Props) => {
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p className="text-sm p-1"> Friend of a Developer </p>
+                                  <p className="p-1 text-sm"> Friend of a Developer </p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -403,7 +384,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="select-none cursor-default drop-shadow transform-gpu"
+                                    className="transform-gpu cursor-default select-none drop-shadow"
                                     src="/badges/chapman_badge.svg"
                                     alt="Chapman Student Badge"
                                     width="25"
@@ -411,7 +392,7 @@ const ProfilePage = ({ params }: Props) => {
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p className="text-sm p-1"> Chapman Community </p>
+                                  <p className="p-1 text-sm"> Chapman Community </p>
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
@@ -433,7 +414,7 @@ const ProfilePage = ({ params }: Props) => {
                                     variant="outline"
                                     role="combobox"
                                     aria-expanded={taglinePopoverOpen}
-                                    className="w-auto justify-between transition-all ml-4"
+                                    className="ml-4 w-auto justify-between transition-all"
                                   >
                                     {taglineForUpdate
                                       ? unlockedProfileTaglines?.find(
@@ -476,13 +457,13 @@ const ProfilePage = ({ params }: Props) => {
                                 </PopoverContent>
                               </Popover>
                               <X
-                                className="h-5 w-5 ml-1 mt-1 cursor-pointer"
+                                className="ml-1 mt-1 h-5 w-5 cursor-pointer"
                                 onClick={() => {
                                   setIsEditingTagline(false);
                                 }}
                               />
                               <Save
-                                className="h-5 w-5 ml-1 mt-1 cursor-pointer"
+                                className="ml-1 mt-1 h-5 w-5 cursor-pointer"
                                 onClick={() => {
                                   if (taglineIdForUpdate !== profileTagline?._id) {
                                     updateSelectedTagline({
@@ -502,11 +483,11 @@ const ProfilePage = ({ params }: Props) => {
                             </>
                           ) : (
                             <>
-                              <p className="text-md lg:pl-4 font-bold text-muted-foreground italic cursor-default">
+                              <p className="text-md cursor-default font-bold italic text-muted-foreground lg:pl-4">
                                 {profileTagline?.tagline}
                               </p>
                               <SquarePen
-                                className="h-4 w-4 ml-1 cursor-pointer"
+                                className="ml-1 h-4 w-4 cursor-pointer"
                                 onClick={() => {
                                   setTaglineForUpdate(profileTagline?.tagline);
                                   setIsEditingTagline(true);
@@ -515,12 +496,12 @@ const ProfilePage = ({ params }: Props) => {
                             </>
                           )
                         ) : (
-                          <p className="text-md lg:pl-4 font-bold text-muted-foreground italic">
+                          <p className="text-md font-bold italic text-muted-foreground lg:pl-4">
                             {profileTagline?.tagline}
                           </p>
                         )}
                       </div>
-                      <p className="text-md lg:pl-4 font-bold text-muted-foreground/60 italic">
+                      <p className="text-md font-bold italic text-muted-foreground/60 lg:pl-4">
                         Guessr since{" "}
                         {new Date(user._creationTime).toLocaleDateString("en-US", {
                           year: "numeric",
@@ -532,19 +513,19 @@ const ProfilePage = ({ params }: Props) => {
                   </div>
                   {isLargerScreen && <GameHistory isCurrentUser={isCurrentUser} recentGames={recentGames} />}
                 </div>
-                <div className="flex flex-col w-full lg:w-auto space-y-10 items-start pt-4">
-                  <div className="flex flex-col w-full">
+                <div className="flex w-full flex-col items-start space-y-10 pt-4 lg:w-auto">
+                  <div className="flex w-full flex-col">
                     <ProfileActions username={user.username} userClerkId={user.clerkId} isCurrentUser={isCurrentUser} />
                   </div>
-                  <div className="flex flex-col w-full">
-                    <div className="flex flex-row justify-between w-full">
-                      <p className="text-md font-bold mr-4">Level {Number(user.level)}</p>
-                      <p className="text-md text-muted-foreground font-bold">
+                  <div className="flex w-full flex-col">
+                    <div className="flex w-full flex-row justify-between">
+                      <p className="text-md mr-4 font-bold">Level {Number(user.level)}</p>
+                      <p className="text-md font-bold text-muted-foreground">
                         {Number(user.currentXP)}/{xpForNextLevel || 0} XP
                       </p>
                     </div>
                     <LevelProgress
-                      className="w-full lg:w-64 mt-1"
+                      className="mt-1 w-full lg:w-64"
                       value={Number(user.currentXP)}
                       max={xpForNextLevel}
                     />
@@ -575,7 +556,7 @@ const ProfilePage = ({ params }: Props) => {
                 </div>
               </div>
               {!isLargerScreen && (
-                <div className="flex w-full flex-col md:items-start items-center justify-between px-4 lg:px-20">
+                <div className="flex w-full flex-col items-center justify-between px-4 md:items-start lg:px-20">
                   <GameHistory isCurrentUser={isCurrentUser} recentGames={recentGames} />
                 </div>
               )}

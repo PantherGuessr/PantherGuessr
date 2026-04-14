@@ -1,11 +1,14 @@
 "use client";
 
 import L, { LatLng } from "leaflet";
+
 import "leaflet/dist/leaflet.css";
+
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from "react-leaflet";
 
 import { useGame } from "../_context/GameContext";
+
 import "./interactable-map.css";
 
 const InteractableMap = () => {
@@ -119,9 +122,9 @@ const InteractableMap = () => {
   }
 
   return (
-    <div className="flex min-h-full min-w-full grow fade-in-map">
+    <div className="fade-in-map flex min-h-full min-w-full grow">
       <MapContainer
-        className="w-full h-full rounded-md"
+        className="h-full w-full rounded-md"
         attributionControl={true}
         center={[33.793332, -117.851475]}
         zoom={17}

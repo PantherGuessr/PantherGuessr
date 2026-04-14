@@ -8,8 +8,8 @@ const SiteSettings = () => {
   return (
     <>
       <div className="flex flex-wrap justify-items-center">
-        <div className="md:basis-1/2 w-full my-4 flex-grow">
-          <Card className="p-2 m-2 h-full">
+        <div className="my-4 w-full flex-grow md:basis-1/2">
+          <Card className="m-2 h-full p-2">
             <CardHeader className="text-start">
               <CardTitle>Gamemode Configuration</CardTitle>
               <CardDescription>Configure which gamemodes are enabled for all users.</CardDescription>
@@ -35,8 +35,8 @@ const SiteSettings = () => {
             </CardContent>
           </Card>
         </div>
-        <div className="md:basis-1/2 w-full my-4 flex-grow">
-          <Card className="p-2 m-2 h-full">
+        <div className="my-4 w-full flex-grow md:basis-1/2">
+          <Card className="m-2 h-full p-2">
             <CardHeader className="text-start">
               <CardTitle>Category Configuration</CardTitle>
               <CardDescription>Configure which level categories are enabled for all users.</CardDescription>

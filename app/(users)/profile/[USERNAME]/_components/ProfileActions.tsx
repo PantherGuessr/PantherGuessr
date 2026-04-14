@@ -15,9 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
 import { api } from "@/convex/_generated/api";
-
 import { toast } from "@/hooks/use-toast";
 
 interface ProfileActionsProps {
@@ -57,7 +55,7 @@ const ProfileActions = ({ username, userClerkId, isCurrentUser }: ProfileActions
   };
 
   return (
-    <div className="flex flex-row space-x-4 justify-center lg:justify-end w-full">
+    <div className="flex w-full flex-row justify-center space-x-4 lg:justify-end">
       {isCurrentUser && (
         <TooltipProvider>
           <Tooltip>
