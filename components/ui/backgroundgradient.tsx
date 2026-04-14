@@ -1,3 +1,9 @@
 export const BackgroundGradient = () => (
-  <div className="circlePosition fixed left-[50%] top-[50%] z-[-5] h-[400px] w-[490px] translate-x-[-50%] translate-y-[-50%] scale-x-[100%] scale-y-[125%] animate-[pulse_7s_ease-in-out_infinite] rounded-[100%] bg-[#ff4e4e] blur-[30em] dark:bg-[#520000] md:translate-y-[-85%] md:scale-x-[170%] md:scale-y-[100%]"></div>
+  <div
+    className="fixed left-[50%] top-[50%] z-[-5] h-[900px] w-[1000px] -translate-x-1/2 -translate-y-1/2 animate-[pulse_7s_ease-in-out_infinite]"
+    style={{
+      background: "radial-gradient(circle, var(--glow-color) 0%, transparent 65%)",
+      willChange: "opacity",
+    }}
+  />
 );
