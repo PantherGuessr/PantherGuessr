@@ -26,6 +26,7 @@ export default [
     },
     rules: {
       "prettier/prettier": "error",
+      "eol-last": ["error", "always"],
       camelcase: "off",
       "import/prefer-default-export": "off",
       "react/jsx-filename-extension": "off",
