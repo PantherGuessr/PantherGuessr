@@ -321,7 +321,12 @@ const Levels = () => {
   return (
     <>
       <p className="text-start">{tableData?.length || 0} total levels.</p>
-      <DataTable columns={columns} data={tableData || []} initialSorting={[{ id: "_creationTime", desc: true }]} />
+      <DataTable
+        columns={columns}
+        data={tableData || []}
+        initialSorting={[{ id: "_creationTime", desc: true }]}
+        initialColumnVisibility={{ tags: false, _creationTime: false }}
+      />
     </>
   );
 };
