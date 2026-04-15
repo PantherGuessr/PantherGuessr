@@ -42,6 +42,20 @@ const CreditsPage = () => {
             professionalEmailUsername="jake"
           />
         </div>
+
+        <h2 className="justify-self-center text-xl md:text-3xl">Open Source Tools</h2>
+        <div className="mx-auto w-full max-w-6xl flex-row gap-6">
+          <p>For PantherGuessr to work, we rely on a number of open source projects.</p>
+        </div>
+
+        <h2 className="justify-self-center text-xl md:text-3xl">Special Thanks</h2>
+        <div className="mx-auto w-full max-w-6xl flex-row gap-6">
+          <p>
+            Sam, Sabrina, Divi, Katelyn, Allie, Sophia, Jeffrey, Noslen, Kyla, Margo, Tom, Nataniel, Kalin, and
+            Clarence.
+          </p>
+        </div>
+
         <p>Made with ❤️ at Chapman University</p>
       </div>
       <Footer />

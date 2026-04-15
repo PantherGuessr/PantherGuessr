@@ -18,7 +18,7 @@ interface LogoProps {
   textOptions?: string;
 }
 
-export const Logo = ({ href, as_png, badge = true, logoDimensions = 40, textOptions }: LogoProps) => {
+export const Logo = ({ href, as_png, badge = false, logoDimensions = 40, textOptions }: LogoProps) => {
   const logoContent = (
     <div className="flex items-center gap-x-2">
       <Image
