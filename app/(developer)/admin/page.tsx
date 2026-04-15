@@ -9,6 +9,7 @@ import LevelUpload from "./_levels/_helpers/levelupload";
 import { MarkerProvider } from "./_levels/_helpers/MarkerContext";
 import Levels from "./_levels/levels";
 import SiteSettings from "./_sitesettings/sitesettings";
+import Users from "./_users/users";
 import WeeklyChallengeConfig from "./_weekly/weeklyconfig";
 
 const AdminPage = () => {
@@ -72,6 +73,11 @@ const AdminPage = () => {
                 </CardContent>
               </MarkerProvider>
             </Card>
+          </TabsContent>
+          <TabsContent value="users">
+            <div className="mx-10 mt-8">
+              <Users />
+            </div>
           </TabsContent>
           <TabsContent value="settings">
             <Card className="mx-10 mt-8 p-2">
