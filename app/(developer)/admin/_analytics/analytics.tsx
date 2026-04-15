@@ -34,9 +34,9 @@ const StatCard = ({
   value: string | number;
   sub?: string;
 }) => (
-  <Card className="p-4">
+  <Card className="p-2 md:p-4">
     <p className="text-xs text-muted-foreground">{label}</p>
-    <p className="mt-1 text-2xl font-bold">{value}</p>
+    <p className="mt-1 text-xl font-bold md:text-2xl">{value}</p>
     {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
   </Card>
 );
@@ -135,9 +135,9 @@ const Analytics = () => {
       {/* ── Row 3: daily charts ── */}
       <div className="flex flex-wrap gap-4">
         <div className="min-w-0 flex-1">
-          <Card className="h-full p-2">
-            <CardHeader>Games Played — Last 7 Days</CardHeader>
-            <CardContent>
+          <Card className="h-full p-1 md:p-2">
+            <CardHeader className="px-3 md:px-6">Games Played — Last 7 Days</CardHeader>
+            <CardContent className="px-2 md:px-6">
               <ChartContainer config={gamesChartConfig} className="min-h-[200px] w-full">
                 <BarChart accessibilityLayer data={dailyGamesData}>
                   <CartesianGrid vertical={false} />
@@ -150,9 +150,9 @@ const Analytics = () => {
           </Card>
         </div>
         <div className="min-w-0 flex-1">
-          <Card className="h-full p-2">
-            <CardHeader>New Signups — Last 7 Days</CardHeader>
-            <CardContent>
+          <Card className="h-full p-1 md:p-2">
+            <CardHeader className="px-3 md:px-6">New Signups — Last 7 Days</CardHeader>
+            <CardContent className="px-2 md:px-6">
               <ChartContainer config={usersChartConfig} className="min-h-[200px] w-full">
                 <BarChart accessibilityLayer data={summary?.newUsersPerDay ?? []}>
                   <CartesianGrid vertical={false} />
@@ -169,9 +169,9 @@ const Analytics = () => {
       {/* ── Row 4: monthly + game type charts ── */}
       <div className="flex flex-wrap gap-4">
         <div className="min-w-0 flex-1">
-          <Card className="h-full p-2">
-            <CardHeader>Games Played — By Month</CardHeader>
-            <CardContent>
+          <Card className="h-full p-1 md:p-2">
+            <CardHeader className="px-3 md:px-6">Games Played — By Month</CardHeader>
+            <CardContent className="px-2 md:px-6">
               <ChartContainer config={gamesChartConfig} className="min-h-[200px] w-full">
                 <BarChart accessibilityLayer data={monthlyGamesData}>
                   <CartesianGrid vertical={false} />
@@ -189,9 +189,9 @@ const Analytics = () => {
           </Card>
         </div>
         <div className="min-w-0 flex-1">
-          <Card className="h-full p-2">
-            <CardHeader>Games By Type — All Time</CardHeader>
-            <CardContent>
+          <Card className="h-full p-1 md:p-2">
+            <CardHeader className="px-3 md:px-6">Games By Type — All Time</CardHeader>
+            <CardContent className="px-2 md:px-6">
               <ChartContainer config={gameTypeChartConfig} className="min-h-[200px] w-full">
                 <BarChart accessibilityLayer data={gameTypeData}>
                   <CartesianGrid vertical={false} />
@@ -206,9 +206,9 @@ const Analytics = () => {
       </div>
 
       {/* ── Row 5: top levels ── */}
-      <Card className="p-2">
-        <CardHeader>Top 5 Most Played Levels</CardHeader>
-        <CardContent>
+      <Card className="p-1 md:p-2">
+        <CardHeader className="px-3 md:px-6">Top 5 Most Played Levels</CardHeader>
+        <CardContent className="px-2 md:px-6 [&_td]:px-2 [&_td]:py-2 [&_th]:px-2 md:[&_td]:px-4 md:[&_th]:px-4">
           <Table>
             <TableHeader>
               <TableRow>

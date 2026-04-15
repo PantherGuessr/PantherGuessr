@@ -44,9 +44,9 @@ const AdminPage = () => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="analytics">
-            <Card className="mx-1 mt-8 md:mx-10 p-2">
-              <CardHeader className="ml-2 text-start text-4xl">Analytics</CardHeader>
-              <CardContent>
+            <Card className="mx-1 mt-8 p-0 md:mx-10 md:p-2">
+              <CardHeader className="px-3 text-start text-4xl md:px-6">Analytics</CardHeader>
+              <CardContent className="px-2 md:px-6">
                 <Analytics />
               </CardContent>
             </Card>
