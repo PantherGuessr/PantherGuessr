@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 import { Footer } from "@/components/footer";
-import { OPEN_SOURCE_TOOLS } from "@/lib/open-source-tooling";
 import MaintainerCard from "./_components/maintainer-card";
+import OpenSourceToolsList from "./_components/open-source-tools-list";
 
 const CreditsPage = () => {
   return (
@@ -47,27 +47,7 @@ const CreditsPage = () => {
         </div>
 
         <h2 className="justify-self-center text-xl md:text-3xl">Open Source Tools</h2>
-        <div className="mx-auto w-full max-w-3xl space-y-8 text-left">
-          {OPEN_SOURCE_TOOLS.map(({ category, packages }) => (
-            <div key={category}>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{category}</p>
-              <div className="divide-y divide-border rounded-lg border">
-                {packages.map(({ name, href, license }) => (
-                  <Link
-                    key={name}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-accent"
-                  >
-                    <span className="text-sm font-medium">{name}</span>
-                    <span className="text-xs text-muted-foreground">{license}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        <OpenSourceToolsList />
 
         <h2 className="justify-self-center text-xl md:text-3xl">Special Thanks</h2>
         <div className="mx-auto w-full max-w-6xl flex-row gap-6">
