@@ -139,9 +139,9 @@ cd PantherGuessr
 Run the follow commands to make sure that you are on the correct versions:
 
 ```sh
-node -v # Should be v22.5.1
-npm -v # Should be 10.8.3
-npx -v # Should be 10.8.3
+node -v # Should be v24.13.1
+npm -v # Should be 11.8.0
+npx -v # Should be 11.8.0
 ```
 
 5. **Install Dependencies**: Install the required dependencies using npm:

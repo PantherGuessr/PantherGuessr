@@ -23,9 +23,9 @@
 1. Run the following to make sure you are on the correct versions:
 
 ```bash
-node -v # Should be v22.5.1
-npm -v # Should be 10.8.3
-npx -v # Should be 10.8.3
+node -v # Should be v24.13.1
+npm -v # Should be 11.8.0
+npx -v # Should be 11.8.0
 ```
 
 Note: If any of the versions do not match, please install the versions listed above. If you use `nvm`, you can run the following commands:
