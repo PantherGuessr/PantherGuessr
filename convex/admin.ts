@@ -42,6 +42,121 @@ export const getImageSrcByLevelId = query({
 });
 
 /**
+ * Returns a comprehensive analytics summary in a single query.
+ * Fetches users, reports, appeals, levels, and leaderboard entries in parallel
+ * to minimise round-trips. Only accessible to developers and moderators.
+ */
+export const getAdminSummary = query({
+  args: {},
+  async handler(ctx) {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    const callerUser = await ctx.db
+      .query("users")
+      .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!callerUser?.roles?.includes("developer") && !callerUser?.roles?.includes("moderator")) {
+      return null;
+    }
+
+    const now = Date.now();
+    const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
+    const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
+
+    const [allUsers, openReports, openAppeals, levels, entries] = await Promise.all([
+      ctx.db.query("users").collect(),
+      ctx.db.query("userReports").filter((q) => q.eq(q.field("hasBeenResolved"), false)).collect(),
+      ctx.db.query("banAppeals").filter((q) => q.eq(q.field("hasBeenResolved"), false)).collect(),
+      ctx.db.query("levels").collect(),
+      ctx.db.query("leaderboardEntries").collect(),
+    ]);
+
+    // --- User stats ---
+    const totalUsers = allUsers.length;
+    const bannedUsers = allUsers.filter((u) => u.isBanned).length;
+    const activeStreakUsers = allUsers.filter((u) => u.currentStreak > 0n).length;
+    const newUsersLast7Days = allUsers.filter((u) => u._creationTime >= sevenDaysAgo).length;
+    const newUsersLast30Days = allUsers.filter((u) => u._creationTime >= thirtyDaysAgo).length;
+
+    // New users per day for the last 7 days (oldest → newest for charting)
+    const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const nowDate = new Date();
+    const newUsersPerDay: { day: string; count: number }[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(nowDate);
+      d.setDate(d.getDate() - i);
+      const startOfDay = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+      const endOfDay = startOfDay + 24 * 60 * 60 * 1000;
+      const count = allUsers.filter(
+        (u) => u._creationTime >= startOfDay && u._creationTime < endOfDay,
+      ).length;
+      newUsersPerDay.push({ day: i === 0 ? "Today" : dayLabels[d.getDay()], count });
+    }
+
+    // --- Level stats ---
+    const totalLevels = levels.length;
+    const topLevels = [...levels]
+      .sort((a, b) => Number(b.timesPlayed - a.timesPlayed))
+      .slice(0, 5)
+      .map((l) => ({ _id: l._id, title: l.title, timesPlayed: l.timesPlayed }));
+
+    // --- Game stats from leaderboard entries ---
+    const totalGames = entries.length;
+    const singleplayer = entries.filter((e) => e.gameType === "singleplayer").length;
+    const weekly = entries.filter((e) => e.gameType === "weekly").length;
+    const multiplayer = entries.filter((e) => e.gameType === "multiplayer").length;
+
+    let avgScore = 0;
+    let avgDistancePerRound = 0;
+    let avgTimeSecs = 0;
+
+    if (entries.length > 0) {
+      const totalScore = entries.reduce(
+        (acc, e) => acc + Number(e.round_1 + e.round_2 + e.round_3 + e.round_4 + e.round_5),
+        0,
+      );
+      const totalDistance = entries.reduce(
+        (acc, e) =>
+          acc +
+          Number(
+            e.round_1_distance +
+              e.round_2_distance +
+              e.round_3_distance +
+              e.round_4_distance +
+              e.round_5_distance,
+          ),
+        0,
+      );
+      const totalTime = entries.reduce((acc, e) => acc + Number(e.totalTimeTaken), 0);
+
+      avgScore = Math.round(totalScore / entries.length);
+      avgDistancePerRound = Math.round(totalDistance / entries.length / 5);
+      avgTimeSecs = Math.round(totalTime / entries.length);
+    }
+
+    return {
+      totalUsers,
+      bannedUsers,
+      activeStreakUsers,
+      newUsersLast7Days,
+      newUsersLast30Days,
+      newUsersPerDay,
+      openReports: openReports.length,
+      openAppeals: openAppeals.length,
+      totalLevels,
+      topLevels,
+      totalGames,
+      gameTypeBreakdown: { singleplayer, weekly, multiplayer },
+      avgScore,
+      avgDistancePerRound,
+      avgTimeSecs,
+    };
+  },
+});
+
+/**
  * Retrieves all ban appeals with enriched user and moderator info.
  * Sorted: unresolved first, then by creation time descending.
  * Only accessible to users with the "developer" or "moderator" role.
