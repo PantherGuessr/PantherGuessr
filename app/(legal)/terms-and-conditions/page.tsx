@@ -12,7 +12,7 @@ const TermsAndConditionsPage = () => {
           <h1 className="text-5xl">Terms and Conditions</h1>
           <div className="space-y-4">
             <p>
-              <span className="font-bold">Effective Date:</span> February 16th, 2025
+              <span className="font-bold">Effective Date:</span> April 15th, 2026
             </p>
             <p>
               Welcome to PantherGuessr, designated by (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;). By using our
@@ -86,7 +86,18 @@ const TermsAndConditionsPage = () => {
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-2xl">7. Contact Information</h2>
+            <h2 className="text-2xl">7. Disclaimer of Affiliation</h2>
+            <p>
+              PantherGuessr is an independent, student-made project and is not affiliated with, endorsed by, sponsored
+              by, or in any way officially connected to Chapman University. The name &quot;Panther&quot; is used
+              informally to reference Chapman University&apos;s mascot and campus community. All references to Chapman
+              University are for descriptive purposes only. Chapman University is not responsible for the content,
+              operation, or availability of this website.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-2xl">8. Contact Information</h2>
             <p>
               If you have questions about these terms, please contact us at:{" "}
               <Link
