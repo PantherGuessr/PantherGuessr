@@ -26,6 +26,7 @@ body {
 
 @layer base {
   :root {
+    --glow-color: #ff4e4e;
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -53,6 +54,7 @@ body {
     --radius: 0.5rem;
   }
   .dark {
+    --glow-color: #520000;
     --background: 0, 100%, 4%; /* Dark red */
     --foreground: 0 0% 98%;
     --card: 0 100% 5%; /* Slightly lighter dark red */

@@ -30,7 +30,7 @@ const GamePage = () => {
     }
   }, [currentUser, router]);
 
-  const isMobile = useMediaQuery("(max-width: 600px");
+  const isMobile = useMediaQuery("(max-width: 600px)");
 
   if (isLoading) {
     return (
