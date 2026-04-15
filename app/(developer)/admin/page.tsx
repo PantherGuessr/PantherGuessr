@@ -23,7 +23,7 @@ const AdminPage = () => {
 
   return (
     <div className="flex min-h-full flex-col">
-      <div className="flex flex-1 flex-col gap-y-8 px-6 pb-10 text-center">
+      <div className="flex flex-1 flex-col gap-y-8 px-1 pb-10 text-center md:px-6">
         <h1 className="text-4xl">Admin Dashboard</h1>
         <Tabs defaultValue={tab} onValueChange={handleTabChange}>
           <TabsList>
@@ -44,7 +44,7 @@ const AdminPage = () => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="analytics">
-            <Card className="mx-10 mt-8 p-2">
+            <Card className="mx-1 mt-8 md:mx-10 p-2">
               <CardHeader className="ml-2 text-start text-4xl">Analytics</CardHeader>
               <CardContent>
                 <Analytics />
@@ -53,7 +53,7 @@ const AdminPage = () => {
           </TabsContent>
           <TabsContent value="levels">
             <MarkerProvider>
-              <Card className="mx-10 mt-8 p-2">
+              <Card className="mx-1 mt-8 md:mx-10 p-2">
                 <CardHeader className="flex flex-row justify-between">
                   <p className="ml-2 text-start text-4xl">Levels</p>
                   <LevelUpload />
@@ -65,7 +65,7 @@ const AdminPage = () => {
             </MarkerProvider>
           </TabsContent>
           <TabsContent value="weekly">
-            <Card className="mx-10 mt-8 p-2">
+            <Card className="mx-1 mt-8 md:mx-10 p-2">
               <MarkerProvider>
                 <CardHeader className="ml-2 text-start text-4xl">Weekly Challenges</CardHeader>
                 <CardContent>
@@ -75,12 +75,12 @@ const AdminPage = () => {
             </Card>
           </TabsContent>
           <TabsContent value="users">
-            <div className="mx-10 mt-8">
+            <div className="mx-1 mt-8 md:mx-10">
               <Users />
             </div>
           </TabsContent>
           <TabsContent value="settings">
-            <Card className="mx-10 mt-8 p-2">
+            <Card className="mx-1 mt-8 md:mx-10 p-2">
               <CardHeader className="ml-2 text-start text-4xl">Site Settings</CardHeader>
               <CardContent>
                 <SiteSettings />
