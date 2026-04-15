@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Link from "next/link";
+import { SignUpButton } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
 
 import DemoRoundPanel from "@/app/(marketing)/_components/_panels/demo-round-panel";
@@ -21,17 +21,18 @@ export const NewUserHeading = () => {
             Test your campus knowledge with <span className="font-bold">PantherGuessr</span>, the free game where you
             identify the locations of photos around Chapman University
           </h2>
-          <Link
-            className="w-1/2 transition-all duration-300 ease-in-out hover:w-[53%]"
-            href="/waitlist"
-            onMouseOver={() => setSignOnButtonHovered(true)}
-            onMouseLeave={() => setSignOnButtonHovered(false)}
-          >
-            <div className="waitlist-button glow flex h-16 flex-row items-center justify-center bg-primary text-primary-foreground shadow-md">
-              <p className="pr-1 text-lg">Join our waitlist</p>
-              <ArrowRight className={cn("transition-transform", signOnButtonHovered && "translate-x-1")} />
+          <SignUpButton mode="modal" fallbackRedirectUrl={window.location.href}>
+            <div
+              className="w-1/2 cursor-pointer transition-all duration-300 ease-in-out hover:w-[53%]"
+              onMouseOver={() => setSignOnButtonHovered(true)}
+              onMouseLeave={() => setSignOnButtonHovered(false)}
+            >
+              <div className="waitlist-button glow flex h-16 flex-row items-center justify-center bg-primary text-primary-foreground shadow-md">
+                <p className="pr-1 text-lg">Sign up to play</p>
+                <ArrowRight className={cn("transition-transform", signOnButtonHovered && "translate-x-1")} />
+              </div>
             </div>
-          </Link>
+          </SignUpButton>
         </div>
         <div className="flex basis-1/2 flex-col px-4 pt-8 md:pt-0">
           <DemoRoundPanel />

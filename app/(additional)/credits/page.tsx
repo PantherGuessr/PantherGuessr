@@ -1,4 +1,7 @@
+import Link from "next/link";
+
 import { Footer } from "@/components/footer";
+import { OPEN_SOURCE_TOOLS } from "@/lib/open-source-tooling";
 import MaintainerCard from "./_components/maintainer-card";
 
 const CreditsPage = () => {
@@ -7,13 +10,13 @@ const CreditsPage = () => {
       <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
         <div className="space-y-2">
           <h1 className="justify-self-center text-4xl md:text-6xl">Credits</h1>
-          <p>Below are all the people that make PantherGuessr possible.</p>
+          <p>Below are all the people and tools that make PantherGuessr possible.</p>
         </div>
 
         <h2 className="justify-self-center text-xl md:text-3xl">Project Maintainers</h2>
         <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
           <MaintainerCard
-            profilePicture="/profile-pictures/dylan.jpeg"
+            profilePicture="/profile-pictures/dylan.webp"
             name="Dylan Ravel"
             role="Developer"
             userId="jh762ew1zf9rtxph2hp588g6w17mj5d5"
@@ -23,7 +26,7 @@ const CreditsPage = () => {
             professionalEmailUsername="dylan"
           />
           <MaintainerCard
-            profilePicture="/profile-pictures/daniel.jpeg"
+            profilePicture="/profile-pictures/daniel.webp"
             name="Daniel Tsivkovski"
             role="Developer"
             userId="jh7fgd24se407hq5rdma0nqesd7mkheh"
@@ -44,8 +47,26 @@ const CreditsPage = () => {
         </div>
 
         <h2 className="justify-self-center text-xl md:text-3xl">Open Source Tools</h2>
-        <div className="mx-auto w-full max-w-6xl flex-row gap-6">
-          <p>For PantherGuessr to work, we rely on a number of open source projects.</p>
+        <div className="mx-auto w-full max-w-3xl space-y-8 text-left">
+          {OPEN_SOURCE_TOOLS.map(({ category, packages }) => (
+            <div key={category}>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{category}</p>
+              <div className="divide-y divide-border rounded-lg border">
+                {packages.map(({ name, href, license }) => (
+                  <Link
+                    key={name}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-accent"
+                  >
+                    <span className="text-sm font-medium">{name}</span>
+                    <span className="text-xs text-muted-foreground">{license}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
 
         <h2 className="justify-self-center text-xl md:text-3xl">Special Thanks</h2>

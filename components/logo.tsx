@@ -23,19 +23,11 @@ export const Logo = ({ href, as_png, badge = false, logoDimensions = 40, textOpt
     <div className="flex items-center gap-x-2">
       <Image
         draggable={false}
-        src={as_png ? "/logo.png" : "/logo.svg"}
+        src={as_png ? "/pantherguessr_logo.png" : "/pantherguessr_logo.svg"}
         height={logoDimensions}
         width={logoDimensions}
         alt="Logo"
-        className="select-none dark:hidden"
-      />
-      <Image
-        draggable={false}
-        src={as_png ? "/logo-dark.png" : "/logo-dark.svg"}
-        height={logoDimensions}
-        width={logoDimensions}
-        alt="Logo"
-        className="hidden select-none dark:block"
+        className="select-none"
       />
       <p className={cn("select-none pl-2 font-semibold", font.className, textOptions)}>PantherGuessr</p>
       {badge && (
