@@ -4,8 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-import { OPEN_SOURCE_TOOLS } from "@/lib/open-source-tooling";
 import { Button } from "@/components/ui/button";
+import { OPEN_SOURCE_TOOLS } from "@/lib/open-source-tooling";
 
 const OpenSourceToolsList = () => {
   const [expanded, setExpanded] = useState(false);

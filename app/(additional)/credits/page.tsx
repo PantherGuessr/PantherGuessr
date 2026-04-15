@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { Footer } from "@/components/footer";
 import MaintainerCard from "./_components/maintainer-card";
 import OpenSourceToolsList from "./_components/open-source-tools-list";
