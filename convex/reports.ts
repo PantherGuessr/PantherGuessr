@@ -55,6 +55,8 @@ export const getLevelReports = query({
         return {
           ...report,
           levelTitle: level?.title ?? "Unknown Level",
+          latitude: level?.latitude ?? 0,
+          longitude: level?.longitude ?? 0,
         };
       })
     );

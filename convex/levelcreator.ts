@@ -41,6 +41,33 @@ export const createLevelWithImageStorageId = mutation({
 });
 
 /**
+ * Updates a level's image and/or coordinates. Deletes the old image from storage when replacing.
+ */
+export const updateLevel = mutation({
+  args: {
+    levelId: v.id("levels"),
+    newImageId: v.optional(v.id("_storage")),
+    latitude: v.optional(v.float64()),
+    longitude: v.optional(v.float64()),
+  },
+  handler: async (ctx, args) => {
+    const level = await ctx.db.get(args.levelId);
+    if (!level) throw new Error("Level not found");
+
+    const updates: { imageId?: typeof level.imageId; latitude?: number; longitude?: number } = {};
+
+    if (args.newImageId !== undefined) {
+      await ctx.storage.delete(level.imageId);
+      updates.imageId = args.newImageId;
+    }
+    if (args.latitude !== undefined) updates.latitude = args.latitude;
+    if (args.longitude !== undefined) updates.longitude = args.longitude;
+
+    await ctx.db.patch(args.levelId, updates);
+  },
+});
+
+/**
  * Deletes a level by its ID and the associated image from storage
  * @param args.levelId - The ID of the level to delete
  */

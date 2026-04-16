@@ -13,8 +13,14 @@ import ReportButton from "./report-button";
 import "./interactable-map.css";
 
 const InteractableMap = () => {
-  const { markerHasBeenPlaced, setMarkerHasBeenPlaced, isSubmittingGuess, setMarkerPosition, correctLocation, currentLevelId } =
-    useGame()!;
+  const {
+    markerHasBeenPlaced,
+    setMarkerHasBeenPlaced,
+    isSubmittingGuess,
+    setMarkerPosition,
+    correctLocation,
+    currentLevelId,
+  } = useGame()!;
   const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
   const prevCorrectLocation = useRef<LatLng | null>(null);
 
