@@ -67,18 +67,11 @@ export const Heading = () => {
             <div className="flex h-full w-full flex-grow flex-col items-center justify-center px-4 pt-10">
               <div className="mb-4 flex basis-1/2 flex-col items-center justify-center px-8">
                 <Image
-                  src="/logo.svg"
-                  height="120"
-                  width="120"
+                  src="/pantherguessr_logo.svg"
+                  height="180"
+                  width="180"
                   alt="Logo"
-                  className="animate-fly-in-from-top-delay-0ms dark:hidden"
-                />
-                <Image
-                  src="/logo-dark.svg"
-                  height="120"
-                  width="120"
-                  alt="Logo"
-                  className="animate-fly-in-from-top-delay-0ms hidden dark:block"
+                  className="animate-fly-in-from-top-delay-0ms"
                 />
                 <h1
                   className={

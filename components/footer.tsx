@@ -19,7 +19,7 @@ export const Footer = () => {
   return (
     <div className="z-5 flex w-full items-center bg-transparent p-6">
       <div className="hidden w-full items-center justify-end gap-x-2 text-muted-foreground md:ml-auto md:flex">
-        <p className="ml-2 mr-auto text-sm">© 2025 • PantherGuessr</p>
+        <p className="ml-2 mr-auto text-sm">© 2026 • PantherGuessr</p>
         <Link href="/credits">
           <Button variant="ghost" size="sm">
             <Heart className="mr-2 h-4 w-4" />
@@ -82,7 +82,7 @@ export const Footer = () => {
             </Link>
           </DropdownMenuContent>
         </DropdownMenu>
-        <p className="mx-auto text-sm">© 2025 • PantherGuessr</p>
+        <p className="mx-auto text-sm">© 2026 • PantherGuessr</p>
         <ModeToggle />
       </div>
     </div>
