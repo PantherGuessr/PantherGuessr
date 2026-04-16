@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useMutation, useQuery } from "convex/react";
-import { CheckCircle, LoaderCircle, MinusCircle, MapPin, ImageIcon } from "lucide-react";
+import { CheckCircle, ImageIcon, LoaderCircle, MapPin, MinusCircle } from "lucide-react";
 
+import { REPORT_REASON_LABELS } from "@/app/(main)/game/_constants/reportReasons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,13 +22,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import DynamicReviewMap from "./dynamic-review-map";
-
-const REASON_LABELS: Record<string, string> = {
-  not_university_property: "Not part of the university property",
-  pin_incorrectly_placed: "Pin is incorrectly placed",
-  wrong_image: "Something is wrong with the image",
-  outdated_image: "Outdated image",
-};
 
 export type ReviewableReport = {
   _id: Id<"levelReports">;
@@ -56,10 +50,7 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const imageSrc = useQuery(
-    api.admin.getImageSrcByLevelId,
-    open && report ? { id: report.levelId } : "skip"
-  );
+  const imageSrc = useQuery(api.admin.getImageSrcByLevelId, open && report ? { id: report.levelId } : "skip");
 
   const generateUploadUrl = useMutation(api.levelcreator.generateUploadUrl);
   const updateLevel = useMutation(api.levelcreator.updateLevel);
@@ -77,21 +68,28 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
     }
   }, [open, report?._id]);
 
-  // Clean up object URLs on unmount or when preview changes
+  // Clean up object URLs only on unmount to avoid race where the URL is revoked
+  // before the image element finishes using it.
+  const previewUrlRef = useRef<string | null>(null);
   useEffect(() => {
     return () => {
-      if (newImagePreviewUrl) URL.revokeObjectURL(newImagePreviewUrl);
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
     };
-  }, [newImagePreviewUrl]);
+  }, []);
 
   const pinChanged = report ? editedLat !== report.latitude || editedLng !== report.longitude : false;
   const imageChanged = newImageFile !== null;
   const hasChanges = pinChanged || imageChanged;
 
   const handleFileSelect = (file: File | null) => {
-    if (newImagePreviewUrl) URL.revokeObjectURL(newImagePreviewUrl);
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current);
+      previewUrlRef.current = null;
+    }
     setNewImageFile(file);
-    setNewImagePreviewUrl(file ? URL.createObjectURL(file) : null);
+    const url = file ? URL.createObjectURL(file) : null;
+    previewUrlRef.current = url;
+    setNewImagePreviewUrl(url);
   };
 
   const saveChanges = async () => {
@@ -133,6 +131,7 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
         headers: { "Content-Type": compressedFile.type },
         body: compressedFile,
       });
+      if (!result.ok) throw new Error("Image upload failed. Please try again.");
       const { storageId } = await result.json();
       newImageId = storageId;
     }
@@ -167,13 +166,18 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
   const displayImageSrc = newImagePreviewUrl ?? imageSrc ?? null;
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen && !isSubmitting) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen && !isSubmitting) onClose();
+      }}
+    >
       <DialogContent className="max-h-[90vh] w-full max-w-4xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Review Level Report</DialogTitle>
           <DialogDescription>
             Report for &quot;{report?.levelTitle ?? "Unknown"}&quot; —{" "}
-            {report ? (REASON_LABELS[report.reason] ?? report.reason) : ""}
+            {report ? (REPORT_REASON_LABELS[report.reason] ?? report.reason) : ""}
           </DialogDescription>
         </DialogHeader>
 
@@ -211,20 +215,13 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
                 </div>
                 <div className="relative aspect-4/3 w-full overflow-hidden rounded-md border bg-secondary">
                   {displayImageSrc ? (
-                    <Image
-                      src={displayImageSrc}
-                      alt={report.levelTitle}
-                      fill
-                      className="object-cover"
-                    />
+                    <Image src={displayImageSrc} alt={report.levelTitle} fill className="object-cover" />
                   ) : (
                     <Skeleton className="h-full w-full" />
                   )}
                 </div>
                 {imageChanged && newImageFile && (
-                  <p className="truncate text-xs text-muted-foreground">
-                    New image: {newImageFile.name}
-                  </p>
+                  <p className="truncate text-xs text-muted-foreground">New image: {newImageFile.name}</p>
                 )}
               </div>
 
@@ -274,11 +271,7 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
           <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button
-            variant="secondary"
-            onClick={() => handleAction("dismiss")}
-            disabled={isSubmitting}
-          >
+          <Button variant="secondary" onClick={() => handleAction("dismiss")} disabled={isSubmitting}>
             {isSubmitting ? (
               <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
             ) : (

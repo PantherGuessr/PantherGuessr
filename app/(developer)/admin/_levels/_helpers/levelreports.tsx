@@ -4,18 +4,12 @@ import { useState } from "react";
 import { useQuery } from "convex/react";
 import { Eye, EyeOff } from "lucide-react";
 
+import { REPORT_REASON_LABELS } from "@/app/(main)/game/_constants/reportReasons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import LevelReportReviewDialog, { ReviewableReport } from "./level-report-review-dialog";
-
-const REASON_LABELS: Record<string, string> = {
-  not_university_property: "Not part of the university property",
-  pin_incorrectly_placed: "Pin is incorrectly placed",
-  wrong_image: "Something is wrong with the image",
-  outdated_image: "Outdated image",
-};
 
 const LevelReports = () => {
   const reports = useQuery(api.reports.getLevelReports);
@@ -71,6 +65,12 @@ const LevelReports = () => {
                   Loading...
                 </TableCell>
               </TableRow>
+            ) : reports === null ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                  Unauthorized.
+                </TableCell>
+              </TableRow>
             ) : visible.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
@@ -82,7 +82,7 @@ const LevelReports = () => {
                 <TableRow key={report._id}>
                   <TableCell className="font-medium">{report.levelTitle}</TableCell>
                   <TableCell className="max-w-[200px]">
-                    <p className="truncate text-sm">{REASON_LABELS[report.reason] ?? report.reason}</p>
+                    <p className="truncate text-sm">{REPORT_REASON_LABELS[report.reason] ?? report.reason}</p>
                   </TableCell>
                   <TableCell>
                     {report.status === "pending" ? (

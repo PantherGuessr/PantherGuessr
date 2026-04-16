@@ -58,7 +58,9 @@ const AdminPage = () => {
                 <Card className="mx-1 mt-8 p-0 md:mx-10 md:p-2 [&_td]:px-2 [&_td]:py-2 md:[&_td]:px-4 md:[&_td]:py-4 [&_th]:px-2 md:[&_th]:px-4">
                   <CardHeader className="px-3 md:px-6">
                     <p className="text-start text-2xl font-semibold">Level Reports</p>
-                    <p className="text-sm text-muted-foreground text-start">Review reports submitted by players. Unresolved reports are shown first.</p>
+                    <p className="text-start text-sm text-muted-foreground">
+                      Review reports submitted by players. Unresolved reports are shown first.
+                    </p>
                   </CardHeader>
                   <CardContent className="px-2 md:px-6">
                     <LevelReports />

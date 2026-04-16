@@ -7,6 +7,18 @@ import { mutation } from "./_generated/server";
  * @returns The URL of the image storage
  */
 export const generateUploadUrl = mutation(async (ctx) => {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) throw new Error("Not authenticated");
+
+  const callerUser = await ctx.db
+    .query("users")
+    .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+    .unique();
+
+  if (!callerUser?.roles?.includes("developer") && !callerUser?.roles?.includes("moderator")) {
+    throw new Error("Insufficient permissions");
+  }
+
   return await ctx.storage.generateUploadUrl();
 });
 
@@ -51,6 +63,18 @@ export const updateLevel = mutation({
     longitude: v.optional(v.float64()),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const callerUser = await ctx.db
+      .query("users")
+      .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!callerUser?.roles?.includes("developer") && !callerUser?.roles?.includes("moderator")) {
+      throw new Error("Insufficient permissions");
+    }
+
     const level = await ctx.db.get(args.levelId);
     if (!level) throw new Error("Level not found");
 

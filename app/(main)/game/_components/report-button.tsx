@@ -16,15 +16,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-
-const REPORT_REASONS = [
-  { value: "not_university_property", label: "Not part of the university property" },
-  { value: "pin_incorrectly_placed", label: "Pin is incorrectly placed" },
-  { value: "wrong_image", label: "Something is wrong with the image" },
-  { value: "outdated_image", label: "Outdated image" },
-] as const;
-
-type ReportReason = (typeof REPORT_REASONS)[number]["value"];
+import { REPORT_REASONS, ReportReason } from "../_constants/reportReasons";
 
 interface ReportButtonProps {
   levelId: Id<"levels">;

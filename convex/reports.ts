@@ -17,11 +17,12 @@ export const submitLevelReport = mutation({
   },
   async handler(ctx, args) {
     const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
 
     await ctx.db.insert("levelReports", {
       levelId: args.levelId,
       reason: args.reason,
-      reportedByClerkId: identity?.subject,
+      reportedByClerkId: identity.subject,
       status: "pending",
     });
   },
