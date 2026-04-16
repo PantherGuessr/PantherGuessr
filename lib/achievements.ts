@@ -21,7 +21,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "map_master",
     name: "Map Master",
-    description: "Scored a perfect 5000 on a single round.",
+    description: "Scored a perfect 250 on a single round.",
     imageSrc: "/achievements/map_master_achievement.svg",
   },
   {

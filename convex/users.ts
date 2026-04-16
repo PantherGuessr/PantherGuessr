@@ -645,6 +645,14 @@ export const updateStreak = mutation({
 
     await ctx.db.patch(user._id, { currentStreak: newStreak, lastPlayedTimestamp: now.getTime() });
 
+    // on_fire: reached a 7-day streak
+    if (newStreak >= 7n) {
+      await ctx.runMutation(internal.achievements.grantAchievement, {
+        userId: user._id,
+        achievementId: "on_fire",
+      });
+    }
+
     return newStreak;
   },
 });
