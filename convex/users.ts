@@ -101,15 +101,29 @@ export const current = query({
  *
  * @returns {Promise<void>} - A promise that resolves when the upsert operation is complete.
  */
+function pickRandom<T>(arr: T[], n: number): T[] {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(n, arr.length));
+}
+
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
   async handler(ctx, { data }) {
     const user = await userByClerkId(ctx, data.id);
 
     if (user === null) {
-      const background = await ctx.db.query("profileBackgrounds").withIndex("by_creation_time").first(); // generates background
-      // TODO: Guarantee that the "Just born" tagline is always set
-      const tagline = await ctx.db.query("profileTaglines").first(); // generates tagline
+      const allTaglines = await ctx.db.query("profileTaglines").collect();
+      const unlockedTaglines = allTaglines.filter((t) => !t.locked);
+      if (unlockedTaglines.length === 0) throw new Error("No unlocked taglines available for new user assignment");
+
+      const allBackgrounds = await ctx.db.query("profileBackgrounds").collect();
+      const unlockedBackgrounds = allBackgrounds.filter((b) => !b.locked);
+      if (unlockedBackgrounds.length === 0) throw new Error("No unlocked backgrounds available for new user assignment");
+
+      const pickedTaglines = pickRandom(unlockedTaglines, 3);
+      const pickedBackgrounds = pickRandom(unlockedBackgrounds, 3);
+      const activeTagline = pickedTaglines[Math.floor(Math.random() * pickedTaglines.length)];
+      const activeBackground = pickedBackgrounds[Math.floor(Math.random() * pickedBackgrounds.length)];
 
       const userAttributes = {
         clerkId: data.id!,
@@ -120,10 +134,10 @@ export const upsertFromClerk = internalMutation({
         currentStreak: 0n,
         isBanned: false,
         picture: data.image_url,
-        profileBackground: background!._id,
-        profileTagline: tagline!._id,
-        unlockedProfileBackgrounds: [background!._id],
-        unlockedProfileTaglines: [tagline!._id],
+        profileBackground: activeBackground._id,
+        profileTagline: activeTagline._id,
+        unlockedProfileBackgrounds: pickedBackgrounds.map((b) => b._id),
+        unlockedProfileTaglines: pickedTaglines.map((t) => t._id),
       };
 
       await ctx.db.insert("users", userAttributes);
