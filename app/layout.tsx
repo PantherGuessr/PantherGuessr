@@ -31,10 +31,10 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL("https://pantherguessr.com"),
   openGraph: {
-    images: "/social-images/opengraph-image.png?v=1",
+    images: "/api/og",
   },
   twitter: {
-    images: "/social-images/opengraph-image.png?v=1",
+    images: "/api/og",
   },
 };
 
