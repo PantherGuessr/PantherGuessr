@@ -39,9 +39,7 @@ const Achievement = ({ name, description, imageSrc, unlockedAt }: IAchievement) 
           <div className="flex flex-col justify-center">
             <p className="text-left font-bold">{name}</p>
             <p className="text-left font-normal">{description}</p>
-            {unlockedDate && (
-              <p className="mt-1 text-left text-xs text-muted-foreground">Unlocked {unlockedDate}</p>
-            )}
+            {unlockedDate && <p className="mt-1 text-left text-xs text-muted-foreground">Unlocked {unlockedDate}</p>}
           </div>
         </div>
       </HoverCardContent>

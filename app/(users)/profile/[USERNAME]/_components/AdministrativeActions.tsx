@@ -453,10 +453,7 @@ const ProfileAdministrativeActions = ({
                       {ACHIEVEMENTS.map((achievement) => {
                         const unlocked = (profileUser?.achievements ?? []).some((a) => a.id === achievement.id);
                         return (
-                          <div
-                            key={achievement.id}
-                            className="flex items-center gap-3 rounded-md border px-3 py-2"
-                          >
+                          <div key={achievement.id} className="flex items-center gap-3 rounded-md border px-3 py-2">
                             <Image
                               src={achievement.imageSrc}
                               width={44}

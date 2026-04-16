@@ -1,5 +1,4 @@
 import { ACHIEVEMENTS_MAP } from "@/lib/achievements";
-
 import Achievement from "./Achievement";
 
 interface ProfileAchievementsProps {
