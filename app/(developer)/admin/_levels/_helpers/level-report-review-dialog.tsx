@@ -57,7 +57,10 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
   const resolveLevelReport = useMutation(api.reports.resolveLevelReport);
   const dismissLevelReport = useMutation(api.reports.dismissLevelReport);
 
-  // Reset all edits when dialog opens for a new report
+  // Reset all edits when dialog opens for a new report.
+  // Intentionally keyed on report._id so edits are only reset when a different
+  // report is opened, not on every render where `report` is a new object reference.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (open && report) {
       setEditedLat(report.latitude);
