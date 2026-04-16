@@ -123,6 +123,20 @@ export const incrementDailyGameStats = mutation({
 
 // monthly stats
 
+/**
+ * Returns all monthly game stats sorted oldest → newest.
+ * Used by the analytics dashboard to show the full historical chart.
+ */
+export const getAllMonthlyGameStats = query({
+  handler: async (ctx) => {
+    const gameStats = await ctx.db
+      .query("gameStats")
+      .filter((q) => q.eq(q.field("type"), "monthly"))
+      .collect();
+    return gameStats.sort((a, b) => a.isoYearMonth.localeCompare(b.isoYearMonth));
+  },
+});
+
 export const getMonthlyGameStats = query({
   handler: async (ctx) => {
     const date = new Date();

@@ -261,7 +261,9 @@ export const isUserBanned = query({
     return {
       result: user.isBanned,
       banReason: user.banReason,
-      appealSubmitted: user.banAppeal ? ((await ctx.db.get(user.banAppeal)) ? true : false) : false,
+      appealSubmitted: user.banAppeal
+        ? ((await ctx.db.get(user.banAppeal))?.hasBeenResolved === false)
+        : false,
     };
   },
 });
@@ -1068,7 +1070,9 @@ async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnT
   const hasChapmanEmail = user.emails.some((email) => email.endsWith("@chapman.edu"));
 
   // Ban status
-  const appealSubmitted = user.banAppeal ? ((await ctx.db.get(user.banAppeal)) ? true : false) : false;
+  const appealSubmitted = user.banAppeal
+    ? ((await ctx.db.get(user.banAppeal))?.hasBeenResolved === false)
+    : false;
 
   // Selected tagline and background
   const selectedTagline = await ctx.db.get(user.profileTagline);
