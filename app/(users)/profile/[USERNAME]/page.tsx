@@ -190,18 +190,7 @@ const ProfilePage = ({ params }: Props) => {
   const isChapmanStudent = profile?.hasChapmanEmail;
   const profileTagline = profile?.selectedTagline;
 
-  const hasEarlyAdopter = profile?.achievements["Early Adopter"]?.unlocked;
-  const earlyAdopterDescription = profile?.achievements["Early Adopter"]?.description;
-  const hasFirstSteps = profile?.achievements["First Steps"]?.unlocked;
-  const firstStepsDescription = profile?.achievements["First Steps"]?.description;
-  const hasMapMaster = profile?.achievements["Map Master"]?.unlocked;
-  const mapMasterDescription = profile?.achievements["Map Master"]?.description;
-  const hasOnFire = profile?.achievements["On Fire"]?.unlocked;
-  const onFireDescription = profile?.achievements["On Fire"]?.description;
-  const hasSniped = profile?.achievements["Sniped"]?.unlocked;
-  const snipedDescription = profile?.achievements["Sniped"]?.description;
-  const hasPhotoScout = profile?.achievements["Photo Scout"]?.unlocked;
-  const photoScoutDescription = profile?.achievements["Photo Scout"]?.description;
+  const unlockedAchievements = profile?.achievements ?? [];
 
   const xpForLevels = [25, 50, 75, 100];
   const xpForMaxLevel = 100;
@@ -530,20 +519,7 @@ const ProfilePage = ({ params }: Props) => {
                       max={xpForNextLevel}
                     />
                   </div>
-                  <ProfileAchievements
-                    hasEarlyAdopter={hasEarlyAdopter}
-                    earlyAdopterDescription={earlyAdopterDescription}
-                    hasFirstSteps={hasFirstSteps}
-                    firstStepsDescription={firstStepsDescription}
-                    hasMapMaster={hasMapMaster}
-                    mapMasterDescription={mapMasterDescription}
-                    hasOnFire={hasOnFire}
-                    onFireDescription={onFireDescription}
-                    hasSniped={hasSniped}
-                    snipedDescription={snipedDescription}
-                    hasPhotoScout={hasPhotoScout}
-                    photoScoutDescription={photoScoutDescription}
-                  />
+                  <ProfileAchievements unlockedAchievements={unlockedAchievements} />
                   <ProfileAdministrativeActions
                     profileUsername={user.username}
                     isProfileDeveloper={!!isDeveloperRole}

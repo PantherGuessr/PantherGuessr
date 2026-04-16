@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as achievements from "../achievements.js";
 import type * as admin from "../admin.js";
 import type * as continuegame from "../continuegame.js";
 import type * as crons from "../crons.js";
@@ -27,6 +28,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  achievements: typeof achievements;
   admin: typeof admin;
   continuegame: typeof continuegame;
   crons: typeof crons;

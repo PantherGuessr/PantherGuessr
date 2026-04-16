@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useMutation, useQuery } from "convex/react";
 import {
   BookHeart,
@@ -7,6 +8,7 @@ import {
   Hash,
   Heart,
   LoaderCircle,
+  Medal,
   Send,
   Shield,
   ShieldX,
@@ -28,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { api } from "@/convex/_generated/api";
+import { ACHIEVEMENTS } from "@/lib/achievements";
 
 interface ProfileAdministrativeActionsProps {
   profileUsername: string;
@@ -74,6 +77,9 @@ const ProfileAdministrativeActions = ({
   // Roles Action
   const [rolesModifierDialogOpen, setRolesModifierDialogOpen] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+
+  // Achievements Action
+  const [achievementsDialogOpen, setAchievementsDialogOpen] = useState(false);
   const updateSelectedRoles = () => {
     if (profileUser && profileUser.roles) {
       const userRoles = profileUser.roles.map((role) => roles.find((r) => r.value === role)).filter(Boolean);
@@ -87,6 +93,8 @@ const ProfileAdministrativeActions = ({
   const unbanUser = useMutation(api.users.unbanUserAdministrativeAction);
   const modifyLevelAndXP = useMutation(api.users.modifyLevelAndXPAdministrativeAction);
   const modifyRoles = useMutation(api.users.modifyRolesAdministrativeAction);
+  const grantAchievement = useMutation(api.achievements.adminGrantAchievement);
+  const revokeAchievement = useMutation(api.achievements.adminRevokeAchievement);
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -175,6 +183,15 @@ const ProfileAdministrativeActions = ({
 
     setRolesModifierDialogOpen(false);
     setIsSubmitting(false);
+  }
+
+  async function handleToggleAchievement(achievementId: string) {
+    const has = (profileUser?.achievements ?? []).some((a) => a.id === achievementId);
+    if (has) {
+      await revokeAchievement({ targetUsername: profileUsername, achievementId });
+    } else {
+      await grantAchievement({ targetUsername: profileUsername, achievementId });
+    }
   }
 
   if (isViewerDeveloper || isViewerModerator) {
@@ -415,6 +432,55 @@ const ProfileAdministrativeActions = ({
                         </>
                       )}
                     </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              )}
+
+              {isViewerDeveloper && (
+                <Dialog open={achievementsDialogOpen} onOpenChange={setAchievementsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="flex w-full">
+                      <Medal className="mr-2 h-4 w-4" />
+                      Manage Achievements
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Manage Achievements</DialogTitle>
+                      <DialogDescription>Grant or revoke achievements for @{profileUsername}.</DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-2 py-4">
+                      {ACHIEVEMENTS.map((achievement) => {
+                        const unlocked = (profileUser?.achievements ?? []).some((a) => a.id === achievement.id);
+                        return (
+                          <div
+                            key={achievement.id}
+                            className="flex items-center gap-3 rounded-md border px-3 py-2"
+                          >
+                            <Image
+                              src={achievement.imageSrc}
+                              width={44}
+                              height={44}
+                              alt={achievement.name}
+                              className="shrink-0 select-none"
+                              draggable={false}
+                            />
+                            <div className="flex min-w-0 flex-1 flex-col">
+                              <p className="text-sm font-semibold">{achievement.name}</p>
+                              <p className="text-xs text-muted-foreground">{achievement.description}</p>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant={unlocked ? "destructive" : "default"}
+                              className="shrink-0"
+                              onClick={() => handleToggleAchievement(achievement.id)}
+                            >
+                              {unlocked ? "Revoke" : "Grant"}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </DialogContent>
                 </Dialog>
               )}

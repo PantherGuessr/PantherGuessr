@@ -1,89 +1,31 @@
+import { ACHIEVEMENTS_MAP } from "@/lib/achievements";
+
 import Achievement from "./Achievement";
 
-interface ProfileAchievementProps {
-  hasEarlyAdopter?: boolean;
-  earlyAdopterDescription?: string;
-  hasFirstSteps?: boolean;
-  firstStepsDescription?: string;
-  hasMapMaster?: boolean;
-  mapMasterDescription?: string;
-  hasOnFire?: boolean;
-  onFireDescription?: string;
-  hasSniped?: boolean;
-  snipedDescription?: string;
-  hasPhotoScout?: boolean;
-  photoScoutDescription?: string;
+interface ProfileAchievementsProps {
+  unlockedAchievements: { id: string; unlockedAt: number }[];
 }
 
-const ProfileAchievements = ({
-  hasEarlyAdopter,
-  earlyAdopterDescription,
-  hasFirstSteps,
-  firstStepsDescription,
-  hasMapMaster,
-  mapMasterDescription,
-  hasOnFire,
-  onFireDescription,
-  hasSniped,
-  snipedDescription,
-  hasPhotoScout,
-  photoScoutDescription,
-}: ProfileAchievementProps) => {
+const ProfileAchievements = ({ unlockedAchievements }: ProfileAchievementsProps) => {
+  const unlocked = unlockedAchievements
+    .map((entry) => ({ ...ACHIEVEMENTS_MAP[entry.id], unlockedAt: entry.unlockedAt }))
+    .filter((a) => a.id !== undefined);
+
   return (
     <div className="flex w-full flex-col items-start">
       <p className="text-md font-bold">Unlocked Achievements</p>
-      {hasEarlyAdopter || hasFirstSteps || hasMapMaster || hasOnFire || hasSniped || hasPhotoScout ? (
-        <>
-          <div className="flex w-full flex-wrap justify-start gap-x-2 lg:grid lg:grid-flow-row lg:grid-cols-3 lg:justify-start">
-            {hasEarlyAdopter && (
-              <Achievement
-                name="Early Adopter"
-                description={earlyAdopterDescription!}
-                imageSrc="/achievements/early_adopter_achievement.svg"
-              />
-            )}
-
-            {hasFirstSteps && (
-              <Achievement
-                name="First Steps"
-                description={firstStepsDescription!}
-                imageSrc="/achievements/first_steps_achievement.svg"
-              />
-            )}
-
-            {hasMapMaster && (
-              <Achievement
-                name="Map Master"
-                description={mapMasterDescription!}
-                imageSrc="/achievements/map_master_achievement.svg"
-              />
-            )}
-
-            {hasOnFire && (
-              <Achievement
-                name="On Fire"
-                description={onFireDescription!}
-                imageSrc="/achievements/on_fire_achievement.svg"
-              />
-            )}
-
-            {hasSniped && (
-              <Achievement
-                name="Sniped"
-                description={snipedDescription!}
-                imageSrc="/achievements/perfect_game_achievement.svg"
-              />
-            )}
-
-            {hasPhotoScout && (
-              <Achievement
-                name="Photo Scout"
-                description={photoScoutDescription!}
-                imageSrc="/achievements/photo_scout_achievement.svg"
-              />
-            )}
-          </div>
-        </>
+      {unlocked.length > 0 ? (
+        <div className="flex w-full flex-wrap justify-start gap-x-2 lg:grid lg:grid-flow-row lg:grid-cols-3 lg:justify-start">
+          {unlocked.map((achievement) => (
+            <Achievement
+              key={achievement.id}
+              name={achievement.name}
+              description={achievement.description}
+              imageSrc={achievement.imageSrc}
+              unlockedAt={achievement.unlockedAt}
+            />
+          ))}
+        </div>
       ) : (
         <p className="font-bold italic text-muted-foreground/60">None</p>
       )}

@@ -364,6 +364,40 @@ export const addLeaderboardEntryToGame = mutation({
       return null;
     }
 
+    // Update streak
+    await ctx.runMutation(internal.users.updateStreak, { userId: args.userId });
+
+    // Award achievements
+    const scores = [args.round_1, args.round_2, args.round_3, args.round_4, args.round_5];
+
+    // first_steps: first completed game
+    const priorEntries = await ctx.db
+      .query("leaderboardEntries")
+      .withIndex("byUserId", (q) => q.eq("userId", args.userId))
+      .take(2);
+    if (priorEntries.length === 1) {
+      await ctx.runMutation(internal.achievements.grantAchievement, {
+        userId: args.userId,
+        achievementId: "first_steps",
+      });
+    }
+
+    // map_master: at least one perfect round (score of 250)
+    if (scores.some((s) => s === 250n)) {
+      await ctx.runMutation(internal.achievements.grantAchievement, {
+        userId: args.userId,
+        achievementId: "map_master",
+      });
+    }
+
+    // sniped: all 5 rounds perfect
+    if (scores.every((s) => s === 250n)) {
+      await ctx.runMutation(internal.achievements.grantAchievement, {
+        userId: args.userId,
+        achievementId: "sniped",
+      });
+    }
+
     return leaderboardEntry;
   },
 });

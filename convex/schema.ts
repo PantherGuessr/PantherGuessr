@@ -15,7 +15,7 @@ export default defineSchema({
     isBanned: v.boolean(),
     banReason: v.optional(v.string()),
     banAppeal: v.optional(v.id("banAppeals")),
-    achievements: v.optional(v.array(v.id("achievements"))),
+    achievements: v.optional(v.array(v.object({ id: v.string(), unlockedAt: v.number() }))),
     picture: v.string(),
     profileTagline: v.id("profileTaglines"),
     profileBackground: v.id("profileBackgrounds"),
@@ -109,13 +109,6 @@ export default defineSchema({
     title: v.string(),
     backgroundCSS: v.string(),
   }),
-
-  achievements: defineTable({
-    name: v.string(),
-    description: v.string(),
-    isEnabled: v.boolean(),
-    canUnlock: v.boolean(),
-  }).index("byName", ["name"]),
 
   userReports: defineTable({
     reportedUser: v.id("users"),

@@ -48,34 +48,6 @@ async function userByUsername(ctx: QueryCtx | MutationCtx, username: string) {
 }
 
 /**
- * Retrieves an achievement by its id.
- *
- * @param ctx - The query context used to interact with the database.
- * @param id - The id of the achievement to retrieve.
- * @returns A promise that resolves to the unique achievement with the specified id.
- */
-async function achievementById(ctx: QueryCtx, id: Id<"achievements">) {
-  return await ctx.db
-    .query("achievements")
-    .withIndex("by_id", (q) => q.eq("_id", id))
-    .unique();
-}
-
-/**
- * Retrieves an achievement by its name.
- *
- * @param ctx - The query context used to interact with the database.
- * @param name - The name of the achievement to retrieve.
- * @returns A promise that resolves to the unique achievement with the specified name.
- */
-async function achievementByName(ctx: QueryCtx, name: string) {
-  return await ctx.db
-    .query("achievements")
-    .withIndex("byName", (q) => q.eq("name", name))
-    .unique();
-}
-
-/**
  * Retrieves the current user based on the authentication context.
  *
  * @param ctx - The query context containing authentication information.
@@ -399,50 +371,6 @@ export const hasRole = query({
 });
 
 /**
- * Query to check if a user has a specific achievement.
- *
- * @param args - The arguments for the query.
- * @param args.name - The name of the achievement to check.
- * @param args.clerkId - The Clerk ID of the user.
- * @returns A boolean indicating whether the user has the specified achievement.
- *
- * @example
- * const hasAchieved = await hasAchievement({ name: 'First Win', clerkId: 'user_123' });
- * console.log(hasAchieved); // true or false
- */
-export const hasAchievement = query({
-  args: {
-    name: v.string(),
-    clerkId: v.string(),
-  },
-  async handler(ctx, args) {
-    const user = await userByClerkId(ctx, args.clerkId);
-
-    if (!user) {
-      return false;
-    }
-
-    for (const achievementId of user.achievements || []) {
-      const achievement = await achievementById(ctx, achievementId);
-      if (achievement?.name === args.name) {
-        return true;
-      }
-    }
-
-    return false;
-  },
-});
-
-export const getAchievementByName = query({
-  args: {
-    name: v.string(),
-  },
-  async handler(ctx, args) {
-    return await achievementByName(ctx, args.name);
-  },
-});
-
-/**
  * Query to check if a user has an email address ending with "@chapman.edu".
  *
  * @param {Object} args - The arguments object.
@@ -681,12 +609,12 @@ export const getLastNPlayedGames = query({
  * If more than a full day has passed since the last play, the streak is reset to 1.
  * The updated streak and the current timestamp are then saved to the database.
  */
-export const updateStreak = mutation({
+export const updateStreak = internalMutation({
   args: {
-    clerkId: v.string(),
+    userId: v.id("users"),
   },
   async handler(ctx, args) {
-    const user = await userByClerkId(ctx, args.clerkId);
+    const user = await ctx.db.get(args.userId);
 
     if (!user) {
       throw new Error("User could not be found!");
@@ -716,6 +644,14 @@ export const updateStreak = mutation({
     }
 
     await ctx.db.patch(user._id, { currentStreak: newStreak, lastPlayedTimestamp: now.getTime() });
+
+    // on_fire: reached a 7-day streak
+    if (newStreak >= 7n) {
+      await ctx.runMutation(internal.achievements.grantAchievement, {
+        userId: user._id,
+        achievementId: "on_fire",
+      });
+    }
 
     return newStreak;
   },
@@ -1084,15 +1020,6 @@ async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnT
     .withIndex("byUserClerkId", (q) => q.eq("userClerkId", user.clerkId))
     .first();
 
-  // Resolve achievements
-  const achievements: Record<string, { unlocked: boolean; description: string }> = {};
-  for (const achievementId of user.achievements ?? []) {
-    const achievement = await ctx.db.get(achievementId);
-    if (achievement) {
-      achievements[achievement.name] = { unlocked: true, description: achievement.description };
-    }
-  }
-
   return {
     user,
     roles: roleFlags,
@@ -1103,7 +1030,7 @@ async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnT
     selectedTagline,
     selectedBackground,
     hasOngoingGame: ongoingGame !== null,
-    achievements,
+    achievements: (user.achievements ?? []) as { id: string; unlockedAt: number }[],
   };
 }
 

@@ -89,7 +89,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
   const checkGuess = useMutation(api.game.checkGuess);
 
-  const updateStreak = useMutation(api.users.updateStreak);
   const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
   const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
   const addLeaderboardEntryToGame = useMutation(api.game.addLeaderboardEntryToGame);
@@ -174,7 +173,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
         userClerkId: clerkId ?? "",
       });
 
-      updateStreak({ clerkId: clerkId! });
       updateFirstPlayedBy({ clerkId: clerkId!, gameId: gameData!.gameContent!._id });
 
       addLeaderboardEntryToGame({
