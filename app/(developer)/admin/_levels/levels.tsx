@@ -6,7 +6,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useMutation, useQuery } from "convex/react";
 import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +31,13 @@ import { Id } from "@/convex/_generated/dataModel";
 import { DataTable } from "./_helpers/datatable";
 import DynamicPreviewMap from "./_helpers/dynamic-preview-map";
 import { useMarker } from "./_helpers/MarkerContext";
+
+const REPORT_REASON_LABELS: Record<string, string> = {
+  not_university_property: "Not part of the university property",
+  pin_incorrectly_placed: "Pin is incorrectly placed",
+  wrong_image: "Something is wrong with the image",
+  outdated_image: "Outdated image",
+};
 
 type Level = {
   _id: Id<"levels">;
@@ -61,6 +70,11 @@ const Levels = () => {
   const tableData = useQuery(api.admin.getAllLevels);
   const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
   const deleteLevel = useMutation(api.levelcreator.deleteLevelById);
+  const levelReports = useQuery(api.reports.getLevelReports);
+  const resolveLevelReport = useMutation(api.reports.resolveLevelReport);
+  const dismissLevelReport = useMutation(api.reports.dismissLevelReport);
+
+  const pendingReports = levelReports?.filter((r) => r.status === "pending") ?? [];
 
   // sets the image source to default on table data load
   useEffect(() => {
@@ -320,6 +334,59 @@ const Levels = () => {
 
   return (
     <>
+      {pendingReports.length > 0 && (
+        <Card className="mb-6 border-orange-300 bg-orange-50 dark:border-orange-700 dark:bg-orange-950/30">
+          <CardHeader className="pb-2 pt-4 px-4">
+            <CardTitle className="flex items-center gap-2 text-base text-orange-800 dark:text-orange-300">
+              Level Reports
+              <Badge variant="destructive" className="text-xs">
+                {pendingReports.length} pending
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <div className="flex flex-col gap-2">
+              {pendingReports.map((report) => (
+                <div
+                  key={report._id}
+                  className="flex flex-col gap-1 rounded-md border border-orange-200 bg-white px-3 py-2 dark:border-orange-800 dark:bg-zinc-900 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="flex flex-col gap-0.5">
+                    <p className="text-sm font-medium">{report.levelTitle}</p>
+                    <p className="text-xs text-muted-foreground">{REPORT_REASON_LABELS[report.reason] ?? report.reason}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(report._creationTime).toLocaleString(undefined, {
+                        year: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 self-end sm:self-auto">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 text-xs"
+                      onClick={() => dismissLevelReport({ reportId: report._id })}
+                    >
+                      Dismiss
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => resolveLevelReport({ reportId: report._id })}
+                    >
+                      Resolve
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
       <p className="text-start">{tableData?.length || 0} total levels.</p>
       <DataTable
         columns={columns}
