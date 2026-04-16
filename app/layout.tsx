@@ -29,6 +29,13 @@ export const metadata: Metadata = {
       },
     ],
   },
+  metadataBase: new URL("https://pantherguessr.com"),
+  openGraph: {
+    images: "/social-images/opengraph-image.png?v=1",
+  },
+  twitter: {
+    images: "/social-images/opengraph-image.png?v=1",
+  },
 };
 
 export default function RootLayout({
