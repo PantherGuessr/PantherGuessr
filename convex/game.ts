@@ -364,6 +364,9 @@ export const addLeaderboardEntryToGame = mutation({
       return null;
     }
 
+    // Update streak
+    await ctx.runMutation(internal.users.updateStreak, { userId: args.userId });
+
     // Award achievements
     const scores = [args.round_1, args.round_2, args.round_3, args.round_4, args.round_5];
 

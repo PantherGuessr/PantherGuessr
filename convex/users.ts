@@ -609,12 +609,12 @@ export const getLastNPlayedGames = query({
  * If more than a full day has passed since the last play, the streak is reset to 1.
  * The updated streak and the current timestamp are then saved to the database.
  */
-export const updateStreak = mutation({
+export const updateStreak = internalMutation({
   args: {
-    clerkId: v.string(),
+    userId: v.id("users"),
   },
   async handler(ctx, args) {
-    const user = await userByClerkId(ctx, args.clerkId);
+    const user = await ctx.db.get(args.userId);
 
     if (!user) {
       throw new Error("User could not be found!");
