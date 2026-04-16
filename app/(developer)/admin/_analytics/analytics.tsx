@@ -4,13 +4,8 @@ import { useQuery } from "convex/react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import { api } from "@/convex/_generated/api";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -25,15 +20,7 @@ function formatTime(secs: number): string {
 
 // ─── stat card ───────────────────────────────────────────────────────────────
 
-const StatCard = ({
-  label,
-  value,
-  sub,
-}: {
-  label: string;
-  value: string | number;
-  sub?: string;
-}) => (
+const StatCard = ({ label, value, sub }: { label: string; value: string | number; sub?: string }) => (
   <Card className="p-2 md:p-4">
     <p className="text-xs text-muted-foreground">{label}</p>
     <p className="mt-1 text-xl font-bold md:text-2xl">{value}</p>
@@ -96,7 +83,6 @@ const Analytics = () => {
 
   return (
     <div className="space-y-4 text-start">
-
       {/* ── Row 1: primary snapshot stats ── */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
         <StatCard label="Total Users" value={summary?.totalUsers ?? loading} />
@@ -126,10 +112,7 @@ const Analytics = () => {
           label="Avg Distance / Round"
           value={summary ? summary.avgDistancePerRound.toLocaleString() : loading}
         />
-        <StatCard
-          label="Avg Time / Game"
-          value={summary ? formatTime(summary.avgTimeSecs) : loading}
-        />
+        <StatCard label="Avg Time / Game" value={summary ? formatTime(summary.avgTimeSecs) : loading} />
       </div>
 
       {/* ── Row 3: daily charts ── */}
@@ -175,12 +158,7 @@ const Analytics = () => {
               <ChartContainer config={gamesChartConfig} className="min-h-[200px] w-full">
                 <BarChart accessibilityLayer data={monthlyGamesData}>
                   <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                  />
+                  <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar dataKey="gamesPlayed" fill="var(--color-gamesPlayed)" radius={4} />
                 </BarChart>
@@ -208,7 +186,7 @@ const Analytics = () => {
       {/* ── Row 5: top levels ── */}
       <Card className="p-1 md:p-2">
         <CardHeader className="px-3 md:px-6">Top 5 Most Played Levels</CardHeader>
-        <CardContent className="px-2 md:px-6 [&_td]:px-2 [&_td]:py-2 [&_th]:px-2 md:[&_td]:px-4 md:[&_th]:px-4">
+        <CardContent className="px-2 md:px-6 [&_td]:px-2 [&_td]:py-2 md:[&_td]:px-4 [&_th]:px-2 md:[&_th]:px-4">
           <Table>
             <TableHeader>
               <TableRow>
@@ -218,28 +196,25 @@ const Analytics = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {summary
-                ? summary.topLevels.map((level, i) => (
-                    <TableRow key={level._id}>
-                      <TableCell className="font-medium text-muted-foreground">{i + 1}</TableCell>
-                      <TableCell>{level.title}</TableCell>
-                      <TableCell className="text-right">
-                        {Number(level.timesPlayed).toLocaleString()}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                : (
-                    <TableRow>
-                      <TableCell colSpan={3} className="h-16 text-center text-muted-foreground">
-                        Loading…
-                      </TableCell>
-                    </TableRow>
-                  )}
+              {summary ? (
+                summary.topLevels.map((level, i) => (
+                  <TableRow key={level._id}>
+                    <TableCell className="font-medium text-muted-foreground">{i + 1}</TableCell>
+                    <TableCell>{level.title}</TableCell>
+                    <TableCell className="text-right">{Number(level.timesPlayed).toLocaleString()}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="h-16 text-center text-muted-foreground">
+                    Loading…
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
-
     </div>
   );
 };

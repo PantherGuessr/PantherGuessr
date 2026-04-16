@@ -180,9 +180,7 @@ const UserReports = () => {
                     <p className="truncate text-sm">{report.reportReason}</p>
                   </TableCell>
                   <TableCell className="max-w-[200px]">
-                    <p className="truncate text-sm text-muted-foreground">
-                      {report.reporterMessage ?? "—"}
-                    </p>
+                    <p className="truncate text-sm text-muted-foreground">{report.reporterMessage ?? "—"}</p>
                   </TableCell>
                   <TableCell>
                     {report.hasBeenResolved ? (
@@ -211,7 +209,12 @@ const UserReports = () => {
         </Table>
       </div>
 
-      <Dialog open={selectedReport !== null} onOpenChange={(open) => { if (!open) closeDialog(); }}>
+      <Dialog
+        open={selectedReport !== null}
+        onOpenChange={(open) => {
+          if (!open) closeDialog();
+        }}
+      >
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Review Report</DialogTitle>
@@ -246,10 +249,7 @@ const UserReports = () => {
               <Separator />
               <div className="space-y-2">
                 <Label htmlFor="report-ban-reason">
-                  Ban Reason{" "}
-                  <span className="font-normal text-muted-foreground">
-                    — only used if banning
-                  </span>
+                  Ban Reason <span className="font-normal text-muted-foreground">— only used if banning</span>
                 </Label>
                 <Input
                   id="report-ban-reason"
@@ -274,7 +274,11 @@ const UserReports = () => {
               )}
               Ignore
             </Button>
-            <Button variant="destructive" onClick={handleResolveAndBan} disabled={isSubmitting || !selectedReport?.reportedUsername}>
+            <Button
+              variant="destructive"
+              onClick={handleResolveAndBan}
+              disabled={isSubmitting || !selectedReport?.reportedUsername}
+            >
               {isSubmitting ? (
                 <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
               ) : (

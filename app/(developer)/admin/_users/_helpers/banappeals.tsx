@@ -146,11 +146,7 @@ const BanAppeals = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {appeal.isBanned ? (
-                      <Badge variant="destructive">Yes</Badge>
-                    ) : (
-                      <Badge variant="secondary">No</Badge>
-                    )}
+                    {appeal.isBanned ? <Badge variant="destructive">Yes</Badge> : <Badge variant="secondary">No</Badge>}
                   </TableCell>
                   <TableCell className="max-w-[150px]">
                     <p className="truncate text-sm text-muted-foreground">{appeal.banReason ?? "None"}</p>
@@ -185,13 +181,16 @@ const BanAppeals = () => {
         </Table>
       </div>
 
-      <Dialog open={selectedAppeal !== null} onOpenChange={(open) => { if (!open) closeDialog(); }}>
+      <Dialog
+        open={selectedAppeal !== null}
+        onOpenChange={(open) => {
+          if (!open) closeDialog();
+        }}
+      >
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Review Ban Appeal</DialogTitle>
-            <DialogDescription>
-              Appeal submitted by @{selectedAppeal?.username ?? "Unknown"}
-            </DialogDescription>
+            <DialogDescription>Appeal submitted by @{selectedAppeal?.username ?? "Unknown"}</DialogDescription>
           </DialogHeader>
           {selectedAppeal && (
             <div className="space-y-4 py-2">

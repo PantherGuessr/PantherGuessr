@@ -53,7 +53,7 @@ const AdminPage = () => {
           </TabsContent>
           <TabsContent value="levels">
             <MarkerProvider>
-              <Card className="mx-1 mt-8 p-0 md:mx-10 md:p-2 [&_td]:px-2 [&_td]:py-2 [&_th]:px-2 md:[&_td]:px-4 md:[&_td]:py-4 md:[&_th]:px-4">
+              <Card className="mx-1 mt-8 p-0 md:mx-10 md:p-2 [&_td]:px-2 [&_td]:py-2 md:[&_td]:px-4 md:[&_td]:py-4 [&_th]:px-2 md:[&_th]:px-4">
                 <CardHeader className="flex flex-row justify-between px-3 md:px-6">
                   <p className="ml-2 text-start text-4xl">Levels</p>
                   <LevelUpload />
@@ -65,7 +65,7 @@ const AdminPage = () => {
             </MarkerProvider>
           </TabsContent>
           <TabsContent value="weekly">
-            <Card className="mx-1 mt-8 p-0 md:mx-10 md:p-2 [&_td]:px-2 [&_td]:py-2 [&_th]:px-2 md:[&_td]:px-4 md:[&_td]:py-4 md:[&_th]:px-4">
+            <Card className="mx-1 mt-8 p-0 md:mx-10 md:p-2 [&_td]:px-2 [&_td]:py-2 md:[&_td]:px-4 md:[&_td]:py-4 [&_th]:px-2 md:[&_th]:px-4">
               <MarkerProvider>
                 <CardHeader className="px-3 text-start text-4xl md:px-6">Weekly Challenges</CardHeader>
                 <CardContent className="px-2 md:px-6">

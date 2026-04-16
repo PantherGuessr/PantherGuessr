@@ -26,8 +26,7 @@ const UserList = () => {
   const [page, setPage] = useState(0);
   const users = useQuery(api.users.getListOfProfiles);
 
-  const filtered =
-    users?.filter((u) => u.username.toLowerCase().includes(search.toLowerCase())) ?? [];
+  const filtered = users?.filter((u) => u.username.toLowerCase().includes(search.toLowerCase())) ?? [];
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const currentPage = Math.min(page, Math.max(0, totalPages - 1));
@@ -84,11 +83,7 @@ const UserList = () => {
                         <AvatarImage src={user.picture} alt={user.username} />
                         <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
                       </Avatar>
-                      <Link
-                        href={`/profile/${user.username}`}
-                        className="font-medium hover:underline"
-                        target="_blank"
-                      >
+                      <Link href={`/profile/${user.username}`} className="font-medium hover:underline" target="_blank">
                         @{user.username}
                       </Link>
                     </div>
@@ -128,12 +123,7 @@ const UserList = () => {
           {filtered.length > 0 ? `${start}–${end} of ${filtered.length} users` : ""}
         </p>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setPage((p) => p - 1)}
-            disabled={currentPage === 0}
-          >
+          <Button variant="outline" size="sm" onClick={() => setPage((p) => p - 1)} disabled={currentPage === 0}>
             Previous
           </Button>
           <Button

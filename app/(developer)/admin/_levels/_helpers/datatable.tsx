@@ -32,7 +32,12 @@ interface DataTableProps<TData, TValue> {
   initialColumnVisibility?: VisibilityState;
 }
 
-export function DataTable<TData, TValue>({ columns, data, initialSorting = [], initialColumnVisibility = {} }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  initialSorting = [],
+  initialColumnVisibility = {},
+}: DataTableProps<TData, TValue>) {
   "use no memo";
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
