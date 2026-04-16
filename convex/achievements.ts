@@ -23,8 +23,10 @@ export const grantAchievement = internalMutation({
     const user = await ctx.db.get(userId);
     if (!user) return;
     const current = user.achievements ?? [];
-    if (current.includes(achievementId)) return;
-    await ctx.db.patch(userId, { achievements: [...current, achievementId] });
+    if (current.some((a) => a.id === achievementId)) return;
+    await ctx.db.patch(userId, {
+      achievements: [...current, { id: achievementId, unlockedAt: Date.now() }],
+    });
   },
 });
 
@@ -41,7 +43,7 @@ export const revokeAchievement = internalMutation({
     const user = await ctx.db.get(userId);
     if (!user) return;
     await ctx.db.patch(userId, {
-      achievements: (user.achievements ?? []).filter((id) => id !== achievementId),
+      achievements: (user.achievements ?? []).filter((a) => a.id !== achievementId),
     });
   },
 });
@@ -67,8 +69,10 @@ export const adminGrantAchievement = mutation({
     if (!target) return;
 
     const current = target.achievements ?? [];
-    if (current.includes(achievementId)) return;
-    await ctx.db.patch(target._id, { achievements: [...current, achievementId] });
+    if (current.some((a) => a.id === achievementId)) return;
+    await ctx.db.patch(target._id, {
+      achievements: [...current, { id: achievementId, unlockedAt: Date.now() }],
+    });
   },
 });
 
@@ -93,7 +97,7 @@ export const adminRevokeAchievement = mutation({
     if (!target) return;
 
     await ctx.db.patch(target._id, {
-      achievements: (target.achievements ?? []).filter((id) => id !== achievementId),
+      achievements: (target.achievements ?? []).filter((a) => a.id !== achievementId),
     });
   },
 });

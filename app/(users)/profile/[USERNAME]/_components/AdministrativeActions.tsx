@@ -186,7 +186,7 @@ const ProfileAdministrativeActions = ({
   }
 
   async function handleToggleAchievement(achievementId: string) {
-    const has = (profileUser?.achievements ?? []).includes(achievementId);
+    const has = (profileUser?.achievements ?? []).some((a) => a.id === achievementId);
     if (has) {
       await revokeAchievement({ targetUsername: profileUsername, achievementId });
     } else {
@@ -451,7 +451,7 @@ const ProfileAdministrativeActions = ({
                     </DialogHeader>
                     <div className="flex flex-col gap-2 py-4">
                       {ACHIEVEMENTS.map((achievement) => {
-                        const unlocked = (profileUser?.achievements ?? []).includes(achievement.id);
+                        const unlocked = (profileUser?.achievements ?? []).some((a) => a.id === achievement.id);
                         return (
                           <div
                             key={achievement.id}

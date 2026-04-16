@@ -1022,7 +1022,7 @@ async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnT
     selectedTagline,
     selectedBackground,
     hasOngoingGame: ongoingGame !== null,
-    achievements: user.achievements ?? [],
+    achievements: (user.achievements ?? []) as { id: string; unlockedAt: number }[],
   };
 }
 

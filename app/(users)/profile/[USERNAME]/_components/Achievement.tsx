@@ -6,9 +6,14 @@ interface IAchievement {
   name: string;
   description: string;
   imageSrc: string;
+  unlockedAt?: number;
 }
 
-const Achievement = ({ name, description, imageSrc }: IAchievement) => {
+const Achievement = ({ name, description, imageSrc, unlockedAt }: IAchievement) => {
+  const unlockedDate = unlockedAt
+    ? new Date(unlockedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    : null;
+
   return (
     <HoverCard key={name} openDelay={100} closeDelay={50}>
       <HoverCardTrigger asChild>
@@ -34,6 +39,9 @@ const Achievement = ({ name, description, imageSrc }: IAchievement) => {
           <div className="flex flex-col justify-center">
             <p className="text-left font-bold">{name}</p>
             <p className="text-left font-normal">{description}</p>
+            {unlockedDate && (
+              <p className="mt-1 text-left text-xs text-muted-foreground">Unlocked {unlockedDate}</p>
+            )}
           </div>
         </div>
       </HoverCardContent>

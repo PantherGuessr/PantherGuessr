@@ -1,12 +1,15 @@
 import { ACHIEVEMENTS_MAP } from "@/lib/achievements";
+
 import Achievement from "./Achievement";
 
 interface ProfileAchievementsProps {
-  unlockedIds: string[];
+  unlockedAchievements: { id: string; unlockedAt: number }[];
 }
 
-const ProfileAchievements = ({ unlockedIds }: ProfileAchievementsProps) => {
-  const unlocked = unlockedIds.map((id) => ACHIEVEMENTS_MAP[id]).filter(Boolean);
+const ProfileAchievements = ({ unlockedAchievements }: ProfileAchievementsProps) => {
+  const unlocked = unlockedAchievements
+    .map((entry) => ({ ...ACHIEVEMENTS_MAP[entry.id], unlockedAt: entry.unlockedAt }))
+    .filter((a) => a.id !== undefined);
 
   return (
     <div className="flex w-full flex-col items-start">
@@ -19,6 +22,7 @@ const ProfileAchievements = ({ unlockedIds }: ProfileAchievementsProps) => {
               name={achievement.name}
               description={achievement.description}
               imageSrc={achievement.imageSrc}
+              unlockedAt={achievement.unlockedAt}
             />
           ))}
         </div>

@@ -519,7 +519,7 @@ const ProfilePage = ({ params }: Props) => {
                       max={xpForNextLevel}
                     />
                   </div>
-                  <ProfileAchievements unlockedIds={unlockedAchievements} />
+                  <ProfileAchievements unlockedAchievements={unlockedAchievements} />
                   <ProfileAdministrativeActions
                     profileUsername={user.username}
                     isProfileDeveloper={!!isDeveloperRole}

@@ -15,7 +15,7 @@ export default defineSchema({
     isBanned: v.boolean(),
     banReason: v.optional(v.string()),
     banAppeal: v.optional(v.id("banAppeals")),
-    achievements: v.optional(v.array(v.string())),
+    achievements: v.optional(v.array(v.object({ id: v.string(), unlockedAt: v.number() }))),
     picture: v.string(),
     profileTagline: v.id("profileTaglines"),
     profileBackground: v.id("profileBackgrounds"),
