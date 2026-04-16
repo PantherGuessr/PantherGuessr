@@ -24,16 +24,17 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        media: "(prefers-color-scheme: light)",
-        url: "/logo.svg",
-        href: "/logo.svg",
-      },
-      {
-        media: "(prefers-color-scheme: dark)",
-        url: "/logo-dark.svg",
-        href: "/logo-dark.svg",
+        url: "/pantherguessr_logo.svg",
+        href: "/pantherguessr_logo.svg",
       },
     ],
+  },
+  metadataBase: new URL("https://pantherguessr.com"),
+  openGraph: {
+    images: "/api/og",
+  },
+  twitter: {
+    images: "/api/og",
   },
 };
 
