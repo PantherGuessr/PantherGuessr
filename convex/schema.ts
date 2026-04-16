@@ -135,4 +135,18 @@ export default defineSchema({
     moderator: v.optional(v.id("users")),
     moderatorMessage: v.optional(v.string()),
   }),
+
+  levelReports: defineTable({
+    levelId: v.id("levels"),
+    reason: v.union(
+      v.literal("not_university_property"),
+      v.literal("pin_incorrectly_placed"),
+      v.literal("wrong_image"),
+      v.literal("outdated_image")
+    ),
+    reportedByClerkId: v.optional(v.string()),
+    status: v.union(v.literal("pending"), v.literal("resolved"), v.literal("dismissed")),
+  })
+    .index("byLevelId", ["levelId"])
+    .index("byStatus", ["status"]),
 });

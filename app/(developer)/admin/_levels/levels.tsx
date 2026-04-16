@@ -61,7 +61,6 @@ const Levels = () => {
   const tableData = useQuery(api.admin.getAllLevels);
   const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
   const deleteLevel = useMutation(api.levelcreator.deleteLevelById);
-
   // sets the image source to default on table data load
   useEffect(() => {
     if (tableData && tableData.length > 0) {

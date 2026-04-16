@@ -7,6 +7,18 @@ import { mutation } from "./_generated/server";
  * @returns The URL of the image storage
  */
 export const generateUploadUrl = mutation(async (ctx) => {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) throw new Error("Not authenticated");
+
+  const callerUser = await ctx.db
+    .query("users")
+    .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+    .unique();
+
+  if (!callerUser?.roles?.includes("developer") && !callerUser?.roles?.includes("moderator")) {
+    throw new Error("Insufficient permissions");
+  }
+
   return await ctx.storage.generateUploadUrl();
 });
 
@@ -37,6 +49,45 @@ export const createLevelWithImageStorageId = mutation({
       authorUsername: args.authorUsername,
       tags: args.tags,
     });
+  },
+});
+
+/**
+ * Updates a level's image and/or coordinates. Deletes the old image from storage when replacing.
+ */
+export const updateLevel = mutation({
+  args: {
+    levelId: v.id("levels"),
+    newImageId: v.optional(v.id("_storage")),
+    latitude: v.optional(v.float64()),
+    longitude: v.optional(v.float64()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const callerUser = await ctx.db
+      .query("users")
+      .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!callerUser?.roles?.includes("developer") && !callerUser?.roles?.includes("moderator")) {
+      throw new Error("Insufficient permissions");
+    }
+
+    const level = await ctx.db.get(args.levelId);
+    if (!level) throw new Error("Level not found");
+
+    const updates: { imageId?: typeof level.imageId; latitude?: number; longitude?: number } = {};
+
+    if (args.newImageId !== undefined) {
+      await ctx.storage.delete(level.imageId);
+      updates.imageId = args.newImageId;
+    }
+    if (args.latitude !== undefined) updates.latitude = args.latitude;
+    if (args.longitude !== undefined) updates.longitude = args.longitude;
+
+    await ctx.db.patch(args.levelId, updates);
   },
 });
 

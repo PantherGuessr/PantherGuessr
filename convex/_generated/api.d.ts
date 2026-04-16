@@ -16,6 +16,7 @@ import type * as gamestats from "../gamestats.js";
 import type * as http from "../http.js";
 import type * as leaderboard from "../leaderboard.js";
 import type * as levelcreator from "../levelcreator.js";
+import type * as reports from "../reports.js";
 import type * as users from "../users.js";
 import type * as weeklychallenge from "../weeklychallenge.js";
 
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   leaderboard: typeof leaderboard;
   levelcreator: typeof levelcreator;
+  reports: typeof reports;
   users: typeof users;
   weeklychallenge: typeof weeklychallenge;
 }>;
