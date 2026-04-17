@@ -1,19 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
+  VisibilityState,
 } from "@tanstack/react-table";
 import { Filter } from "lucide-react";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,13 +29,21 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   initialSorting?: SortingState;
+  initialColumnVisibility?: VisibilityState;
 }
 
-export function DataTable<TData, TValue>({ columns, data, initialSorting = [] }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  initialSorting = [],
+  initialColumnVisibility = {},
+}: DataTableProps<TData, TValue>) {
+  "use no memo";
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialColumnVisibility);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
@@ -58,14 +66,14 @@ export function DataTable<TData, TValue>({ columns, data, initialSorting = [] }:
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter by title..."
-          value={table.getColumn("title")?.getFilterValue() as string}
+          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) => table.getColumn("title")?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              <Filter className="h-4 w-4 mr-2" /> Filter
+              <Filter className="mr-2 h-4 w-4" /> Filter
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

@@ -6,6 +6,68 @@ import { Id } from "./_generated/dataModel";
 import { internalAction, internalMutation, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 
 /**
+ * Retrieves a user from the database using their Convex ID.
+ *
+ * @param ctx - The query context containing the database connection.
+ * @param convexId - The Convex users table ID of the user to be retrieved.
+ * @returns A promise that resolves to the user object if found, otherwise null.
+ */
+async function userById(ctx: QueryCtx | MutationCtx, convexId: Id<"users">) {
+  return await ctx.db
+    .query("users")
+    .withIndex("by_id", (q) => q.eq("_id", convexId))
+    .unique();
+}
+
+/**
+ * Retrieves a user from the database using their Clerk ID.
+ *
+ * @param ctx - The query context containing the database connection.
+ * @param clerkId - The Clerk ID of the user to be retrieved.
+ * @returns A promise that resolves to the user object if found, otherwise null.
+ */
+async function userByClerkId(ctx: QueryCtx | MutationCtx, clerkId: string) {
+  return await ctx.db
+    .query("users")
+    .withIndex("byClerkId", (q) => q.eq("clerkId", clerkId))
+    .unique();
+}
+
+/**
+ * Retrieves a user by their username from the database.
+ *
+ * @param ctx - The context object containing the database connection.
+ * @param username - The username of the user to retrieve.
+ * @returns A promise that resolves to the user object if found, otherwise null.
+ */
+async function userByUsername(ctx: QueryCtx | MutationCtx, username: string) {
+  return await ctx.db
+    .query("users")
+    .withIndex("byUsername", (q) => q.eq("username", username))
+    .unique();
+}
+
+/**
+ * Retrieves the current user based on the authentication context.
+ *
+ * @param ctx - The query context containing authentication information.
+ * @returns A promise that resolves to the current user or null if no user is authenticated.
+ */
+export async function getCurrentUser(ctx: QueryCtx | MutationCtx) {
+  const identity = await ctx.auth.getUserIdentity();
+  if (identity === null) {
+    return null;
+  }
+  return await userByClerkId(ctx, identity.subject);
+}
+
+export async function getCurrentUserOrThrow(ctx: QueryCtx | MutationCtx) {
+  const userRecord = await getCurrentUser(ctx);
+  if (!userRecord) throw new Error("Can't get current user");
+  return userRecord;
+}
+
+/**
  * Query to get the current user.
  *
  * @constant
@@ -39,15 +101,29 @@ export const current = query({
  *
  * @returns {Promise<void>} - A promise that resolves when the upsert operation is complete.
  */
+function pickRandom<T>(arr: T[], n: number): T[] {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(n, arr.length));
+}
+
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
   async handler(ctx, { data }) {
     const user = await userByClerkId(ctx, data.id);
 
     if (user === null) {
-      const background = await ctx.db.query("profileBackgrounds").withIndex("by_creation_time").first(); // generates background
-      // TODO: Guarantee that the "Just born" tagline is always set
-      const tagline = await ctx.db.query("profileTaglines").first(); // generates tagline
+      const allTaglines = await ctx.db.query("profileTaglines").collect();
+      const unlockedTaglines = allTaglines.filter((t) => !t.locked);
+      if (unlockedTaglines.length === 0) throw new Error("No unlocked taglines available for new user assignment");
+
+      const allBackgrounds = await ctx.db.query("profileBackgrounds").collect();
+      const unlockedBackgrounds = allBackgrounds.filter((b) => !b.locked);
+      if (unlockedBackgrounds.length === 0) throw new Error("No unlocked backgrounds available for new user assignment");
+
+      const pickedTaglines = pickRandom(unlockedTaglines, 3);
+      const pickedBackgrounds = pickRandom(unlockedBackgrounds, 3);
+      const activeTagline = pickedTaglines[Math.floor(Math.random() * pickedTaglines.length)];
+      const activeBackground = pickedBackgrounds[Math.floor(Math.random() * pickedBackgrounds.length)];
 
       const userAttributes = {
         clerkId: data.id!,
@@ -58,10 +134,10 @@ export const upsertFromClerk = internalMutation({
         currentStreak: 0n,
         isBanned: false,
         picture: data.image_url,
-        profileBackground: background!._id,
-        profileTagline: tagline!._id,
-        unlockedProfileBackgrounds: [background!._id],
-        unlockedProfileTaglines: [tagline!._id],
+        profileBackground: activeBackground._id,
+        profileTagline: activeTagline._id,
+        unlockedProfileBackgrounds: pickedBackgrounds.map((b) => b._id),
+        unlockedProfileTaglines: pickedTaglines.map((t) => t._id),
       };
 
       await ctx.db.insert("users", userAttributes);
@@ -171,7 +247,9 @@ export const isUserBanned = query({
     return {
       result: user.isBanned,
       banReason: user.banReason,
-      appealSubmitted: user.banAppeal ? ((await ctx.db.get(user.banAppeal)) ? true : false) : false,
+      appealSubmitted: user.banAppeal
+        ? ((await ctx.db.get(user.banAppeal))?.hasBeenResolved === false)
+        : false,
     };
   },
 });
@@ -303,50 +381,6 @@ export const hasRole = query({
     }
 
     return user.roles?.includes(args.role);
-  },
-});
-
-/**
- * Query to check if a user has a specific achievement.
- *
- * @param args - The arguments for the query.
- * @param args.name - The name of the achievement to check.
- * @param args.clerkId - The Clerk ID of the user.
- * @returns A boolean indicating whether the user has the specified achievement.
- *
- * @example
- * const hasAchieved = await hasAchievement({ name: 'First Win', clerkId: 'user_123' });
- * console.log(hasAchieved); // true or false
- */
-export const hasAchievement = query({
-  args: {
-    name: v.string(),
-    clerkId: v.string(),
-  },
-  async handler(ctx, args) {
-    const user = await userByClerkId(ctx, args.clerkId);
-
-    if (!user) {
-      return false;
-    }
-
-    for (const achievementId of user.achievements || []) {
-      const achievement = await achievementById(ctx, achievementId);
-      if (achievement?.name === args.name) {
-        return true;
-      }
-    }
-
-    return false;
-  },
-});
-
-export const getAchievementByName = query({
-  args: {
-    name: v.string(),
-  },
-  async handler(ctx, args) {
-    return await achievementByName(ctx, args.name);
   },
 });
 
@@ -589,12 +623,12 @@ export const getLastNPlayedGames = query({
  * If more than a full day has passed since the last play, the streak is reset to 1.
  * The updated streak and the current timestamp are then saved to the database.
  */
-export const updateStreak = mutation({
+export const updateStreak = internalMutation({
   args: {
-    clerkId: v.string(),
+    userId: v.id("users"),
   },
   async handler(ctx, args) {
-    const user = await userByClerkId(ctx, args.clerkId);
+    const user = await ctx.db.get(args.userId);
 
     if (!user) {
       throw new Error("User could not be found!");
@@ -624,6 +658,14 @@ export const updateStreak = mutation({
     }
 
     await ctx.db.patch(user._id, { currentStreak: newStreak, lastPlayedTimestamp: now.getTime() });
+
+    // on_fire: reached a 7-day streak
+    if (newStreak >= 7n) {
+      await ctx.runMutation(internal.achievements.grantAchievement, {
+        userId: user._id,
+        achievementId: "on_fire",
+      });
+    }
 
     return newStreak;
   },
@@ -960,98 +1002,81 @@ export const modifyRolesAdministrativeAction = mutation({
 });
 
 /**
- * Retrieves the current user record or throws an error if the user is not found.
- *
- * @param ctx - The context for the query.
- * @returns The current user record.
- * @throws Will throw an error if the current user cannot be retrieved.
+ * Internal helper that builds a full user profile object from a user document.
+ * Used by both getUserProfile and getCurrentUserProfile to avoid duplication.
  */
-export async function getCurrentUserOrThrow(ctx: QueryCtx | MutationCtx) {
-  const userRecord = await getCurrentUser(ctx);
-  if (!userRecord) throw new Error("Can't get current user");
-  return userRecord;
+async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnType<typeof userByClerkId>>>) {
+  // Derive roles from the user.roles array
+  const roles = user.roles ?? [];
+  const roleFlags = {
+    isDeveloper: roles.includes("developer"),
+    isContributor: roles.includes("contributor"),
+    isTopPlayer: roles.includes("top_player"),
+    isModerator: roles.includes("moderator"),
+    isFriend: roles.includes("friend"),
+  };
+
+  // Check chapman email
+  const hasChapmanEmail = user.emails.some((email) => email.endsWith("@chapman.edu"));
+
+  // Ban status
+  const appealSubmitted = user.banAppeal
+    ? ((await ctx.db.get(user.banAppeal))?.hasBeenResolved === false)
+    : false;
+
+  // Selected tagline and background
+  const selectedTagline = await ctx.db.get(user.profileTagline);
+  const selectedBackground = await ctx.db.get(user.profileBackground);
+
+  // Ongoing game check
+  const ongoingGame = await ctx.db
+    .query("ongoingGames")
+    .withIndex("byUserClerkId", (q) => q.eq("userClerkId", user.clerkId))
+    .first();
+
+  return {
+    user,
+    roles: roleFlags,
+    hasChapmanEmail,
+    isBanned: user.isBanned,
+    banReason: user.banReason,
+    appealSubmitted,
+    selectedTagline,
+    selectedBackground,
+    hasOngoingGame: ongoingGame !== null,
+    achievements: (user.achievements ?? []) as { id: string; unlockedAt: number }[],
+  };
 }
 
 /**
- * Retrieves the current user based on the authentication context.
- *
- * @param ctx - The query context containing authentication information.
- * @returns A promise that resolves to the current user or null if no user is authenticated.
+ * Retrieves a full user profile by Clerk ID in a single query.
+ * Consolidates roles, badges, ban status, tagline, background, ongoing game, and achievements.
  */
-export async function getCurrentUser(ctx: QueryCtx | MutationCtx) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (identity === null) {
-    return null;
-  }
-  return await userByClerkId(ctx, identity.subject);
-}
+export const getUserProfile = query({
+  args: {
+    clerkId: v.string(),
+  },
+  async handler(ctx, args) {
+    const user = await userByClerkId(ctx, args.clerkId);
+    if (!user) {
+      return null;
+    }
+    return await buildUserProfile(ctx, user);
+  },
+});
 
 /**
- * Retrieves a user from the database using their Convex ID.
- *
- * @param ctx - The query context containing the database connection.
- * @param convexId - The Convex users table ID of the user to be retrieved.
- * @returns A promise that resolves to the user object if found, otherwise null.
+ * Retrieves the current authenticated user's full profile in a single query.
+ * Same data as getUserProfile but resolves the user via the auth token.
  */
-async function userById(ctx: QueryCtx | MutationCtx, convexId: Id<"users">) {
-  return await ctx.db
-    .query("users")
-    .withIndex("by_id", (q) => q.eq("_id", convexId))
-    .unique();
-}
+export const getCurrentUserProfile = query({
+  args: {},
+  async handler(ctx) {
+    const user = await getCurrentUser(ctx);
+    if (!user) {
+      return null;
+    }
+    return await buildUserProfile(ctx, user);
+  },
+});
 
-/**
- * Retrieves a user from the database using their Clerk ID.
- *
- * @param ctx - The query context containing the database connection.
- * @param clerkId - The Clerk ID of the user to be retrieved.
- * @returns A promise that resolves to the user object if found, otherwise null.
- */
-async function userByClerkId(ctx: QueryCtx | MutationCtx, clerkId: string) {
-  return await ctx.db
-    .query("users")
-    .withIndex("byClerkId", (q) => q.eq("clerkId", clerkId))
-    .unique();
-}
-
-/**
- * Retrieves a user by their username from the database.
- *
- * @param ctx - The context object containing the database connection.
- * @param username - The username of the user to retrieve.
- * @returns A promise that resolves to the user object if found, otherwise null.
- */
-async function userByUsername(ctx: QueryCtx | MutationCtx, username: string) {
-  return await ctx.db
-    .query("users")
-    .withIndex("byUsername", (q) => q.eq("username", username))
-    .unique();
-}
-
-/**
- * Retrieves an achievement by its id.
- *
- * @param ctx - The query context used to interact with the database.
- * @param id - The id of the achievement to retrieve.
- * @returns A promise that resolves to the unique achievement with the specified id.
- */
-async function achievementById(ctx: QueryCtx, id: Id<"achievements">) {
-  return await ctx.db
-    .query("achievements")
-    .withIndex("by_id", (q) => q.eq("_id", id))
-    .unique();
-}
-
-/**
- * Retrieves an achievement by its name.
- *
- * @param ctx - The query context used to interact with the database.
- * @param name - The name of the achievement to retrieve.
- * @returns A promise that resolves to the unique achievement with the specified name.
- */
-async function achievementByName(ctx: QueryCtx, name: string) {
-  return await ctx.db
-    .query("achievements")
-    .withIndex("byName", (q) => q.eq("name", name))
-    .unique();
-}

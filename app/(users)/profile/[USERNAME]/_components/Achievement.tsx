@@ -6,9 +6,14 @@ interface IAchievement {
   name: string;
   description: string;
   imageSrc: string;
+  unlockedAt?: number;
 }
 
-const Achievement = ({ name, description, imageSrc }: IAchievement) => {
+const Achievement = ({ name, description, imageSrc, unlockedAt }: IAchievement) => {
+  const unlockedDate = unlockedAt
+    ? new Date(unlockedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    : null;
+
   return (
     <HoverCard key={name} openDelay={100} closeDelay={50}>
       <HoverCardTrigger asChild>
@@ -17,23 +22,24 @@ const Achievement = ({ name, description, imageSrc }: IAchievement) => {
           width={80}
           height={80}
           alt={name + " Achievement"}
-          className="select-none cursor-default"
+          className="cursor-default select-none"
           draggable={false}
         />
       </HoverCardTrigger>
-      <HoverCardContent className="w-80 z-50">
-        <div className="flex flex-row space-x-4 items-center">
+      <HoverCardContent className="z-50 w-80">
+        <div className="flex flex-row items-center space-x-4">
           <Image
             src={imageSrc}
             width={80}
             height={80}
             alt={name + " Achievement"}
-            className="justify-center align-middle select-none cursor-default"
+            className="cursor-default select-none justify-center align-middle"
             draggable={false}
           />
           <div className="flex flex-col justify-center">
-            <p className="font-bold text-left">{name}</p>
-            <p className="font-normal text-left">{description}</p>
+            <p className="text-left font-bold">{name}</p>
+            <p className="text-left font-normal">{description}</p>
+            {unlockedDate && <p className="mt-1 text-left text-xs text-muted-foreground">Unlocked {unlockedDate}</p>}
           </div>
         </div>
       </HoverCardContent>

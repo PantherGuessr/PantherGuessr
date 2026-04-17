@@ -1,5 +1,7 @@
 import L from "leaflet";
+
 import "leaflet/dist/leaflet.css";
+
 import { useEffect, useState } from "react";
 import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 
@@ -43,7 +45,7 @@ const UploadMap = () => {
   return (
     <div className="flex min-h-full min-w-full grow">
       <MapContainer
-        className="w-full h-full rounded-md"
+        className="h-full w-full rounded-md"
         attributionControl={true}
         center={[33.793332, -117.851475]}
         zoom={16}

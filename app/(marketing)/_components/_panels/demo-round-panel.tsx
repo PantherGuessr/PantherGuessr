@@ -1,9 +1,8 @@
-import { ImageIcon, MapPin } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
+import Image from "next/image";
+import { ImageIcon, MapPin } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-
 import { cn } from "@/lib/utils";
 
 import "./flipcard.css";
@@ -23,15 +22,15 @@ const DemoRoundPanel = () => {
     <div className={cn("flip-card-container", isFlipped && "flipped")}>
       <div className="flip-card-inner">
         <div className="flip-card-front">
-          <div className="relative flex grow justify-center w-full">
+          <div className="relative flex w-full grow justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={"/new-user-heading/CampusDemoImage.jpeg"}
               alt={"PantherGuessr Demo Image 1"}
-              className={"object-contain aspect-4/3 rounded-lg border-4 border-primary bg-primary"}
+              className={"aspect-4/3 rounded-lg border-4 border-primary bg-primary object-contain"}
             />
             <Image
-              className="absolute bottom-[25%] right-[11%] cursor-pointer hover:scale-125 transition-all drop-shadow-lg"
+              className="absolute bottom-[25%] right-[11%] cursor-pointer drop-shadow-lg transition-all hover:scale-125"
               src={lightHintIcon}
               alt={"Hint 1"}
               onMouseOver={() => setHint1Open(true)}
@@ -43,14 +42,14 @@ const DemoRoundPanel = () => {
               id="hint1"
               className={cn(
                 hintOverlayClassName,
-                " rounded-br-none bottom-[30%] right-[15%]",
+                "bottom-[30%] right-[15%] rounded-br-none",
                 hint1Open ? "opacity-100" : "opacity-0"
               )}
             >
               Info Booth
             </div>
             <Image
-              className="absolute bottom-[66%] right-[27%] cursor-pointer hover:scale-125 transition-all drop-shadow-lg"
+              className="absolute bottom-[66%] right-[27%] cursor-pointer drop-shadow-lg transition-all hover:scale-125"
               src={lightHintIcon}
               alt={"Hint 2"}
               onMouseOver={() => setHint2Open(true)}
@@ -62,14 +61,14 @@ const DemoRoundPanel = () => {
               id="hint2"
               className={cn(
                 hintOverlayClassName,
-                "rounded-tr-none top-[34%] right-[31%]",
+                "right-[31%] top-[34%] rounded-tr-none",
                 hint2Open ? "opacity-100" : "opacity-0"
               )}
             >
               Bertea Hall
             </div>
             <Image
-              className="absolute left-[15%] top-[53%] cursor-pointer hover:scale-125 transition-all drop-shadow-lg"
+              className="absolute left-[15%] top-[53%] cursor-pointer drop-shadow-lg transition-all hover:scale-125"
               src={lightHintIcon}
               alt={"Hint 3"}
               onMouseOver={() => setHint3Open(true)}
@@ -81,14 +80,14 @@ const DemoRoundPanel = () => {
               id="hint3"
               className={cn(
                 hintOverlayClassName,
-                "rounded-tl-none top-[58%] left-[19%]",
+                "left-[19%] top-[58%] rounded-tl-none",
                 hint3Open ? "opacity-100" : "opacity-0"
               )}
             >
               Waltmar Theatre
             </div>
             <Image
-              className="absolute left-[48%] top-[50%] cursor-pointer hover:scale-125 transition-all drop-shadow-lg"
+              className="absolute left-[48%] top-[50%] cursor-pointer drop-shadow-lg transition-all hover:scale-125"
               src={lightHintIcon}
               alt={"Hint 4"}
               onMouseOver={() => setHint4Open(true)}
@@ -100,7 +99,7 @@ const DemoRoundPanel = () => {
               id="hint4"
               className={cn(
                 hintOverlayClassName,
-                "rounded-tl-none top-[55%] left-[52%]",
+                "left-[52%] top-[55%] rounded-tl-none",
                 hint4Open ? "opacity-100" : "opacity-0"
               )}
             >
@@ -108,7 +107,7 @@ const DemoRoundPanel = () => {
             </div>
             <Button
               onClick={() => setIsFlipped(!isFlipped)}
-              className={"absolute right-[3%] bottom-[3%] px-2 aspect-square"}
+              className={"absolute bottom-[3%] right-[3%] aspect-square px-2"}
               title="Reveal Answer"
             >
               <MapPin className="mx-0" />
@@ -116,16 +115,16 @@ const DemoRoundPanel = () => {
           </div>
         </div>
         <div className="flip-card-back" id="flip-card-back">
-          <div className="relative flex grow justify-center w-full h-full bg-primary rounded-lg border-4 border-primary">
+          <div className="relative flex h-full w-full grow justify-center rounded-lg border-4 border-primary bg-primary">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={"/new-user-heading/MapAnswerReveal.jpeg"}
               alt={"PantherGuessr Demo Image 1"}
-              className={"object-contain aspect-4/3 rounded-xl border-4 border-primary bg-primary"}
+              className={"aspect-4/3 rounded-xl border-4 border-primary bg-primary object-contain"}
               draggable={false}
             />
             <Image
-              className="absolute top-[calc(50%-32px)] right-[calc(50%-24px)]]"
+              className="right-[calc(50%-24px)]] absolute top-[calc(50%-32px)]"
               src={"/CorrectPin.svg"}
               alt={"Hint 1"}
               height={48}
@@ -133,7 +132,7 @@ const DemoRoundPanel = () => {
             />
             <Button
               onClick={() => setIsFlipped(!isFlipped)}
-              className={"absolute right-[3%] bottom-[3%] px-2 aspect-square bg-black text-white hover:bg-black/80"}
+              className={"absolute bottom-[3%] right-[3%] aspect-square bg-black px-2 text-white hover:bg-black/80"}
             >
               <ImageIcon className="mx-0" />
             </Button>

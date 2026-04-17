@@ -1,10 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMutation, useQuery } from "convex/react";
 import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,13 +24,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-
-import { useMarker } from "./_helpers/MarkerContext";
 import { DataTable } from "./_helpers/datatable";
 import DynamicPreviewMap from "./_helpers/dynamic-preview-map";
+import { useMarker } from "./_helpers/MarkerContext";
 
 type Level = {
   _id: Id<"levels">;
@@ -52,14 +50,17 @@ const Levels = () => {
   // accessors and mutators for states
   const [clickedLevelId, setClickedLevelId] = useState<Id<"levels"> | null>(null);
   const [currentImageSrcUrl, setCurrentSrcUrl] = useState(defaultImageSource);
+  const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const [openDialogId, setOpenDialogId] = useState<Id<"levels"> | null>(null);
+  const [isMapDialogOpen, setIsMapDialogOpen] = useState(false);
   const [openMapDialogId, setOpenMapDialogId] = useState<Id<"levels"> | null>(null);
+  // necessary to force re-fetching image source when dialog is opened multiple times for the same level
+  const [dialogOpenCounter, setDialogOpenCounter] = useState(0);
 
   // convex api functions
   const tableData = useQuery(api.admin.getAllLevels);
   const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
   const deleteLevel = useMutation(api.levelcreator.deleteLevelById);
-
   // sets the image source to default on table data load
   useEffect(() => {
     if (tableData && tableData.length > 0) {
@@ -69,26 +70,30 @@ const Levels = () => {
 
   // updates image source state and open dialog id on dialog trigger
   useEffect(() => {
-    if (imageSrc) {
+    if (imageSrc && clickedLevelId) {
       setCurrentSrcUrl(imageSrc);
       setOpenDialogId(clickedLevelId);
+      setIsImageDialogOpen(true);
     }
-  }, [imageSrc, clickedLevelId]);
+  }, [imageSrc, clickedLevelId, dialogOpenCounter]);
 
   // closes dialog
   const handleDialogClose = () => {
     setCurrentSrcUrl(defaultImageSource);
+    setIsImageDialogOpen(false);
     setOpenDialogId(null);
   };
 
   // opens dialog
   const handleDialogOpen = (levelId: Id<"levels">) => {
     setClickedLevelId(levelId);
+    setDialogOpenCounter((prev) => prev + 1); // force state change
   };
 
   // closes map dialog
   const handleMapDialogClose = () => {
     setLocalMarkerPosition(null);
+    setIsMapDialogOpen(false);
     setOpenMapDialogId(null);
   };
 
@@ -98,13 +103,14 @@ const Levels = () => {
     const latlng = new L.LatLng(latitude, longitude);
     setLocalMarkerPosition(latlng);
     setOpenMapDialogId(levelId);
+    setIsMapDialogOpen(true);
   };
 
   // creates image dialog button
   function imageDialogCreator(row: Level) {
     return (
       <Dialog
-        open={openDialogId === row._id}
+        open={isImageDialogOpen && openDialogId === row._id}
         onOpenChange={(open) => {
           if (!open) {
             handleDialogClose();
@@ -124,7 +130,7 @@ const Levels = () => {
           </DialogHeader>
           <div className="flex justify-center">
             {currentImageSrcUrl === "/Invalid-Image.jpg" ? (
-              <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
+              <Skeleton className="aspect-4/3 w-full bg-zinc-400 dark:bg-red-900" />
             ) : (
               <Image
                 className="w-full"
@@ -144,7 +150,7 @@ const Levels = () => {
   function mapDialogCreator(row: Level) {
     return (
       <Dialog
-        open={openMapDialogId === row._id}
+        open={isMapDialogOpen && openMapDialogId === row._id}
         onOpenChange={(open) => {
           if (!open) {
             handleMapDialogClose();
@@ -164,7 +170,7 @@ const Levels = () => {
               (Latitude: {row.latitude}, Longitude: {row.longitude})
             </DialogDescription>
           </DialogHeader>
-          <div className="flex w-full h-80 grow py-2">
+          <div className="flex h-80 w-full grow py-2">
             <DynamicPreviewMap />
           </div>
         </DialogContent>
@@ -314,7 +320,12 @@ const Levels = () => {
   return (
     <>
       <p className="text-start">{tableData?.length || 0} total levels.</p>
-      <DataTable columns={columns} data={tableData || []} initialSorting={[{ id: "_creationTime", desc: true }]} />
+      <DataTable
+        columns={columns}
+        data={tableData || []}
+        initialSorting={[{ id: "_creationTime", desc: true }]}
+        initialColumnVisibility={{ tags: false, _creationTime: false }}
+      />
     </>
   );
 };

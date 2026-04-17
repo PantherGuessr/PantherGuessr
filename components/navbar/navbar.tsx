@@ -1,26 +1,16 @@
 "use client";
 
-import { useClerk, useUser } from "@clerk/clerk-react";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
-import { useConvexAuth, useQuery } from "convex/react";
-import { Bug, Copy, LogOut, Settings, Shield, User, UserRoundSearch, Wrench } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { SignInButton, SignUpButton, useClerk } from "@clerk/nextjs";
+import { Bug, Copy, LogOut, Settings, Shield, User, UserRoundSearch, Wrench } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-
-import { api } from "@/convex/_generated/api";
-
-import { useHasChapmanEmail } from "@/hooks/use-has-chapman-email";
-import { useRoleCheck } from "@/hooks/use-role-check";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { toast } from "@/hooks/use-toast";
-import { useGetSelectedTagline } from "@/hooks/userProfiles/use-get-selected-tagline";
-
 import { cn } from "@/lib/utils";
-
 import LevelBadge from "../level-badge";
 import { Logo } from "../logo";
 import StreakBadge from "../streak-badge";
@@ -28,60 +18,38 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "../ui/menubar";
 import { Toaster } from "../ui/toaster";
+
 import "./navbar.css";
 
 export const Navbar = () => {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useConvexAuth();
-  const clerkUser = useUser();
-  const user = useQuery(api.users.getUserByUsername, { username: clerkUser.user?.username ?? "" });
-  const { isLoading: isProfileTaglineLoading, result: profileTagline } = useGetSelectedTagline(user?.clerkId);
+  const { data: currentUser, isLoading, isAuthenticated } = useCurrentUser();
   const { signOut, openUserProfile } = useClerk();
-
-  const { result: isDeveloperRole, isLoading: developerRoleLoading } = useRoleCheck("developer");
-  const { result: isContributorRole, isLoading: contributorRoleLoading } = useRoleCheck("contributor");
-  const { result: isTopPlayer, isLoading: topPlayerIsLoading } = useRoleCheck("top_player", user?.clerkId);
-  const { result: isModeratorRole, isLoading: moderatorRoleLoading } = useRoleCheck("moderator");
-  const { result: isFriendRole, isLoading: friendRoleLoading } = useRoleCheck("friend");
-  const { result: isChapmanStudent, isLoading: chapmanRoleLoading } = useHasChapmanEmail();
   const scrolled = useScrollTop();
 
-  const [isUserLoading, setIsUserLoading] = useState(true);
-  useEffect(() => {
-    if (user !== undefined) {
-      setIsUserLoading(false);
-    }
-  }, [user]);
+  const user = currentUser?.user;
 
   return (
     <>
       <div
         className={cn(
-          "z-50 bg-transparent fixed top-0 flex items-center p-6 w-full",
-          scrolled && "backdrop-blur-sm border-b-2 border-[#450b0b4c] shadow-md"
+          "fixed top-0 z-50 flex w-full items-center bg-transparent p-6",
+          scrolled && "border-b-2 border-[#450b0b4c] shadow-md backdrop-blur-sm"
         )}
       >
-        <div className="justify-between flex items-center gap-x-2 w-full">
-          <div className="flex flex-row mr-2 items-center">
+        <div className="flex w-full items-center justify-between gap-x-2">
+          <div className="mr-2 flex flex-row items-center">
             <Logo href="/" />
           </div>
-          {isLoading ||
-            developerRoleLoading ||
-            contributorRoleLoading ||
-            topPlayerIsLoading ||
-            moderatorRoleLoading ||
-            friendRoleLoading ||
-            chapmanRoleLoading ||
-            isUserLoading ||
-            (isProfileTaglineLoading && (
-              <div className="flex justify-end justify-items-end items-center">
-                <Skeleton className="h-6 w-[120px] mr-1" />
-                <Skeleton className="h-8 w-8 rounded-full" />
-              </div>
-            ))}
+          {isLoading && (
+            <div className="flex items-center justify-end justify-items-end">
+              <Skeleton className="mr-1 h-6 w-[120px]" />
+              <Skeleton className="h-8 w-8 rounded-full" />
+            </div>
+          )}
           {!isLoading && !isAuthenticated && (
             <>
-              <div className="hidden sm:block ml-auto space-x-2">
+              <div className="ml-auto hidden space-x-2 sm:block">
                 <SignInButton mode="modal" fallbackRedirectUrl={window.location.href}>
                   <Button variant="ghost" size="sm">
                     Login
@@ -93,7 +61,7 @@ export const Navbar = () => {
                   </Button>
                 </SignUpButton>
               </div>
-              <div className="block sm:hidden text-muted-foreground">
+              <div className="block text-muted-foreground sm:hidden">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="icon">
@@ -112,208 +80,197 @@ export const Navbar = () => {
               </div>
             </>
           )}
-          {isAuthenticated &&
-            !isLoading &&
-            !developerRoleLoading &&
-            !contributorRoleLoading &&
-            !moderatorRoleLoading &&
-            !friendRoleLoading &&
-            !chapmanRoleLoading &&
-            !isUserLoading &&
-            user?.picture !== undefined && (
-              <>
-                {/* <div className="items-center justify-items-end gap-x-1 mx-auto hidden sm:flex">
-                      <NavbarMain />
-                    </div>        */}
-                <div className="flex justify-end justify-items-end items-center gap-x-0 ml-2">
-                  <Menubar className="flex-1 bg-transparent outline-none p-0 hover:bg-accent focus:bg-accent cursor-pointer">
-                    <MenubarMenu>
-                      <MenubarTrigger className="bg-transparent outline-none hover:bg-accent focus:bg-accent cursor-pointer">
-                        <div className="flex justify-end justify-items-end items-center">
-                          <StreakBadge
-                            streak={Number(user.currentStreak)}
-                            lastPlayedTime={Number(user.lastPlayedTimestamp)}
+          {isAuthenticated && !isLoading && user && (
+            <>
+              <div className="ml-2 flex items-center justify-end justify-items-end gap-x-0">
+                <Menubar className="flex-1 cursor-pointer bg-transparent p-0 outline-none hover:bg-accent focus:bg-accent">
+                  <MenubarMenu>
+                    <MenubarTrigger className="cursor-pointer bg-transparent outline-none hover:bg-accent focus:bg-accent">
+                      <div className="flex items-center justify-end justify-items-end">
+                        <StreakBadge
+                          streak={Number(user.currentStreak)}
+                          lastPlayedTime={Number(user.lastPlayedTimestamp)}
+                        />
+                        <LevelBadge level={Number(user.level)} />
+                        <p className="mr-2 hidden font-bold sm:flex">@{user.username}</p>
+                        <Avatar className="h-[25px] w-[25px] overflow-hidden">
+                          <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+                          <AvatarImage
+                            src={user.picture}
+                            alt={`${user.username}'s Profile Picture`}
+                            className="object-cover"
                           />
-                          <LevelBadge level={Number(user.level)} />
-                          <p className="hidden sm:flex mr-2 font-bold">@{user?.username}</p>
-                          <Avatar className="w-[25px] h-[25px] overflow-hidden">
-                            <AvatarFallback>{user?.username[0].toUpperCase()}</AvatarFallback>
-                            <AvatarImage
-                              src={user?.picture}
-                              alt={`${user?.username}'s Profile Picture`}
-                              className="object-cover"
-                            />
+                        </Avatar>
+                      </div>
+                    </MenubarTrigger>
+                    <MenubarContent align="end">
+                      <MenubarItem
+                        className="cursor-pointer"
+                        onClick={() => {
+                          router.push(`/profile/${user.username}`);
+                        }}
+                      >
+                        <div className="flex space-x-3">
+                          <Avatar>
+                            <AvatarImage src={user.picture} />
+                            <AvatarFallback>{user.username.toUpperCase()}</AvatarFallback>
                           </Avatar>
-                        </div>
-                      </MenubarTrigger>
-                      <MenubarContent align="end">
-                        <MenubarItem
-                          className="cursor-pointer"
-                          onClick={() => {
-                            router.push(`/profile/${user!.username}`);
-                          }}
-                        >
-                          <div className="flex space-x-3">
-                            <Avatar>
-                              <AvatarImage src={user.picture} />
-                              <AvatarFallback>{user.username.toUpperCase()}</AvatarFallback>
-                            </Avatar>
-                            <div className="space-y-1 text-left">
-                              <div className="flex md:flex-row flex-col md:items-start">
-                                <div className="flex flex-row">
-                                  <h4 className="text-sm font-semibold">@{user.username}</h4>
-                                  <div className="flex flex-row items-center gap-x-2 pl-2">
-                                    {isDeveloperRole && (
-                                      <Image
-                                        draggable={false}
-                                        className="select-none"
-                                        src="/badges/developer_badge.svg"
-                                        width="15"
-                                        height="15"
-                                        alt="Developer Badge"
-                                      />
-                                    )}
-                                    {isModeratorRole && (
-                                      <Image
-                                        draggable={false}
-                                        className="select-none"
-                                        src="/badges/moderator_badge.svg"
-                                        width="15"
-                                        height="15"
-                                        alt="Moderator Badge"
-                                      />
-                                    )}
-                                    {isContributorRole && (
-                                      <Image
-                                        draggable={false}
-                                        className="select-none"
-                                        src="/badges/contributor_badge.svg"
-                                        width="15"
-                                        height="15"
-                                        alt="Contributor Badge"
-                                      />
-                                    )}
-                                    {isTopPlayer && (
-                                      <Image
-                                        draggable={false}
-                                        className="select-none"
-                                        src="/badges/top_player_badge.svg"
-                                        width="15"
-                                        height="15"
-                                        alt="Top Ranked Player Badge"
-                                      />
-                                    )}
-                                    {isFriendRole && (
-                                      <Image
-                                        draggable={false}
-                                        className="select-none"
-                                        src="/badges/friend_badge.svg"
-                                        alt="Friend Badge"
-                                        width="15"
-                                        height="15"
-                                      />
-                                    )}
-                                    {isChapmanStudent && (
-                                      <Image
-                                        draggable={false}
-                                        className="select-none"
-                                        src="/badges/chapman_badge.svg"
-                                        alt="Chapman Student Badge"
-                                        width="15"
-                                        height="15"
-                                      />
-                                    )}
-                                  </div>
+                          <div className="space-y-1 text-left">
+                            <div className="flex flex-col md:flex-row md:items-start">
+                              <div className="flex flex-row">
+                                <h4 className="text-sm font-semibold">@{user.username}</h4>
+                                <div className="flex flex-row items-center gap-x-2 pl-2">
+                                  {currentUser.roles.isDeveloper && (
+                                    <Image
+                                      draggable={false}
+                                      className="select-none"
+                                      src="/badges/developer_badge.svg"
+                                      width="15"
+                                      height="15"
+                                      alt="Developer Badge"
+                                    />
+                                  )}
+                                  {currentUser.roles.isModerator && (
+                                    <Image
+                                      draggable={false}
+                                      className="select-none"
+                                      src="/badges/moderator_badge.svg"
+                                      width="15"
+                                      height="15"
+                                      alt="Moderator Badge"
+                                    />
+                                  )}
+                                  {currentUser.roles.isContributor && (
+                                    <Image
+                                      draggable={false}
+                                      className="select-none"
+                                      src="/badges/contributor_badge.svg"
+                                      width="15"
+                                      height="15"
+                                      alt="Contributor Badge"
+                                    />
+                                  )}
+                                  {currentUser.roles.isTopPlayer && (
+                                    <Image
+                                      draggable={false}
+                                      className="select-none"
+                                      src="/badges/top_player_badge.svg"
+                                      width="15"
+                                      height="15"
+                                      alt="Top Ranked Player Badge"
+                                    />
+                                  )}
+                                  {currentUser.roles.isFriend && (
+                                    <Image
+                                      draggable={false}
+                                      className="select-none"
+                                      src="/badges/friend_badge.svg"
+                                      alt="Friend Badge"
+                                      width="15"
+                                      height="15"
+                                    />
+                                  )}
+                                  {currentUser.hasChapmanEmail && (
+                                    <Image
+                                      draggable={false}
+                                      className="select-none"
+                                      src="/badges/chapman_badge.svg"
+                                      alt="Chapman Student Badge"
+                                      width="15"
+                                      height="15"
+                                    />
+                                  )}
                                 </div>
                               </div>
-                              <p className="text-sm text-muted-foreground font-semibold italic">
-                                {profileTagline?.tagline}
-                              </p>
                             </div>
+                            <p className="text-sm font-semibold italic text-muted-foreground">
+                              {currentUser.selectedTagline?.tagline}
+                            </p>
                           </div>
-                        </MenubarItem>
-                        <MenubarSeparator />
-                        <MenubarItem
-                          className="cursor-pointer"
-                          onClick={() => {
-                            openUserProfile();
-                          }}
-                        >
-                          <Settings className="h-4 w-4 mr-2" /> Account Settings
-                        </MenubarItem>
-                        <MenubarSeparator />
-                        <MenubarItem
-                          className="cursor-pointer"
-                          onClick={() => {
-                            navigator.clipboard.writeText(user!.username);
-                            toast({
-                              description: `"${user!.username}" has been copied to clipboard!`,
-                            });
-                          }}
-                        >
-                          <Copy className="h-4 w-4 mr-2" /> Copy Username
-                        </MenubarItem>
-                        <MenubarItem
-                          className="cursor-pointer"
-                          onClick={() => {
-                            router.push("/profile");
-                          }}
-                        >
-                          <UserRoundSearch className="h-4 w-4 mr-2" /> Search Profiles
-                        </MenubarItem>
+                        </div>
+                      </MenubarItem>
+                      <MenubarSeparator />
+                      <MenubarItem
+                        className="cursor-pointer"
+                        onClick={() => {
+                          openUserProfile();
+                        }}
+                      >
+                        <Settings className="mr-2 h-4 w-4" /> Account Settings
+                      </MenubarItem>
+                      <MenubarSeparator />
+                      <MenubarItem
+                        className="cursor-pointer"
+                        onClick={() => {
+                          navigator.clipboard.writeText(user.username);
+                          toast({
+                            description: `"${user.username}" has been copied to clipboard!`,
+                          });
+                        }}
+                      >
+                        <Copy className="mr-2 h-4 w-4" /> Copy Username
+                      </MenubarItem>
+                      <MenubarItem
+                        className="cursor-pointer"
+                        onClick={() => {
+                          router.push("/profile");
+                        }}
+                      >
+                        <UserRoundSearch className="mr-2 h-4 w-4" /> Search Profiles
+                      </MenubarItem>
 
-                        {(isDeveloperRole || isModeratorRole) && <MenubarSeparator />}
+                      {(currentUser.roles.isDeveloper || currentUser.roles.isModerator) && <MenubarSeparator />}
 
-                        {isDeveloperRole && (
-                          <MenubarItem
-                            className="cursor-pointer"
-                            onClick={() => {
-                              router.push("/admin");
-                            }}
-                          >
-                            <Wrench className="h-4 w-4 mr-2" />
-                            Developer Portal
-                          </MenubarItem>
-                        )}
-
-                        {(isModeratorRole || isDeveloperRole) && (
-                          <MenubarItem
-                            className="cursor-pointer"
-                            onClick={() => {
-                              // router.push('/moderator'); <- TODO: ADD THIS BACK WHEN WE GET THE PAGE WORKING
-                              alert("Moderator page coming soon!");
-                            }}
-                          >
-                            <Shield className="h-4 w-4 mr-2" />
-                            Moderator Portal
-                          </MenubarItem>
-                        )}
-                        <MenubarSeparator />
+                      {currentUser.roles.isDeveloper && (
                         <MenubarItem
                           className="cursor-pointer"
                           onClick={() => {
-                            window.open("https://github.com/PantherGuessr/PantherGuessr/issues/new/choose", "_blank");
+                            router.push("/admin");
                           }}
                         >
-                          <Bug className="h-4 w-4 mr-2" />
-                          Report a Bug
+                          <Wrench className="mr-2 h-4 w-4" />
+                          Developer Portal
                         </MenubarItem>
-                        <MenubarSeparator />
+                      )}
+
+                      {(currentUser.roles.isModerator || currentUser.roles.isDeveloper) && (
                         <MenubarItem
                           className="cursor-pointer"
                           onClick={() => {
-                            signOut({ redirectUrl: window.location.href });
+                            // router.push('/moderator'); <- TODO: ADD THIS BACK WHEN WE GET THE PAGE WORKING
+                            alert("Moderator page coming soon!");
                           }}
                         >
-                          <LogOut className="h-4 w-4 mr-2" />
-                          Logout
+                          <Shield className="mr-2 h-4 w-4" />
+                          Moderator Portal
                         </MenubarItem>
-                      </MenubarContent>
-                    </MenubarMenu>
-                  </Menubar>
-                </div>
-              </>
-            )}
+                      )}
+                      <MenubarSeparator />
+                      <MenubarItem
+                        className="cursor-pointer"
+                        onClick={() => {
+                          window.open("https://github.com/PantherGuessr/PantherGuessr/issues/new/choose", "_blank");
+                        }}
+                      >
+                        <Bug className="mr-2 h-4 w-4" />
+                        Report a Bug
+                      </MenubarItem>
+                      <MenubarSeparator />
+                      <MenubarItem
+                        className="cursor-pointer"
+                        onClick={() => {
+                          signOut({ redirectUrl: window.location.href });
+                        }}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </MenubarItem>
+                    </MenubarContent>
+                  </MenubarMenu>
+                </Menubar>
+              </div>
+            </>
+          )}
         </div>
       </div>
       <Toaster />

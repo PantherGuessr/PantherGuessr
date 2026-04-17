@@ -1,15 +1,16 @@
 "use client";
 
 import { Footer } from "@/components/footer";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import Analytics from "./_analytics/analytics";
 import { useAdmin } from "./_components/adminprovider";
-import { MarkerProvider } from "./_levels/_helpers/MarkerContext";
+import LevelReports from "./_levels/_helpers/levelreports";
 import LevelUpload from "./_levels/_helpers/levelupload";
+import { MarkerProvider } from "./_levels/_helpers/MarkerContext";
 import Levels from "./_levels/levels";
 import SiteSettings from "./_sitesettings/sitesettings";
+import Users from "./_users/users";
 import WeeklyChallengeConfig from "./_weekly/weeklyconfig";
 
 const AdminPage = () => {
@@ -22,8 +23,8 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="min-h-full flex flex-col">
-      <div className="flex flex-col text-center gap-y-8 flex-1 px-6 pb-10">
+    <div className="flex min-h-full flex-col">
+      <div className="flex flex-1 flex-col gap-y-8 px-1 pb-10 text-center md:px-6">
         <h1 className="text-4xl">Admin Dashboard</h1>
         <Tabs defaultValue={tab} onValueChange={handleTabChange}>
           <TabsList>
@@ -44,40 +45,61 @@ const AdminPage = () => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="analytics">
-            <Card className="mt-8 mx-10 p-2">
-              <CardHeader className="text-4xl ml-2 text-start">Analytics</CardHeader>
-              <CardContent>
+            <Card className="mx-1 mt-8 p-0 md:mx-10 md:p-2">
+              <CardHeader className="px-3 md:px-6">
+                <CardTitle>Analytics</CardTitle>
+              </CardHeader>
+              <CardContent className="px-2 md:px-6">
                 <Analytics />
               </CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="levels">
             <MarkerProvider>
-              <Card className="mt-8 mx-10 p-2">
-                <CardHeader className="flex flex-row justify-between">
-                  <p className="text-4xl ml-2 text-start ">Levels</p>
-                  <LevelUpload />
-                </CardHeader>
-                <CardContent>
-                  <Levels />
-                </CardContent>
-              </Card>
+              <div className="space-y-6">
+                <Card className="mx-1 mt-8 p-0 md:mx-10 md:p-2 [&_td]:px-2 [&_td]:py-2 md:[&_td]:px-4 md:[&_td]:py-4 [&_th]:px-2 md:[&_th]:px-4">
+                  <CardHeader className="px-3 md:px-6">
+                    <CardTitle>Level Reports</CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-2 md:px-6">
+                    <LevelReports />
+                  </CardContent>
+                </Card>
+                <Card className="mx-1 p-0 md:mx-10 md:p-2 [&_td]:px-2 [&_td]:py-2 md:[&_td]:px-4 md:[&_td]:py-4 [&_th]:px-2 md:[&_th]:px-4">
+                  <CardHeader className="flex flex-row items-center justify-between px-3 md:px-6">
+                    <CardTitle>Levels</CardTitle>
+                    <LevelUpload />
+                  </CardHeader>
+                  <CardContent className="px-2 md:px-6">
+                    <Levels />
+                  </CardContent>
+                </Card>
+              </div>
             </MarkerProvider>
           </TabsContent>
           <TabsContent value="weekly">
-            <Card className="mt-8 mx-10 p-2">
+            <Card className="mx-1 mt-8 p-0 md:mx-10 md:p-2 [&_td]:px-2 [&_td]:py-2 md:[&_td]:px-4 md:[&_td]:py-4 [&_th]:px-2 md:[&_th]:px-4">
               <MarkerProvider>
-                <CardHeader className="text-4xl ml-2 text-start">Weekly Challenges</CardHeader>
-                <CardContent>
+                <CardHeader className="px-3 md:px-6">
+                  <CardTitle>Weekly Challenges</CardTitle>
+                </CardHeader>
+                <CardContent className="px-2 md:px-6">
                   <WeeklyChallengeConfig />
                 </CardContent>
               </MarkerProvider>
             </Card>
           </TabsContent>
+          <TabsContent value="users">
+            <div className="mx-1 mt-8 md:mx-10">
+              <Users />
+            </div>
+          </TabsContent>
           <TabsContent value="settings">
-            <Card className="mt-8 mx-10 p-2">
-              <CardHeader className="text-4xl ml-2 text-start">Site Settings</CardHeader>
-              <CardContent>
+            <Card className="mx-1 mt-8 p-0 md:mx-10 md:p-2">
+              <CardHeader className="px-3 md:px-6">
+                <CardTitle>Site Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="px-2 md:px-6">
                 <SiteSettings />
               </CardContent>
             </Card>

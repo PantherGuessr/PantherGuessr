@@ -2,7 +2,7 @@ import "./game.css";
 
 const GamePageLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="h-full w-full flex overflow-y-auto">
+    <div className="flex h-full w-full overflow-y-auto">
       <main className="w-full">{children}</main>
     </div>
   );

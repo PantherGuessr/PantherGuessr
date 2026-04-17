@@ -1,12 +1,11 @@
-import { useUser } from "@clerk/nextjs";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import type { LatLng } from "leaflet";
-import { useRouter } from "next/navigation";
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
-
+import { useCurrentUser } from "@/hooks/use-current-user";
 import useGameById from "@/hooks/use-game-by-id";
 
 interface GameData {
@@ -43,11 +42,12 @@ const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider = ({ children, gameId }: { children: React.ReactNode; gameId?: Id<"games"> }) => {
   const router = useRouter();
-  const user = useUser();
+  const { data: currentUser } = useCurrentUser();
+  const clerkId = currentUser?.user.clerkId;
 
   // states for the game
   const [levels, setLevels] = useState<Id<"levels">[]>([]);
-  const [currentRound, setCurrentRound] = useState(1); // uses starting round if continuing game, or 1 is first round
+  const [currentRound, setCurrentRound] = useState(1);
   const [score, setScore] = useState(0);
   const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
   const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
@@ -59,20 +59,17 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   const [distanceFromTarget, setDistanceFromTarget] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [allDistances, setAllDistances] = useState<number[]>([]); // imports starting distances if continuing game
-  const [allScores, setAllScores] = useState<number[]>([]); // imports starting scores if continuing game
+  const [allDistances, setAllDistances] = useState<number[]>([]);
+  const [allScores, setAllScores] = useState<number[]>([]);
   const [leaderboardEntryId, setLeaderboardEntryId] = useState<string | null>(null);
 
-  const gameData: GameData | null = useGameById(gameId); // gets the game by id
-
-  // user
-  const currentUser = useQuery(api.users.current);
+  const gameData: GameData | null = useGameById(gameId, clerkId);
 
   // Get leaderboard entry for this game and user
   const leaderboardEntry = useQuery(
     api.game.getLeaderboardEntryByGameAndUser,
-    gameData?.gameContent?._id && currentUser?._id
-      ? { gameId: gameData.gameContent._id, userId: currentUser._id }
+    gameData?.gameContent?._id && currentUser?.user._id
+      ? { gameId: gameData.gameContent._id, userId: currentUser.user._id }
       : "skip"
   );
 
@@ -89,31 +86,20 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
     return [];
   }, [gameData]);
 
-  // image sources and check guess query/mutations
   const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
   const checkGuess = useMutation(api.game.checkGuess);
 
-  // user
-  const updateStreak = useMutation(api.users.updateStreak);
-
-  // analytics
   const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
   const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
-
-  // leaderboard
   const addLeaderboardEntryToGame = useMutation(api.game.addLeaderboardEntryToGame);
-
-  // first played by update
   const updateFirstPlayedBy = useMutation(api.game.updateFirstPlayedByClerkId);
-
-  // continue game
   const updateOngoingGameOrCreate = useMutation(api.continuegame.updateOngoingGameOrCreate);
   const deleteOngoingGame = useMutation(api.continuegame.deleteOngoingGame);
 
   useEffect(() => {
     if (ids) {
-      setLevels(ids); // sets the levels
-      setCurrentLevel(ids[currentRound - 1]); // sets the current level
+      setLevels(ids);
+      setCurrentLevel(ids[currentRound - 1]);
     }
   }, [ids, currentRound]);
 
@@ -128,11 +114,10 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
 
   useEffect(() => {
     if (currentLevelId) {
-      setCurrentSrcUrl(imageSrc ?? "/Invalid-Image.jpg"); // sets the current image source URL
+      setCurrentSrcUrl(imageSrc ?? "/Invalid-Image.jpg");
     }
   }, [currentLevelId, imageSrc]);
 
-  // Update the browser URL without reloading the page
   useEffect(() => {
     if (gameData?.gameContent?._id) {
       router.replace(`/game/${gameData.gameContent._id}`);
@@ -145,10 +130,8 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
     setIsSubmittingGuess(true);
 
     try {
-      // checks the guess and updates the scores, correct values, distances, and scores arrays
       const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
 
-      // Dynamically import leaflet here to avoid SSR issues
       const L = (await import("leaflet")).default;
 
       setCorrectLocation(new L.LatLng(result.correctLat, result.correctLng));
@@ -170,7 +153,7 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
 
     updateOngoingGameOrCreate({
       gameId: gameData!.gameContent!._id,
-      userClerkId: user?.user?.id ?? "",
+      userClerkId: clerkId ?? "",
       currentRound: BigInt(nextRoundNumber),
       totalTimeTaken: BigInt(0),
       scores: allScores.map((score) => BigInt(score)),
@@ -179,28 +162,22 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
     });
 
     if (nextRoundNumber > levels.length) {
-      // adds loading states
       setIsLoading(true);
       setIsModalVisible(true);
 
-      // incrementing daily and monthly statistics
       incrementDailyGameStats();
       incrementMonthlyGameStats();
 
-      // deletes ongoing game and removes it from local storage
       await deleteOngoingGame({
         gameId: gameData!.gameContent!._id,
-        userClerkId: user?.user?.id ?? "",
+        userClerkId: clerkId ?? "",
       });
 
-      // !!! it may be a bad idea to assume this is never null but, ya know, YOLO! - Dylan
-      updateStreak({ clerkId: currentUser!.clerkId });
-
-      updateFirstPlayedBy({ clerkId: currentUser!.clerkId, gameId: gameData!.gameContent!._id });
+      updateFirstPlayedBy({ clerkId: clerkId!, gameId: gameData!.gameContent!._id });
 
       addLeaderboardEntryToGame({
         gameId: gameData!.gameContent!._id,
-        userId: currentUser!._id,
+        userId: currentUser!.user._id,
         round_1: BigInt(allScores[0]),
         round_1_distance: BigInt(allDistances[0]),
         round_2: BigInt(allScores[1]),
@@ -217,14 +194,12 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
         setLeaderboardEntryId(leaderboardEntry);
       });
     } else {
-      // updates the current round to the next round and updates the level
       setCurrentRound(currentRound + 1);
       const nextLevel = levels[nextRoundNumber - 1];
       if (nextLevel) {
         setCurrentLevel(nextLevel);
       }
 
-      // resets marker positions and score values
       setMarkerHasBeenPlaced(false);
       setMarkerPosition(null);
       setCorrectLocation(null);
@@ -233,7 +208,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
     }
   };
 
-  // Redirect user to their results page if they have already completed the game
   useEffect(() => {
     if (leaderboardEntry && leaderboardEntry._id) {
       router.replace(`/results/${leaderboardEntry._id}?fromGame=true`);
@@ -284,5 +258,4 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   );
 };
 
-// Export the hook so that components can use game context
 export const useGame = () => useContext(GameContext);

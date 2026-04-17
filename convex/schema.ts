@@ -15,7 +15,7 @@ export default defineSchema({
     isBanned: v.boolean(),
     banReason: v.optional(v.string()),
     banAppeal: v.optional(v.id("banAppeals")),
-    achievements: v.optional(v.array(v.id("achievements"))),
+    achievements: v.optional(v.array(v.object({ id: v.string(), unlockedAt: v.number() }))),
     picture: v.string(),
     profileTagline: v.id("profileTaglines"),
     profileBackground: v.id("profileBackgrounds"),
@@ -63,7 +63,9 @@ export default defineSchema({
     gameId: v.id("games"),
     firstPlayedByClerkId: v.optional(v.string()),
     leaderboard: v.optional(v.array(v.id("leaderboardEntries"))),
-  }),
+    isActive: v.optional(v.boolean()), // true if currently active, false if upcoming; optional for migration safety
+  }).index("byIsActive", ["isActive"])
+    .index("byStartDate", ["startDate"]),
 
   leaderboardEntries: defineTable({
     game: v.union(v.id("games"), v.id("weeklyChallenges")),
@@ -101,19 +103,14 @@ export default defineSchema({
 
   profileTaglines: defineTable({
     tagline: v.string(),
+    locked: v.optional(v.boolean()),
   }),
 
   profileBackgrounds: defineTable({
     title: v.string(),
     backgroundCSS: v.string(),
+    locked: v.optional(v.boolean()),
   }),
-
-  achievements: defineTable({
-    name: v.string(),
-    description: v.string(),
-    isEnabled: v.boolean(),
-    canUnlock: v.boolean(),
-  }).index("byName", ["name"]),
 
   userReports: defineTable({
     reportedUser: v.id("users"),
@@ -133,4 +130,18 @@ export default defineSchema({
     moderator: v.optional(v.id("users")),
     moderatorMessage: v.optional(v.string()),
   }),
+
+  levelReports: defineTable({
+    levelId: v.id("levels"),
+    reason: v.union(
+      v.literal("not_university_property"),
+      v.literal("pin_incorrectly_placed"),
+      v.literal("wrong_image"),
+      v.literal("outdated_image")
+    ),
+    reportedByClerkId: v.optional(v.string()),
+    status: v.union(v.literal("pending"), v.literal("resolved"), v.literal("dismissed")),
+  })
+    .index("byLevelId", ["levelId"])
+    .index("byStatus", ["status"]),
 });

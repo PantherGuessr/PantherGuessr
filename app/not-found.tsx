@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowLeft, Home } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowLeft, Home } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar/navbar";
@@ -15,16 +16,25 @@ export default function NotFound() {
     <div className="h-full">
       <Navbar />
       <main className="h-full pt-40">
-        <div className="min-h-full flex flex-col">
-          <div className="flex flex-col items-center justify-center text-center gap-y-4 flex-1 px-6 pb-10">
+        <div className="flex min-h-full flex-col">
+          <div className="flex flex-1 flex-col items-center justify-center gap-y-4 px-6 pb-10 text-center">
+            <Image
+              src="/404.svg"
+              alt="A sad panther with a globe behind it."
+              className="h-52 w-52 select-none"
+              draggable={false}
+              unoptimized
+              width={0}
+              height={0}
+            />
             <h1 className="text-8xl">404</h1>
-            <p className="text-xl pt-4">Page Does Not Exist</p>
+            <p className="pt-4 text-xl">Page Does Not Exist</p>
             <Button variant="outline" className="mt-4" onClick={() => router.back()}>
-              <ArrowLeft className="mr-2 w-4 h-4" /> Go Back To Previous Page
+              <ArrowLeft className="mr-2 h-4 w-4" /> Go Back To Previous Page
             </Button>
             <Link href="/">
               <Button variant="outline">
-                <Home className="mr-2 w-4 h-4" /> Go To Home Page
+                <Home className="mr-2 h-4 w-4" /> Go To Home Page
               </Button>
             </Link>
           </div>

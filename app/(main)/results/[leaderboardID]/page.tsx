@@ -1,5 +1,9 @@
 "use client";
 
+import { use, useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import html2canvas from "html2canvas-pro";
 import {
@@ -14,10 +18,6 @@ import {
   Share2,
   User,
 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { use, useEffect, useRef, useState } from "react";
 
 import { Footer } from "@/components/footer";
 import { Logo } from "@/components/logo";
@@ -26,12 +26,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-
 import { api } from "@/convex/_generated/api";
-
-import { useBanCheck } from "@/hooks/use-ban-check";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import useUserById from "@/hooks/use-user-by-id";
-
 import { cn, isValidConvexId } from "@/lib/utils";
 
 type Props = {
@@ -39,30 +36,50 @@ type Props = {
 };
 
 const ResultPage = ({ params }: Props) => {
-  // All hooks must be called before any return statements
-  const currentUser = useQuery(api.users.current);
-  const { result: isBanned, isLoading: isBanCheckLoading } = useBanCheck(currentUser?.clerkId);
+  const { data: currentUser } = useCurrentUser();
   const searchParams = useSearchParams();
   const { leaderboardID } = use(params);
 
-  // Validate leaderboardID format
   const isValidId = isValidConvexId(leaderboardID);
 
-  // fetch leaderboard entry or skip if invalid ID
   const leaderboardEntry = useQuery(
     api.game.getPersonalLeaderboardEntryById,
     isValidId ? { id: leaderboardID } : "skip"
   );
-  // fetch the user document for this leaderboard entry by userId
   const user = useUserById(leaderboardEntry?.userId);
-  const [distances, setDistances] = useState<number[]>([]);
-  const [scores, setScores] = useState<number[]>([]);
-  const [finalScore, setFinalScore] = useState<number>(0);
-  const [gameType, setGameType] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
-  const [oldLevel, setOldLevel] = useState<number>(0);
-  const [newLevel, setNewLevel] = useState<number>(0);
-  const [isFromGame, setIsFromGame] = useState<boolean>(false);
+
+  // Derive values from leaderboardEntry during render
+  const isFromGame = searchParams.get("fromGame") === "true";
+  const distances = leaderboardEntry
+    ? [
+        Number(leaderboardEntry.round_1_distance),
+        Number(leaderboardEntry.round_2_distance),
+        Number(leaderboardEntry.round_3_distance),
+        Number(leaderboardEntry.round_4_distance),
+        Number(leaderboardEntry.round_5_distance),
+      ]
+    : [];
+  const scores = leaderboardEntry
+    ? [
+        Number(leaderboardEntry.round_1),
+        Number(leaderboardEntry.round_2),
+        Number(leaderboardEntry.round_3),
+        Number(leaderboardEntry.round_4),
+        Number(leaderboardEntry.round_5),
+      ]
+    : [];
+  const finalScore = leaderboardEntry
+    ? Number(leaderboardEntry.round_1) +
+      Number(leaderboardEntry.round_2) +
+      Number(leaderboardEntry.round_3) +
+      Number(leaderboardEntry.round_4) +
+      Number(leaderboardEntry.round_5)
+    : 0;
+  const username = user?.username ?? "";
+  const oldLevel = leaderboardEntry ? Number(leaderboardEntry.oldLevel) : 0;
+  const newLevel = leaderboardEntry ? Number(leaderboardEntry.newLevel) : 0;
+  const gameType = leaderboardEntry?.gameType ?? "";
+
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState<{
@@ -73,49 +90,11 @@ const ResultPage = ({ params }: Props) => {
   }>({ title: "", description: "" });
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // All useEffect hooks must be called before any conditional returns
   useEffect(() => {
-    if (searchParams.get("fromGame") === "true") {
-      setIsFromGame(true);
+    if (currentUser?.isBanned) {
+      router.push(`/profile/${currentUser.user.username}`);
     }
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (isBanned) {
-      router.push(`/profile/${currentUser?.username}`);
-    }
-  }, [currentUser?.username, isBanned, router]);
-
-  useEffect(() => {
-    if (leaderboardEntry) {
-      setDistances([
-        Number(leaderboardEntry.round_1_distance),
-        Number(leaderboardEntry.round_2_distance),
-        Number(leaderboardEntry.round_3_distance),
-        Number(leaderboardEntry.round_4_distance),
-        Number(leaderboardEntry.round_5_distance),
-      ]);
-      setScores([
-        Number(leaderboardEntry.round_1),
-        Number(leaderboardEntry.round_2),
-        Number(leaderboardEntry.round_3),
-        Number(leaderboardEntry.round_4),
-        Number(leaderboardEntry.round_5),
-      ]);
-      const totalScore =
-        Number(leaderboardEntry.round_1) +
-        Number(leaderboardEntry.round_2) +
-        Number(leaderboardEntry.round_3) +
-        Number(leaderboardEntry.round_4) +
-        Number(leaderboardEntry.round_5);
-      setFinalScore(totalScore);
-      // prefer fetching username from the user document referenced by userId
-      setUsername(user?.username ?? "");
-      setOldLevel(Number(leaderboardEntry.oldLevel));
-      setNewLevel(Number(leaderboardEntry.newLevel));
-      setGameType(leaderboardEntry.gameType);
-    }
-  }, [leaderboardEntry, user]);
+  }, [currentUser, router]);
 
   useEffect(() => {
     if (isFromGame && leaderboardEntry) {
@@ -125,11 +104,10 @@ const ResultPage = ({ params }: Props) => {
     }
   }, [isFromGame, leaderboardEntry]);
 
-  // Handle validation errors after all hooks are called
   if (!isValidId) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
           <NotFoundContent
             title="Invalid Results ID"
             description="The results ID you provided is not valid. Please check the URL and try again."
@@ -198,10 +176,10 @@ const ResultPage = ({ params }: Props) => {
     }
   };
 
-  if (leaderboardEntry === undefined || isBanCheckLoading || (leaderboardEntry && !username)) {
+  if (leaderboardEntry === undefined || (leaderboardEntry && !username)) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
           <Loader2 className="h-20 w-20 animate-spin" />
         </div>
         <Footer />
@@ -211,8 +189,8 @@ const ResultPage = ({ params }: Props) => {
 
   if (leaderboardEntry === null) {
     return (
-      <div className="min-h-full flex flex-col">
-        <div className="flex flex-col flex-grow items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+      <div className="flex min-h-full flex-col">
+        <div className="flex flex-1 flex-grow flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
           <NotFoundContent
             title="Results Not Found"
             description="The game results you're looking for don't exist or have been removed."
@@ -224,8 +202,8 @@ const ResultPage = ({ params }: Props) => {
   }
 
   return (
-    <div className="min-h-full flex flex-col">
-      <div className="flex flex-col items-center justify-center text-center gap-y-8 flex-1 px-6 pb-10">
+    <div className="flex min-h-full flex-col">
+      <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
         <div ref={cardRef} className="bg-transparent">
           <Card className="w-[350px] shadow-xl">
             <CardHeader className="mt-4">
@@ -236,11 +214,11 @@ const ResultPage = ({ params }: Props) => {
               <Separator />
               <div className="flex flex-col space-y-4">
                 <div className="p-2">
-                  <div className="text-lg flex flex-row bg-secondary justify-items-center justify-center items-center p-2 w-full rounded-md gap-x-2">
+                  <div className="flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md bg-secondary p-2 text-lg">
                     {gameType === "weekly" ? (
-                      <Calendar className="w-5 h-5" />
+                      <Calendar className="h-5 w-5" />
                     ) : gameType === "singleplayer" ? (
-                      <User className="w-5 h-5" />
+                      <User className="h-5 w-5" />
                     ) : null}
                     <div className="">
                       {gameType === "weekly" ? "Weekly Challenge" : gameType === "singleplayer" ? "Singleplayer" : null}
@@ -263,9 +241,9 @@ const ResultPage = ({ params }: Props) => {
                     {oldLevel === newLevel ? (
                       <p>{oldLevel}</p>
                     ) : (
-                      <p className="flex flex-row justify-center items-center">
-                        <span className="text-muted-foreground flex items-center">
-                          {oldLevel} <ArrowRight className="flex w-4 h-4 mx-1" />
+                      <p className="flex flex-row items-center justify-center">
+                        <span className="flex items-center text-muted-foreground">
+                          {oldLevel} <ArrowRight className="mx-1 flex h-4 w-4" />
                         </span>
                         {newLevel}
                       </p>
@@ -293,13 +271,13 @@ const ResultPage = ({ params }: Props) => {
               <div className="p-2">
                 <div className="flex flex-row justify-between">
                   <h2 className="font-bold">Final Score</h2>
-                  <p className="bg-primary text-primary-foreground px-2">{finalScore}</p>
+                  <p className="bg-primary px-2 text-primary-foreground">{finalScore}</p>
                 </div>
               </div>
               <div className="p-2">
                 <div className="flex flex-row justify-between">
                   <h2 className="font-bold">XP Awarded</h2>
-                  <p className="bg-primary text-primary-foreground px-2">{leaderboardEntry?.xpGained || 0}</p>
+                  <p className="bg-primary px-2 text-primary-foreground">{leaderboardEntry?.xpGained || 0}</p>
                 </div>
               </div>
               <Separator />
@@ -313,26 +291,26 @@ const ResultPage = ({ params }: Props) => {
             </CardContent>
           </Card>
         </div>
-        <div className="w-[350px] flex">
+        <div className="flex w-[350px]">
           <Link href={`/results/game/${leaderboardEntry.game.toString()}`} className="w-full">
-            <Button className="w-full flex justify-center items-center">
-              <ListOrdered className="h-4 w-4 mr-2" /> Game Leaderboard
+            <Button className="flex w-full items-center justify-center">
+              <ListOrdered className="mr-2 h-4 w-4" /> Game Leaderboard
             </Button>
           </Link>
         </div>
-        <div className={cn("flex justify-between w-[350px] gap-2", isFromGame ? "flex-row" : "flex-row-reverse")}>
+        <div className={cn("flex w-[350px] justify-between gap-2", isFromGame ? "flex-row" : "flex-row-reverse")}>
           <Button onClick={() => handleShareClick()} variant="outline" size="icon" className="aspect-square">
             <Share className="h-4 w-4" />
           </Button>
           <Link href="/" className="w-full">
-            <Button className="w-full flex justify-center items-center" variant={isFromGame ? "outline" : "default"}>
-              <Home className="h-4 w-4 mr-2" /> Main Menu
+            <Button className="flex w-full items-center justify-center" variant={isFromGame ? "outline" : "default"}>
+              <Home className="mr-2 h-4 w-4" /> Main Menu
             </Button>
           </Link>
           {isFromGame && (
             <Link href="/game">
               <Button variant="default">
-                <Gamepad2 className="h-4 w-4 mr-2" />
+                <Gamepad2 className="mr-2 h-4 w-4" />
                 New Game
               </Button>
             </Link>
@@ -341,20 +319,20 @@ const ResultPage = ({ params }: Props) => {
       </div>
       <Footer />
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-[300px] max-h-[800px]">
+        <DialogContent className="max-h-[800px] max-w-[300px]">
           <DialogHeader>
             <DialogTitle>{dialogContent.title}</DialogTitle>
             <DialogDescription>{dialogContent.description}</DialogDescription>
           </DialogHeader>
           {dialogContent.imageSrc && (
-            <div className="flex flex-col justify-center items-center space-y-2">
+            <div className="flex flex-col items-center justify-center space-y-2">
               <Image src={dialogContent.imageSrc} width={200} height={100} alt="Game Receipt" />
               <div className="space-x-2">
                 <Button size="icon" className="" onClick={handleSocialShareClick}>
                   <Share2 className="h-4 w-4" />
                 </Button>
                 <Button className="mt-4" onClick={handleDownloadClick}>
-                  <Download className="h-4 w-4 mr-2" /> Download
+                  <Download className="mr-2 h-4 w-4" /> Download
                 </Button>
               </div>
             </div>

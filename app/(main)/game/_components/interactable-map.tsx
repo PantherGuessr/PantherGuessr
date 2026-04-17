@@ -1,16 +1,26 @@
 "use client";
 
 import L, { LatLng } from "leaflet";
+
 import "leaflet/dist/leaflet.css";
+
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from "react-leaflet";
 
 import { useGame } from "../_context/GameContext";
+import ReportButton from "./report-button";
+
 import "./interactable-map.css";
 
 const InteractableMap = () => {
-  const { markerHasBeenPlaced, setMarkerHasBeenPlaced, isSubmittingGuess, setMarkerPosition, correctLocation } =
-    useGame()!;
+  const {
+    markerHasBeenPlaced,
+    setMarkerHasBeenPlaced,
+    isSubmittingGuess,
+    setMarkerPosition,
+    correctLocation,
+    currentLevelId,
+  } = useGame()!;
   const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
   const prevCorrectLocation = useRef<LatLng | null>(null);
 
@@ -119,9 +129,10 @@ const InteractableMap = () => {
   }
 
   return (
-    <div className="flex min-h-full min-w-full grow fade-in-map">
+    <div className="fade-in-map relative flex min-h-full min-w-full grow">
+      {correctLocation && currentLevelId && <ReportButton levelId={currentLevelId} />}
       <MapContainer
-        className="w-full h-full rounded-md"
+        className="h-full w-full rounded-md"
         attributionControl={true}
         center={[33.793332, -117.851475]}
         zoom={17}

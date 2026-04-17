@@ -8,13 +8,13 @@ const SiteSettings = () => {
   return (
     <>
       <div className="flex flex-wrap justify-items-center">
-        <div className="md:basis-1/2 w-full my-4 flex-grow">
-          <Card className="p-2 m-2 h-full">
-            <CardHeader className="text-start">
+        <div className="my-4 w-full flex-grow md:basis-1/2">
+          <Card className="m-0 h-full p-1 md:m-2 md:p-2">
+            <CardHeader className="px-3 text-start md:px-6">
               <CardTitle>Gamemode Configuration</CardTitle>
               <CardDescription>Configure which gamemodes are enabled for all users.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 md:px-6">
               <div className="flex-col gap-x-4">
                 <Separator className="mb-4" />
                 <div className="flex items-center justify-between">
@@ -35,13 +35,13 @@ const SiteSettings = () => {
             </CardContent>
           </Card>
         </div>
-        <div className="md:basis-1/2 w-full my-4 flex-grow">
-          <Card className="p-2 m-2 h-full">
-            <CardHeader className="text-start">
+        <div className="my-4 w-full flex-grow md:basis-1/2">
+          <Card className="m-0 h-full p-1 md:m-2 md:p-2">
+            <CardHeader className="px-3 text-start md:px-6">
               <CardTitle>Category Configuration</CardTitle>
               <CardDescription>Configure which level categories are enabled for all users.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 md:px-6">
               <div className="flex-col gap-x-4">
                 <Separator className="mb-4" />
                 <div className="flex items-center justify-between">

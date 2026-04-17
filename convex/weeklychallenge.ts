@@ -1,5 +1,31 @@
+import { v } from "convex/values";
+
 import { getNextWeeklyResetTimestamp } from "../lib/weeklytimes";
-import { internalMutation, mutation, query } from "./_generated/server";
+import { api } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
+import { internalMutation, MutationCtx, mutation, query } from "./_generated/server";
+import { getCurrentUser } from "./users";
+
+/**
+ * Selects `count` unique random level IDs from the database.
+ * Throws if there are fewer than `count` levels available.
+ */
+async function pickRandomLevelIds(ctx: MutationCtx, count: number): Promise<Id<"levels">[]> {
+  const levels = await ctx.db.query("levels").collect();
+  if (levels.length < count) {
+    throw new Error(`Not enough levels in the database. Need at least ${count}, found ${levels.length}.`);
+  }
+  const selected: Id<"levels">[] = [];
+  const usedIndices: number[] = [];
+  while (selected.length < count) {
+    const idx = Math.floor(Math.random() * levels.length);
+    if (!usedIndices.includes(idx)) {
+      usedIndices.push(idx);
+      selected.push(levels[idx]._id);
+    }
+  }
+  return selected;
+}
 
 /**
  * Retrieves the weekly challenge that is currently active
@@ -11,9 +37,28 @@ export const getWeeklyChallenge = query({
     const today = date.getTime();
     const weeklyChallenge = await ctx.db
       .query("weeklyChallenges")
+      .withIndex("byIsActive", (q) => q.eq("isActive", true))
       .filter((q) => q.gte(q.field("endDate"), BigInt(today)))
       .first();
     return weeklyChallenge;
+  },
+});
+
+/**
+ * Retrieves the upcoming weekly challenge (next week's challenge)
+ * @returns The upcoming weekly challenge
+ */
+export const getUpcomingWeeklyChallenge = query({
+  handler: async (ctx) => {
+    const date = new Date();
+    const today = date.getTime();
+    const upcomingChallenge = await ctx.db
+      .query("weeklyChallenges")
+      .withIndex("byIsActive", (q) => q.eq("isActive", false))
+      .filter((q) => q.gt(q.field("startDate"), BigInt(today)))
+      .order("asc")
+      .first();
+    return upcomingChallenge;
   },
 });
 
@@ -23,6 +68,7 @@ export const getPopulatedWeeklyChallenge = query({
     const today = date.getTime();
     const weeklyChallenge = await ctx.db
       .query("weeklyChallenges")
+      .withIndex("byIsActive", (q) => q.eq("isActive", true))
       .filter((q) => q.gte(q.field("endDate"), BigInt(today)))
       .first();
 
@@ -56,27 +102,89 @@ export const getPopulatedWeeklyChallenge = query({
 });
 
 /**
- * Creates a new weekly challenge by selecting 5 random levels from the levels table
- * @returns The mutation promise of the new weekly challenge
+ * Retrieves the populated upcoming weekly challenge
+ * @returns The populated upcoming weekly challenge
+ */
+export const getPopulatedUpcomingWeeklyChallenge = query({
+  handler: async (ctx) => {
+    const date = new Date();
+    const today = date.getTime();
+    const weeklyChallenge = await ctx.db
+      .query("weeklyChallenges")
+      .withIndex("byIsActive", (q) => q.eq("isActive", false))
+      .filter((q) => q.gt(q.field("startDate"), BigInt(today)))
+      .order("asc")
+      .first();
+
+    if (!weeklyChallenge) {
+      return null;
+    }
+
+    const game = await ctx.db.get(weeklyChallenge.gameId);
+    if (!game) {
+      return null;
+    }
+
+    const round1 = await ctx.db.get(game.round_1);
+    const round2 = await ctx.db.get(game.round_2);
+    const round3 = await ctx.db.get(game.round_3);
+    const round4 = await ctx.db.get(game.round_4);
+    const round5 = await ctx.db.get(game.round_5);
+
+    return {
+      ...weeklyChallenge,
+      game: {
+        ...game,
+        round_1: round1,
+        round_2: round2,
+        round_3: round3,
+        round_4: round4,
+        round_5: round5,
+      },
+    };
+  },
+});
+
+/**
+ * Creates a new weekly challenge by selecting 5 random levels from the levels table.
+ * This runs on a cron job and:
+ * 1. Activates any upcoming challenges whose start date has passed
+ * 2. Creates a new upcoming challenge for next week if one doesn't exist
  */
 export const createWeeklyChallenge = internalMutation({
   handler: async (ctx) => {
-    const today = new Date().getTime();
-    const endDate = getNextWeeklyResetTimestamp(new Date(today));
-    const levels = await ctx.db.query("levels").collect();
-    const randomLevels = [];
-    const randomIndices: number[] = [];
-    // function to get random levels
-    for (let i = 0; i < 5; i++) {
-      const randomIndex = Math.floor(Math.random() * levels.length);
-      if (randomIndices.includes(randomIndex)) {
-        i--;
-        continue;
-      }
-      randomIndices.push(randomIndex);
-      randomLevels.push(levels[randomIndex]._id);
+    const now = new Date();
+    const today = now.getTime();
+    
+    // Step 1: Activate any upcoming challenges whose start date has passed
+    const challengesToActivate = await ctx.db
+      .query("weeklyChallenges")
+      .withIndex("byIsActive", (q) => q.eq("isActive", false))
+      .filter((q) => q.lte(q.field("startDate"), BigInt(today)))
+      .collect();
+    
+    for (const challenge of challengesToActivate) {
+      await ctx.db.patch(challenge._id, { isActive: true });
     }
-    // makes a new game with weekly challenge parameter set
+    
+    // Step 2: Check if there's already an upcoming challenge
+    const existingUpcoming = await ctx.db
+      .query("weeklyChallenges")
+      .withIndex("byIsActive", (q) => q.eq("isActive", false))
+      .filter((q) => q.gt(q.field("startDate"), BigInt(today)))
+      .first();
+    
+    if (existingUpcoming) {
+      return; // Already have an upcoming challenge
+    }
+    
+    // Step 3: Create a new upcoming challenge for next week
+    const nextResetDate = getNextWeeklyResetTimestamp(now);
+    const weekAfterNextResetDate = getNextWeeklyResetTimestamp(new Date(nextResetDate));
+
+    const randomLevels = await pickRandomLevelIds(ctx, 5);
+
+    // Create the game for the upcoming challenge
     const gameId = await ctx.db.insert("games", {
       round_1: randomLevels[0],
       round_2: randomLevels[1],
@@ -86,59 +194,139 @@ export const createWeeklyChallenge = internalMutation({
       timeAllowedPerRound: BigInt(60),
       gameType: "weekly",
     });
+    
+    // Create the upcoming weekly challenge (inactive until its start date)
     await ctx.db.insert("weeklyChallenges", {
-      startDate: BigInt(today),
-      endDate: BigInt(endDate),
+      startDate: BigInt(nextResetDate),
+      endDate: BigInt(weekAfterNextResetDate),
       gameId: gameId,
+      isActive: false,
     });
   },
 });
 
 /**
- * Creates a new weekly challenge if one does not already exist, ending on the upcoming Monday.
- * @returns The mutation promise of the new weekly challenge, or null if one already exists
+ * Creates weekly challenges if they don't exist:
+ * - An active challenge for this week
+ * - An upcoming challenge for next week
+ * @returns The mutation promise of the new weekly challenge, or null if challenges already exist
  */
 export const makeWeeklyChallengeIfNonexistent = mutation({
   handler: async (ctx) => {
-    // Check if a weekly challenge already exists that hasn't ended
     const now = new Date();
     const today = now.getTime();
-    const existingChallenge = await ctx.db
+    
+    // Check if there's an active weekly challenge
+    const existingActive = await ctx.db
       .query("weeklyChallenges")
+      .withIndex("byIsActive", (q) => q.eq("isActive", true))
       .filter((q) => q.gte(q.field("endDate"), BigInt(today)))
       .first();
-    if (existingChallenge) {
-      return null;
+    
+    // Create active challenge if it doesn't exist
+    if (!existingActive) {
+      const endDate = getNextWeeklyResetTimestamp(now);
+      const randomLevels = await pickRandomLevelIds(ctx, 5);
+
+      const gameId = await ctx.db.insert("games", {
+        round_1: randomLevels[0],
+        round_2: randomLevels[1],
+        round_3: randomLevels[2],
+        round_4: randomLevels[3],
+        round_5: randomLevels[4],
+        timeAllowedPerRound: BigInt(60),
+        gameType: "weekly",
+      });
+      
+      await ctx.db.insert("weeklyChallenges", {
+        startDate: BigInt(today),
+        endDate: BigInt(endDate),
+        gameId: gameId,
+        isActive: true,
+      });
     }
-    const endDate = getNextWeeklyResetTimestamp(now);
-    // selects 5 random levels
-    const levels = await ctx.db.query("levels").collect();
-    const randomLevels = [];
-    const randomIndices: number[] = [];
-    for (let i = 0; i < 5; i++) {
-      const randomIndex = Math.floor(Math.random() * levels.length);
-      if (randomIndices.includes(randomIndex)) {
-        i--;
-        continue;
-      }
-      randomIndices.push(randomIndex);
-      randomLevels.push(levels[randomIndex]._id);
+    
+    // Check if there's an upcoming weekly challenge
+    const existingUpcoming = await ctx.db
+      .query("weeklyChallenges")
+      .withIndex("byIsActive", (q) => q.eq("isActive", false))
+      .filter((q) => q.gt(q.field("startDate"), BigInt(today)))
+      .first();
+    
+    // Create upcoming challenge if it doesn't exist
+    if (!existingUpcoming) {
+      const nextResetDate = getNextWeeklyResetTimestamp(now);
+      const weekAfterNextResetDate = getNextWeeklyResetTimestamp(new Date(nextResetDate));
+      const randomLevels = await pickRandomLevelIds(ctx, 5);
+
+      const gameId = await ctx.db.insert("games", {
+        round_1: randomLevels[0],
+        round_2: randomLevels[1],
+        round_3: randomLevels[2],
+        round_4: randomLevels[3],
+        round_5: randomLevels[4],
+        timeAllowedPerRound: BigInt(60),
+        gameType: "weekly",
+      });
+      
+      await ctx.db.insert("weeklyChallenges", {
+        startDate: BigInt(nextResetDate),
+        endDate: BigInt(weekAfterNextResetDate),
+        gameId: gameId,
+        isActive: false,
+      });
     }
-    // creates weekly challenge game
-    const gameId = await ctx.db.insert("games", {
-      round_1: randomLevels[0],
-      round_2: randomLevels[1],
-      round_3: randomLevels[2],
-      round_4: randomLevels[3],
-      round_5: randomLevels[4],
-      timeAllowedPerRound: BigInt(60),
-      gameType: "weekly",
+  },
+});
+
+/**
+ * Updates a specific round in a weekly challenge game
+ * @param weeklyChallengeId - The ID of the weekly challenge
+ * @param roundNumber - The round number (1-5)
+ * @param newLevelId - The new level ID to use for this round
+ */
+export const updateWeeklyChallengeRound = mutation({
+  args: {
+    weeklyChallengeId: v.id("weeklyChallenges"),
+    roundNumber: v.number(),
+    newLevelId: v.id("levels"),
+  },
+  handler: async (ctx, args) => {
+    const callUser = await getCurrentUser(ctx);
+    if (!callUser) {
+      throw new Error("Unauthorized");
+    }
+    const isDeveloper = await ctx.runQuery(api.users.hasRole, { clerkId: callUser.clerkId, role: "developer" });
+    if (!isDeveloper) {
+      throw new Error("Unauthorized");
+    }
+
+    const { weeklyChallengeId, roundNumber, newLevelId } = args;
+
+    if (roundNumber < 1 || roundNumber > 5) {
+      throw new Error("Round number must be between 1 and 5");
+    }
+
+    const weeklyChallenge = await ctx.db.get(weeklyChallengeId);
+    if (!weeklyChallenge) {
+      throw new Error("Weekly challenge not found");
+    }
+
+    const level = await ctx.db.get(newLevelId);
+    if (!level) {
+      throw new Error("Level not found with the provided ID");
+    }
+
+    const game = await ctx.db.get(weeklyChallenge.gameId);
+    if (!game) {
+      throw new Error("Game not found");
+    }
+
+    const roundKey = `round_${roundNumber}` as "round_1" | "round_2" | "round_3" | "round_4" | "round_5";
+    await ctx.db.patch(weeklyChallenge.gameId, {
+      [roundKey]: newLevelId,
     });
-    // creates weekly challenge entry
-    await ctx.db.insert("weeklyChallenges", {
-      startDate: BigInt(today),
-      endDate: BigInt(endDate),
-      gameId: gameId,
-    });
+
+    return { success: true, message: `Round ${roundNumber} updated to level: ${level.title}` };
   },
 });

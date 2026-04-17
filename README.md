@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/39e5850e-4999-4dad-afc9-1a6933a0ea2e" style="display: block; margin-left: auto; margin-right: auto; width: 15%; height: 75%; border-radius: 25px;">
+  <img src="https://github.com/user-attachments/assets/f1758a73-c29a-4dae-9db7-4a4536c88f96" style="display: block; margin-left: auto; margin-right: auto; width: 15%; height: 75%; border-radius: 25px;">
 </p>
 
 <p align="center">
@@ -23,9 +23,9 @@
 1. Run the following to make sure you are on the correct versions:
 
 ```bash
-node -v # Should be v22.5.1
-npm -v # Should be 10.8.3
-npx -v # Should be 10.8.3
+node -v # Should be v24.13.1
+npm -v # Should be 11.8.0
+npx -v # Should be 11.8.0
 ```
 
 Note: If any of the versions do not match, please install the versions listed above. If you use `nvm`, you can run the following commands:

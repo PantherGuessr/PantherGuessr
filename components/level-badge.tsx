@@ -1,33 +1,28 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
 interface LevelBadgeProps {
   level: number;
 }
 
 const LevelBadge: React.FC<LevelBadgeProps> = ({ level }) => {
-  const [levelBadgeWidth, setLevelBadgeWidth] = useState(0);
-
-  useEffect(() => {
-    const textWidth = level.toString().length * 8;
-    setLevelBadgeWidth(textWidth > 25 ? textWidth : 25);
-  }, [level]);
+  const textWidth = level.toString().length * 8;
+  const levelBadgeWidth = textWidth > 25 ? textWidth : 25;
 
   return (
     <div
-      className="hidden xs:flex xs:justify-center items-center gap-x-2 mr-1 relative"
+      className="relative mr-1 hidden items-center gap-x-2 xs:flex xs:justify-center"
       style={{ width: levelBadgeWidth }}
     >
       <Image
         draggable={false}
-        className="select-none cursor-default drop-shadow transform-gpu"
+        className="transform-gpu cursor-default select-none drop-shadow"
         src="/badges/level_badge.svg"
         alt={`Account Level of ${level}`}
         width="25"
         height="25"
       />
       <p
-        className="absolute top-1/2 left-1/2 transform -translate-x-[51%] -translate-y-[45%] text-white rounded-full px-1 text-sm font-bold drop-shadow-md"
+        className="absolute left-1/2 top-1/2 -translate-x-[51%] -translate-y-[45%] transform rounded-full px-1 text-sm font-bold text-white drop-shadow-md"
         style={{ textShadow: "1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000" }}
       >
         {level}

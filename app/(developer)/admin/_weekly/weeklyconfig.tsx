@@ -1,13 +1,20 @@
+import { useMemo, useState } from "react";
+import Image from "next/image";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { ColumnDef } from "@tanstack/react-table";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { LatLng } from "leaflet";
 import { MoreHorizontal } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,13 +23,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-
+import { useToast } from "@/hooks/use-toast";
+import useUpcomingWeeklyChallenge from "@/hooks/use-upcoming-weekly-challenge";
 import useWeeklyChallenge from "@/hooks/use-weekly-challenge";
-
+import { isValidConvexId } from "@/lib/utils";
 import { useMarker } from "../_levels/_helpers/MarkerContext";
 import PreviewMap from "../_levels/_helpers/preview-map";
 import { DataTable } from "./helpers/datatable";
@@ -47,25 +57,45 @@ const WeeklyChallengeConfig = () => {
 
   // accessors and mutators for states
   const [clickedLevelId, setClickedLevelId] = useState<Id<"levels"> | null>(null);
-  const [currentImageSrcUrl, setCurrentSrcUrl] = useState(defaultImageSource);
-  const [openDialogId, setOpenDialogId] = useState<Id<"levels"> | null>(null);
+  const [isMapDialogOpen, setIsMapDialogOpen] = useState(false);
   const [openMapDialogId, setOpenMapDialogId] = useState<Id<"levels"> | null>(null);
-  const [weeklyChallengeStartDate, setWeeklyChallengeStartDate] = useState<string>("");
-  const [weeklyChallengeEndDate, setWeeklyChallengeEndDate] = useState<string>("");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [openEditDialogId, setOpenEditDialogId] = useState<Id<"levels"> | null>(null);
+  const [editLevelId, setEditLevelId] = useState<string>("");
+  const [editingRound, setEditingRound] = useState<number | null>(null);
+  const [editingChallengeId, setEditingChallengeId] = useState<Id<"weeklyChallenges"> | null>(null);
 
   // fetch weekly challenge data
   const weeklyChallenge = useWeeklyChallenge();
+  const upcomingWeeklyChallenge = useUpcomingWeeklyChallenge();
 
-  // TODO: add an option to reroll weekly challenge
+  // mutation for updating weekly challenge round
+  const updateWeeklyChallengeRound = useMutation(api.weeklychallenge.updateWeeklyChallengeRound);
+  const { toast } = useToast();
 
   // fetch image source
   const imageSrc = useQuery(api.admin.getImageSrcByLevelId, clickedLevelId ? { id: clickedLevelId } : "skip");
 
-  // memoize table data
+  // derive dialog state from query results
+  const currentImageSrcUrl = imageSrc && clickedLevelId ? imageSrc : defaultImageSource;
+  const isImageDialogOpen = !!(imageSrc && clickedLevelId);
+  const openDialogId = clickedLevelId;
+
+  // derive date strings from weekly challenge data
+  const weeklyChallengeStartDate = weeklyChallenge
+    ? new Date(Number(weeklyChallenge.startDate)).toLocaleDateString()
+    : "";
+  const weeklyChallengeEndDate = weeklyChallenge ? new Date(Number(weeklyChallenge.endDate)).toLocaleDateString() : "";
+  const upcomingChallengeStartDate = upcomingWeeklyChallenge
+    ? new Date(Number(upcomingWeeklyChallenge.startDate)).toLocaleDateString()
+    : "";
+  const upcomingChallengeEndDate = upcomingWeeklyChallenge
+    ? new Date(Number(upcomingWeeklyChallenge.endDate)).toLocaleDateString()
+    : "";
+
+  // memoize table data for current week
   const tableData = useMemo(() => {
     if (weeklyChallenge) {
-      setWeeklyChallengeStartDate(new Date(Number(weeklyChallenge.startDate)).toLocaleDateString());
-      setWeeklyChallengeEndDate(new Date(Number(weeklyChallenge.endDate)).toLocaleDateString());
       return [
         weeklyChallenge.game.round_1,
         weeklyChallenge.game.round_2,
@@ -77,25 +107,32 @@ const WeeklyChallengeConfig = () => {
     return [];
   }, [weeklyChallenge]);
 
-  // sets the image source to default on table data load
-  useEffect(() => {
+  // memoize table data for upcoming week
+  const upcomingTableData = useMemo(() => {
+    if (upcomingWeeklyChallenge) {
+      return [
+        upcomingWeeklyChallenge.game.round_1,
+        upcomingWeeklyChallenge.game.round_2,
+        upcomingWeeklyChallenge.game.round_3,
+        upcomingWeeklyChallenge.game.round_4,
+        upcomingWeeklyChallenge.game.round_5,
+      ];
+    }
+    return [];
+  }, [upcomingWeeklyChallenge]);
+
+  // reset clicked level when table data first loads (render-time state sync)
+  const [prevTableData, setPrevTableData] = useState(tableData);
+  if (prevTableData !== tableData) {
+    setPrevTableData(tableData);
     if (tableData && tableData.length > 0) {
       setClickedLevelId(null);
     }
-  }, [tableData]);
-
-  // updates image source state and open dialog id on dialog trigger
-  useEffect(() => {
-    if (imageSrc) {
-      setCurrentSrcUrl(imageSrc);
-      setOpenDialogId(clickedLevelId);
-    }
-  }, [imageSrc, clickedLevelId]);
+  }
 
   // closes dialog
   const handleDialogClose = () => {
-    setCurrentSrcUrl(defaultImageSource);
-    setOpenDialogId(null);
+    setClickedLevelId(null);
   };
 
   // opens dialog
@@ -106,6 +143,7 @@ const WeeklyChallengeConfig = () => {
   // closes map dialog
   const handleMapDialogClose = () => {
     setLocalMarkerPosition(null);
+    setIsMapDialogOpen(false);
     setOpenMapDialogId(null);
   };
 
@@ -115,6 +153,68 @@ const WeeklyChallengeConfig = () => {
     const latlng = new LatLng(latitude, longitude);
     setLocalMarkerPosition(latlng);
     setOpenMapDialogId(levelId);
+    setIsMapDialogOpen(true);
+  };
+
+  // closes edit dialog
+  const handleEditDialogClose = () => {
+    setIsEditDialogOpen(false);
+    setOpenEditDialogId(null);
+    setEditLevelId("");
+    setEditingRound(null);
+    setEditingChallengeId(null);
+  };
+
+  // opens edit dialog
+  const handleEditDialogOpen = (levelId: Id<"levels">, roundNumber: number, challengeId: Id<"weeklyChallenges">) => {
+    setOpenEditDialogId(levelId);
+    setEditLevelId("");
+    setEditingRound(roundNumber);
+    setEditingChallengeId(challengeId);
+    setIsEditDialogOpen(true);
+  };
+
+  // handles saving the edited level
+  const handleSaveEditedLevel = async () => {
+    if (!editLevelId || !editingRound || !editingChallengeId) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid level ID",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if it looks like a Convex ID (basic format check)
+    if (!isValidConvexId(editLevelId.trim())) {
+      toast({
+        title: "Invalid Level ID Format",
+        description: "The level ID format is invalid. It should look like 'k17abc123def456' or similar.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await updateWeeklyChallengeRound({
+        weeklyChallengeId: editingChallengeId,
+        roundNumber: editingRound,
+        newLevelId: editLevelId.trim() as Id<"levels">,
+      });
+
+      toast({
+        title: "Success",
+        description: `Round ${editingRound} updated successfully!`,
+      });
+
+      handleEditDialogClose();
+    } catch {
+      toast({
+        title: "Error",
+        description: "Failed to update level. Check the level ID and try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // creates image dialog button
@@ -123,7 +223,7 @@ const WeeklyChallengeConfig = () => {
 
     return (
       <Dialog
-        open={openDialogId === row._id}
+        open={isImageDialogOpen && openDialogId === row._id}
         onOpenChange={(open) => {
           if (!open) {
             handleDialogClose();
@@ -143,7 +243,7 @@ const WeeklyChallengeConfig = () => {
           </DialogHeader>
           <div className="flex justify-center">
             {currentImageSrcUrl === "/Invalid-Image.jpg" ? (
-              <Skeleton className="bg-zinc-400 dark:bg-red-900 w-full aspect-4/3" />
+              <Skeleton className="aspect-4/3 w-full bg-zinc-400 dark:bg-red-900" />
             ) : (
               <Image
                 className="w-full"
@@ -165,7 +265,7 @@ const WeeklyChallengeConfig = () => {
 
     return (
       <Dialog
-        open={openMapDialogId === row._id}
+        open={isMapDialogOpen && openMapDialogId === row._id}
         onOpenChange={(open) => {
           if (!open) {
             handleMapDialogClose();
@@ -185,7 +285,7 @@ const WeeklyChallengeConfig = () => {
               (Latitude: {row.latitude}, Longitude: {row.longitude})
             </DialogDescription>
           </DialogHeader>
-          <div className="flex w-full h-80 grow py-2">
+          <div className="flex h-80 w-full grow py-2">
             <PreviewMap />
           </div>
         </DialogContent>
@@ -194,7 +294,7 @@ const WeeklyChallengeConfig = () => {
   }
 
   // columns key value pairs for shadcn DataTable component
-  const columns: ColumnDef<Level | null>[] = [
+  const createColumns = (challengeId: Id<"weeklyChallenges"> | null): ColumnDef<Level | null>[] => [
     {
       header: "Round #",
       cell: (cell) => {
@@ -231,6 +331,7 @@ const WeeklyChallengeConfig = () => {
       header: "Actions",
       cell: ({ row }) => {
         const level = row.original;
+        const roundNumber = row.index + 1;
         return (
           <>
             <DropdownMenu>
@@ -264,6 +365,15 @@ const WeeklyChallengeConfig = () => {
                   Copy Coordinates
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (level && challengeId) {
+                      handleEditDialogOpen(level._id, roundNumber, challengeId);
+                    }
+                  }}
+                >
+                  Edit Level ID
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </>
@@ -272,13 +382,79 @@ const WeeklyChallengeConfig = () => {
     },
   ];
 
+  // Get the current level being edited for display in the dialog
+  const currentEditingLevel = useMemo(() => {
+    if (!openEditDialogId) return null;
+    const allLevels = [...tableData, ...upcomingTableData];
+    return allLevels.find((level) => level?._id === openEditDialogId) || null;
+  }, [openEditDialogId, tableData, upcomingTableData]);
+
   return (
     <>
-      <p className="text-lg text-left justify-start w-full px-2 mb-1">
-        <span className="font-bold">{weeklyChallengeStartDate}</span> -{" "}
-        <span className="font-bold">{weeklyChallengeEndDate}</span>
-      </p>
-      <DataTable columns={columns} data={tableData || []} />
+      <Dialog
+        open={isEditDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleEditDialogClose();
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Level for Round {editingRound}</DialogTitle>
+            <DialogDescription>
+              Current Level: {currentEditingLevel?.title ?? "Loading..."} ({openEditDialogId})
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="levelId">New Level ID</Label>
+              <Input
+                id="levelId"
+                value={editLevelId}
+                onChange={(e) => setEditLevelId(e.target.value)}
+                placeholder="Paste level ID here..."
+                className="font-mono text-sm"
+                autoFocus
+              />
+              <p className="text-xs text-muted-foreground">
+                Tip: Use &quot;Copy Level ID&quot; from another level&apos;s menu
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleEditDialogClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEditedLevel} disabled={!editLevelId.trim()}>
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Tabs defaultValue="current" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="current">Current Week</TabsTrigger>
+          <TabsTrigger value="upcoming">Next Week (Preview)</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="current" className="space-y-2">
+          <p className="mb-1 w-full justify-start px-2 text-left text-lg">
+            <span className="font-bold">{weeklyChallengeStartDate}</span> -{" "}
+            <span className="font-bold">{weeklyChallengeEndDate}</span>
+          </p>
+          <DataTable columns={createColumns(weeklyChallenge?._id ?? null)} data={tableData || []} />
+        </TabsContent>
+
+        <TabsContent value="upcoming" className="space-y-2">
+          <p className="mb-1 w-full justify-start px-2 text-left text-lg">
+            <span className="font-bold">{upcomingChallengeStartDate}</span> -{" "}
+            <span className="font-bold">{upcomingChallengeEndDate}</span>
+          </p>
+          <DataTable columns={createColumns(upcomingWeeklyChallenge?._id ?? null)} data={upcomingTableData || []} />
+        </TabsContent>
+      </Tabs>
     </>
   );
 };

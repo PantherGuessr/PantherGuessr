@@ -52,6 +52,20 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-fly-in-from-top-delay-0ms {
+    animation: none;
+  }
+  .animate-fly-in-from-top-delay-500ms {
+    transform: none;
+    animation: none;
+  }
+  .animate-fly-in-from-top-delay-1000ms {
+    transform: none;
+    animation: none;
+  }
+}
+
 .animate-flip-left-right {
   animation: flip-left-right 5s linear infinite;
 }
