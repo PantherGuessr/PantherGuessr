@@ -100,7 +100,11 @@ const LevelUpload = () => {
             if (!ctx) throw new Error("Could not get canvas context");
             ctx.drawImage(bitmap, 0, 0);
             convertedBlob = await new Promise<Blob>((resolve, reject) => {
-              canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("Canvas toBlob failed"))), "image/jpeg", 0.9);
+              canvas.toBlob(
+                (blob) => (blob ? resolve(blob) : reject(new Error("Canvas toBlob failed"))),
+                "image/jpeg",
+                0.9
+              );
             });
           } catch {
             throw new Error(
@@ -109,7 +113,9 @@ const LevelUpload = () => {
           }
         }
 
-        fileToProcess = new File([convertedBlob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), { type: "image/jpeg" });
+        fileToProcess = new File([convertedBlob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), {
+          type: "image/jpeg",
+        });
       }
 
       // image compression options
