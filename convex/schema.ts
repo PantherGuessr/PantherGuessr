@@ -101,17 +101,6 @@ export default defineSchema({
     .index("byUserClerkId", ["userClerkId"])
     .index("byGame", ["game"]),
 
-  profileTaglines: defineTable({
-    tagline: v.string(),
-    locked: v.optional(v.boolean()),
-  }),
-
-  profileBackgrounds: defineTable({
-    title: v.string(),
-    backgroundCSS: v.string(),
-    locked: v.optional(v.boolean()),
-  }),
-
   userReports: defineTable({
     reportedUser: v.id("users"),
     reporter: v.id("users"),

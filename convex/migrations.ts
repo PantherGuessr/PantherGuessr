@@ -1,5 +1,4 @@
 import { internalMutation } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
 import { PROFILE_BACKGROUNDS, DEFAULT_BACKGROUND_ID } from "../lib/backgrounds";
 import { PROFILE_TAGLINES, DEFAULT_TAGLINE_ID } from "../lib/taglines";
 
@@ -47,7 +46,7 @@ export const migrateTaglinesAndBackgrounds = internalMutation({
       // --- profileTagline: convert old Convex ID → library string ID ---
       const rawTaglineId = user.profileTagline;
       if (!allLibraryTaglineIds.has(rawTaglineId)) {
-        const taglineDoc = await ctx.db.get(rawTaglineId as Id<"profileTaglines">).catch(() => null);
+        const taglineDoc = await (ctx.db as any).get(rawTaglineId).catch(() => null);
         if (taglineDoc && "tagline" in taglineDoc) {
           const text = (taglineDoc as { tagline: string }).tagline;
           newTagline = taglineByText[text] ?? slugify(text);
@@ -57,7 +56,7 @@ export const migrateTaglinesAndBackgrounds = internalMutation({
       // --- profileBackground: convert old Convex ID → library string ID ---
       const rawBgId = user.profileBackground;
       if (!allLibraryBgIds.has(rawBgId)) {
-        const bgDoc = await ctx.db.get(rawBgId as Id<"profileBackgrounds">).catch(() => null);
+        const bgDoc = await (ctx.db as any).get(rawBgId).catch(() => null);
         if (bgDoc && "backgroundCSS" in bgDoc) {
           const css = (bgDoc as { backgroundCSS: string }).backgroundCSS;
           newBackground = bgByCss[css] ?? css;
@@ -72,7 +71,7 @@ export const migrateTaglinesAndBackgrounds = internalMutation({
           migratedTaglines.push(id);
         } else {
           anyTaglineChanged = true;
-          const doc = await ctx.db.get(id as Id<"profileTaglines">).catch(() => null);
+          const doc = await (ctx.db as any).get(id).catch(() => null);
           if (doc && "tagline" in doc) {
             const text = (doc as { tagline: string }).tagline;
             migratedTaglines.push(taglineByText[text] ?? slugify(text));
@@ -97,7 +96,7 @@ export const migrateTaglinesAndBackgrounds = internalMutation({
           migratedBgs.push(id);
         } else {
           anyBgChanged = true;
-          const doc = await ctx.db.get(id as Id<"profileBackgrounds">).catch(() => null);
+          const doc = await (ctx.db as any).get(id).catch(() => null);
           if (doc && "backgroundCSS" in doc) {
             const css = (doc as { backgroundCSS: string }).backgroundCSS;
             migratedBgs.push(bgByCss[css] ?? css);
