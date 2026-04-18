@@ -74,7 +74,7 @@ const ProfilePage = ({ params }: Props) => {
 
   // tagline editing
   const [taglineForUpdate, setTaglineForUpdate] = useState(profile?.selectedTagline?.tagline);
-  const [taglineIdForUpdate, setTaglineIdForUpdate] = useState(profile?.selectedTagline?._id);
+  const [taglineIdForUpdate, setTaglineIdForUpdate] = useState(profile?.selectedTagline?.id);
   const [isEditingTagline, setIsEditingTagline] = useState(false);
   const [taglinePopoverOpen, setTaglinePopoverOpen] = useState(false);
 
@@ -83,7 +83,7 @@ const ProfilePage = ({ params }: Props) => {
   const [backgroundCSSValue, setBackgroundCSSValue] = useState<string | undefined>(
     profile?.selectedBackground?.backgroundCSS
   );
-  const [backgroundIdForUpdate, setBackgroundIdForUpdate] = useState(profile?.selectedBackground?._id);
+  const [backgroundIdForUpdate, setBackgroundIdForUpdate] = useState(profile?.selectedBackground?.id);
   const [prevSelectedBackground, setPrevSelectedBackground] = useState(profile?.selectedBackground);
 
   // page reloading effect that is just a CSS class change
@@ -94,7 +94,7 @@ const ProfilePage = ({ params }: Props) => {
     setPrevSelectedBackground(profile?.selectedBackground);
     if (profile?.selectedBackground && !isEditingBackground) {
       setBackgroundCSSValue(profile.selectedBackground.backgroundCSS);
-      setBackgroundIdForUpdate(profile.selectedBackground._id);
+      setBackgroundIdForUpdate(profile.selectedBackground.id);
     }
   }
 
@@ -421,13 +421,13 @@ const ProfilePage = ({ params }: Props) => {
                                       <CommandGroup>
                                         {unlockedProfileTaglines?.map((tagline) => (
                                           <CommandItem
-                                            key={tagline?._id}
+                                            key={tagline?.id}
                                             value={tagline?.tagline}
                                             onSelect={(currentValue) => {
                                               setTaglineForUpdate(
                                                 currentValue === taglineForUpdate ? "" : currentValue
                                               );
-                                              setTaglineIdForUpdate(tagline?._id);
+                                              setTaglineIdForUpdate(tagline?.id);
                                               setTaglinePopoverOpen(false);
                                             }}
                                           >
@@ -454,7 +454,7 @@ const ProfilePage = ({ params }: Props) => {
                               <Save
                                 className="ml-1 mt-1 h-5 w-5 cursor-pointer"
                                 onClick={() => {
-                                  if (taglineIdForUpdate !== profileTagline?._id) {
+                                  if (taglineIdForUpdate !== profileTagline?.id) {
                                     updateSelectedTagline({
                                       clerkId: user.clerkId,
                                       taglineId: taglineIdForUpdate!,

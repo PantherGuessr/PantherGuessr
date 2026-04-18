@@ -17,10 +17,10 @@ export default defineSchema({
     banAppeal: v.optional(v.id("banAppeals")),
     achievements: v.optional(v.array(v.object({ id: v.string(), unlockedAt: v.number() }))),
     picture: v.string(),
-    profileTagline: v.id("profileTaglines"),
-    profileBackground: v.id("profileBackgrounds"),
-    unlockedProfileTaglines: v.array(v.id("profileTaglines")),
-    unlockedProfileBackgrounds: v.array(v.id("profileBackgrounds")),
+    profileTagline: v.string(),
+    profileBackground: v.string(),
+    unlockedProfileTaglines: v.array(v.string()),
+    unlockedProfileBackgrounds: v.array(v.string()),
   })
     .index("byClerkId", ["clerkId"])
     .index("byUsername", ["username"])

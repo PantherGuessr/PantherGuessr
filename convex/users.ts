@@ -4,6 +4,8 @@ import { v, Validator } from "convex/values";
 import { api, internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import { internalAction, internalMutation, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
+import { PROFILE_BACKGROUNDS, PROFILE_BACKGROUNDS_MAP, DEFAULT_BACKGROUND_ID } from "../lib/backgrounds";
+import { PROFILE_TAGLINES, PROFILE_TAGLINES_MAP, DEFAULT_TAGLINE_ID } from "../lib/taglines";
 
 /**
  * Retrieves a user from the database using their Convex ID.
@@ -101,10 +103,6 @@ export const current = query({
  *
  * @returns {Promise<void>} - A promise that resolves when the upsert operation is complete.
  */
-function pickRandom<T>(arr: T[], n: number): T[] {
-  const shuffled = [...arr].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(n, arr.length));
-}
 
 export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
@@ -112,18 +110,8 @@ export const upsertFromClerk = internalMutation({
     const user = await userByClerkId(ctx, data.id);
 
     if (user === null) {
-      const allTaglines = await ctx.db.query("profileTaglines").collect();
-      const unlockedTaglines = allTaglines.filter((t) => !t.locked);
-      if (unlockedTaglines.length === 0) throw new Error("No unlocked taglines available for new user assignment");
-
-      const allBackgrounds = await ctx.db.query("profileBackgrounds").collect();
-      const unlockedBackgrounds = allBackgrounds.filter((b) => !b.locked);
-      if (unlockedBackgrounds.length === 0) throw new Error("No unlocked backgrounds available for new user assignment");
-
-      const pickedTaglines = pickRandom(unlockedTaglines, 3);
-      const pickedBackgrounds = pickRandom(unlockedBackgrounds, 3);
-      const activeTagline = pickedTaglines[Math.floor(Math.random() * pickedTaglines.length)];
-      const activeBackground = pickedBackgrounds[Math.floor(Math.random() * pickedBackgrounds.length)];
+      const starterTaglines = PROFILE_TAGLINES.filter((t) => t.tier === "starter");
+      const starterBackgrounds = PROFILE_BACKGROUNDS.filter((b) => b.tier === "starter");
 
       const userAttributes = {
         clerkId: data.id!,
@@ -134,10 +122,10 @@ export const upsertFromClerk = internalMutation({
         currentStreak: 0n,
         isBanned: false,
         picture: data.image_url,
-        profileBackground: activeBackground._id,
-        profileTagline: activeTagline._id,
-        unlockedProfileBackgrounds: pickedBackgrounds.map((b) => b._id),
-        unlockedProfileTaglines: pickedTaglines.map((t) => t._id),
+        profileTagline: DEFAULT_TAGLINE_ID,
+        profileBackground: DEFAULT_BACKGROUND_ID,
+        unlockedProfileTaglines: starterTaglines.map((t) => t.id),
+        unlockedProfileBackgrounds: starterBackgrounds.map((b) => b.id),
       };
 
       await ctx.db.insert("users", userAttributes);
@@ -428,19 +416,9 @@ export const getUnlockedTaglines = query({
       return null;
     }
 
-    const taglineIds = user?.unlockedProfileTaglines;
-
-    // iterate through taglines to return objects
-    const taglines = [];
-    for (const taglineId of taglineIds) {
-      const tagline = await ctx.db
-        .query("profileTaglines")
-        .withIndex("by_id", (q) => q.eq("_id", taglineId))
-        .unique();
-      taglines.push(tagline);
-    }
-
-    return taglines;
+    return user.unlockedProfileTaglines
+      .map((id) => PROFILE_TAGLINES_MAP[id] ?? null)
+      .filter(Boolean);
   },
 });
 
@@ -467,14 +445,7 @@ export const getSelectedTagline = query({
       return null;
     }
 
-    const taglineId = user?.profileTagline;
-
-    const tagline = await ctx.db
-      .query("profileTaglines")
-      .withIndex("by_id", (q) => q.eq("_id", taglineId))
-      .unique();
-
-    return tagline;
+    return PROFILE_TAGLINES_MAP[user.profileTagline] ?? null;
   },
 });
 
@@ -496,7 +467,7 @@ export const getSelectedTagline = query({
 export const updateSelectedTagline = mutation({
   args: {
     clerkId: v.string(),
-    taglineId: v.id("profileTaglines"),
+    taglineId: v.string(),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
@@ -520,18 +491,9 @@ export const getUnlockedBackgrounds = query({
       return null;
     }
 
-    const backgroundIds = user?.unlockedProfileBackgrounds;
-
-    const backgrounds = [];
-    for (const backgroundId of backgroundIds) {
-      const background = await ctx.db
-        .query("profileBackgrounds")
-        .withIndex("by_id", (q) => q.eq("_id", backgroundId))
-        .unique();
-      backgrounds.push(background);
-    }
-
-    return backgrounds;
+    return user.unlockedProfileBackgrounds
+      .map((id) => PROFILE_BACKGROUNDS_MAP[id] ?? null)
+      .filter(Boolean);
   },
 });
 
@@ -546,21 +508,14 @@ export const getSelectedBackground = query({
       return null;
     }
 
-    const backgroundId = user?.profileBackground;
-
-    const background = await ctx.db
-      .query("profileBackgrounds")
-      .withIndex("by_id", (q) => q.eq("_id", backgroundId))
-      .unique();
-
-    return background;
+    return PROFILE_BACKGROUNDS_MAP[user.profileBackground] ?? null;
   },
 });
 
 export const updateSelectedBackground = mutation({
   args: {
     clerkId: v.string(),
-    backgroundId: v.id("profileBackgrounds"),
+    backgroundId: v.string(),
   },
   async handler(ctx, args) {
     const user = await userByClerkId(ctx, args.clerkId);
@@ -570,6 +525,46 @@ export const updateSelectedBackground = mutation({
     }
 
     await ctx.db.patch(user._id, { profileBackground: args.backgroundId });
+  },
+});
+
+export const adminGrantTagline = mutation({
+  args: {
+    targetUsername: v.string(),
+    taglineId: v.string(),
+  },
+  async handler(ctx, args) {
+    const callUser = await getCurrentUser(ctx);
+    if (!callUser || !callUser.roles?.includes("developer")) return null;
+
+    const targetUser = await userByUsername(ctx, args.targetUsername);
+    if (!targetUser) return null;
+
+    if (!targetUser.unlockedProfileTaglines.includes(args.taglineId)) {
+      await ctx.db.patch(targetUser._id, {
+        unlockedProfileTaglines: [...targetUser.unlockedProfileTaglines, args.taglineId],
+      });
+    }
+  },
+});
+
+export const adminGrantBackground = mutation({
+  args: {
+    targetUsername: v.string(),
+    backgroundId: v.string(),
+  },
+  async handler(ctx, args) {
+    const callUser = await getCurrentUser(ctx);
+    if (!callUser || !callUser.roles?.includes("developer")) return null;
+
+    const targetUser = await userByUsername(ctx, args.targetUsername);
+    if (!targetUser) return null;
+
+    if (!targetUser.unlockedProfileBackgrounds.includes(args.backgroundId)) {
+      await ctx.db.patch(targetUser._id, {
+        unlockedProfileBackgrounds: [...targetUser.unlockedProfileBackgrounds, args.backgroundId],
+      });
+    }
   },
 });
 
@@ -1025,8 +1020,8 @@ async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnT
     : false;
 
   // Selected tagline and background
-  const selectedTagline = await ctx.db.get(user.profileTagline);
-  const selectedBackground = await ctx.db.get(user.profileBackground);
+  const selectedTagline = PROFILE_TAGLINES_MAP[user.profileTagline] ?? null;
+  const selectedBackground = PROFILE_BACKGROUNDS_MAP[user.profileBackground] ?? null;
 
   // Ongoing game check
   const ongoingGame = await ctx.db
