@@ -84,7 +84,7 @@ const LevelUpload = () => {
         fileName.endsWith(".heif");
 
       if (isHeicOrHeif) {
-        let convertedBlob: Blob | null = null;
+        let convertedBlob!: Blob;
 
         try {
           const result = await heic2any({ blob: selectedImage, toType: "image/jpeg", quality: 0.9 });
