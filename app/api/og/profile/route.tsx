@@ -3,25 +3,11 @@ import { type NextRequest } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 
 import { api } from "@/convex/_generated/api";
+import { PROFILE_BACKGROUNDS_MAP } from "@/lib/backgrounds";
 
 export const dynamic = "force-dynamic";
 
-const BACKGROUND_CSS_TO_GRADIENT: Record<string, string> = {
-  "bg-gradient-blue-green": "linear-gradient(180deg, hsla(200,84%,47%,1) 0%, hsla(120,60%,51%,1) 100%)",
-  "bg-gradient-red-purple": "linear-gradient(180deg, hsla(0,84%,47%,1) 0%, hsla(280,60%,51%,1) 100%)",
-  "bg-gradient-yellow-orange": "linear-gradient(180deg, hsla(40,84%,47%,1) 0%, hsla(20,60%,51%,1) 100%)",
-  "bg-gradient-rainbow":
-    "linear-gradient(180deg, hsla(0,84%,47%,1) 0%, hsla(40,60%,51%,1) 20%, hsla(80,60%,51%,1) 40%, hsla(120,60%,51%,1) 60%, hsla(160,60%,51%,1) 80%, hsla(200,60%,51%,1) 100%)",
-  "bg-gradient-pink-purple-royalblue":
-    "linear-gradient(180deg, hsla(320,84%,47%,1) 0%, hsla(280,60%,51%,1) 50%, hsla(240,60%,51%,1) 100%)",
-  "bg-gradient-lblue-lpink-white-lpink-lblue":
-    "linear-gradient(180deg, rgb(104,188,230) 0%, rgb(212,116,180) 25%, rgb(255,255,255) 50%, rgb(212,116,180) 75%, rgb(104,188,230) 100%)",
-  "bg-boulder-colorado-image": "linear-gradient(180deg, #4a7c59 0%, #8b6914 100%)",
-  "bg-planepic-image": "linear-gradient(180deg, #1a1a2e 0%, #0f3460 100%)",
-  "bg-water-gif-image": "linear-gradient(180deg, #0077b6 0%, #90e0ef 100%)",
-};
-
-const DEFAULT_GRADIENT = "linear-gradient(180deg, hsla(200,84%,47%,1) 0%, hsla(120,60%,51%,1) 100%)";
+const DEFAULT_GRADIENT = PROFILE_BACKGROUNDS_MAP["gradient-blue-green"].ogGradient;
 
 const BANNER_HEIGHT = 280;
 const AVATAR_SIZE = 300;
@@ -94,10 +80,8 @@ async function getFigtreeFonts(): Promise<FontEntry[]> {
       .then((data) => ({ name: "Figtree", data, style: "italic" as const, weight: 400 as FontWeight })),
   ]);
   const fonts = results
-    .filter(
-      (r): r is PromiseFulfilledResult<FontEntry> => r.status === "fulfilled"
-    )
-    .map((r) => r.value);
+    .filter((r) => r.status === "fulfilled")
+    .map((r) => (r as PromiseFulfilledResult<FontEntry>).value);
   if (fonts.length > 0) cachedFonts = fonts;
   return fonts;
 }
@@ -119,7 +103,7 @@ export async function GET(request: NextRequest) {
     if (!profile) return fallbackImage();
 
     const backgroundGradient =
-      BACKGROUND_CSS_TO_GRADIENT[profile.selectedBackground?.backgroundCSS ?? ""] ?? DEFAULT_GRADIENT;
+      PROFILE_BACKGROUNDS_MAP[profile.selectedBackground?.id ?? ""]?.ogGradient ?? DEFAULT_GRADIENT;
 
     const tagline = profile.selectedTagline?.tagline ?? "";
 
@@ -163,7 +147,6 @@ export async function GET(request: NextRequest) {
           }}
         />
 
-        {/* White ring behind avatar */}
         <div
           style={{
             position: "absolute",
@@ -176,7 +159,6 @@ export async function GET(request: NextRequest) {
             display: "flex",
           }}
         />
-        {/* Avatar — borderRadius on img directly clips correctly in Satori */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={user.picture}
@@ -192,7 +174,6 @@ export async function GET(request: NextRequest) {
           alt=""
         />
 
-        {/* Content */}
         <div
           style={{
             position: "absolute",
@@ -205,7 +186,6 @@ export async function GET(request: NextRequest) {
             gap: 10,
           }}
         >
-          {/* Username + badges */}
           <div
             style={{
               display: "flex",
@@ -232,7 +212,6 @@ export async function GET(request: NextRequest) {
             ))}
           </div>
 
-          {/* Tagline */}
           {tagline ? (
             <div
               style={{
@@ -245,7 +224,6 @@ export async function GET(request: NextRequest) {
             </div>
           ) : null}
 
-          {/* Join date */}
           <div
             style={{
               display: "flex",
@@ -258,12 +236,11 @@ export async function GET(request: NextRequest) {
           </div>
         </div>
 
-        {/* Branding */}
         <div
           style={{
             position: "absolute",
             bottom: 28,
-            right: 48,
+            right: 28,
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
