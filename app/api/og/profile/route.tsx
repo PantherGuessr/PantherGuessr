@@ -13,11 +13,8 @@ const BANNER_HEIGHT = 280;
 const AVATAR_SIZE = 300;
 const AVATAR_BORDER = 10;
 const AVATAR_LEFT = 80;
-// Center avatar on the gradient/white boundary
 const AVATAR_TOP = BANNER_HEIGHT - AVATAR_SIZE / 2;
-// Content starts to the right of the avatar
 const CONTENT_LEFT = AVATAR_LEFT + AVATAR_SIZE + AVATAR_BORDER * 2 + 36;
-// Align text content near the avatar's center (banner boundary) + small offset
 const CONTENT_TOP = BANNER_HEIGHT + 30;
 
 function fallbackImage(gradient: string = DEFAULT_GRADIENT) {
@@ -64,7 +61,6 @@ type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 type FontEntry = { name: string; data: ArrayBuffer; style: "normal" | "italic"; weight: FontWeight };
 let cachedFonts: FontEntry[] | null = null;
 
-// Load Figtree regular, bold, and italic from jsDelivr (fontsource)
 async function getFigtreeFonts(): Promise<FontEntry[]> {
   if (cachedFonts) return cachedFonts;
   const base = "https://cdn.jsdelivr.net/npm/@fontsource/figtree/files";
@@ -102,8 +98,9 @@ export async function GET(request: NextRequest) {
     const profile = await client.query(api.users.getUserProfile, { clerkId: user.clerkId });
     if (!profile) return fallbackImage();
 
-    const backgroundGradient =
-      PROFILE_BACKGROUNDS_MAP[profile.selectedBackground?.id ?? ""]?.ogGradient ?? DEFAULT_GRADIENT;
+    const bg = PROFILE_BACKGROUNDS_MAP[profile.selectedBackground?.id ?? ""] ?? null;
+    const backgroundGradient = bg?.ogGradient ?? DEFAULT_GRADIENT;
+    const backgroundImageUrl = bg?.ogImage ? `${origin}${bg.ogImage}` : null;
 
     const tagline = profile.selectedTagline?.tagline ?? "";
 
@@ -135,7 +132,6 @@ export async function GET(request: NextRequest) {
           fontFamily: "Figtree",
         }}
       >
-        {/* Gradient banner */}
         <div
           style={{
             position: "absolute",
@@ -143,7 +139,13 @@ export async function GET(request: NextRequest) {
             left: 0,
             width: 1200,
             height: BANNER_HEIGHT,
-            background: backgroundGradient,
+            ...(backgroundImageUrl
+              ? {
+                  backgroundImage: `url(${backgroundImageUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }
+              : { background: backgroundGradient }),
           }}
         />
 

@@ -5,6 +5,7 @@ export interface ProfileBackground {
   title: string;
   backgroundCSS: string;
   ogGradient: string;
+  ogImage?: string;
   tier: BackgroundTier;
 }
 
@@ -59,6 +60,7 @@ export const PROFILE_BACKGROUNDS: ProfileBackground[] = [
     title: "Boulder Colorado Hike",
     backgroundCSS: "bg-boulder-colorado-image",
     ogGradient: "linear-gradient(180deg, #4a7c59 0%, #8b6914 100%)",
+    ogImage: "/profile-banner-images/BoulderCO.jpeg",
     tier: "restricted",
   },
   {
@@ -66,6 +68,7 @@ export const PROFILE_BACKGROUNDS: ProfileBackground[] = [
     title: "Airport Picture",
     backgroundCSS: "bg-planepic-image",
     ogGradient: "linear-gradient(180deg, #1a1a2e 0%, #0f3460 100%)",
+    ogImage: "/profile-banner-images/planepic.jpg",
     tier: "restricted",
   },
   {
@@ -73,6 +76,7 @@ export const PROFILE_BACKGROUNDS: ProfileBackground[] = [
     title: "Animated Water",
     backgroundCSS: "bg-water-gif-image",
     ogGradient: "linear-gradient(180deg, #0077b6 0%, #90e0ef 100%)",
+    ogImage: "/profile-banner-images/Water.gif",
     tier: "restricted",
   },
 ];
