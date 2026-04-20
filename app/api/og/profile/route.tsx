@@ -22,7 +22,7 @@ const BANNER_HEIGHT = 280;
 const AVATAR_SIZE = 300;
 const AVATAR_BORDER = 10;
 const AVATAR_LEFT = 80;
-const AVATAR_TOP = BANNER_HEIGHT - AVATAR_SIZE / 2;
+const AVATAR_TOP = (630 - AVATAR_SIZE) / 2;
 const CONTENT_LEFT = AVATAR_LEFT + AVATAR_SIZE + AVATAR_BORDER * 2 + 36;
 const CONTENT_TOP = BANNER_HEIGHT + 30;
 
@@ -201,6 +201,34 @@ export async function GET(request: NextRequest) {
           }}
           alt=""
         />
+
+        <div
+          style={{
+            position: "absolute",
+            top: 40,
+            right: 40,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 80,
+            height: 80,
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`${origin}/badges/level_badge.svg`} width={120} height={120} style={{ position: "absolute" }} />
+          <div
+            style={{
+              position: "absolute",
+              display: "flex",
+              fontSize: Number(user.level) > 9999 ? 26 : Number(user.level) > 999 ? 32 : 38,
+              fontWeight: "bold",
+              color: "white",
+              textShadow: "1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000",
+            }}
+          >
+            {Number(user.level)}
+          </div>
+        </div>
 
         <div
           style={{
