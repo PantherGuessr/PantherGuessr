@@ -1,3 +1,4 @@
+import path from "path";
 import { ImageResponse } from "next/og";
 import { type NextRequest } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
@@ -6,6 +7,14 @@ import { api } from "@/convex/_generated/api";
 import { PROFILE_BACKGROUNDS_MAP } from "@/lib/backgrounds";
 
 export const dynamic = "force-dynamic";
+
+async function resolveImageUrl(ogImagePath: string, origin: string): Promise<string> {
+  if (!ogImagePath.endsWith(".gif")) return `${origin}${ogImagePath}`;
+  const sharp = (await import("sharp")).default;
+  const absolutePath = path.join(process.cwd(), "public", ogImagePath);
+  const pngBuffer = await sharp(absolutePath, { pages: 1 }).png().toBuffer();
+  return `data:image/png;base64,${pngBuffer.toString("base64")}`;
+}
 
 const DEFAULT_GRADIENT = PROFILE_BACKGROUNDS_MAP["gradient-blue-green"].ogGradient;
 
@@ -100,7 +109,7 @@ export async function GET(request: NextRequest) {
 
     const bg = PROFILE_BACKGROUNDS_MAP[profile.selectedBackground?.id ?? ""] ?? null;
     const backgroundGradient = bg?.ogGradient ?? DEFAULT_GRADIENT;
-    const backgroundImageUrl = bg?.ogImage ? `${origin}${bg.ogImage}` : null;
+    const backgroundImageUrl = bg?.ogImage ? await resolveImageUrl(bg.ogImage, origin) : null;
 
     const tagline = profile.selectedTagline?.tagline ?? "";
 
@@ -132,22 +141,33 @@ export async function GET(request: NextRequest) {
           fontFamily: "Figtree",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: 1200,
-            height: BANNER_HEIGHT,
-            ...(backgroundImageUrl
-              ? {
-                  backgroundImage: `url(${backgroundImageUrl})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }
-              : { background: backgroundGradient }),
-          }}
-        />
+        {backgroundImageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={backgroundImageUrl}
+            width={1200}
+            height={BANNER_HEIGHT}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+            alt=""
+          />
+        ) : (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: 1200,
+              height: BANNER_HEIGHT,
+              background: backgroundGradient,
+            }}
+          />
+        )}
 
         <div
           style={{
