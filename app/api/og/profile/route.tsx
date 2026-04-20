@@ -1,6 +1,6 @@
 import path from "path";
 import { ImageResponse } from "next/og";
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 
 import { api } from "@/convex/_generated/api";
@@ -26,44 +26,8 @@ const AVATAR_TOP = (630 - AVATAR_SIZE) / 2;
 const CONTENT_LEFT = AVATAR_LEFT + AVATAR_SIZE + AVATAR_BORDER * 2 + 36;
 const CONTENT_TOP = BANNER_HEIGHT + 30;
 
-function fallbackImage(gradient: string = DEFAULT_GRADIENT) {
-  return new ImageResponse(
-    <div
-      style={{
-        display: "flex",
-        width: 1200,
-        height: 630,
-        background: "white",
-        position: "relative",
-        fontFamily: "sans-serif",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: 1200,
-          height: BANNER_HEIGHT,
-          background: gradient,
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          top: BANNER_HEIGHT + 60,
-          left: CONTENT_LEFT,
-          display: "flex",
-          fontSize: 64,
-          fontWeight: "bold",
-          color: "#18181b",
-        }}
-      >
-        PantherGuessr
-      </div>
-    </div>,
-    { width: 1200, height: 630 }
-  );
+function fallbackImage(origin: string) {
+  return NextResponse.redirect(`${origin}/api/og`, { status: 302 });
 }
 
 type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
@@ -95,17 +59,17 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const username = searchParams.get("username")?.toLowerCase();
 
-  if (!username) return fallbackImage();
+  if (!username) return fallbackImage(origin);
 
   try {
     const fonts = await getFigtreeFonts();
     const client = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
     const user = await client.query(api.users.getUserByUsername, { username });
-    if (!user || user.isBanned) return fallbackImage();
+    if (!user || user.isBanned) return fallbackImage(origin);
 
     const profile = await client.query(api.users.getUserProfile, { clerkId: user.clerkId });
-    if (!profile) return fallbackImage();
+    if (!profile) return fallbackImage(origin);
 
     const bg = PROFILE_BACKGROUNDS_MAP[profile.selectedBackground?.id ?? ""] ?? null;
     const backgroundGradient = bg?.ogGradient ?? DEFAULT_GRADIENT;
@@ -315,6 +279,6 @@ export async function GET(request: NextRequest) {
       }
     );
   } catch {
-    return fallbackImage();
+    return fallbackImage(origin);
   }
 }
