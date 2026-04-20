@@ -142,20 +142,26 @@ export async function GET(request: NextRequest) {
         }}
       >
         {backgroundImageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={backgroundImageUrl}
-            width={1200}
-            height={BANNER_HEIGHT}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              objectFit: "cover",
-              objectPosition: "center",
-            }}
-            alt=""
-          />
+          <div style={{ position: "absolute", top: 0, left: 0, width: 1200, height: BANNER_HEIGHT, display: "flex" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={backgroundImageUrl}
+              width={1200}
+              height={BANNER_HEIGHT}
+              style={{ position: "absolute", top: 0, left: 0, objectFit: "cover", objectPosition: "center" }}
+              alt=""
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: 1200,
+                height: BANNER_HEIGHT,
+                background: "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 50%)",
+              }}
+            />
+          </div>
         ) : (
           <div
             style={{
