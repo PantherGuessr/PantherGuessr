@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
               width={1200}
               height={BANNER_HEIGHT}
               style={{ position: "absolute", top: 0, left: 0, objectFit: "cover", objectPosition: "center" }}
-              alt=""
+              alt="Decorative Profile Banner Image"
             />
             <div
               style={{
@@ -169,7 +169,7 @@ export async function GET(request: NextRequest) {
             borderRadius: AVATAR_SIZE / 2,
             objectFit: "cover",
           }}
-          alt=""
+          alt="Profile Picture"
         />
 
         <div
@@ -185,7 +185,13 @@ export async function GET(request: NextRequest) {
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`${origin}/badges/level_badge.svg`} width={120} height={120} style={{ position: "absolute" }} />
+          <img
+            src={`${origin}/badges/level_badge.svg`}
+            width={120}
+            height={120}
+            style={{ position: "absolute" }}
+            alt="Decorative Player Level Background Image"
+          />
           <div
             style={{
               position: "absolute",
@@ -234,7 +240,7 @@ export async function GET(request: NextRequest) {
             </div>
             {badgeIcons.map((src) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={src} src={src} width={48} height={48} alt="" />
+              <img key={src} src={src} width={48} height={48} alt="Decorative Profile Badge" />
             ))}
           </div>
 
@@ -274,7 +280,7 @@ export async function GET(request: NextRequest) {
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`${origin}/pantherguessr_logo.png`} width={26} height={26} alt="" />
+          <img src={`${origin}/pantherguessr_logo.png`} width={26} height={26} alt="PantherGuessr Logo" />
           <div style={{ display: "flex", fontSize: 25, color: "#a1a1aa" }}>pantherguessr.com</div>
         </div>
       </div>,
