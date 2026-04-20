@@ -3,7 +3,6 @@ import { PenLine } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 
 interface ProfileBackgroundProps {
@@ -13,8 +12,7 @@ interface ProfileBackgroundProps {
   setIsEditingBackground: (value: boolean) => void;
   unlockedProfileBackgrounds?:
     | ({
-        _id: Id<"profileBackgrounds">;
-        _creationTime: number;
+        id: string;
         title: string;
         backgroundCSS: string;
       } | null)[]
@@ -22,9 +20,9 @@ interface ProfileBackgroundProps {
     | undefined;
   userClerkId: string;
   setBackgroundCSSValue: (value: string) => void;
-  setBackgroundIdForUpdate: Dispatch<SetStateAction<Id<"profileBackgrounds"> | undefined>>;
-  backgroundIdForUpdate: Id<"profileBackgrounds"> | undefined;
-  updateSelectedBackground: (value: { clerkId: string; backgroundId: Id<"profileBackgrounds"> }) => void;
+  setBackgroundIdForUpdate: Dispatch<SetStateAction<string | undefined>>;
+  backgroundIdForUpdate: string | undefined;
+  updateSelectedBackground: (value: { clerkId: string; backgroundId: string }) => void;
 }
 
 const ProfileBackground = ({
@@ -54,22 +52,22 @@ const ProfileBackground = ({
                   <div className="grid max-h-24 grid-flow-row grid-cols-2 gap-4 overflow-y-scroll md:max-h-48 md:grid-cols-3">
                     {unlockedProfileBackgrounds?.map((background) => (
                       <div
-                        key={background?._id}
+                        key={background?.id}
                         className={cn(
                           "bg-gradient-red-purple flex h-20 w-32 cursor-pointer items-center justify-center rounded-md",
                           background?.backgroundCSS
                         )}
                         onClick={() => {
                           setBackgroundCSSValue(background!.backgroundCSS);
-                          setBackgroundIdForUpdate(background!._id);
+                          setBackgroundIdForUpdate(background!.id);
                           updateSelectedBackground({
                             clerkId: userClerkId,
-                            backgroundId: background!._id,
+                            backgroundId: background!.id,
                           });
                           setIsEditingBackground(false);
                         }}
                       >
-                        {background?._id == backgroundIdForUpdate && <p className="text-sm text-white">Selected</p>}
+                        {background?.id == backgroundIdForUpdate && <p className="text-sm text-white">Selected</p>}
                       </div>
                     ))}
                   </div>

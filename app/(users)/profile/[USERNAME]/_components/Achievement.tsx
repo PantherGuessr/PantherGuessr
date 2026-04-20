@@ -17,17 +17,19 @@ const Achievement = ({ name, description, imageSrc, unlockedAt }: IAchievement) 
   return (
     <HoverCard key={name} openDelay={100} closeDelay={50}>
       <HoverCardTrigger asChild>
-        <Image
-          src={imageSrc}
-          width={80}
-          height={80}
-          alt={name + " Achievement"}
-          className="cursor-default select-none"
-          draggable={false}
-        />
+        <span className="inline-block cursor-default select-none drop-shadow-md">
+          <Image
+            src={imageSrc}
+            width={80}
+            height={80}
+            alt={name + " Achievement"}
+            className="cursor-default select-none"
+            draggable={false}
+          />
+        </span>
       </HoverCardTrigger>
       <HoverCardContent className="z-50 w-80">
-        <div className="flex flex-row items-center space-x-4">
+        <div className="flex flex-row items-center space-x-4 drop-shadow-md">
           <Image
             src={imageSrc}
             width={80}

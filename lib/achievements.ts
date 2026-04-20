@@ -34,7 +34,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: "sniped",
     name: "Sniped",
     description: "Achieved a perfect score across all five rounds.",
-    imageSrc: "/achievements/perfect_game_achievement.svg",
+    imageSrc: "/achievements/sniped_achievement.svg",
   },
   {
     id: "photo_scout",

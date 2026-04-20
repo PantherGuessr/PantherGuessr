@@ -84,15 +84,38 @@ const LevelUpload = () => {
         fileName.endsWith(".heif");
 
       if (isHeicOrHeif) {
-        const convertedBlob = await heic2any({
-          blob: selectedImage,
-          toType: "image/jpeg",
-          quality: 0.9,
+        let convertedBlob!: Blob;
+
+        try {
+          const result = await heic2any({ blob: selectedImage, toType: "image/jpeg", quality: 0.9 });
+          convertedBlob = Array.isArray(result) ? result[0] : result;
+        } catch {
+          // heic2any fails on some HEIC variants, tries to use native browser decoding
+          try {
+            const bitmap = await createImageBitmap(selectedImage);
+            const canvas = document.createElement("canvas");
+            canvas.width = bitmap.width;
+            canvas.height = bitmap.height;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) throw new Error("Could not get canvas context");
+            ctx.drawImage(bitmap, 0, 0);
+            convertedBlob = await new Promise<Blob>((resolve, reject) => {
+              canvas.toBlob(
+                (blob) => (blob ? resolve(blob) : reject(new Error("Canvas toBlob failed"))),
+                "image/jpeg",
+                0.9
+              );
+            });
+          } catch {
+            throw new Error(
+              "This HEIC/HEIF image could not be converted automatically. Please convert it to JPEG or PNG first and re-upload, or try another browser."
+            );
+          }
+        }
+
+        fileToProcess = new File([convertedBlob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), {
+          type: "image/jpeg",
         });
-
-        const finalBlob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
-
-        fileToProcess = new File([finalBlob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), { type: "image/jpeg" });
       }
 
       // image compression options
@@ -163,7 +186,7 @@ const LevelUpload = () => {
               <Input
                 id="picture"
                 type="file"
-                accept="image/png, image/jpg, image/jpeg, image/heic, image/heif"
+                accept="image/png, image/jpeg, image/heic, image/heif, .png, .jpg, .jpeg, .heic, .heif"
                 ref={imageInput}
                 onChange={(event) => setSelectedImage(event.target.files?.[0] || null)}
               />
