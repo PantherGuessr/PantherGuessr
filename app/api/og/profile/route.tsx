@@ -1,6 +1,7 @@
+import fs from "fs";
 import path from "path";
 import { ImageResponse } from "next/og";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 
 import { api } from "@/convex/_generated/api";
@@ -34,25 +35,30 @@ type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 type FontEntry = { name: string; data: ArrayBuffer; style: "normal" | "italic"; weight: FontWeight };
 let cachedFonts: FontEntry[] | null = null;
 
-async function getFigtreeFonts(): Promise<FontEntry[]> {
+function getFigtreeFonts(): FontEntry[] {
   if (cachedFonts) return cachedFonts;
-  const base = "https://cdn.jsdelivr.net/npm/@fontsource/figtree/files";
-  const results = await Promise.allSettled([
-    fetch(`${base}/figtree-latin-400-normal.woff`)
-      .then((r) => r.arrayBuffer())
-      .then((data) => ({ name: "Figtree", data, style: "normal" as const, weight: 400 as FontWeight })),
-    fetch(`${base}/figtree-latin-700-normal.woff`)
-      .then((r) => r.arrayBuffer())
-      .then((data) => ({ name: "Figtree", data, style: "normal" as const, weight: 700 as FontWeight })),
-    fetch(`${base}/figtree-latin-400-italic.woff`)
-      .then((r) => r.arrayBuffer())
-      .then((data) => ({ name: "Figtree", data, style: "italic" as const, weight: 400 as FontWeight })),
-  ]);
-  const fonts = results
-    .filter((r) => r.status === "fulfilled")
-    .map((r) => (r as PromiseFulfilledResult<FontEntry>).value);
-  if (fonts.length > 0) cachedFonts = fonts;
-  return fonts;
+  const dir = path.join(process.cwd(), "app/fonts");
+  cachedFonts = [
+    {
+      name: "Figtree",
+      data: fs.readFileSync(`${dir}/figtree-latin-400-normal.woff`).buffer as ArrayBuffer,
+      style: "normal",
+      weight: 400,
+    },
+    {
+      name: "Figtree",
+      data: fs.readFileSync(`${dir}/figtree-latin-700-normal.woff`).buffer as ArrayBuffer,
+      style: "normal",
+      weight: 700,
+    },
+    {
+      name: "Figtree",
+      data: fs.readFileSync(`${dir}/figtree-latin-400-italic.woff`).buffer as ArrayBuffer,
+      style: "italic",
+      weight: 400,
+    },
+  ];
+  return cachedFonts;
 }
 
 export async function GET(request: NextRequest) {
@@ -62,7 +68,7 @@ export async function GET(request: NextRequest) {
   if (!username) return fallbackImage(origin);
 
   try {
-    const fonts = await getFigtreeFonts();
+    const fonts = getFigtreeFonts();
     const client = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
     const user = await client.query(api.users.getUserByUsername, { username });
