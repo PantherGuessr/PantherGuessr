@@ -39,8 +39,8 @@ const GameContent = ({ isMobile }: { isMobile: boolean }) => {
       )}
       <div
         className={cn(
-          "flex h-full w-full overflow-y-auto",
-          isMobile ? "animate-body-opacity-scale-in flex-col" : "flex-row"
+          "animate-body-opacity-scale-in flex h-full w-full overflow-y-auto",
+          isMobile ? "flex-col" : "flex-row"
         )}
       >
         <InGameSidebar />

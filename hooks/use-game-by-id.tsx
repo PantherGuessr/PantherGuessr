@@ -52,6 +52,9 @@ const useGameById = (gameId?: Id<"games">, clerkId?: string) => {
   const gameData = useMemo<GameData | null>(() => {
     if (!gameContent) return null;
 
+    // Wait for ongoingGame to settle before returning data so context doesn't start with round 1 before state is known
+    if (isAuthenticated && clerkId && ongoingGame === undefined) return null;
+
     const data: GameData = { gameContent };
 
     if (ongoingGame && ongoingGame.game === gameContent._id) {
@@ -61,7 +64,7 @@ const useGameById = (gameId?: Id<"games">, clerkId?: string) => {
     }
 
     return data;
-  }, [gameContent, ongoingGame]);
+  }, [gameContent, ongoingGame, isAuthenticated, clerkId]);
 
   return gameData;
 };

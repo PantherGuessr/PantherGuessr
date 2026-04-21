@@ -33,6 +33,7 @@ const InGameSidebar = () => {
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const [isResetting] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Retrieve Game Context
   const {
@@ -58,6 +59,11 @@ const InGameSidebar = () => {
       sidebarRef.current.style.width = "";
     }
   }, [isMobile]);
+
+  // Reset loaded state whenever the image URL changes so skeleton shows until new image is ready
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [currentImageSrcUrl]);
 
   /**
    * Handles submitting a guess for the current round
@@ -302,22 +308,31 @@ const InGameSidebar = () => {
           )}
         </div>
         <div className="flex justify-center p-3">
-          {isLoading || !currentImageSrcUrl ? (
-            <Skeleton className="aspect-4/3 w-full bg-zinc-400 dark:bg-red-900" />
-          ) : (
-            <Image
-              src={currentImageSrcUrl}
-              layout="responsive"
-              width={isMobile ? 250 : 296}
-              height={isMobile ? 188 : 222}
-              alt=""
-              onMouseEnter={handleMouseEnter}
-              onMouseMove={handleMouseMoveMagnifier}
-              onMouseLeave={handleMouseLeave}
-              draggable={false}
-              className="select-none rounded-md"
+          <div className="relative aspect-4/3 w-full">
+            <Skeleton
+              className={cn(
+                "absolute inset-0 rounded-md bg-zinc-400 transition-opacity duration-300 dark:bg-red-900",
+                imageLoaded && !isLoading && currentImageSrcUrl ? "opacity-0 pointer-events-none" : "opacity-100"
+              )}
             />
-          )}
+            {!isLoading && currentImageSrcUrl && (
+              <Image
+                src={currentImageSrcUrl}
+                fill
+                sizes={isMobile ? "250px" : "296px"}
+                alt=""
+                onLoad={() => setImageLoaded(true)}
+                onMouseEnter={handleMouseEnter}
+                onMouseMove={handleMouseMoveMagnifier}
+                onMouseLeave={handleMouseLeave}
+                draggable={false}
+                className={cn(
+                  "select-none rounded-md object-cover transition-opacity duration-300",
+                  imageLoaded ? "opacity-100" : "opacity-0"
+                )}
+              />
+            )}
+          </div>
         </div>
         {!isMobile && (
           <div className="mt-4 flex flex-col items-center">
