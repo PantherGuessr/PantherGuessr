@@ -1,5 +1,5 @@
 .animate-body-opacity-scale-in {
-  animation: body-opacity-scale-in 1.5s ease;
+  animation: body-opacity-scale-in 1.5s ease 200ms both;
 }
 
 @keyframes body-opacity-scale-in {
@@ -10,6 +10,12 @@
   100% {
     transform: scale(1);
     opacity: 100%;
+  }
+}
+
+@media (min-width: 601px) {
+  .animate-body-opacity-scale-in {
+    animation: none;
   }
 }
 
