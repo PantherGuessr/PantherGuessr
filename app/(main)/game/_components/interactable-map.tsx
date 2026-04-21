@@ -8,6 +8,7 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from "react-leaflet";
 
 import { useGame } from "../_context/GameContext";
+import { useTournament } from "../_context/TournamentContext";
 import ReportButton from "./report-button";
 
 import "./interactable-map.css";
@@ -21,6 +22,7 @@ const InteractableMap = () => {
     correctLocation,
     currentLevelId,
   } = useGame()!;
+  const tournament = useTournament();
   const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);
   const prevCorrectLocation = useRef<LatLng | null>(null);
 
@@ -47,6 +49,7 @@ const InteractableMap = () => {
           setLocalMarkerPosition(position);
           setMarkerPosition(position);
           setMarkerHasBeenPlaced(true);
+          tournament?.onMarkerPlace(position.lat, position.lng);
         }
       },
     });

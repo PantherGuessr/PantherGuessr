@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useGame } from "../_context/GameContext";
+import { useTournament } from "../_context/TournamentContext";
 
 import "./sidebar-cursor.css";
 
@@ -52,6 +53,7 @@ const InGameSidebar = () => {
     isLoading,
     gameType,
   } = useGame()!;
+  const tournament = useTournament();
 
   const imageLoaded = !!currentImageSrcUrl && loadedImageUrl === currentImageSrcUrl;
 
@@ -70,8 +72,10 @@ const InGameSidebar = () => {
     if (!markerHasBeenPlaced || !markerPosition) return;
 
     const { lat, lng } = markerPosition;
-    submitGuess(lat, lng);
-  }, [markerHasBeenPlaced, markerPosition, submitGuess]);
+    submitGuess(lat, lng).then(() => {
+      tournament?.onGuessSubmit(lat, lng).catch(console.error);
+    });
+  }, [markerHasBeenPlaced, markerPosition, submitGuess, tournament]);
 
   /**
    * Handles advancing to the next round
@@ -272,7 +276,9 @@ const InGameSidebar = () => {
               isMobile && "basis-1/5"
             )}
           >
-            {gameType === "weekly" ? (
+            {tournament ? (
+              <Medal />
+            ) : gameType === "weekly" ? (
               <Calendar />
             ) : gameType === "singleplayer" ? (
               <User />
@@ -280,7 +286,9 @@ const InGameSidebar = () => {
               <Skeleton className="h-6 w-6 bg-zinc-400 dark:bg-red-900" />
             )}
             <div className={isMobile ? "sr-only" : ""}>
-              {gameType === "weekly" ? (
+              {tournament ? (
+                "Duel"
+              ) : gameType === "weekly" ? (
                 "Weekly"
               ) : gameType === "singleplayer" ? (
                 "Singleplayer"
@@ -382,9 +390,15 @@ const InGameSidebar = () => {
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
             </Button>
           ) : correctLocation ? (
-            <Button disabled={false} onClick={handleNextRound} className="w-full">
-              {currentRound >= levels.length ? "FINISH GAME" : "NEXT ROUND"}
-            </Button>
+            tournament?.suppressRoundAdvance ? (
+              <div className="w-full rounded-md bg-secondary p-3 text-center text-sm text-secondary-foreground">
+                Waiting for organizer...
+              </div>
+            ) : (
+              <Button disabled={false} onClick={handleNextRound} className="w-full">
+                {currentRound >= levels.length ? "FINISH GAME" : "NEXT ROUND"}
+              </Button>
+            )
           ) : (
             <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={handleSubmittingGuess}>
               SUBMIT
