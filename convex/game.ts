@@ -252,6 +252,7 @@ export const getGameById = query({
  *
  * @param {bigint[]} allPoints - An array of points earned in each game.
  * @param {bigint[]} allDistances - An array of distances for each game.
+ * @param {bigint} currentStreak - The player's current streak at the time of the game.
  * @returns {number} The total earned XP.
  *
  * @remarks
@@ -260,8 +261,16 @@ export const getGameById = query({
  * - For every 25 points earned, 1 XP is awarded.
  * - For every "Spot On" game (distance <= 20), an additional 5 XP bonus is awarded.
  * - If every round was "Spot On", the total XP is doubled.
+ * - A streak multiplier is applied: 3-6 days = 1.1x, 7-13 days = 1.25x, 14+ days = 1.5x.
  */
-function getTotalEarnedXP(allPoints: bigint[], allDistances: bigint[]): number {
+function getStreakMultiplier(streak: number): number {
+  if (streak >= 14) return 1.5;
+  if (streak >= 7) return 1.25;
+  if (streak >= 3) return 1.1;
+  return 1.0;
+}
+
+function getTotalEarnedXP(allPoints: bigint[], allDistances: bigint[], currentStreak: bigint): number {
   let earnedXP = 0;
 
   // TODO: Add 10xp if first game of the day
@@ -290,6 +299,9 @@ function getTotalEarnedXP(allPoints: bigint[], allDistances: bigint[]): number {
     earnedXP *= 2;
   }
 
+  // * Apply streak multiplier
+  earnedXP = Math.floor(earnedXP * getStreakMultiplier(Number(currentStreak)));
+
   return earnedXP;
 }
 
@@ -311,6 +323,10 @@ export const addLeaderboardEntryToGame = mutation({
     gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   },
   handler: async (ctx, args) => {
+    // Fetch current streak before updating it (streak is updated after this)
+    const user = await ctx.db.get(args.userId);
+    const currentStreak = user?.currentStreak ?? 0n;
+
     const newXP = getTotalEarnedXP(
       [args.round_1, args.round_2, args.round_3, args.round_4, args.round_5],
       [
@@ -319,7 +335,8 @@ export const addLeaderboardEntryToGame = mutation({
         args.round_3_distance,
         args.round_4_distance,
         args.round_5_distance,
-      ]
+      ],
+      currentStreak
     );
 
     // calculate total points to update user points earned
@@ -349,6 +366,7 @@ export const addLeaderboardEntryToGame = mutation({
       round_5_distance: args.round_5_distance,
       totalTimeTaken: args.totalTimeTaken,
       xpGained: newXP,
+      streakAtGame: currentStreak,
       gameType: args.gameType,
     });
 
