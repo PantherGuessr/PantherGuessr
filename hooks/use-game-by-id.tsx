@@ -52,8 +52,9 @@ const useGameById = (gameId?: Id<"games">, clerkId?: string) => {
   const gameData = useMemo<GameData | null>(() => {
     if (!gameContent) return null;
 
-    // Wait for ongoingGame to settle before returning data so context doesn't start with round 1 before state is known
-    if (isAuthenticated && clerkId && ongoingGame === undefined) return null;
+    // Wait until clerkId is loaded and ongoingGame has settled before returning data.
+    // gameData returns before we know a resume state without this fix, causes a flash of round 1 data
+    if (isAuthenticated && (!clerkId || ongoingGame === undefined)) return null;
 
     const data: GameData = { gameContent };
 

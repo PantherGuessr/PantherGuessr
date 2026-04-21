@@ -33,7 +33,7 @@ const InGameSidebar = () => {
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const [isResetting] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [loadedImageUrl, setLoadedImageUrl] = useState("");
 
   // Retrieve Game Context
   const {
@@ -53,17 +53,14 @@ const InGameSidebar = () => {
     gameType,
   } = useGame()!;
 
+  const imageLoaded = !!currentImageSrcUrl && loadedImageUrl === currentImageSrcUrl;
+
   // Reset sidebar width when switching to mobile
   useEffect(() => {
     if (isMobile && sidebarRef.current) {
       sidebarRef.current.style.width = "";
     }
   }, [isMobile]);
-
-  // Reset loaded state whenever the image URL changes so skeleton shows until new image is ready
-  useEffect(() => {
-    setImageLoaded(false);
-  }, [currentImageSrcUrl]);
 
   /**
    * Handles submitting a guess for the current round
@@ -321,7 +318,7 @@ const InGameSidebar = () => {
                 fill
                 sizes={isMobile ? "250px" : "296px"}
                 alt=""
-                onLoad={() => setImageLoaded(true)}
+                onLoad={() => setLoadedImageUrl(currentImageSrcUrl)}
                 onMouseEnter={handleMouseEnter}
                 onMouseMove={handleMouseMoveMagnifier}
                 onMouseLeave={handleMouseLeave}
