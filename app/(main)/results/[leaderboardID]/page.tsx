@@ -30,6 +30,7 @@ import { api } from "@/convex/_generated/api";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import useUserById from "@/hooks/use-user-by-id";
 import { cn, isValidConvexId } from "@/lib/utils";
+import { computeXPBreakdown } from "@/lib/xp";
 
 type Props = {
   params: Promise<{ leaderboardID: string }>;
@@ -79,6 +80,10 @@ const ResultPage = ({ params }: Props) => {
   const oldLevel = leaderboardEntry ? Number(leaderboardEntry.oldLevel) : 0;
   const newLevel = leaderboardEntry ? Number(leaderboardEntry.newLevel) : 0;
   const gameType = leaderboardEntry?.gameType ?? "";
+
+  const streak = leaderboardEntry ? Number(leaderboardEntry.streakAtGame ?? 0n) : 0;
+  const isFirstGameOfDay = leaderboardEntry?.firstGameOfDay ?? false;
+  const xpBreakdown = leaderboardEntry ? computeXPBreakdown(scores, distances, streak, isFirstGameOfDay) : null;
 
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -267,18 +272,59 @@ const ResultPage = ({ params }: Props) => {
                   </div>
                 </div>
               ))}
-              <Separator />
               <div className="p-2">
-                <div className="flex flex-row justify-between">
+                <div className="flex flex-row justify-between font-bold">
                   <h2 className="font-bold">Final Score</h2>
                   <p className="bg-primary px-2 text-primary-foreground">{finalScore}</p>
                 </div>
               </div>
+              <Separator />
               <div className="p-2">
-                <div className="flex flex-row justify-between">
-                  <h2 className="font-bold">XP Awarded</h2>
-                  <p className="bg-primary px-2 text-primary-foreground">{leaderboardEntry?.xpGained || 0}</p>
+                <div className="flex flex-row justify-between pb-2">
+                  <h2 className="font-bold">XP Breakdown</h2>
                 </div>
+                {xpBreakdown && (
+                  <div className="flex flex-col space-y-1 text-sm">
+                    <div className="flex flex-row justify-between">
+                      <p className="text-muted-foreground">Base</p>
+                      <p>+{xpBreakdown.baseXP} XP</p>
+                    </div>
+                    {xpBreakdown.firstGameOfDayXP > 0 && (
+                      <div className="flex flex-row justify-between">
+                        <p className="text-muted-foreground">First game of the day</p>
+                        <p>+{xpBreakdown.firstGameOfDayXP} XP</p>
+                      </div>
+                    )}
+                    <div className="flex flex-row justify-between">
+                      <p className="text-muted-foreground">Score bonus</p>
+                      <p>+{xpBreakdown.pointsXP} XP</p>
+                    </div>
+                    {xpBreakdown.spotOnXP > 0 && (
+                      <div className="flex flex-row justify-between">
+                        <p className="text-muted-foreground">Spot-on bonus</p>
+                        <p>+{xpBreakdown.spotOnXP} XP</p>
+                      </div>
+                    )}
+                    {xpBreakdown.isPerfect && (
+                      <div className="flex flex-row justify-between">
+                        <p className="text-muted-foreground">Perfect game</p>
+                        <p>×2</p>
+                      </div>
+                    )}
+                    {xpBreakdown.streakBonusXP > 0 && (
+                      <div className="flex flex-row justify-between">
+                        <p className="text-muted-foreground">
+                          Streak bonus ({streak}d, {Math.round((xpBreakdown.streakMultiplier - 1) * 100)}% boost)
+                        </p>
+                        <p>+{xpBreakdown.streakBonusXP} XP</p>
+                      </div>
+                    )}
+                    <div className="flex flex-row justify-between pt-1 text-base font-bold">
+                      <p>Total XP Awarded</p>
+                      <p className="bg-primary px-2 text-primary-foreground">{xpBreakdown.totalXP} XP</p>
+                    </div>
+                  </div>
+                )}
               </div>
               <Separator />
               <div className="flex flex-col space-y-4">
