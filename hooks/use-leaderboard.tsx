@@ -46,7 +46,7 @@ export function useLeaderboard(type: LeaderboardType) {
     return [...topUsers, currentUser];
   }, [topUsers, currentUser, userInTop25]);
 
-  const isLoading = topUsers === undefined || currentUserProfile === undefined || userRank === undefined;
+  const isLoading = topUsers === undefined || currentUserProfile === undefined || (!!currentUser?.clerkId && userRank === undefined);
 
   return {
     topUsers: topUsers || [],
