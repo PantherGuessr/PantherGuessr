@@ -312,7 +312,7 @@ const InGameSidebar = () => {
             <Skeleton
               className={cn(
                 "absolute inset-0 rounded-md bg-zinc-400 transition-opacity duration-300 dark:bg-red-900",
-                imageLoaded && !isLoading && currentImageSrcUrl ? "opacity-0 pointer-events-none" : "opacity-100"
+                imageLoaded && !isLoading && currentImageSrcUrl ? "pointer-events-none opacity-0" : "opacity-100"
               )}
             />
             {!isLoading && currentImageSrcUrl && (
