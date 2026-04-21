@@ -85,6 +85,7 @@ export default defineSchema({
     totalTimeTaken: v.int64(),
     xpGained: v.number(),
     streakAtGame: v.optional(v.int64()),
+    firstGameOfDay: v.optional(v.boolean()),
     gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   }).index("byUserId", ["userId"]),
 

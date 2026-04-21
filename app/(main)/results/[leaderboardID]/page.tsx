@@ -30,6 +30,7 @@ import { api } from "@/convex/_generated/api";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import useUserById from "@/hooks/use-user-by-id";
 import { cn, isValidConvexId } from "@/lib/utils";
+import { computeXPBreakdown } from "@/lib/xp";
 
 type Props = {
   params: Promise<{ leaderboardID: string }>;
@@ -80,20 +81,9 @@ const ResultPage = ({ params }: Props) => {
   const newLevel = leaderboardEntry ? Number(leaderboardEntry.newLevel) : 0;
   const gameType = leaderboardEntry?.gameType ?? "";
 
-  const xpBreakdown = (() => {
-    if (!leaderboardEntry) return null;
-    const baseXP = 10;
-    const pointsXP = Math.floor(finalScore / 25);
-    const spotOnCount = distances.filter((d) => d <= 20).length;
-    const spotOnXP = spotOnCount * 5;
-    const isPerfect = spotOnCount === scores.length && scores.length > 0;
-    const subtotal = (baseXP + pointsXP + spotOnXP) * (isPerfect ? 2 : 1);
-    const streak = Number(leaderboardEntry.streakAtGame ?? 0n);
-    const streakMultiplier = streak >= 14 ? 1.5 : streak >= 7 ? 1.25 : streak >= 3 ? 1.1 : 1.0;
-    const streakBonusXP = Math.floor(subtotal * streakMultiplier) - subtotal;
-    const totalXP = subtotal + streakBonusXP;
-    return { baseXP, pointsXP, spotOnXP, isPerfect, subtotal, streak, streakMultiplier, streakBonusXP, totalXP };
-  })();
+  const streak = leaderboardEntry ? Number(leaderboardEntry.streakAtGame ?? 0n) : 0;
+  const isFirstGameOfDay = leaderboardEntry?.firstGameOfDay ?? false;
+  const xpBreakdown = leaderboardEntry ? computeXPBreakdown(scores, distances, streak, isFirstGameOfDay) : null;
 
   const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -283,7 +273,7 @@ const ResultPage = ({ params }: Props) => {
                 </div>
               ))}
               <div className="p-2">
-                <div className="flex flex-row justify-between">
+                <div className="flex flex-row justify-between font-bold">
                   <h2 className="font-bold">Final Score</h2>
                   <p className="bg-primary px-2 text-primary-foreground">{finalScore}</p>
                 </div>
@@ -299,6 +289,12 @@ const ResultPage = ({ params }: Props) => {
                       <p className="text-muted-foreground">Base</p>
                       <p>+{xpBreakdown.baseXP} XP</p>
                     </div>
+                    {xpBreakdown.firstGameOfDayXP > 0 && (
+                      <div className="flex flex-row justify-between">
+                        <p className="text-muted-foreground">First game of the day</p>
+                        <p>+{xpBreakdown.firstGameOfDayXP} XP</p>
+                      </div>
+                    )}
                     <div className="flex flex-row justify-between">
                       <p className="text-muted-foreground">Score bonus</p>
                       <p>+{xpBreakdown.pointsXP} XP</p>
@@ -318,8 +314,7 @@ const ResultPage = ({ params }: Props) => {
                     {xpBreakdown.streakBonusXP > 0 && (
                       <div className="flex flex-row justify-between">
                         <p className="text-muted-foreground">
-                          Streak bonus ({xpBreakdown.streak}d, {Math.round((xpBreakdown.streakMultiplier - 1) * 100)}%
-                          boost)
+                          Streak bonus ({streak}d, {Math.round((xpBreakdown.streakMultiplier - 1) * 100)}% boost)
                         </p>
                         <p>+{xpBreakdown.streakBonusXP} XP</p>
                       </div>
