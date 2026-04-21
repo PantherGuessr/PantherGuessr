@@ -6,6 +6,7 @@ import { Id } from "./_generated/dataModel";
 import { internalAction, internalMutation, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { PROFILE_BACKGROUNDS, PROFILE_BACKGROUNDS_MAP, DEFAULT_BACKGROUND_ID } from "../lib/backgrounds";
 import { PROFILE_TAGLINES, PROFILE_TAGLINES_MAP, DEFAULT_TAGLINE_ID } from "../lib/taglines";
+import { isNewPSTDay } from "../lib/xp";
 
 /**
  * Retrieves a user from the database using their Convex ID.
@@ -630,24 +631,18 @@ export const updateStreak = internalMutation({
     }
 
     const now = new Date();
-    const nowPST = new Date(now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
-    const lastPlay = user.lastPlayedTimestamp ? new Date(user.lastPlayedTimestamp) : new Date(0);
-    const lastPlayPST = new Date(lastPlay.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
-
-    // Reset time part of the dates to midnight PST
-    const nowMidnightPST = new Date(nowPST.getFullYear(), nowPST.getMonth(), nowPST.getDate());
-    const lastPlayMidnightPST = new Date(lastPlayPST.getFullYear(), lastPlayPST.getMonth(), lastPlayPST.getDate());
-
     let newStreak = user.currentStreak ?? 0n;
 
-    // Check if the user has already played today
-    if (nowMidnightPST.getTime() !== lastPlayMidnightPST.getTime()) {
+    if (isNewPSTDay(user.lastPlayedTimestamp)) {
+      const nowPST = new Date(now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+      const nowMidnightPST = new Date(nowPST.getFullYear(), nowPST.getMonth(), nowPST.getDate());
+      const lastPlay = user.lastPlayedTimestamp ? new Date(user.lastPlayedTimestamp) : new Date(0);
+      const lastPlayPST = new Date(lastPlay.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+      const lastPlayMidnightPST = new Date(lastPlayPST.getFullYear(), lastPlayPST.getMonth(), lastPlayPST.getDate());
       const timeSinceLastPlay = nowMidnightPST.getTime() - lastPlayMidnightPST.getTime();
       if (timeSinceLastPlay <= 24 * 60 * 60 * 1000) {
-        // Played within the next full day, increment streak
         newStreak += 1n;
       } else {
-        // More than a full day, reset streak
         newStreak = 1n;
       }
     }

@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 
+import { computeXPBreakdown, isNewPSTDay } from "../lib/xp";
 import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import { internalMutation, mutation, query } from "./_generated/server";
@@ -247,51 +248,6 @@ export const getGameById = query({
  * 3. Adds the new entry ID to the game's leaderboard array
  * 4. Returns success status
  */
-/**
- * Calculates the total earned experience points (XP) based on the points and distances provided.
- *
- * @param {bigint[]} allPoints - An array of points earned in each game.
- * @param {bigint[]} allDistances - An array of distances for each game.
- * @returns {number} The total earned XP.
- *
- * @remarks
- * - Adds a base score of 10 XP for playing a game.
- * - Add 10 XP if it is the first game of the day.
- * - For every 25 points earned, 1 XP is awarded.
- * - For every "Spot On" game (distance <= 20), an additional 5 XP bonus is awarded.
- * - If every round was "Spot On", the total XP is doubled.
- */
-function getTotalEarnedXP(allPoints: bigint[], allDistances: bigint[]): number {
-  let earnedXP = 0;
-
-  // TODO: Add 10xp if first game of the day
-
-  // * Add score for playing a game
-  earnedXP += 10;
-
-  // * For every 25 points you get 1xp
-  let totalPointsEarned = 0;
-  for (let i = 0; i < allPoints.length; ++i) {
-    totalPointsEarned += Number(allPoints[i]);
-  }
-  earnedXP += Math.floor(totalPointsEarned / 25);
-
-  // * For every "Spot On" (distance away <= 20) add 5xp bonus
-  let numberOfSpotOnGames = 0;
-  for (let i = 0; i < allDistances.length; ++i) {
-    if (allDistances[i] <= 20) {
-      earnedXP += 5;
-      numberOfSpotOnGames++;
-    }
-  }
-
-  // * If every round was spot on, double their score
-  if (numberOfSpotOnGames == allPoints.length) {
-    earnedXP *= 2;
-  }
-
-  return earnedXP;
-}
 
 export const addLeaderboardEntryToGame = mutation({
   args: {
@@ -311,15 +267,23 @@ export const addLeaderboardEntryToGame = mutation({
     gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   },
   handler: async (ctx, args) => {
-    const newXP = getTotalEarnedXP(
-      [args.round_1, args.round_2, args.round_3, args.round_4, args.round_5],
+    // Fetch user data before updating streak/timestamp (both are mutated after this)
+    const user = await ctx.db.get(args.userId);
+    const currentStreak = user?.currentStreak ?? 0n;
+
+    const isFirstGameOfDay = isNewPSTDay(user?.lastPlayedTimestamp);
+
+    const { totalXP: newXP } = computeXPBreakdown(
+      [args.round_1, args.round_2, args.round_3, args.round_4, args.round_5].map(Number),
       [
         args.round_1_distance,
         args.round_2_distance,
         args.round_3_distance,
         args.round_4_distance,
         args.round_5_distance,
-      ]
+      ].map(Number),
+      Number(currentStreak),
+      isFirstGameOfDay
     );
 
     // calculate total points to update user points earned
@@ -349,6 +313,8 @@ export const addLeaderboardEntryToGame = mutation({
       round_5_distance: args.round_5_distance,
       totalTimeTaken: args.totalTimeTaken,
       xpGained: newXP,
+      streakAtGame: currentStreak,
+      firstGameOfDay: isFirstGameOfDay,
       gameType: args.gameType,
     });
 
