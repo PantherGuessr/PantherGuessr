@@ -101,26 +101,39 @@ export async function GET(request: NextRequest) {
     const usernameFontSize = username.length > 18 ? 48 : username.length > 12 ? 58 : 66;
 
     return new ImageResponse(
-      <div
-        style={{
-          display: "flex",
-          width: 1200,
-          height: 630,
-          background: "white",
-          position: "relative",
-          fontFamily: "Figtree",
-        }}
-      >
-        {backgroundImageUrl ? (
-          <div style={{ position: "absolute", top: 0, left: 0, width: 1200, height: BANNER_HEIGHT, display: "flex" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={backgroundImageUrl}
-              width={1200}
-              height={BANNER_HEIGHT}
-              style={{ position: "absolute", top: 0, left: 0, objectFit: "cover", objectPosition: "center" }}
-              alt="Decorative Profile Banner Image"
-            />
+      (
+        <div
+          style={{
+            display: "flex",
+            width: 1200,
+            height: 630,
+            background: "white",
+            position: "relative",
+            fontFamily: "Figtree",
+          }}
+        >
+          {backgroundImageUrl ? (
+            <div style={{ position: "absolute", top: 0, left: 0, width: 1200, height: BANNER_HEIGHT, display: "flex" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={backgroundImageUrl}
+                width={1200}
+                height={BANNER_HEIGHT}
+                style={{ position: "absolute", top: 0, left: 0, objectFit: "cover", objectPosition: "center" }}
+                alt="Decorative Profile Banner Image"
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: 1200,
+                  height: BANNER_HEIGHT,
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 50%)",
+                }}
+              />
+            </div>
+          ) : (
             <div
               style={{
                 position: "absolute",
@@ -128,162 +141,151 @@ export async function GET(request: NextRequest) {
                 left: 0,
                 width: 1200,
                 height: BANNER_HEIGHT,
-                background: "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 50%)",
+                background: backgroundGradient,
               }}
             />
-          </div>
-        ) : (
+          )}
+
           <div
             style={{
               position: "absolute",
-              top: 0,
-              left: 0,
-              width: 1200,
-              height: BANNER_HEIGHT,
-              background: backgroundGradient,
+              top: AVATAR_TOP - AVATAR_BORDER,
+              left: AVATAR_LEFT - AVATAR_BORDER,
+              width: AVATAR_SIZE + AVATAR_BORDER * 2,
+              height: AVATAR_SIZE + AVATAR_BORDER * 2,
+              borderRadius: (AVATAR_SIZE + AVATAR_BORDER * 2) / 2,
+              background: "white",
+              display: "flex",
             }}
           />
-        )}
-
-        <div
-          style={{
-            position: "absolute",
-            top: AVATAR_TOP - AVATAR_BORDER,
-            left: AVATAR_LEFT - AVATAR_BORDER,
-            width: AVATAR_SIZE + AVATAR_BORDER * 2,
-            height: AVATAR_SIZE + AVATAR_BORDER * 2,
-            borderRadius: (AVATAR_SIZE + AVATAR_BORDER * 2) / 2,
-            background: "white",
-            display: "flex",
-          }}
-        />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={user.picture}
-          width={AVATAR_SIZE}
-          height={AVATAR_SIZE}
-          style={{
-            position: "absolute",
-            top: AVATAR_TOP,
-            left: AVATAR_LEFT,
-            borderRadius: AVATAR_SIZE / 2,
-            objectFit: "cover",
-          }}
-          alt="Profile Picture"
-        />
-
-        <div
-          style={{
-            position: "absolute",
-            top: 40,
-            right: 40,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 80,
-            height: 80,
-          }}
-        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`${origin}/badges/level_badge.svg`}
-            width={120}
-            height={120}
-            style={{ position: "absolute" }}
-            alt="Decorative Player Level Background Image"
+            src={user.picture}
+            width={AVATAR_SIZE}
+            height={AVATAR_SIZE}
+            style={{
+              position: "absolute",
+              top: AVATAR_TOP,
+              left: AVATAR_LEFT,
+              borderRadius: AVATAR_SIZE / 2,
+              objectFit: "cover",
+            }}
+            alt="Profile Picture"
           />
+
           <div
             style={{
               position: "absolute",
+              top: 40,
+              right: 40,
               display: "flex",
-              fontSize: Number(user.level) > 9999 ? 26 : Number(user.level) > 999 ? 32 : 38,
-              fontWeight: "bold",
-              color: "white",
-              textShadow: "1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 80,
+              height: 80,
             }}
           >
-            {Number(user.level)}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`${origin}/badges/level_badge.svg`}
+              width={120}
+              height={120}
+              style={{ position: "absolute" }}
+              alt="Decorative Player Level Background Image"
+            />
+            <div
+              style={{
+                position: "absolute",
+                display: "flex",
+                fontSize: Number(user.level) > 9999 ? 26 : Number(user.level) > 999 ? 32 : 38,
+                fontWeight: "bold",
+                color: "white",
+                textShadow: "1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000",
+              }}
+            >
+              {Number(user.level)}
+            </div>
           </div>
-        </div>
 
-        <div
-          style={{
-            position: "absolute",
-            top: CONTENT_TOP,
-            left: CONTENT_LEFT,
-            right: 60,
-            bottom: 60,
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-          }}
-        >
           <div
             style={{
+              position: "absolute",
+              top: CONTENT_TOP,
+              left: CONTENT_LEFT,
+              right: 60,
+              bottom: 60,
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 14,
+                flexWrap: "wrap",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: usernameFontSize,
+                  fontWeight: "bold",
+                  color: "#18181b",
+                  lineHeight: 1,
+                }}
+              >
+                @{username}
+              </div>
+              {badgeIcons.map((src) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={src} src={src} width={48} height={48} alt="Decorative Profile Badge" />
+              ))}
+            </div>
+
+            {tagline ? (
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: 34,
+                  color: "#71717a",
+                }}
+              >
+                {tagline}
+              </div>
+            ) : null}
+
+            <div
+              style={{
+                display: "flex",
+                fontStyle: "italic",
+                fontSize: 30,
+                color: "#a1a1aa",
+              }}
+            >
+              Guessr since {joinDate}
+            </div>
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              bottom: 28,
+              right: 28,
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
-              gap: 14,
-              flexWrap: "wrap",
+              gap: 8,
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                fontSize: usernameFontSize,
-                fontWeight: "bold",
-                color: "#18181b",
-                lineHeight: 1,
-              }}
-            >
-              @{username}
-            </div>
-            {badgeIcons.map((src) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={src} src={src} width={48} height={48} alt="Decorative Profile Badge" />
-            ))}
-          </div>
-
-          {tagline ? (
-            <div
-              style={{
-                display: "flex",
-                fontSize: 34,
-                color: "#71717a",
-              }}
-            >
-              {tagline}
-            </div>
-          ) : null}
-
-          <div
-            style={{
-              display: "flex",
-              fontStyle: "italic",
-              fontSize: 30,
-              color: "#a1a1aa",
-            }}
-          >
-            Guessr since {joinDate}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`${origin}/pantherguessr_logo.png`} width={26} height={26} alt="PantherGuessr Logo" />
+            <div style={{ display: "flex", fontSize: 25, color: "#a1a1aa" }}>pantherguessr.com</div>
           </div>
         </div>
-
-        <div
-          style={{
-            position: "absolute",
-            bottom: 28,
-            right: 28,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`${origin}/pantherguessr_logo.png`} width={26} height={26} alt="PantherGuessr Logo" />
-          <div style={{ display: "flex", fontSize: 25, color: "#a1a1aa" }}>pantherguessr.com</div>
-        </div>
-      </div>,
+      ),
       {
         width: 1200,
         height: 630,
