@@ -6,23 +6,21 @@ import { useQuery } from "convex/react";
 import { DoorOpen, Home, Loader2 } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 
+import InGameSidebar from "@/app/(main)/game/_components/in-game-sidebar";
+import DynamicInteractableMap from "@/app/(main)/game/_components/map-wrapper";
+import { GameProvider } from "@/app/(main)/game/_context/GameContext";
+import { TournamentProvider } from "@/app/(main)/game/_context/TournamentContext";
+import { CountdownOverlay } from "@/app/(main)/tournament/_components/countdown-overlay";
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar/navbar";
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Navbar } from "@/components/navbar/navbar";
-import { Footer } from "@/components/footer";
-
-import { GameProvider } from "@/app/(main)/game/_context/GameContext";
-import { TournamentProvider } from "@/app/(main)/game/_context/TournamentContext";
-import InGameSidebar from "@/app/(main)/game/_components/in-game-sidebar";
-import DynamicInteractableMap from "@/app/(main)/game/_components/map-wrapper";
-import { CountdownOverlay } from "@/app/(main)/tournament/_components/countdown-overlay";
-
-import { WaitingScreen } from "./_components/waiting-screen";
+import { PlayerGameOver } from "./_components/player-game-over";
 import { RoundSummaryOverlay } from "./_components/round-summary-overlay";
 import { RoundTracker } from "./_components/round-tracker";
-import { PlayerGameOver } from "./_components/player-game-over";
+import { WaitingScreen } from "./_components/waiting-screen";
 
 import "@/app/(main)/game/_components/game-animations.css";
 
@@ -36,10 +34,7 @@ export default function TournamentPlayPage({ params }: Props) {
   const room = useQuery(api.tournament.getTournamentRoomByCode, { roomCode: ROOMCODE });
 
   const clerkIds = [room?.player1ClerkId, room?.player2ClerkId].filter(Boolean) as string[];
-  const rawUsers = useQuery(
-    api.tournament.getUsersByClerkIds,
-    clerkIds.length > 0 ? { clerkIds } : "skip"
-  );
+  const rawUsers = useQuery(api.tournament.getUsersByClerkIds, clerkIds.length > 0 ? { clerkIds } : "skip");
   const users = (rawUsers ?? []).map((u) => ({
     clerkId: u!.clerkId,
     username: u!.username,
@@ -94,25 +89,11 @@ export default function TournamentPlayPage({ params }: Props) {
   }
 
   if (room.status === "waiting") {
-    return (
-      <WaitingScreen
-        roomCode={ROOMCODE}
-        roomId={room._id}
-        room={room}
-        users={users}
-      />
-    );
+    return <WaitingScreen roomCode={ROOMCODE} roomId={room._id} room={room} users={users} />;
   }
 
   if (room.status === "finished") {
-    return (
-      <PlayerGameOver
-        room={room}
-        users={users}
-        clerkId={clerkId}
-        roomCode={ROOMCODE}
-      />
-    );
+    return <PlayerGameOver room={room} users={users} clerkId={clerkId} roomCode={ROOMCODE} />;
   }
 
   if (!room.currentGameId) {
@@ -128,11 +109,7 @@ export default function TournamentPlayPage({ params }: Props) {
       {/* key forces fresh mount on each new countdown so useState initializer always runs */}
       <CountdownOverlay key={room.countdownStartedAt} countdownStartedAt={room.countdownStartedAt} />
       <GameProvider key={gameKey} gameId={room.currentGameId} startingRound={room.currentRound}>
-        <RoundTracker
-          roomId={room._id}
-          localRound={localRound}
-          onRoundAdvance={handleRoundAdvance}
-        />
+        <RoundTracker roomId={room._id} localRound={localRound} onRoundAdvance={handleRoundAdvance} />
         <div className="relative">
           <RoundSummaryOverlay visible={showSummaryOverlay} />
           <div

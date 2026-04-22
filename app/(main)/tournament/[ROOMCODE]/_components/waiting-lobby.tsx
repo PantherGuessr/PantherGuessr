@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { Home } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/logo";
+
 import { PlayerSlot, TournamentUser } from "@/app/(main)/tournament/_components/player-slot";
+import { Logo } from "@/components/logo";
+import { Button } from "@/components/ui/button";
 
 type WaitingLobbyRoom = {
   _id: string;

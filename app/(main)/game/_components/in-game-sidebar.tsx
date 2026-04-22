@@ -231,7 +231,14 @@ const InGameSidebar = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, [isSubmittingGuess, correctLocation, markerHasBeenPlaced, handleNextRound, handleSubmittingGuess]);
+  }, [
+    isSubmittingGuess,
+    correctLocation,
+    markerHasBeenPlaced,
+    handleNextRound,
+    handleSubmittingGuess,
+    tournament?.suppressRoundAdvance,
+  ]);
 
   return (
     <>

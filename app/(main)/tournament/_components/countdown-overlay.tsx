@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import "./countdown.css";
 
 const STEP_MS = 1000;
@@ -32,9 +33,7 @@ export function CountdownOverlay({ countdownStartedAt }: { countdownStartedAt: n
     const timeouts: ReturnType<typeof setTimeout>[] = [];
     for (let s = startStep + 1; s <= STEPS.length; s++) {
       const delay = s * STEP_MS - elapsed;
-      timeouts.push(
-        setTimeout(() => setStep(s < STEPS.length ? s : null), delay)
-      );
+      timeouts.push(setTimeout(() => setStep(s < STEPS.length ? s : null), delay));
     }
 
     return () => timeouts.forEach(clearTimeout);

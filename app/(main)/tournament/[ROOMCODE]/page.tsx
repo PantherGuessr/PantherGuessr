@@ -11,13 +11,13 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { CountdownOverlay } from "../_components/countdown-overlay";
+import { PlayerStatus } from "../_components/player-slot";
 import { SpectatorSounds } from "../_components/spectator-sounds";
-import { SpectatorWaitingLobby } from "./_components/waiting-lobby";
 import { SpectatorGameOver } from "./_components/game-over-screen";
+import { OrganizerControls } from "./_components/organizer-controls";
 import { ScoreBars } from "./_components/score-bars";
 import { SpectatorHeader } from "./_components/spectator-header";
-import { OrganizerControls } from "./_components/organizer-controls";
-import { PlayerStatus } from "../_components/player-slot";
+import { SpectatorWaitingLobby } from "./_components/waiting-lobby";
 
 const SpectatorMap = dynamic(() => import("./_components/spectator-map"), {
   ssr: false,
@@ -42,10 +42,7 @@ export default function SpectatorPage({ params }: Props) {
   );
 
   const clerkIds = [room?.player1ClerkId, room?.player2ClerkId].filter(Boolean) as string[];
-  const rawUsers = useQuery(
-    api.tournament.getUsersByClerkIds,
-    clerkIds.length > 0 ? { clerkIds } : "skip"
-  );
+  const rawUsers = useQuery(api.tournament.getUsersByClerkIds, clerkIds.length > 0 ? { clerkIds } : "skip");
   const users = (rawUsers ?? []).map((u) => ({
     clerkId: u!.clerkId,
     username: u!.username,
@@ -53,20 +50,12 @@ export default function SpectatorPage({ params }: Props) {
     level: u!.level,
   }));
 
-  const currentGameQuery = useQuery(
-    api.game.getGameById,
-    room?.currentGameId ? { id: room.currentGameId } : "skip"
-  );
+  const currentGameQuery = useQuery(api.game.getGameById, room?.currentGameId ? { id: room.currentGameId } : "skip");
   const levelId =
     currentGameQuery &&
     room &&
-    (currentGameQuery[`round_${room.currentRound}` as keyof typeof currentGameQuery] as
-      | string
-      | undefined);
-  const imageSrc = useQuery(
-    api.game.getImageSrc,
-    levelId ? { id: levelId as Id<"levels"> } : "skip"
-  );
+    (currentGameQuery[`round_${room.currentRound}` as keyof typeof currentGameQuery] as string | undefined);
+  const imageSrc = useQuery(api.game.getImageSrc, levelId ? { id: levelId as Id<"levels"> } : "skip");
 
   const showRoundSummary = useMutation(api.tournament.showRoundSummary);
   const advanceToNextRound = useMutation(api.tournament.advanceToNextRound);
@@ -161,12 +150,7 @@ export default function SpectatorPage({ params }: Props) {
         p1Submitted={!!p1Guess?.hasSubmitted}
         p2Submitted={!!p2Guess?.hasSubmitted}
       />
-      <SpectatorHeader
-        room={room}
-        users={users}
-        p1Status={playerStatus(p1Guess)}
-        p2Status={playerStatus(p2Guess)}
-      />
+      <SpectatorHeader room={room} users={users} p1Status={playerStatus(p1Guess)} p2Status={playerStatus(p2Guess)} />
       <div className="flex flex-1 overflow-hidden">
         <div className="relative flex-1">
           <SpectatorMap room={room} p1Guess={p1Guess ?? null} p2Guess={p2Guess ?? null} />

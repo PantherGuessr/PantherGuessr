@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { Loader2 } from "lucide-react";
 
-import { api } from "@/convex/_generated/api";
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar/navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Navbar } from "@/components/navbar/navbar";
-import { Footer } from "@/components/footer";
+import { api } from "@/convex/_generated/api";
 
 export default function TournamentJoinPage() {
   const router = useRouter();

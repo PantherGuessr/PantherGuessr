@@ -1,11 +1,7 @@
 "use client";
 
+import { PlayerSlot, PlayerStatus, TournamentUser } from "@/app/(main)/tournament/_components/player-slot";
 import { Logo } from "@/components/logo";
-import {
-  PlayerSlot,
-  PlayerStatus,
-  TournamentUser,
-} from "@/app/(main)/tournament/_components/player-slot";
 
 type SpectatorHeaderRoom = {
   player1ClerkId?: string;
@@ -26,26 +22,14 @@ export function SpectatorHeader({
 }) {
   return (
     <div className="flex items-center justify-between border-b px-6 py-3">
-      <PlayerSlot
-        clerkId={room.player1ClerkId}
-        label="Player 1"
-        users={users}
-        status={p1Status}
-        color="p1color"
-      />
+      <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} status={p1Status} color="p1color" />
       <div className="flex flex-col items-center">
         <div className="flex flex-row items-center gap-2">
           <Logo logoDimensions={100} textOptions="text-3xl" badge="Tournament" />
         </div>
         <span className="text-sm text-muted-foreground">Round {room.currentRound}/5</span>
       </div>
-      <PlayerSlot
-        clerkId={room.player2ClerkId}
-        label="Player 2"
-        users={users}
-        status={p2Status}
-        color="p2color"
-      />
+      <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} status={p2Status} color="p2color" />
     </div>
   );
 }

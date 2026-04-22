@@ -1,11 +1,12 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
+import { Loader2 } from "lucide-react";
+
+import { Logo } from "@/components/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/logo";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
@@ -34,11 +35,7 @@ function PlayerSlotMini({
       {user?.picture && (
         <Avatar className="h-[28px] w-[28px] overflow-hidden">
           <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
-          <AvatarImage
-            src={user.picture}
-            alt={`${user.username}'s Profile Picture`}
-            className="object-cover"
-          />
+          <AvatarImage src={user.picture} alt={`${user.username}'s Profile Picture`} className="object-cover" />
         </Avatar>
       )}
       <span className="font-medium">{user?.username ?? clerkId.slice(0, 8)}</span>

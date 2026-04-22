@@ -9,13 +9,7 @@ type ScoreBarsRoom = {
   player2TotalScore: number;
 };
 
-export function ScoreBars({
-  room,
-  users,
-}: {
-  room: ScoreBarsRoom;
-  users: TournamentUser[];
-}) {
+export function ScoreBars({ room, users }: { room: ScoreBarsRoom; users: TournamentUser[] }) {
   const maxScore = Math.max(room.player1TotalScore, room.player2TotalScore, 1);
   const p1Pct = (room.player1TotalScore / maxScore) * 100;
   const p2Pct = (room.player2TotalScore / maxScore) * 100;

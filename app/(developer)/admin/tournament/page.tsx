@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useMutation, useQuery } from "convex/react";
 import { Copy, ExternalLink, Loader2, Plus } from "lucide-react";
 
-import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { api } from "@/convex/_generated/api";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -27,10 +27,7 @@ export default function TournamentAdminPage() {
   const [copied, setCopied] = useState(false);
 
   const createRoom = useMutation(api.tournament.createTournamentRoom);
-  const myRooms = useQuery(
-    api.tournament.getRoomsByOrganizer,
-    clerkId ? { organizerClerkId: clerkId } : "skip"
-  );
+  const myRooms = useQuery(api.tournament.getRoomsByOrganizer, clerkId ? { organizerClerkId: clerkId } : "skip");
 
   const handleCreate = async () => {
     setIsCreating(true);
@@ -102,18 +99,13 @@ export default function TournamentAdminPage() {
         ) : (
           <div className="flex flex-col gap-2">
             {myRooms.map((room) => (
-              <div
-                key={room._id}
-                className="flex items-center justify-between rounded-md border bg-card p-4"
-              >
+              <div key={room._id} className="flex items-center justify-between rounded-md border bg-card p-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-bold">{room.roomCode}</span>
                     {room.name && <span className="text-muted-foreground">— {room.name}</span>}
                   </div>
-                  <span className="text-sm text-muted-foreground">
-                    {STATUS_LABELS[room.status] ?? room.status}
-                  </span>
+                  <span className="text-sm text-muted-foreground">{STATUS_LABELS[room.status] ?? room.status}</span>
                 </div>
                 <Link href={`/tournament/${room.roomCode}`} target="_blank">
                   <Button variant="outline" size="sm">

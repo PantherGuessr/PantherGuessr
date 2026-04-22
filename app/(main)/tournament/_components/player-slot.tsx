@@ -1,6 +1,7 @@
 "use client";
 
-import { Clock, LockKeyhole, Loader2, Search } from "lucide-react";
+import { Clock, Loader2, LockKeyhole, Search } from "lucide-react";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -71,19 +72,11 @@ export function PlayerSlot({
         className={cn(
           "overflow-hidden border-4",
           size === "large" ? "h-[100px] w-[100px]" : "h-[60px] w-[60px]",
-          color === "p1color"
-            ? "border-blue-500"
-            : color === "p2color"
-              ? "border-orange-500"
-              : "border-transparent"
+          color === "p1color" ? "border-blue-500" : color === "p2color" ? "border-orange-500" : "border-transparent"
         )}
       >
         <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
-        <AvatarImage
-          src={user.picture}
-          alt={`${user.username}'s Profile Picture`}
-          className="object-cover"
-        />
+        <AvatarImage src={user.picture} alt={`${user.username}'s Profile Picture`} className="object-cover" />
       </Avatar>
       <span className="font-semibold">{user.username}</span>
       {status !== undefined ? (

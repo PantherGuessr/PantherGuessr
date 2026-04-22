@@ -2,7 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import L, { LatLng } from "leaflet";
+
 import "leaflet/dist/leaflet.css";
+
 import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap } from "react-leaflet";
 
 import { Doc } from "@/convex/_generated/dataModel";
@@ -136,9 +138,7 @@ export default function SpectatorMap({ room, p1Guess, p2Guess }: Props) {
 
       {p2Guess?.hasSubmitted && p2Pos && p2Correct && (
         <>
-          {!p1Guess?.hasSubmitted && (
-            <Marker position={p2Correct} icon={CORRECT_ICON} zIndexOffset={1000} />
-          )}
+          {!p1Guess?.hasSubmitted && <Marker position={p2Correct} icon={CORRECT_ICON} zIndexOffset={1000} />}
           <Polyline positions={[p2Pos, p2Correct]} color="#f97316" />
         </>
       )}

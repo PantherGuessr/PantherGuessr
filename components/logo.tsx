@@ -34,7 +34,7 @@ export const Logo = ({ href, as_png, badge, logoDimensions = 40, textOptions }: 
         <Badge
           className={cn(
             href == undefined ? "cursor-default hover:bg-red-800" : "cursor-pointer hover:bg-red-900",
-            "h-6 select-none bg-red-800 text-white pt-1"
+            "h-6 select-none bg-red-800 pt-1 text-white"
           )}
         >
           {badge}
