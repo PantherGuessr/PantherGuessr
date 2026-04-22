@@ -4,7 +4,7 @@ import { use } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useMutation, useQuery } from "convex/react";
-import { Loader2 } from "lucide-react";
+import { Clock, Loader2, LockKeyhole, Search } from "lucide-react";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -25,16 +25,39 @@ const SpectatorMap = dynamic(() => import("./_components/spectator-map"), {
 
 type Props = { params: Promise<{ ROOMCODE: string }> };
 
+type PlayerStatus = "searching" | "locked_in" | "waiting";
+
+function PlayerStatusBadge({ status }: { status: PlayerStatus }) {
+  if (status === "locked_in") {
+    return <div className="flex flex-row items-center justify-center gap-2 text-sm font-medium text-green-500">
+      <LockKeyhole className="h-4 w-4" />
+      <span className="pt-1">Locked In</span>
+    </div>;
+  }
+  if (status === "waiting") {
+    return <div className="flex flex-row items-center justify-center gap-2 text-sm font-medium text-yellow-500">
+      <Clock className="h-4 w-4" />
+      <span className="pt-1">Waiting</span>
+    </div>;
+  }
+  return <div className="flex flex-row items-center justify-center gap-2 text-sm font-medium text-yellow-500">
+      <Search className="h-4 w-4" />
+      <span className="pt-1">Searching</span>
+    </div>;
+}
+
 function PlayerSlot({
   clerkId,
   label,
   users,
-  size = "default"
+  size = "default",
+  status,
 }: {
   clerkId: string | undefined;
   label: string;
   users: Array<{ clerkId: string; username: string; picture: string; level: bigint }>;
-  size?: "default" | "large"
+  size?: "default" | "large";
+  status?: PlayerStatus;
 }) {
   if (!clerkId) {
     return (
@@ -59,7 +82,11 @@ function PlayerSlot({
         />
       </Avatar>
       <span className="font-semibold">{user.username}</span>
-      <span className="text-sm text-muted-foreground">Lvl. {Number(user.level)}</span>
+      {status !== undefined ? (
+        <PlayerStatusBadge status={status} />
+      ) : (
+        <span className="text-sm text-muted-foreground">Lvl. {Number(user.level)}</span>
+      )}
     </div>
   );
 }
@@ -108,6 +135,12 @@ export default function SpectatorPage({ params }: Props) {
   const p1Guess = guesses?.find((g) => g.playerClerkId === room?.player1ClerkId);
   const p2Guess = guesses?.find((g) => g.playerClerkId === room?.player2ClerkId);
   const bothSubmitted = !!p1Guess?.hasSubmitted && !!p2Guess?.hasSubmitted;
+
+  function playerStatus(guess: typeof p1Guess): PlayerStatus {
+    if (room!.status === "round_summary") return "waiting";
+    if (guess?.hasSubmitted) return "locked_in";
+    return "searching";
+  }
 
   if (room === undefined) {
     return (
@@ -191,7 +224,7 @@ export default function SpectatorPage({ params }: Props) {
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       {/* Header */}
       <div className="flex items-center justify-between border-b px-6 py-3">
-        <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} />
+        <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} status={playerStatus(p1Guess)} />
         <div className="flex flex-col items-center">
           <div className="flex flex-row items-center gap-2">
             <Logo logoDimensions={100} textOptions="text-3xl" badge="Tournament" />
@@ -200,7 +233,7 @@ export default function SpectatorPage({ params }: Props) {
             Round {room.currentRound}/5
           </span>
         </div>
-        <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} />
+        <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} status={playerStatus(p2Guess)} />
       </div>
 
       {/* Main content */}
@@ -215,7 +248,7 @@ export default function SpectatorPage({ params }: Props) {
         </div>
 
         {/* Right panel: image + controls */}
-        <div className="flex w-[500px] flex-col gap-4 border-l p-4">
+        <div className="flex w-[600px] max-w-[50%] flex-col gap-4 border-l p-4">
           <div className="relative aspect-4/3 w-full overflow-hidden rounded-md bg-secondary">
             {imageSrc ? (
               <Image src={imageSrc} alt="" fill className="object-cover aspect-4/3" />
@@ -238,25 +271,6 @@ export default function SpectatorPage({ params }: Props) {
                 {users.find((u) => u.clerkId === room.player2ClerkId)?.username ?? "P2"}
               </span>
               <span className="font-bold">{room.player2TotalScore}</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1 text-xs text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <span
-                className={p1Guess?.hasSubmitted ? "text-green-500" : ""}
-              >
-                {p1Guess?.hasSubmitted ? "✓" : "○"}{" "}
-                {users.find((u) => u.clerkId === room.player1ClerkId)?.username ?? "P1"}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span
-                className={p2Guess?.hasSubmitted ? "text-green-500" : ""}
-              >
-                {p2Guess?.hasSubmitted ? "✓" : "○"}{" "}
-                {users.find((u) => u.clerkId === room.player2ClerkId)?.username ?? "P2"}
-              </span>
             </div>
           </div>
 
