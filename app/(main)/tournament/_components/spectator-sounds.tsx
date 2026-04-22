@@ -22,15 +22,12 @@ export function SpectatorSounds({
   p1Submitted: boolean;
   p2Submitted: boolean;
 }) {
-  const prevCountdown = useRef<number | undefined>(undefined);
   const p1WasSubmitted = useRef(false);
   const p2WasSubmitted = useRef(false);
 
   // Countdown sounds — schedule from current elapsed position so joining late still syncs
   useEffect(() => {
     if (!countdownStartedAt) return;
-    if (countdownStartedAt === prevCountdown.current) return;
-    prevCountdown.current = countdownStartedAt;
 
     const elapsed = Date.now() - countdownStartedAt;
     const timeouts: ReturnType<typeof setTimeout>[] = [];

@@ -218,9 +218,9 @@ const InGameSidebar = () => {
 
         if (isSubmittingGuess) {
           return;
-        } else if (correctLocation) {
+        } else if (correctLocation && !tournament?.suppressRoundAdvance) {
           handleNextRound();
-        } else if (markerHasBeenPlaced) {
+        } else if (markerHasBeenPlaced && !correctLocation) {
           handleSubmittingGuess();
         }
       }
