@@ -40,9 +40,9 @@ export function SpectatorWaitingLobby({
         <p className="text-sm text-muted-foreground">Room Code</p>
         <p className="text-5xl font-bold tracking-widest">{room.roomCode}</p>
       </div>
-      <div className="flex gap-16">
-        <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} size="large" />
-        <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} size="large" />
+      <div className="flex items-center justify-center gap-16">
+        <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} size="large" color="p1color" />
+        <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} size="large" color="p2color" />
       </div>
       {isOrganizer && room.player1ClerkId && room.player2ClerkId && (
         <Button onClick={onStartGame} size="lg">

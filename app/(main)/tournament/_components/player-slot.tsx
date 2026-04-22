@@ -56,9 +56,9 @@ export function PlayerSlot({
 }) {
   if (!clerkId) {
     return (
-      <div className="flex flex-col items-center gap-1">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary">
-          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      <div className="flex flex-col flex-1 justify-center items-center gap-1 h-full">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
         <span className="text-xs text-muted-foreground">Waiting for {label}...</span>
       </div>
@@ -67,7 +67,7 @@ export function PlayerSlot({
   const user = users.find((u) => u.clerkId === clerkId);
   if (!user) return null;
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex flex-col justify-center items-center gap-1 h-full">
       <Avatar
         className={cn(
           "overflow-hidden border-4",
