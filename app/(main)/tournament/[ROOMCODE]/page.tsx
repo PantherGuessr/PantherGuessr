@@ -13,6 +13,8 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { Logo } from "@/components/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { CountdownOverlay } from "../_components/countdown-overlay";
+import { SpectatorSounds } from "../_components/spectator-sounds";
 
 const SpectatorMap = dynamic(() => import("./_components/spectator-map"), {
   ssr: false,
@@ -224,6 +226,12 @@ export default function SpectatorPage({ params }: Props) {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
+      <CountdownOverlay countdownStartedAt={room.countdownStartedAt} />
+      <SpectatorSounds
+        countdownStartedAt={room.countdownStartedAt}
+        p1Submitted={!!p1Guess?.hasSubmitted}
+        p2Submitted={!!p2Guess?.hasSubmitted}
+      />
       {/* Header */}
       <div className="flex items-center justify-between border-b px-6 py-3">
         <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} status={playerStatus(p1Guess)} color={"p1color"} />

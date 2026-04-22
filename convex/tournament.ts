@@ -124,6 +124,7 @@ export const startTournamentGame = mutation({
       currentRound: 1,
       player1TotalScore: 0,
       player2TotalScore: 0,
+      countdownStartedAt: Date.now(),
     });
 
     return gameId;
@@ -266,6 +267,7 @@ export const advanceToNextRound = mutation({
       await ctx.db.patch(args.roomId, {
         currentRound: room.currentRound + 1,
         status: "round_active",
+        countdownStartedAt: Date.now(),
       });
     }
   },

@@ -152,6 +152,7 @@ export default defineSchema({
     currentRound: v.number(),
     player1TotalScore: v.number(),
     player2TotalScore: v.number(),
+    countdownStartedAt: v.optional(v.number()),
   }).index("byRoomCode", ["roomCode"])
     .index("byOrganizerClerkId", ["organizerClerkId"]),
 

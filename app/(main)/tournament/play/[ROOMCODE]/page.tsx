@@ -21,6 +21,7 @@ import DynamicInteractableMap from "@/app/(main)/game/_components/map-wrapper";
 import "@/app/(main)/game/_components/game-animations.css";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Logo } from "@/components/logo";
+import { CountdownOverlay } from "@/app/(main)/tournament/_components/countdown-overlay";
 
 type Props = { params: Promise<{ ROOMCODE: string }> };
 
@@ -244,6 +245,7 @@ export default function TournamentPlayPage({ params }: Props) {
 
   return (
     <TournamentProvider roomId={room._id} roomCode={ROOMCODE}>
+      <CountdownOverlay countdownStartedAt={room.countdownStartedAt} />
       <GameProvider key={gameKey} gameId={room.currentGameId} startingRound={room.currentRound}>
         <RoundTracker
           roomId={room._id}
