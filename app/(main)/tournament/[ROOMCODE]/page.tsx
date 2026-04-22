@@ -51,12 +51,14 @@ function PlayerSlot({
   label,
   users,
   size = "default",
+  color,
   status,
 }: {
   clerkId: string | undefined;
   label: string;
   users: Array<{ clerkId: string; username: string; picture: string; level: bigint }>;
   size?: "default" | "large";
+  color?: "p1color" | "p2color";
   status?: PlayerStatus;
 }) {
   if (!clerkId) {
@@ -73,7 +75,7 @@ function PlayerSlot({
   if (!user) return null;
   return (
     <div className="flex flex-col items-center gap-1">
-      <Avatar className={cn("overflow-hidden", size === "large" ? "h-[100px] w-[100px]" : "h-[60px] w-[60px]")}>
+      <Avatar className={cn("overflow-hidden border-4", size === "large" ? "h-[100px] w-[100px]" : "h-[60px] w-[60px]", color === "p1color" ? "border-blue-500" : color === "p2color" ? "border-orange-500" : "border-transparent")}>
         <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
         <AvatarImage
           src={user.picture}
@@ -224,7 +226,7 @@ export default function SpectatorPage({ params }: Props) {
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       {/* Header */}
       <div className="flex items-center justify-between border-b px-6 py-3">
-        <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} status={playerStatus(p1Guess)} />
+        <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} status={playerStatus(p1Guess)} color={"p1color"} />
         <div className="flex flex-col items-center">
           <div className="flex flex-row items-center gap-2">
             <Logo logoDimensions={100} textOptions="text-3xl" badge="Tournament" />
@@ -233,7 +235,7 @@ export default function SpectatorPage({ params }: Props) {
             Round {room.currentRound}/5
           </span>
         </div>
-        <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} status={playerStatus(p2Guess)} />
+        <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} status={playerStatus(p2Guess)} color={"p2color"} />
       </div>
 
       {/* Main content */}

@@ -130,7 +130,7 @@ export default function SpectatorMap({ room, p1Guess, p2Guess }: Props) {
       {p1Guess?.hasSubmitted && p1Pos && p1Correct && (
         <>
           <Marker position={p1Correct} icon={CORRECT_ICON} zIndexOffset={1000} />
-          <Polyline positions={[p1Pos, p1Correct]} color="#3b82f6" dashArray="6 4" />
+          <Polyline positions={[p1Pos, p1Correct]} color="#3b82f6" />
         </>
       )}
 
@@ -139,7 +139,7 @@ export default function SpectatorMap({ room, p1Guess, p2Guess }: Props) {
           {!p1Guess?.hasSubmitted && (
             <Marker position={p2Correct} icon={CORRECT_ICON} zIndexOffset={1000} />
           )}
-          <Polyline positions={[p2Pos, p2Correct]} color="#f97316" dashArray="6 4" />
+          <Polyline positions={[p2Pos, p2Correct]} color="#f97316" />
         </>
       )}
     </MapContainer>
