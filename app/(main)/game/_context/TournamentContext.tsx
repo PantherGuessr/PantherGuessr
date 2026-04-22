@@ -11,7 +11,7 @@ export type TournamentContextValue = {
   roomCode: string;
   isTournamentMode: true;
   organizerControlledRound: number;
-  gameLabel: "Duel";
+  gameLabel: "Tournament";
   onMarkerPlace: (lat: number, lng: number) => void;
   onGuessSubmit: (lat: number, lng: number) => Promise<void>;
   suppressRoundAdvance: true;
@@ -50,7 +50,7 @@ export const TournamentProvider = ({
         roomCode,
         isTournamentMode: true,
         organizerControlledRound: currentRound,
-        gameLabel: "Duel",
+        gameLabel: "Tournament",
         onMarkerPlace,
         onGuessSubmit,
         suppressRoundAdvance: true,

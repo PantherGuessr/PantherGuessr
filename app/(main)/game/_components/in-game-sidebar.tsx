@@ -287,7 +287,7 @@ const InGameSidebar = () => {
             )}
             <div className={isMobile ? "sr-only" : ""}>
               {tournament ? (
-                "Duel"
+                "Tournament"
               ) : gameType === "weekly" ? (
                 "Weekly"
               ) : gameType === "singleplayer" ? (

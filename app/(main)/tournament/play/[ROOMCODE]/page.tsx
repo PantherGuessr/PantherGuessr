@@ -19,6 +19,8 @@ import InGameSidebar from "@/app/(main)/game/_components/in-game-sidebar";
 import DynamicInteractableMap from "@/app/(main)/game/_components/map-wrapper";
 
 import "@/app/(main)/game/_components/game-animations.css";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Logo } from "@/components/logo";
 
 type Props = { params: Promise<{ ROOMCODE: string }> };
 
@@ -43,15 +45,16 @@ function PlayerSlotMini({
   return (
     <div className="flex items-center gap-2">
       {user?.picture && (
-        <Image
+        <Avatar className="h-[28px] w-[28px] overflow-hidden">
+        <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+        <AvatarImage
           src={user.picture}
-          alt={user.username}
-          width={24}
-          height={24}
-          className="rounded-full"
+          alt={`${user.username}'s Profile Picture`}
+          className="object-cover"
         />
+      </Avatar>
       )}
-      <span className="text-sm font-medium">{user?.username ?? clerkId.slice(0, 8)}</span>
+      <span className="font-medium">{user?.username ?? clerkId.slice(0, 8)}</span>
     </div>
   );
 }
@@ -78,7 +81,10 @@ function WaitingScreen({
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-8 px-4 text-center">
-      <h1 className="text-2xl font-bold">Duel — {roomCode}</h1>
+      <div className="flex flex-row items-center gap-2">
+        <Logo logoDimensions={100} textOptions="text-3xl" badge="Tournament" />
+      </div>
+      <h1 className="text-2xl font-bold">Room {roomCode}</h1>
       <div className="flex gap-12">
         <div className="flex flex-col items-center gap-2">
           <span className="text-xs text-muted-foreground">Player 1</span>

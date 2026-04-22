@@ -35,7 +35,7 @@ export default function TournamentJoinPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-4">
-      <h1 className="text-3xl font-bold">Join a Duel</h1>
+      <h1 className="text-3xl font-bold">Join a Tournament</h1>
       <p className="text-muted-foreground">Enter the room code provided by the organizer.</p>
       <div className="flex w-full max-w-sm flex-col gap-3">
         <Input

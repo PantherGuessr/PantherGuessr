@@ -10,6 +10,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { Logo } from "@/components/logo";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const SpectatorMap = dynamic(() => import("./_components/spectator-map"), {
   ssr: false,
@@ -45,15 +47,16 @@ function PlayerSlot({
   if (!user) return null;
   return (
     <div className="flex flex-col items-center gap-1">
-      <Image
-        src={user.picture}
-        alt={user.username}
-        width={40}
-        height={40}
-        className="rounded-full"
-      />
-      <span className="text-sm font-semibold">{user.username}</span>
-      <span className="text-xs text-muted-foreground">Lv. {Number(user.level)}</span>
+      <Avatar className="h-[100px] w-[100px] overflow-hidden">
+        <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+        <AvatarImage
+          src={user.picture}
+          alt={`${user.username}'s Profile Picture`}
+          className="object-cover"
+        />
+      </Avatar>
+      <span className="font-semibold">{user.username}</span>
+      <span className="text-sm text-muted-foreground">Lvl. {Number(user.level)}</span>
     </div>
   );
 }
@@ -130,7 +133,9 @@ export default function SpectatorPage({ params }: Props) {
   if (room.status === "waiting") {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-8 px-4">
-        <h1 className="text-2xl font-bold">DUEL</h1>
+        <div className="flex flex-row items-center gap-2">
+          <Logo logoDimensions={100} textOptions="text-3xl" badge="Tournament" />
+        </div>
         <div className="text-center">
           <p className="text-sm text-muted-foreground">Room Code</p>
           <p className="text-5xl font-bold tracking-widest">{room.roomCode}</p>
@@ -185,9 +190,9 @@ export default function SpectatorPage({ params }: Props) {
       <div className="flex items-center justify-between border-b px-6 py-3">
         <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} />
         <div className="flex flex-col items-center">
-          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Duel
-          </span>
+          <div className="flex flex-row items-center gap-2">
+            <Logo logoDimensions={100} textOptions="text-3xl" badge="Tournament" />
+          </div>
           <span className="text-sm text-muted-foreground">
             Round {room.currentRound}/5
           </span>
