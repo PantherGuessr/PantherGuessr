@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { useQuery } from "convex/react";
 
 import { api } from "@/convex/_generated/api";
-import { Doc } from "@/convex/_generated/dataModel";
 import { LeaderboardType } from "@/convex/leaderboard";
 import { useCurrentUser } from "./use-current-user";
 
@@ -37,7 +36,7 @@ export function useLeaderboard(type: LeaderboardType) {
 
   const userInTop25 = useMemo(() => {
     if (!topUsers || !currentUser) return false;
-    return topUsers.some((user: Doc<"users">) => user._id === currentUser._id);
+    return topUsers.some((user) => user._id === currentUser._id);
   }, [topUsers, currentUser]);
 
   const displayEntries = useMemo(() => {
