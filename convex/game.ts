@@ -233,13 +233,8 @@ export const getGameById = query({
  * Adds a leaderboard entry for a completed game.
  *
  * @param args.gameId - ID of the game the entry is for
- * @param args.userClerkId - Clerk ID of the user who completed the game
- * @param args.round_1 - Score for round 1
- * @param args.round_2 - Score for round 2
- * @param args.round_3 - Score for round 3
- * @param args.round_4 - Score for round 4
- * @param args.round_5 - Score for round 5
  * @param args.totalTimeTaken - Total time taken to complete all rounds
+ * @param args.gameType - The game mode that the leaderboard entry is for
  * @returns Object indicating success/failure of adding the entry
  *
  * This mutation:
@@ -252,45 +247,55 @@ export const getGameById = query({
 export const addLeaderboardEntryToGame = mutation({
   args: {
     gameId: v.id("games"),
-    userId: v.id("users"),
-    round_1: v.int64(),
-    round_1_distance: v.int64(),
-    round_2: v.int64(),
-    round_2_distance: v.int64(),
-    round_3: v.int64(),
-    round_3_distance: v.int64(),
-    round_4: v.int64(),
-    round_4_distance: v.int64(),
-    round_5: v.int64(),
-    round_5_distance: v.int64(),
     totalTimeTaken: v.int64(),
     gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const callerUser = await ctx.db
+      .query("users")
+      .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!callerUser) throw new Error("User not found");
+
+    const ongoingGame = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byUserClerkIdGame", (q) =>
+        q.eq("userClerkId", identity.subject).eq("game", args.gameId)
+      )
+      .first();
+
+    if (!ongoingGame?.scores || ongoingGame.scores.length !== 5) {
+      throw new Error("Game not completed — all 5 rounds must be played before submitting");
+    }
+    if (!ongoingGame.distances || ongoingGame.distances.length !== 5) {
+      throw new Error("Incomplete game data");
+    }
+
+    const [round_1, round_2, round_3, round_4, round_5] = ongoingGame.scores;
+    const [round_1_distance, round_2_distance, round_3_distance, round_4_distance, round_5_distance] =
+      ongoingGame.distances;
+
     // Fetch user data before updating streak/timestamp (both are mutated after this)
-    const user = await ctx.db.get(args.userId);
+    const user = callerUser;
     const currentStreak = user?.currentStreak ?? 0n;
 
     const isFirstGameOfDay = isNewPSTDay(user?.lastPlayedTimestamp);
 
     const { totalXP: newXP } = computeXPBreakdown(
-      [args.round_1, args.round_2, args.round_3, args.round_4, args.round_5].map(Number),
-      [
-        args.round_1_distance,
-        args.round_2_distance,
-        args.round_3_distance,
-        args.round_4_distance,
-        args.round_5_distance,
-      ].map(Number),
+      [round_1, round_2, round_3, round_4, round_5].map(Number),
+      [round_1_distance, round_2_distance, round_3_distance, round_4_distance, round_5_distance].map(Number),
       Number(currentStreak),
       isFirstGameOfDay
     );
 
     // calculate total points to update user points earned
-    const totalPointsEarned = args.round_1 + args.round_2 + args.round_3 + args.round_4 + args.round_5;
+    const totalPointsEarned = round_1 + round_2 + round_3 + round_4 + round_5;
 
     const xpResult: { newLevel: bigint; oldLevel: bigint } = await ctx.runMutation(internal.users.awardUserXP, {
-      userID: args.userId,
+      userID: callerUser._id,
       earnedXP: newXP,
       totalPointsEarned: BigInt(totalPointsEarned || 0n),
     });
@@ -300,17 +305,17 @@ export const addLeaderboardEntryToGame = mutation({
       game: args.gameId,
       oldLevel: xpResult.oldLevel,
       newLevel: xpResult.newLevel,
-      userId: args.userId,
-      round_1: args.round_1,
-      round_1_distance: args.round_1_distance,
-      round_2: args.round_2,
-      round_2_distance: args.round_2_distance,
-      round_3: args.round_3,
-      round_3_distance: args.round_3_distance,
-      round_4: args.round_4,
-      round_4_distance: args.round_4_distance,
-      round_5: args.round_5,
-      round_5_distance: args.round_5_distance,
+      userId: callerUser._id,
+      round_1,
+      round_1_distance,
+      round_2,
+      round_2_distance,
+      round_3,
+      round_3_distance,
+      round_4,
+      round_4_distance,
+      round_5,
+      round_5_distance,
       totalTimeTaken: args.totalTimeTaken,
       xpGained: newXP,
       streakAtGame: currentStreak,
@@ -330,20 +335,22 @@ export const addLeaderboardEntryToGame = mutation({
       return null;
     }
 
+    await ctx.db.delete(ongoingGame._id);
+
     // Update streak
-    await ctx.runMutation(internal.users.updateStreak, { userId: args.userId });
+    await ctx.runMutation(internal.users.updateStreak, { userId: callerUser._id });
 
     // Award achievements
-    const scores = [args.round_1, args.round_2, args.round_3, args.round_4, args.round_5];
+    const scores = [round_1, round_2, round_3, round_4, round_5];
 
     // first_steps: first completed game
     const priorEntries = await ctx.db
       .query("leaderboardEntries")
-      .withIndex("byUserId", (q) => q.eq("userId", args.userId))
+      .withIndex("byUserId", (q) => q.eq("userId", callerUser._id))
       .take(2);
     if (priorEntries.length === 1) {
       await ctx.runMutation(internal.achievements.grantAchievement, {
-        userId: args.userId,
+        userId: callerUser._id,
         achievementId: "first_steps",
       });
     }
@@ -351,7 +358,7 @@ export const addLeaderboardEntryToGame = mutation({
     // map_master: at least one perfect round (score of 250)
     if (scores.some((s) => s === 250n)) {
       await ctx.runMutation(internal.achievements.grantAchievement, {
-        userId: args.userId,
+        userId: callerUser._id,
         achievementId: "map_master",
       });
     }
@@ -359,7 +366,7 @@ export const addLeaderboardEntryToGame = mutation({
     // sniped: all 5 rounds perfect
     if (scores.every((s) => s === 250n)) {
       await ctx.runMutation(internal.achievements.grantAchievement, {
-        userId: args.userId,
+        userId: callerUser._id,
         achievementId: "sniped",
       });
     }
@@ -518,18 +525,43 @@ export const haversineDistanceInFeet = (lat1: number, lon1: number, lat2: number
  * Checks a user's guess against the correct latitude and longitude of a level
  *
  * @param args.id - The ID of the level to check against
+ * @param args.gameId - The ID of the game to check
  * @param args.guessLatitude - The user's guess for the latitude
  * @param args.guessLongitude - The user's guess for the longitude
  * @returns An object containing the correct latitude, correct longitude, distance away, and score
  */
 export const checkGuess = mutation({
-  args: { id: v.id("levels"), guessLatitude: v.float64(), guessLongitude: v.float64() },
+  args: {
+    id: v.id("levels"),
+    gameId: v.id("games"),
+    guessLatitude: v.float64(),
+    guessLongitude: v.float64(),
+  },
   handler: async (ctx, args) => {
-    const level = await ctx.db.get(args.id);
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
 
-    if (!level) {
-      throw new Error("No levels exist");
+    const game = await ctx.db.get(args.gameId);
+    if (!game) throw new Error("Game not found");
+
+    const roundIds = [game.round_1, game.round_2, game.round_3, game.round_4, game.round_5];
+    const roundIndex = roundIds.findIndex((id) => id === args.id);
+    if (roundIndex === -1) throw new Error("Level is not part of this game");
+
+    // check if this round has already been answered
+    const existingOngoingGame = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byUserClerkIdGame", (q) =>
+        q.eq("userClerkId", identity.subject).eq("game", args.gameId)
+      )
+      .first();
+
+    if ((existingOngoingGame?.scores?.length ?? 0) > roundIndex) {
+      throw new Error("Already submitted a guess for this round");
     }
+
+    const level = await ctx.db.get(args.id);
+    if (!level) throw new Error("Level not found");
 
     const correctLat = level.latitude;
     const correctLng = level.longitude;
@@ -553,8 +585,29 @@ export const checkGuess = mutation({
     console.log("User Guess: " + args.guessLatitude + " " + args.guessLongitude);
 
     await ctx.db.patch(args.id, {
-      timesPlayed: (level.timesPlayed ?? BigInt(0)) + BigInt(1)
+      timesPlayed: (level.timesPlayed ?? BigInt(0)) + BigInt(1),
     });
+
+    const newScores = [...(existingOngoingGame?.scores ?? []), BigInt(score)];
+    const newDistances = [...(existingOngoingGame?.distances ?? []), BigInt(distanceAway)];
+
+    if (existingOngoingGame) {
+      await ctx.db.patch(existingOngoingGame._id, {
+        scores: newScores,
+        distances: newDistances,
+      });
+    } else {
+      // no ongoingGame yet
+      await ctx.db.insert("ongoingGames", {
+        game: args.gameId,
+        userClerkId: identity.subject,
+        currentRound: BigInt(roundIndex + 2),
+        totalTimeTaken: BigInt(0),
+        scores: newScores,
+        distances: newDistances,
+        gameType: game.gameType,
+      });
+    }
 
     return {
       correctLat,
