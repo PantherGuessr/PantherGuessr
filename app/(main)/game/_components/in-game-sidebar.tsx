@@ -24,6 +24,7 @@ import { useGame } from "../_context/GameContext";
 import { useTournament } from "../_context/TournamentContext";
 
 import "./sidebar-cursor.css";
+import "../game.css";
 
 const InGameSidebar = () => {
   const isMobile = useMediaQuery("(max-width: 600px");
