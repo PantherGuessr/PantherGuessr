@@ -63,7 +63,6 @@ function WaitingScreen({
   roomCode,
   room,
   users,
-  clerkId,
 }: {
   roomCode: string;
   room: {
@@ -72,7 +71,6 @@ function WaitingScreen({
     status: string;
   };
   users: Array<{ clerkId: string; username: string; picture: string }>;
-  clerkId: string;
 }) {
   const leaveRoom = useMutation(api.tournament.leaveTournamentRoom);
   const router = useRouter();
@@ -169,21 +167,12 @@ export default function TournamentPlayPage({ params }: Props) {
 
   const [gameKey, setGameKey] = useState(0);
   const [localRound, setLocalRound] = useState(1);
-  const [showSummaryOverlay, setShowSummaryOverlay] = useState(false);
 
   const clerkId = currentUser?.user.clerkId ?? "";
-
-  useEffect(() => {
-    if (room?.status === "round_summary") {
-      setShowSummaryOverlay(true);
-    } else if (room?.status === "round_active") {
-      setShowSummaryOverlay(false);
-    }
-  }, [room?.status]);
+  const showSummaryOverlay = room?.status === "round_summary";
 
   const handleRoundAdvance = () => {
     setLocalRound((r) => r + 1);
-    setShowSummaryOverlay(false);
     setGameKey((k) => k + 1);
   };
 
@@ -209,7 +198,6 @@ export default function TournamentPlayPage({ params }: Props) {
         roomCode={ROOMCODE}
         room={room}
         users={users}
-        clerkId={clerkId}
       />
     );
   }

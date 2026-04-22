@@ -49,8 +49,8 @@ function FitBoundsToMarkers({ positions }: { positions: LatLng[] }) {
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      const bounds = L.latLngBounds(positions);
-      map.flyToBounds(bounds, { padding: [60, 60], maxZoom: 18, duration: 0.8 });
+      const boundsLiteral = positions.map((p) => [p.lat, p.lng] as [number, number]);
+      map.flyToBounds(boundsLiteral, { padding: [60, 60], maxZoom: 18, duration: 0.8 });
     }, 150);
 
     return () => {
