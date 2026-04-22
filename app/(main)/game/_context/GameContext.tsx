@@ -94,7 +94,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   const addLeaderboardEntryToGame = useMutation(api.game.addLeaderboardEntryToGame);
   const updateFirstPlayedBy = useMutation(api.game.updateFirstPlayedByClerkId);
   const updateOngoingGameOrCreate = useMutation(api.continuegame.updateOngoingGameOrCreate);
-  const deleteOngoingGame = useMutation(api.continuegame.deleteOngoingGame);
 
   useEffect(() => {
     if (ids) {
@@ -130,7 +129,12 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
     setIsSubmittingGuess(true);
 
     try {
-      const result = await checkGuess({ id: currentLevelId, guessLatitude: lat, guessLongitude: lng });
+      const result = await checkGuess({
+        id: currentLevelId,
+        gameId: gameData!.gameContent!._id,
+        guessLatitude: lat,
+        guessLongitude: lng,
+      });
 
       const L = (await import("leaflet")).default;
 
@@ -168,26 +172,10 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
       incrementDailyGameStats();
       incrementMonthlyGameStats();
 
-      await deleteOngoingGame({
-        gameId: gameData!.gameContent!._id,
-        userClerkId: clerkId ?? "",
-      });
-
       updateFirstPlayedBy({ clerkId: clerkId!, gameId: gameData!.gameContent!._id });
 
       addLeaderboardEntryToGame({
         gameId: gameData!.gameContent!._id,
-        userId: currentUser!.user._id,
-        round_1: BigInt(allScores[0]),
-        round_1_distance: BigInt(allDistances[0]),
-        round_2: BigInt(allScores[1]),
-        round_2_distance: BigInt(allDistances[1]),
-        round_3: BigInt(allScores[2]),
-        round_3_distance: BigInt(allDistances[2]),
-        round_4: BigInt(allScores[3]),
-        round_4_distance: BigInt(allDistances[3]),
-        round_5: BigInt(allScores[4]),
-        round_5_distance: BigInt(allDistances[4]),
         totalTimeTaken: BigInt(0),
         gameType: gameData!.gameContent!.gameType,
       }).then((leaderboardEntry) => {

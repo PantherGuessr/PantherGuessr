@@ -8,6 +8,18 @@ import { mutation, query } from "./_generated/server";
  */
 export const getAllLevels = query({
   handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    const callerUser = await ctx.db
+      .query("users")
+      .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!callerUser?.roles?.includes("developer") && !callerUser?.roles?.includes("moderator")) {
+      return null;
+    }
+
     // get levels and sort from newest to oldest
     const levels = await ctx.db.query("levels").collect();
     levels.sort((a, b) => (a._creationTime > b._creationTime ? -1 : 1));
