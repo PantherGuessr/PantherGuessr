@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { Logo } from "@/components/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 const SpectatorMap = dynamic(() => import("./_components/spectator-map"), {
   ssr: false,
@@ -28,10 +29,12 @@ function PlayerSlot({
   clerkId,
   label,
   users,
+  size = "default"
 }: {
   clerkId: string | undefined;
   label: string;
   users: Array<{ clerkId: string; username: string; picture: string; level: bigint }>;
+  size?: "default" | "large"
 }) {
   if (!clerkId) {
     return (
@@ -47,7 +50,7 @@ function PlayerSlot({
   if (!user) return null;
   return (
     <div className="flex flex-col items-center gap-1">
-      <Avatar className="h-[100px] w-[100px] overflow-hidden">
+      <Avatar className={cn("overflow-hidden", size === "large" ? "h-[100px] w-[100px]" : "h-[60px] w-[60px]")}>
         <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
         <AvatarImage
           src={user.picture}
@@ -141,8 +144,8 @@ export default function SpectatorPage({ params }: Props) {
           <p className="text-5xl font-bold tracking-widest">{room.roomCode}</p>
         </div>
         <div className="flex gap-16">
-          <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} />
-          <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} />
+          <PlayerSlot clerkId={room.player1ClerkId} label="Player 1" users={users} size="large" />
+          <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} size="large" />
         </div>
         {isOrganizer && room.player1ClerkId && room.player2ClerkId && (
           <Button onClick={() => startGame({ roomId: room._id })} size="lg">
@@ -212,10 +215,10 @@ export default function SpectatorPage({ params }: Props) {
         </div>
 
         {/* Right panel: image + controls */}
-        <div className="flex w-64 flex-col gap-4 border-l p-4">
+        <div className="flex w-[500px] flex-col gap-4 border-l p-4">
           <div className="relative aspect-4/3 w-full overflow-hidden rounded-md bg-secondary">
             {imageSrc ? (
-              <Image src={imageSrc} alt="" fill className="object-cover" />
+              <Image src={imageSrc} alt="" fill className="object-cover aspect-4/3" />
             ) : (
               <div className="flex h-full items-center justify-center">
                 <Loader2 className="h-6 w-6 animate-spin" />
