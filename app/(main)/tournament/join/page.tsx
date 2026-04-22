@@ -1,23 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Shield } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar/navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 export default function TournamentJoinPage() {
   const router = useRouter();
+  const { data: currentUser } = useCurrentUser();
   const [code, setCode] = useState("");
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const joinRoom = useMutation(api.tournament.joinTournamentRoom);
+  const isDeveloper = currentUser?.roles.isDeveloper ?? false;
 
   const handleJoin = async () => {
     const trimmed = code.trim().toUpperCase();
@@ -56,6 +60,17 @@ export default function TournamentJoinPage() {
             Join Room
           </Button>
         </div>
+        {isDeveloper && (
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <p className="text-xs text-muted-foreground">Organizer access</p>
+            <Link href="/admin/tournament">
+              <Button variant="outline" size="sm" className="gap-2">
+                <Shield className="h-4 w-4" />
+                Host a Tournament
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
       <Footer />
     </div>

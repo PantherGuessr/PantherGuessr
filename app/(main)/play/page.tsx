@@ -53,13 +53,13 @@ const PlayPage = () => {
           </div>
         </Link>
         <Link href="/game">
-          <div className="gamemode-card glow-effect flex flex-col items-center bg-primary text-primary-foreground shadow-md">
+          <div className="gamemode-card flex flex-col items-center bg-primary text-primary-foreground shadow-md">
             <User className="mb-2" />
             <h1>Singleplayer</h1>
           </div>
         </Link>
         <Link href="/tournament/join">
-          <div className="gamemode-card glow flex flex-col items-center bg-primary text-primary-foreground shadow-md">
+          <div className="gamemode-card flex flex-col items-center bg-primary text-primary-foreground shadow-md">
             <Swords className="mb-2" />
             <h1>Tournament</h1>
           </div>
