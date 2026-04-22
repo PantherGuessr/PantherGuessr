@@ -250,7 +250,7 @@ export default function TournamentPlayPage({ params }: Props) {
 
   return (
     <TournamentProvider roomId={room._id} roomCode={ROOMCODE}>
-      <GameProvider key={gameKey} gameId={room.currentGameId}>
+      <GameProvider key={gameKey} gameId={room.currentGameId} startingRound={room.currentRound}>
         <RoundTracker
           roomId={room._id}
           localRound={localRound}

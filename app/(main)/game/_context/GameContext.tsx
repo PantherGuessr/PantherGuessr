@@ -40,14 +40,22 @@ interface GameContextType {
 
 const GameContext = createContext<GameContextType | null>(null);
 
-export const GameProvider = ({ children, gameId }: { children: React.ReactNode; gameId?: Id<"games"> }) => {
+export const GameProvider = ({
+  children,
+  gameId,
+  startingRound: startingRoundProp,
+}: {
+  children: React.ReactNode;
+  gameId?: Id<"games">;
+  startingRound?: number;
+}) => {
   const router = useRouter();
   const { data: currentUser } = useCurrentUser();
   const clerkId = currentUser?.user.clerkId;
 
   // states for the game
   const [levels, setLevels] = useState<Id<"levels">[]>([]);
-  const [currentRound, setCurrentRound] = useState(1);
+  const [currentRound, setCurrentRound] = useState(startingRoundProp ?? 1);
   const [score, setScore] = useState(0);
   const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
   const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
@@ -119,10 +127,10 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   }, [currentLevelId, imageSrc]);
 
   useEffect(() => {
-    if (gameData?.gameContent?._id) {
+    if (!gameId && gameData?.gameContent?._id) {
       router.replace(`/game/${gameData.gameContent._id}`);
     }
-  }, [gameData?.gameContent?._id, router]);
+  }, [gameId, gameData?.gameContent?._id, router]);
 
   const submitGuess = async (lat: number, lng: number) => {
     if (!currentLevelId) return;
