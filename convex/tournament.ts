@@ -308,6 +308,82 @@ export const leaveTournamentRoom = mutation({
   },
 });
 
+export const resetTournamentRoom = mutation({
+  args: { roomId: v.id("tournamentRooms") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const room = await ctx.db.get(args.roomId);
+    if (!room) throw new Error("Room not found");
+    if (room.organizerClerkId !== identity.subject) throw new Error("Not the organizer");
+
+    // Delete all guesses for this room
+    const guesses = await ctx.db
+      .query("tournamentGuesses")
+      .withIndex("byRoomAndRound", (q) => q.eq("roomId", args.roomId))
+      .collect();
+    await Promise.all(guesses.map((g) => ctx.db.delete(g._id)));
+
+    await ctx.db.patch(args.roomId, {
+      status: "waiting",
+      currentGameId: undefined,
+      currentRound: 1,
+      player1TotalScore: 0,
+      player2TotalScore: 0,
+      countdownStartedAt: undefined,
+    });
+  },
+});
+
+export const createNewLobbyFromExisting = mutation({
+  args: { roomId: v.id("tournamentRooms") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const room = await ctx.db.get(args.roomId);
+    if (!room) throw new Error("Room not found");
+    if (room.organizerClerkId !== identity.subject) throw new Error("Not the organizer");
+
+    // Delete all guesses for old room
+    const guesses = await ctx.db
+      .query("tournamentGuesses")
+      .withIndex("byRoomAndRound", (q) => q.eq("roomId", args.roomId))
+      .collect();
+    await Promise.all(guesses.map((g) => ctx.db.delete(g._id)));
+    await ctx.db.delete(args.roomId);
+
+    // Generate new unique room code
+    let roomCode: string;
+    let attempts = 0;
+    do {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let suffix = "";
+      for (let i = 0; i < 4; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
+      roomCode = `PG-${suffix}`;
+      const existing = await ctx.db
+        .query("tournamentRooms")
+        .withIndex("byRoomCode", (q) => q.eq("roomCode", roomCode))
+        .unique();
+      if (!existing) break;
+      if (++attempts > 20) throw new Error("Failed to generate unique room code");
+    } while (true);
+
+    const newRoomId = await ctx.db.insert("tournamentRooms", {
+      roomCode,
+      organizerClerkId: room.organizerClerkId,
+      name: room.name,
+      status: "waiting",
+      currentRound: 1,
+      player1TotalScore: 0,
+      player2TotalScore: 0,
+    });
+
+    return { roomId: newRoomId, roomCode };
+  },
+});
+
 export const getTournamentRoomByCode = query({
   args: { roomCode: v.string() },
   handler: async (ctx, args) => {

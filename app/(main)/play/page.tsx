@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CalendarClock, Loader2, User } from "lucide-react";
+import { ArrowLeft, CalendarClock, Loader2, Swords, User } from "lucide-react";
 
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
@@ -56,6 +56,12 @@ const PlayPage = () => {
           <div className="gamemode-card glow-effect flex flex-col items-center bg-primary text-primary-foreground shadow-md">
             <User className="mb-2" />
             <h1>Singleplayer</h1>
+          </div>
+        </Link>
+        <Link href="/tournament/join">
+          <div className="gamemode-card glow flex flex-col items-center bg-primary text-primary-foreground shadow-md">
+            <Swords className="mb-2" />
+            <h1>Tournament</h1>
           </div>
         </Link>
       </div>

@@ -1,10 +1,12 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
-import { Clock, Loader2, LockKeyhole, Search } from "lucide-react";
+import { Clock, Home, Loader2, LockKeyhole, Search } from "lucide-react";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -97,6 +99,7 @@ function PlayerSlot({
 
 export default function SpectatorPage({ params }: Props) {
   const { ROOMCODE } = use(params);
+  const router = useRouter();
   const { data: currentUser } = useCurrentUser();
 
   const room = useQuery(api.tournament.getTournamentRoomByCode, { roomCode: ROOMCODE });
@@ -133,8 +136,26 @@ export default function SpectatorPage({ params }: Props) {
   const showRoundSummary = useMutation(api.tournament.showRoundSummary);
   const advanceToNextRound = useMutation(api.tournament.advanceToNextRound);
   const startGame = useMutation(api.tournament.startTournamentGame);
+  const resetRoom = useMutation(api.tournament.resetTournamentRoom);
+  const createNewLobby = useMutation(api.tournament.createNewLobbyFromExisting);
 
   const isOrganizer = currentUser?.user.clerkId === room?.organizerClerkId;
+
+  // Win sound — track status transitions so we only fire on the change, not on initial load
+  const prevStatusRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!room) return;
+    const prev = prevStatusRef.current;
+    prevStatusRef.current = room.status;
+    if (prev === null || prev === room.status) return; // initial load or no change
+    if (room.status === "finished") {
+      const p1Wins = room.player1TotalScore > room.player2TotalScore;
+      const tied = room.player1TotalScore === room.player2TotalScore;
+      if (!tied) {
+        new Audio(`/audio/tournament/${p1Wins ? "p1-wins.mp3" : "p2-wins.mp3"}`).play().catch(() => {});
+      }
+    }
+  }, [room?.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const p1Guess = guesses?.find((g) => g.playerClerkId === room?.player1ClerkId);
   const p2Guess = guesses?.find((g) => g.playerClerkId === room?.player2ClerkId);
@@ -172,7 +193,13 @@ export default function SpectatorPage({ params }: Props) {
 
   if (room.status === "waiting") {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-8 px-4">
+      <div className="relative flex min-h-screen flex-col items-center justify-center gap-8 px-4">
+        <Link href="/" className="absolute left-4 top-4">
+          <Button variant="outline" size="sm" className="gap-2">
+            <Home className="h-4 w-4" />
+            Home
+          </Button>
+        </Link>
         <div className="flex flex-row items-center gap-2">
           <Logo logoDimensions={100} textOptions="text-3xl" badge="Tournament" />
         </div>
@@ -200,7 +227,13 @@ export default function SpectatorPage({ params }: Props) {
     const tied = room.player1TotalScore === room.player2TotalScore;
 
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-8 px-4 text-center">
+      <div className="relative flex min-h-screen flex-col items-center justify-center gap-8 px-4 text-center">
+        <Link href="/" className="absolute left-4 top-4">
+          <Button variant="outline" size="sm" className="gap-2">
+            <Home className="h-4 w-4" />
+            Home
+          </Button>
+        </Link>
         <h1 className="text-3xl font-bold">Game Over</h1>
         {tied ? (
           <p className="text-xl">It&apos;s a tie!</p>
@@ -220,6 +253,26 @@ export default function SpectatorPage({ params }: Props) {
             <p className="text-4xl font-bold">{room.player2TotalScore}</p>
           </div>
         </div>
+        {isOrganizer && (
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button
+              size="lg"
+              onClick={() => resetRoom({ roomId: room._id })}
+            >
+              Play Again
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={async () => {
+                const result = await createNewLobby({ roomId: room._id });
+                router.push(`/tournament/${result.roomCode}`);
+              }}
+            >
+              New Lobby
+            </Button>
+          </div>
+        )}
       </div>
     );
   }

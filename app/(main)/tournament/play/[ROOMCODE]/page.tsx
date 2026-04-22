@@ -10,6 +10,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { Navbar } from "@/components/navbar/navbar";
+import { Footer } from "@/components/footer";
 import { useMediaQuery } from "usehooks-ts";
 import { cn } from "@/lib/utils";
 
@@ -213,24 +215,36 @@ export default function TournamentPlayPage({ params }: Props) {
     const tied = myScore === theirScore;
 
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-4 text-center">
-        <h1 className="text-3xl font-bold">
-          {tied ? "It&apos;s a tie!" : won ? "You win! 🎉" : "You lose"}
-        </h1>
-        <div className="flex gap-12 text-center">
-          <div>
-            <p className="text-xs text-muted-foreground">{p1User?.username ?? "P1"}</p>
-            <p className="text-4xl font-bold">{room.player1TotalScore}</p>
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
+        <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 pt-24 text-center">
+          <h1 className="text-3xl font-bold">
+            {tied ? "It's a tie!" : won ? "You win!" : "You lose"}
+          </h1>
+          <div className="flex gap-12 text-center">
+            <div>
+              <p className="text-xs text-muted-foreground">{p1User?.username ?? "P1"}</p>
+              <p className="text-4xl font-bold">{room.player1TotalScore}</p>
+            </div>
+            <div className="self-center text-xl text-muted-foreground">vs</div>
+            <div>
+              <p className="text-xs text-muted-foreground">{p2User?.username ?? "P2"}</p>
+              <p className="text-4xl font-bold">{room.player2TotalScore}</p>
+            </div>
           </div>
-          <div className="self-center text-xl text-muted-foreground">vs</div>
-          <div>
-            <p className="text-xs text-muted-foreground">{p2User?.username ?? "P2"}</p>
-            <p className="text-4xl font-bold">{room.player2TotalScore}</p>
+          <div className="flex gap-3">
+            <Button onClick={() => router.push(`/tournament/play/${ROOMCODE}`)} variant="default">
+              Stay in Lobby
+            </Button>
+            <Button onClick={() => router.push("/")} variant="outline">
+              Back to Home
+            </Button>
           </div>
+          <p className="text-sm text-muted-foreground">
+            The organizer can restart this lobby for a rematch.
+          </p>
         </div>
-        <Button onClick={() => router.push("/")} variant="outline">
-          Back to Home
-        </Button>
+        <Footer />
       </div>
     );
   }
