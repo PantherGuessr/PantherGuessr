@@ -262,17 +262,23 @@ export default function SpectatorPage({ params }: Props) {
           </div>
 
           <div className="flex flex-col gap-2 text-sm">
-            <div className="flex justify-between rounded bg-secondary px-3 py-2">
-              <span className="text-muted-foreground">
-                {users.find((u) => u.clerkId === room.player1ClerkId)?.username ?? "P1"}
-              </span>
-              <span className="font-bold">{room.player1TotalScore}</span>
+            <div className="flex relative justify-start w-full rounded bg-secondary px-3 py-2">
+              <div className="flex justify-between w-full z-20">
+                <span className="text-white font-medium">
+                  {users.find((u) => u.clerkId === room.player1ClerkId)?.username ?? "P1"}
+                </span>
+                <span className="font-bold">{room.player1TotalScore}</span>
+              </div>
+              <div className="absolute rounded w-1/2 h-full top-0 left-0 bg-blue-500" style={{ width: `${(room.player1TotalScore / Math.max(room.player1TotalScore, room.player2TotalScore)) * 100}%` }} />
             </div>
-            <div className="flex justify-between rounded bg-secondary px-3 py-2">
-              <span className="text-muted-foreground">
-                {users.find((u) => u.clerkId === room.player2ClerkId)?.username ?? "P2"}
-              </span>
-              <span className="font-bold">{room.player2TotalScore}</span>
+            <div className="flex relative justify-start w-full rounded bg-secondary px-3 py-2">
+              <div className="flex justify-between w-full z-20">
+                <span className="text-white font-medium">
+                  {users.find((u) => u.clerkId === room.player2ClerkId)?.username ?? "P2"}
+                </span>
+                <span className="font-bold">{room.player2TotalScore}</span>
+              </div>
+              <div className="absolute rounded w-1/2 h-full top-0 left-0 bg-orange-500" style={{ width: `${(room.player2TotalScore / Math.max(room.player1TotalScore, room.player2TotalScore)) * 100}%` }} />
             </div>
           </div>
 
