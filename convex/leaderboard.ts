@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
+import { sanitizePublicUser } from "./users";
 
 export type LeaderboardType = "streak" | "level" | "totalPoints";
 
@@ -29,7 +30,7 @@ export const getTopUsersByStreak = query({
       })
       .slice(0, 25);
 
-    return sortedUsers;
+    return sortedUsers.map(sanitizePublicUser);
   },
 });
 
@@ -59,7 +60,7 @@ export const getTopUsersByLevel = query({
       })
       .slice(0, 25);
 
-    return sortedUsers;
+    return sortedUsers.map(sanitizePublicUser);
   },
 });
 
@@ -91,7 +92,7 @@ export const getTopUsersByTotalPoints = query({
       })
       .slice(0, 25);
 
-    return sortedUsers;
+    return sortedUsers.map(sanitizePublicUser);
   },
 });
 

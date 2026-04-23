@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import type { LatLng } from "leaflet";
@@ -64,6 +64,7 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   const [leaderboardEntryId, setLeaderboardEntryId] = useState<string | null>(null);
 
   const gameData: GameData | null = useGameById(gameId, clerkId);
+  const initializedRef = useRef(false);
 
   // Get leaderboard entry for this game and user
   const leaderboardEntry = useQuery(
@@ -95,21 +96,24 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   const updateFirstPlayedBy = useMutation(api.game.updateFirstPlayedByClerkId);
   const updateOngoingGameOrCreate = useMutation(api.continuegame.updateOngoingGameOrCreate);
 
+  // Runs once when game data first loads. Prevents Convex's reactive updates from resetting in-memory state mid-game
   useEffect(() => {
-    if (ids) {
-      setLevels(ids);
-      setCurrentLevel(ids[currentRound - 1]);
-    }
-  }, [ids, currentRound]);
+    if (initializedRef.current || !ids.length) return;
 
-  useEffect(() => {
+    setLevels(ids);
+
     if (gameData?.startingDistances && gameData?.startingScores && gameData?.startingRound) {
       setAllDistances(gameData.startingDistances);
       setAllScores(gameData.startingScores);
       setCurrentRound(gameData.startingRound);
       setScore(gameData.startingScores.reduce((acc, score) => acc + score, 0));
+      setCurrentLevel(ids[gameData.startingRound - 1]);
+    } else {
+      setCurrentLevel(ids[0]);
     }
-  }, [gameData]);
+
+    initializedRef.current = true;
+  }, [ids, gameData]);
 
   useEffect(() => {
     if (currentLevelId) {
