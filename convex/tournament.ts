@@ -232,6 +232,15 @@ export const submitTournamentGuess = mutation({
       )
       .unique();
 
+    if (existing?.hasSubmitted) {
+      return {
+        score: existing.score ?? 0,
+        distanceFeet: existing.distanceFeet ?? 0,
+        correctLat: existing.correctLat ?? 0,
+        correctLng: existing.correctLng ?? 0,
+      };
+    }
+
     if (existing) {
       await ctx.db.patch(existing._id, {
         currentLat: args.lat,

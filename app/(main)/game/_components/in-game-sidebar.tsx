@@ -73,8 +73,8 @@ const InGameSidebar = () => {
     if (!markerHasBeenPlaced || !markerPosition) return;
 
     const { lat, lng } = markerPosition;
-    submitGuess(lat, lng).then(() => {
-      tournament?.onGuessSubmit(lat, lng).catch(console.error);
+    submitGuess(lat, lng).then((success) => {
+      if (success) tournament?.onGuessSubmit(lat, lng).catch(console.error);
     });
   }, [markerHasBeenPlaced, markerPosition, submitGuess, tournament]);
 

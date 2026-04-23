@@ -25,7 +25,7 @@ interface GameContextType {
   setMarkerHasBeenPlaced: (marker: boolean) => void;
   isSubmittingGuess: boolean;
   setIsSubmittingGuess: (button: boolean) => void;
-  submitGuess: (lat: number, lng: number) => Promise<void>;
+  submitGuess: (lat: number, lng: number) => Promise<boolean>;
   markerPosition: LatLng | null;
   setMarkerPosition: (position: LatLng | null) => void;
   correctLocation: LatLng | null;
@@ -117,7 +117,9 @@ export const GameProvider = ({
       setScore(gameData.startingScores.reduce((acc, score) => acc + score, 0));
       setCurrentLevel(ids[gameData.startingRound - 1]);
     } else {
-      setCurrentLevel(ids[0]);
+      const initRound = startingRoundProp ?? 1;
+      setCurrentRound(initRound);
+      setCurrentLevel(ids[initRound - 1]);
     }
 
     initializedRef.current = true;
@@ -135,8 +137,8 @@ export const GameProvider = ({
     }
   }, [gameId, gameData?.gameContent?._id, router]);
 
-  const submitGuess = async (lat: number, lng: number) => {
-    if (!currentLevelId) return;
+  const submitGuess = async (lat: number, lng: number): Promise<boolean> => {
+    if (!currentLevelId) return false;
 
     setIsSubmittingGuess(true);
 
@@ -157,8 +159,10 @@ export const GameProvider = ({
       setAllDistances((prevDistances) => [...prevDistances, result.distanceAway]);
       setAllScores((prevScores) => [...prevScores, result.score]);
       setScore(allScores.reduce((acc, score) => acc + score, 0) + result.score);
+      return true;
     } catch (error) {
       console.error("Error submitting guess:", error);
+      return false;
     } finally {
       setIsSubmittingGuess(false);
     }
