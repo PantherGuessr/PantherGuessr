@@ -2,15 +2,15 @@ import ProfileHoverCard from "@/components/profile-hover-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Doc } from "@/convex/_generated/dataModel";
 import { LeaderboardType } from "@/convex/leaderboard";
+import { PublicUser } from "@/convex/users";
 
 type TopThreeProps = {
-  users: Doc<"users">[];
+  users: PublicUser[];
   type: LeaderboardType;
 };
 
-const getStatValue = (user: Doc<"users">, type: LeaderboardType): string => {
+const getStatValue = (user: PublicUser, type: LeaderboardType): string => {
   switch (type) {
     case "streak":
       return `${user.currentStreak} day${user.currentStreak === 1n ? "" : "s"}`;

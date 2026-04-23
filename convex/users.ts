@@ -1,12 +1,12 @@
 import { createClerkClient, UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
 
+import { DEFAULT_BACKGROUND_ID, PROFILE_BACKGROUNDS, PROFILE_BACKGROUNDS_MAP } from "../lib/backgrounds";
+import { DEFAULT_TAGLINE_ID, PROFILE_TAGLINES, PROFILE_TAGLINES_MAP } from "../lib/taglines";
+import { isNewPSTDay } from "../lib/xp";
 import { api, internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import { internalAction, internalMutation, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
-import { PROFILE_BACKGROUNDS, PROFILE_BACKGROUNDS_MAP, DEFAULT_BACKGROUND_ID } from "../lib/backgrounds";
-import { PROFILE_TAGLINES, PROFILE_TAGLINES_MAP, DEFAULT_TAGLINE_ID } from "../lib/taglines";
-import { isNewPSTDay } from "../lib/xp";
 
 /**
  * Retrieves a user from the database using their Convex ID.
@@ -49,6 +49,36 @@ async function userByUsername(ctx: QueryCtx | MutationCtx, username: string) {
     .withIndex("byUsername", (q) => q.eq("username", username))
     .unique();
 }
+
+/**
+ * Strips sensitive PII fields from a user document before returning it to the client.
+ * Removes: emails, banReason, banAppeal.
+ * Use for any query that may be called by users other than the account owner.
+ */
+export function sanitizePublicUser(user: NonNullable<Awaited<ReturnType<typeof userByClerkId>>>) {
+  return {
+    _id: user._id,
+    _creationTime: user._creationTime,
+    clerkId: user.clerkId,
+    username: user.username,
+    picture: user.picture,
+    level: user.level,
+    currentXP: user.currentXP,
+    currentStreak: user.currentStreak,
+    totalPointsEarned: user.totalPointsEarned,
+    lastPlayedTimestamp: user.lastPlayedTimestamp,
+    isBanned: user.isBanned,
+    roles: user.roles,
+    profileTagline: user.profileTagline,
+    profileBackground: user.profileBackground,
+    unlockedProfileTaglines: user.unlockedProfileTaglines,
+    unlockedProfileBackgrounds: user.unlockedProfileBackgrounds,
+    achievements: user.achievements,
+  };
+}
+
+/** The shape of a user document safe to expose to any client. */
+export type PublicUser = ReturnType<typeof sanitizePublicUser>;
 
 /**
  * Retrieves the current user based on the authentication context.
@@ -187,7 +217,8 @@ export const getUserById = query({
   },
   async handler(ctx, args) {
     const user = await userById(ctx, args.id as Id<"users">);
-    return user;
+    if (!user) return null;
+    return sanitizePublicUser(user);
   },
 });
 
@@ -207,7 +238,8 @@ export const getUserByUsername = query({
   },
   async handler(ctx, args) {
     const user = await userByUsername(ctx, args.username);
-    return user;
+    if (!user) return null;
+    return sanitizePublicUser(user);
   },
 });
 
@@ -233,10 +265,20 @@ export const isUserBanned = query({
       return { result: false, banReason: undefined, appealSubmitted: false };
     }
 
+    // Only return sensitive fields (banReason, appealSubmitted) to the account owner or admins/moderators
+    const identity = await ctx.auth.getUserIdentity();
+    const isSelf = identity !== null && identity.subject === user.clerkId;
+    let isAdmin = false;
+    if (identity && !isSelf) {
+      const callerUser = await userByClerkId(ctx, identity.subject);
+      isAdmin = !!(callerUser?.roles?.includes("developer") || callerUser?.roles?.includes("moderator"));
+    }
+    const includeSensitiveData = isSelf || isAdmin;
+
     return {
       result: user.isBanned,
-      banReason: user.banReason,
-      appealSubmitted: user.banAppeal
+      banReason: includeSensitiveData ? user.banReason : undefined,
+      appealSubmitted: includeSensitiveData && user.banAppeal
         ? ((await ctx.db.get(user.banAppeal))?.hasBeenResolved === false)
         : false,
     };
@@ -572,7 +614,8 @@ export const adminGrantBackground = mutation({
 export const getListOfProfiles = query({
   args: {},
   async handler(ctx) {
-    return await ctx.db.query("users").collect();
+    const users = await ctx.db.query("users").collect();
+    return users.map(sanitizePublicUser);
   },
 });
 
@@ -994,8 +1037,15 @@ export const modifyRolesAdministrativeAction = mutation({
 /**
  * Internal helper that builds a full user profile object from a user document.
  * Used by both getUserProfile and getCurrentUserProfile to avoid duplication.
+ *
+ * @param includeSensitiveData - When true, includes banReason and appealSubmitted.
+ *   Should only be true when the caller is the account owner or an admin/moderator.
  */
-async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnType<typeof userByClerkId>>>) {
+async function buildUserProfile(
+  ctx: QueryCtx,
+  user: NonNullable<Awaited<ReturnType<typeof userByClerkId>>>,
+  includeSensitiveData: boolean,
+) {
   // Derive roles from the user.roles array
   const roles = user.roles ?? [];
   const roleFlags = {
@@ -1006,13 +1056,14 @@ async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnT
     isFriend: roles.includes("friend"),
   };
 
-  // Check chapman email
+  // Check chapman email without leaking the address itself
   const hasChapmanEmail = user.emails.some((email) => email.endsWith("@chapman.edu"));
 
-  // Ban status
-  const appealSubmitted = user.banAppeal
-    ? ((await ctx.db.get(user.banAppeal))?.hasBeenResolved === false)
-    : false;
+  // Ban appeal status — only fetched when the caller is allowed to see it
+  const appealSubmitted =
+    includeSensitiveData && user.banAppeal
+      ? ((await ctx.db.get(user.banAppeal))?.hasBeenResolved === false)
+      : false;
 
   // Selected tagline and background
   const selectedTagline = PROFILE_TAGLINES_MAP[user.profileTagline] ?? null;
@@ -1025,12 +1076,12 @@ async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnT
     .first();
 
   return {
-    user,
+    user: sanitizePublicUser(user),
     roles: roleFlags,
     hasChapmanEmail,
     isBanned: user.isBanned,
-    banReason: user.banReason,
-    appealSubmitted,
+    banReason: includeSensitiveData ? user.banReason : undefined,
+    appealSubmitted: includeSensitiveData ? appealSubmitted : undefined,
     selectedTagline,
     selectedBackground,
     hasOngoingGame: ongoingGame !== null,
@@ -1041,6 +1092,7 @@ async function buildUserProfile(ctx: QueryCtx, user: NonNullable<Awaited<ReturnT
 /**
  * Retrieves a full user profile by Clerk ID in a single query.
  * Consolidates roles, badges, ban status, tagline, background, ongoing game, and achievements.
+ * Sensitive fields (banReason, appealSubmitted) are only returned to the account owner or admins/moderators.
  */
 export const getUserProfile = query({
   args: {
@@ -1051,13 +1103,24 @@ export const getUserProfile = query({
     if (!user) {
       return null;
     }
-    return await buildUserProfile(ctx, user);
+
+    const identity = await ctx.auth.getUserIdentity();
+    const isSelf = identity !== null && identity.subject === user.clerkId;
+
+    let isAdmin = false;
+    if (identity && !isSelf) {
+      const callerUser = await userByClerkId(ctx, identity.subject);
+      isAdmin = !!(callerUser?.roles?.includes("developer") || callerUser?.roles?.includes("moderator"));
+    }
+
+    return await buildUserProfile(ctx, user, isSelf || isAdmin);
   },
 });
 
 /**
  * Retrieves the current authenticated user's full profile in a single query.
  * Same data as getUserProfile but resolves the user via the auth token.
+ * Always includes sensitive data since this is always the account owner.
  */
 export const getCurrentUserProfile = query({
   args: {},
@@ -1066,7 +1129,7 @@ export const getCurrentUserProfile = query({
     if (!user) {
       return null;
     }
-    return await buildUserProfile(ctx, user);
+    return await buildUserProfile(ctx, user, true);
   },
 });
 

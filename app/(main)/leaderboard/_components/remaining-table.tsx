@@ -1,17 +1,17 @@
 import ProfileHoverCard from "@/components/profile-hover-card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Doc } from "@/convex/_generated/dataModel";
 import { LeaderboardType } from "@/convex/leaderboard";
+import { PublicUser } from "@/convex/users";
 
 type RemainingTableProps = {
-  users: Doc<"users">[];
+  users: PublicUser[];
   description: string;
   type: LeaderboardType;
-  currentUser?: Doc<"users"> | null;
+  currentUser?: PublicUser | null;
   userRank?: number | null;
 };
 
-const getStatValue = (user: Doc<"users">, type: LeaderboardType): string => {
+const getStatValue = (user: PublicUser, type: LeaderboardType): string => {
   switch (type) {
     case "streak":
       return `${user.currentStreak} day${user.currentStreak === 1n ? "" : "s"}`;
@@ -24,7 +24,7 @@ const getStatValue = (user: Doc<"users">, type: LeaderboardType): string => {
   }
 };
 
-const getSecondaryStatValue = (user: Doc<"users">, type: LeaderboardType): string => {
+const getSecondaryStatValue = (user: PublicUser, type: LeaderboardType): string => {
   switch (type) {
     case "streak":
       return `Level ${user.level}`;
