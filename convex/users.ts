@@ -1,12 +1,12 @@
 import { createClerkClient, UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
 
+import { DEFAULT_BACKGROUND_ID, PROFILE_BACKGROUNDS, PROFILE_BACKGROUNDS_MAP } from "../lib/backgrounds";
+import { DEFAULT_TAGLINE_ID, PROFILE_TAGLINES, PROFILE_TAGLINES_MAP } from "../lib/taglines";
+import { isNewPSTDay } from "../lib/xp";
 import { api, internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import { internalAction, internalMutation, mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
-import { PROFILE_BACKGROUNDS, PROFILE_BACKGROUNDS_MAP, DEFAULT_BACKGROUND_ID } from "../lib/backgrounds";
-import { PROFILE_TAGLINES, PROFILE_TAGLINES_MAP, DEFAULT_TAGLINE_ID } from "../lib/taglines";
-import { isNewPSTDay } from "../lib/xp";
 
 /**
  * Retrieves a user from the database using their Convex ID.
@@ -56,9 +56,25 @@ async function userByUsername(ctx: QueryCtx | MutationCtx, username: string) {
  * Use for any query that may be called by users other than the account owner.
  */
 export function sanitizePublicUser(user: NonNullable<Awaited<ReturnType<typeof userByClerkId>>>) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { emails: _emails, banReason: _banReason, banAppeal: _banAppeal, ...publicFields } = user;
-  return publicFields;
+  return {
+    _id: user._id,
+    _creationTime: user._creationTime,
+    clerkId: user.clerkId,
+    username: user.username,
+    picture: user.picture,
+    level: user.level,
+    currentXP: user.currentXP,
+    currentStreak: user.currentStreak,
+    totalPointsEarned: user.totalPointsEarned,
+    lastPlayedTimestamp: user.lastPlayedTimestamp,
+    isBanned: user.isBanned,
+    roles: user.roles,
+    profileTagline: user.profileTagline,
+    profileBackground: user.profileBackground,
+    unlockedProfileTaglines: user.unlockedProfileTaglines,
+    unlockedProfileBackgrounds: user.unlockedProfileBackgrounds,
+    achievements: user.achievements,
+  };
 }
 
 /** The shape of a user document safe to expose to any client. */
