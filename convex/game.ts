@@ -187,8 +187,7 @@ export const createNewGame = mutation({
     if (identity) {
       const staleOngoingGames = await ctx.db
         .query("ongoingGames")
-        .withIndex("byUserClerkId")
-        .filter((q) => q.eq(q.field("userClerkId"), identity.subject))
+        .withIndex("byUserClerkId", (q) => q.eq("userClerkId", identity.subject))
         .collect();
       for (const staleGame of staleOngoingGames) {
         await ctx.db.delete(staleGame._id);
