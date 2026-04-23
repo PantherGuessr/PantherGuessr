@@ -82,7 +82,6 @@ export const updateOngoingGame = mutation({
 export const updateOngoingGameOrCreate = mutation({
   args: {
     gameId: v.id("games"),
-    userClerkId: v.string(),
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
@@ -91,10 +90,15 @@ export const updateOngoingGameOrCreate = mutation({
     gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   },
   handler: async (ctx, args) => {
-    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances, gameType } = args;
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const { gameId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances, gameType } = args;
+    const userClerkId = identity.subject;
+
     const existingGame = await ctx.db
       .query("ongoingGames")
-      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId))
+      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId).eq("game", gameId))
       .first();
     if (existingGame) {
       await ctx.db.patch(existingGame._id, {
