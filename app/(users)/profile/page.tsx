@@ -8,7 +8,6 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Doc } from "@/convex/_generated/dataModel";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useGetListOfProfiles } from "@/hooks/userProfiles/use-get-list-of-profiles";
 import { cn } from "@/lib/utils";
@@ -27,14 +26,14 @@ const ProfileSearchPage = () => {
     }
   }, [currentUser, router]);
 
-  const filteredUsernames = useMemo<Doc<"users">[]>(() => {
+  const filteredUsernames = useMemo(() => {
     if (usernames && searchedUsername) {
       return usernames.filter((user) => user.username.toLowerCase().includes(searchedUsername.toLowerCase()));
     }
     return [];
   }, [usernames, searchedUsername]);
 
-  const suggestedUsernames = useMemo<Doc<"users">[]>(() => {
+  const suggestedUsernames = useMemo(() => {
     if (usernames && searchedUsername) {
       return usernames.filter((user) => {
         const distance = Levenshtein(user.username, searchedUsername);
