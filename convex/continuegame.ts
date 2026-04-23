@@ -9,6 +9,7 @@ import { internalMutation, mutation, query } from "./_generated/server";
 export const deleteStaleGames = internalMutation({
   args: {
     userClerkId: v.string(),
+    gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
     matchingId: v.optional(v.id("ongoingGames")),
   },
   handler: async (ctx, args) => {
@@ -17,7 +18,7 @@ export const deleteStaleGames = internalMutation({
       .withIndex("byUserClerkId", (q) => q.eq("userClerkId", args.userClerkId))
       .collect();
     for (const stale of staleGames) {
-      if (stale._id !== args.matchingId) {
+      if (stale.gameType === args.gameType && stale._id !== args.matchingId) {
         await ctx.db.delete(stale._id);
       }
     }
@@ -125,6 +126,7 @@ export const updateOngoingGameOrCreate = mutation({
     if (existingGame) {
       await ctx.scheduler.runAfter(0, internal.continuegame.deleteStaleGames, {
         userClerkId,
+        gameType,
         matchingId: existingGame._id,
       });
       await ctx.db.patch(existingGame._id, {
@@ -150,6 +152,7 @@ export const updateOngoingGameOrCreate = mutation({
       });
       await ctx.scheduler.runAfter(0, internal.continuegame.deleteStaleGames, {
         userClerkId,
+        gameType,
         matchingId: newId,
       });
     }
