@@ -1,7 +1,23 @@
 import { v } from "convex/values";
 
-import { mutation, query } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
+import { mutation, query, MutationCtx } from "./_generated/server";
 import { haversineDistanceInFeet } from "./game";
+
+async function cleanupOngoingGamesForRoom(
+  ctx: MutationCtx,
+  gameId: Id<"games">,
+  playerClerkIds: (string | undefined)[]
+) {
+  for (const clerkId of playerClerkIds) {
+    if (!clerkId) continue;
+    const record = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", clerkId).eq("game", gameId))
+      .first();
+    if (record) await ctx.db.delete(record._id);
+  }
+}
 
 function generateRoomCode(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -106,6 +122,11 @@ export const startTournamentGame = mutation({
         usedIndices.add(idx);
         randomLevels.push(levels[idx]);
       }
+    }
+
+    // Clean up any stale ongoingGame records from a previous game in this room
+    if (room.currentGameId) {
+      await cleanupOngoingGamesForRoom(ctx, room.currentGameId, [room.player1ClerkId, room.player2ClerkId]);
     }
 
     const gameId = await ctx.db.insert("games", {
@@ -262,6 +283,9 @@ export const advanceToNextRound = mutation({
     if (room.organizerClerkId !== identity.subject) throw new Error("Not the organizer");
 
     if (room.currentRound >= 5 && room.status === "round_summary") {
+      if (room.currentGameId) {
+        await cleanupOngoingGamesForRoom(ctx, room.currentGameId, [room.player1ClerkId, room.player2ClerkId]);
+      }
       await ctx.db.patch(args.roomId, { status: "finished" });
     } else {
       await ctx.db.patch(args.roomId, {
@@ -324,6 +348,11 @@ export const resetTournamentRoom = mutation({
       .withIndex("byRoomAndRound", (q) => q.eq("roomId", args.roomId))
       .collect();
     await Promise.all(guesses.map((g) => ctx.db.delete(g._id)));
+
+    // Clean up ongoingGame records for both players
+    if (room.currentGameId) {
+      await cleanupOngoingGamesForRoom(ctx, room.currentGameId, [room.player1ClerkId, room.player2ClerkId]);
+    }
 
     await ctx.db.patch(args.roomId, {
       status: "waiting",
@@ -423,6 +452,42 @@ export const getUsersByClerkIds = query({
       )
     );
     return results.filter(Boolean);
+  },
+});
+
+export const deleteTournamentRoom = mutation({
+  args: { roomId: v.id("tournamentRooms") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const callerUser = await ctx.db
+      .query("users")
+      .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!callerUser) throw new Error("User not found");
+
+    const roles = callerUser.roles ?? [];
+    if (!roles.includes("developer") && !roles.includes("admin")) {
+      throw new Error("Insufficient permissions");
+    }
+
+    const room = await ctx.db.get(args.roomId);
+    if (!room) throw new Error("Room not found");
+
+    // Delete all tournament guesses
+    const guesses = await ctx.db
+      .query("tournamentGuesses")
+      .withIndex("byRoomAndRound", (q) => q.eq("roomId", args.roomId))
+      .collect();
+    await Promise.all(guesses.map((g) => ctx.db.delete(g._id)));
+
+    // Clean up ongoingGame records for both players
+    if (room.currentGameId) {
+      await cleanupOngoingGamesForRoom(ctx, room.currentGameId, [room.player1ClerkId, room.player2ClerkId]);
+    }
+
+    await ctx.db.delete(args.roomId);
   },
 });
 

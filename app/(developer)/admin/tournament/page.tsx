@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useMutation, useQuery } from "convex/react";
-import { Copy, ExternalLink, Loader2, Plus } from "lucide-react";
+import { Copy, ExternalLink, Loader2, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -25,9 +26,24 @@ export default function TournamentAdminPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [createdCode, setCreatedCode] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
 
   const createRoom = useMutation(api.tournament.createTournamentRoom);
+  const deleteRoom = useMutation(api.tournament.deleteTournamentRoom);
   const myRooms = useQuery(api.tournament.getRoomsByOrganizer, clerkId ? { organizerClerkId: clerkId } : "skip");
+
+  const handleDelete = async (roomId: Id<"tournamentRooms">) => {
+    setIsDeletingId(roomId);
+    try {
+      await deleteRoom({ roomId });
+      setConfirmDeleteId(null);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsDeletingId(null);
+    }
+  };
 
   const handleCreate = async () => {
     setIsCreating(true);
@@ -107,12 +123,46 @@ export default function TournamentAdminPage() {
                   </div>
                   <span className="text-sm text-muted-foreground">{STATUS_LABELS[room.status] ?? room.status}</span>
                 </div>
-                <Link href={`/tournament/${room.roomCode}`} target="_blank">
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="h-3 w-3" />
-                    Open
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link href={`/tournament/${room.roomCode}`} target="_blank">
+                    <Button variant="outline" size="sm">
+                      <ExternalLink className="h-3 w-3" />
+                      Open
+                    </Button>
+                  </Link>
+                  {confirmDeleteId === room._id ? (
+                    <>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        disabled={isDeletingId === room._id}
+                        onClick={() => handleDelete(room._id)}
+                      >
+                        {isDeletingId === room._id ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          "Confirm"
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setConfirmDeleteId(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => setConfirmDeleteId(room._id)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
