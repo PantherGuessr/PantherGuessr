@@ -94,7 +94,7 @@ export const updateOngoingGameOrCreate = mutation({
     const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances, gameType } = args;
     const existingGame = await ctx.db
       .query("ongoingGames")
-      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId))
+      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId).eq("game", gameId))
       .first();
     if (existingGame) {
       await ctx.db.patch(existingGame._id, {

@@ -159,16 +159,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   const nextRound = async () => {
     const nextRoundNumber = currentRound + 1;
 
-    updateOngoingGameOrCreate({
-      gameId: gameData!.gameContent!._id,
-      userClerkId: clerkId ?? "",
-      currentRound: BigInt(nextRoundNumber),
-      totalTimeTaken: BigInt(0),
-      scores: allScores.map((score) => BigInt(score)),
-      distances: allDistances.map((distance) => BigInt(distance)),
-      gameType: gameData!.gameContent!.gameType,
-    });
-
     if (nextRoundNumber > levels.length) {
       setIsLoading(true);
       setIsModalVisible(true);
@@ -186,6 +176,16 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
         setLeaderboardEntryId(leaderboardEntry);
       });
     } else {
+      updateOngoingGameOrCreate({
+        gameId: gameData!.gameContent!._id,
+        userClerkId: clerkId ?? "",
+        currentRound: BigInt(nextRoundNumber),
+        totalTimeTaken: BigInt(0),
+        scores: allScores.map((score) => BigInt(score)),
+        distances: allDistances.map((distance) => BigInt(distance)),
+        gameType: gameData!.gameContent!.gameType,
+      });
+
       setCurrentRound(currentRound + 1);
       const nextLevel = levels[nextRoundNumber - 1];
       if (nextLevel) {

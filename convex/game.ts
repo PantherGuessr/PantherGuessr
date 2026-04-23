@@ -183,6 +183,18 @@ export const clearUnplayedGames = internalMutation({
 export const createNewGame = mutation({
   args: { timeAllowedPerRound: v.int64() },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity) {
+      const staleOngoingGames = await ctx.db
+        .query("ongoingGames")
+        .withIndex("byUserClerkId")
+        .filter((q) => q.eq(q.field("userClerkId"), identity.subject))
+        .collect();
+      for (const staleGame of staleOngoingGames) {
+        await ctx.db.delete(staleGame._id);
+      }
+    }
+
     const levels = await ctx.db.query("levels").collect();
     const randomLevels = [];
     const randomIndices: number[] = [];
