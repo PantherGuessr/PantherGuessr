@@ -178,7 +178,6 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
     } else {
       updateOngoingGameOrCreate({
         gameId: gameData!.gameContent!._id,
-        userClerkId: clerkId ?? "",
         currentRound: BigInt(nextRoundNumber),
         totalTimeTaken: BigInt(0),
         scores: allScores.map((score) => BigInt(score)),
