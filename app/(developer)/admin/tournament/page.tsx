@@ -138,17 +138,9 @@ export default function TournamentAdminPage() {
                         disabled={isDeletingId === room._id}
                         onClick={() => handleDelete(room._id)}
                       >
-                        {isDeletingId === room._id ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          "Confirm"
-                        )}
+                        {isDeletingId === room._id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Confirm"}
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setConfirmDeleteId(null)}
-                      >
+                      <Button variant="ghost" size="sm" onClick={() => setConfirmDeleteId(null)}>
                         Cancel
                       </Button>
                     </>
