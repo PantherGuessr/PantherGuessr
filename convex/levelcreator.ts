@@ -40,6 +40,18 @@ export const createLevelWithImageStorageId = mutation({
     tags: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const callerUser = await ctx.db
+      .query("users")
+      .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!callerUser?.roles?.includes("developer") && !callerUser?.roles?.includes("moderator")) {
+      throw new Error("Insufficient permissions");
+    }
+
     await ctx.db.insert("levels", {
       imageId: args.storageId,
       title: args.description,
@@ -100,6 +112,18 @@ export const deleteLevelById = mutation({
     levelId: v.id("levels"),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const callerUser = await ctx.db
+      .query("users")
+      .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!callerUser?.roles?.includes("developer") && !callerUser?.roles?.includes("moderator")) {
+      throw new Error("Insufficient permissions");
+    }
+
     const level = await ctx.db.get(args.levelId);
     if (level) {
       // Find all games that contain this level and delete them too

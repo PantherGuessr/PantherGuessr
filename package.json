@@ -1,6 +1,6 @@
 {
   "name": "pantherguessr",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "private": false,
   "scripts": {
     "dev": "next dev",
@@ -39,7 +39,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "convex": "^1.35.1",
+    "convex": "^1.36.0",
     "date-fns": "^4.1.0",
     "heic2any": "^0.0.4",
     "html2canvas-pro": "^1.5.8",
