@@ -603,13 +603,16 @@ export const checkGuess = mutation({
     const newDistances = [...(existingOngoingGame?.distances ?? []), BigInt(distanceAway)];
 
     if (existingOngoingGame) {
+      await ctx.scheduler.runAfter(0, internal.continuegame.deleteStaleGames, {
+        userClerkId: identity.subject,
+        matchingId: existingOngoingGame._id,
+      });
       await ctx.db.patch(existingOngoingGame._id, {
         scores: newScores,
         distances: newDistances,
       });
     } else {
-      // no ongoingGame yet
-      await ctx.db.insert("ongoingGames", {
+      const newId = await ctx.db.insert("ongoingGames", {
         game: args.gameId,
         userClerkId: identity.subject,
         currentRound: BigInt(roundIndex + 2),
@@ -617,6 +620,10 @@ export const checkGuess = mutation({
         scores: newScores,
         distances: newDistances,
         gameType: game.gameType,
+      });
+      await ctx.scheduler.runAfter(0, internal.continuegame.deleteStaleGames, {
+        userClerkId: identity.subject,
+        matchingId: newId,
       });
     }
 

@@ -1,6 +1,28 @@
 import { v } from "convex/values";
 
-import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { internalMutation, mutation, query } from "./_generated/server";
+
+/**
+ * Deletes all ongoing games for a user except the one with the matching ID.
+ */
+export const deleteStaleGames = internalMutation({
+  args: {
+    userClerkId: v.string(),
+    matchingId: v.optional(v.id("ongoingGames")),
+  },
+  handler: async (ctx, args) => {
+    const staleGames = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byUserClerkId", (q) => q.eq("userClerkId", args.userClerkId))
+      .collect();
+    for (const stale of staleGames) {
+      if (stale._id !== args.matchingId) {
+        await ctx.db.delete(stale._id);
+      }
+    }
+  },
+});
 
 /**
  * Creates a new save game entry in the ongoingGames table.
@@ -101,6 +123,10 @@ export const updateOngoingGameOrCreate = mutation({
       .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId).eq("game", gameId))
       .first();
     if (existingGame) {
+      await ctx.scheduler.runAfter(0, internal.continuegame.deleteStaleGames, {
+        userClerkId,
+        matchingId: existingGame._id,
+      });
       await ctx.db.patch(existingGame._id, {
         game: gameId,
         userClerkId,
@@ -112,7 +138,7 @@ export const updateOngoingGameOrCreate = mutation({
         gameType,
       });
     } else {
-      await ctx.db.insert("ongoingGames", {
+      const newId = await ctx.db.insert("ongoingGames", {
         game: gameId,
         userClerkId,
         currentRound,
@@ -121,6 +147,10 @@ export const updateOngoingGameOrCreate = mutation({
         scores,
         distances,
         gameType,
+      });
+      await ctx.scheduler.runAfter(0, internal.continuegame.deleteStaleGames, {
+        userClerkId,
+        matchingId: newId,
       });
     }
   },
