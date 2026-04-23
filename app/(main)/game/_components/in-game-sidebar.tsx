@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useGame } from "../_context/GameContext";
+import ReportButton from "./report-button";
 
 import "./sidebar-cursor.css";
 
@@ -51,6 +52,7 @@ const InGameSidebar = () => {
     distanceFromTarget,
     isLoading,
     gameType,
+    currentLevelId,
   } = useGame()!;
 
   const imageLoaded = !!currentImageSrcUrl && loadedImageUrl === currentImageSrcUrl;
@@ -377,19 +379,22 @@ const InGameSidebar = () => {
               )}
             </div>
           )}
-          {isSubmittingGuess ? (
-            <Button disabled={true} className="w-full">
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
-            </Button>
-          ) : correctLocation ? (
-            <Button disabled={false} onClick={handleNextRound} className="w-full">
-              {currentRound >= levels.length ? "FINISH GAME" : "NEXT ROUND"}
-            </Button>
-          ) : (
-            <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={handleSubmittingGuess}>
-              SUBMIT
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {correctLocation && currentLevelId && <ReportButton levelId={currentLevelId} />}
+            {isSubmittingGuess ? (
+              <Button disabled={true} className="w-full">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> SUBMITTING
+              </Button>
+            ) : correctLocation ? (
+              <Button disabled={false} onClick={handleNextRound} className="w-full">
+                {currentRound >= levels.length ? "FINISH GAME" : "NEXT ROUND"}
+              </Button>
+            ) : (
+              <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={handleSubmittingGuess}>
+                SUBMIT
+              </Button>
+            )}
+          </div>
         </div>
         {!isMobile && (
           <div
