@@ -142,7 +142,10 @@ export default function SpectatorMap({ room, p1Guess, p2Guess }: Props) {
       {/* Correct location pin — shown once as soon as any player's result is available,
           regardless of whether individual guess pins are valid (e.g. auto-submitted at 0,0) */}
       {correctPos && (
-        <Marker position={correctPos} icon={CORRECT_ICON} zIndexOffset={1000} />
+        <>
+          <Marker position={correctPos} icon={CORRECT_ICON} zIndexOffset={1000} />
+          <CircleMarker center={correctPos} pathOptions={{ color: "#a50034" }} radius={3} />
+        </>
       )}
 
       {/* Polylines only drawn when the player's guess pin itself is valid */}
