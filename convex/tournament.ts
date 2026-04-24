@@ -317,7 +317,7 @@ export const showRoundSummary = mutation({
     if (!room) throw new Error("Room not found");
     if (room.organizerClerkId !== identity.subject) throw new Error("Not the organizer");
 
-    await ctx.db.patch(args.roomId, { status: "round_summary" });
+    await ctx.db.patch(args.roomId, { status: "round_summary", firstGuessAt: undefined });
   },
 });
 
@@ -371,6 +371,7 @@ export const resetTournamentRoom = mutation({
       player1TotalScore: 0,
       player2TotalScore: 0,
       countdownStartedAt: undefined,
+      firstGuessAt: undefined,
     });
   },
 });
@@ -420,6 +421,21 @@ export const createNewLobbyFromExisting = mutation({
     });
 
     return { roomId: newRoomId, roomCode };
+  },
+});
+
+export const setGuessCountdown = mutation({
+  args: { roomId: v.id("tournamentRooms"), seconds: v.number() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const room = await ctx.db.get(args.roomId);
+    if (!room) throw new Error("Room not found");
+    if (room.organizerClerkId !== identity.subject) throw new Error("Not the organizer");
+
+    const clamped = Math.min(60, Math.max(5, Math.round(args.seconds)));
+    await ctx.db.patch(args.roomId, { guessCountdownSeconds: clamped });
   },
 });
 

@@ -8,23 +8,33 @@ import { Id } from "@/convex/_generated/dataModel";
 
 export function RoundTracker({
   roomId,
-  localRound,
   onRoundAdvance,
 }: {
   roomId: Id<"tournamentRooms">;
-  localRound: number;
   onRoundAdvance: () => void;
 }) {
   const room = useQuery(api.tournament.getTournamentRoomById, { roomId });
-  const prevRound = useRef(localRound);
+
+  // null = not yet initialized from server (skip advance on first load)
+  const prevRoundRef = useRef<number | null>(null);
+  // Always point at the latest callback without re-scheduling the effect
+  const onRoundAdvanceRef = useRef(onRoundAdvance);
+  onRoundAdvanceRef.current = onRoundAdvance;
 
   useEffect(() => {
     if (!room) return;
-    if (room.currentRound > prevRound.current) {
-      prevRound.current = room.currentRound;
-      onRoundAdvance();
+
+    if (prevRoundRef.current === null) {
+      // Seed from server on first load so a refresh never triggers a spurious advance
+      prevRoundRef.current = room.currentRound;
+      return;
     }
-  }, [room?.currentRound, onRoundAdvance, room]);
+
+    if (room.currentRound > prevRoundRef.current) {
+      prevRoundRef.current = room.currentRound;
+      onRoundAdvanceRef.current();
+    }
+  }, [room?.currentRound]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return null;
 }

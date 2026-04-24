@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { cn } from "@/lib/utils";
+import { GuessCountdown } from "./_components/guess-countdown";
 import { PlayerGameOver } from "./_components/player-game-over";
 import { RoundSummaryOverlay } from "./_components/round-summary-overlay";
 import { RoundTracker } from "./_components/round-tracker";
@@ -43,13 +44,11 @@ export default function TournamentPlayPage({ params }: Props) {
   }));
 
   const [gameKey, setGameKey] = useState(0);
-  const [localRound, setLocalRound] = useState(1);
 
   const clerkId = currentUser?.user.clerkId ?? "";
   const showSummaryOverlay = room?.status === "round_summary";
 
   const handleRoundAdvance = () => {
-    setLocalRound((r) => r + 1);
     setGameKey((k) => k + 1);
   };
 
@@ -109,17 +108,18 @@ export default function TournamentPlayPage({ params }: Props) {
       {/* key forces fresh mount on each new countdown so useState initializer always runs */}
       <CountdownOverlay key={room.countdownStartedAt} countdownStartedAt={room.countdownStartedAt} />
       <GameProvider key={gameKey} gameId={room.currentGameId} startingRound={room.currentRound}>
-        <RoundTracker roomId={room._id} localRound={localRound} onRoundAdvance={handleRoundAdvance} />
-        <div className="relative">
+        <RoundTracker roomId={room._id} onRoundAdvance={handleRoundAdvance} />
+        <div className="relative flex h-screen flex-col">
           <RoundSummaryOverlay visible={showSummaryOverlay} />
           <div
             className={cn(
-              "animate-body-opacity-scale-in flex h-screen w-full overflow-y-auto",
+              "animate-body-opacity-scale-in flex flex-1 overflow-hidden",
               isMobile ? "flex-col" : "flex-row"
             )}
           >
             <InGameSidebar />
-            <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pl-0 pr-4")}>
+            <div className={cn("relative flex grow rounded-sm", isMobile ? "p-3" : "py-4 pl-0 pr-4")}>
+              <GuessCountdown />
               <DynamicInteractableMap />
             </div>
           </div>

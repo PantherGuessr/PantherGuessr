@@ -62,6 +62,7 @@ export default function SpectatorPage({ params }: Props) {
   const startGame = useMutation(api.tournament.startTournamentGame);
   const resetRoom = useMutation(api.tournament.resetTournamentRoom);
   const createNewLobby = useMutation(api.tournament.createNewLobbyFromExisting);
+  const setGuessCountdown = useMutation(api.tournament.setGuessCountdown);
 
   const isOrganizer = currentUser?.user.clerkId === room?.organizerClerkId;
 
@@ -122,6 +123,11 @@ export default function SpectatorPage({ params }: Props) {
         users={users}
         isOrganizer={isOrganizer}
         onStartGame={() => startGame({ roomId: room._id })}
+        onUpdateCountdown={
+          isOrganizer
+            ? (seconds) => setGuessCountdown({ roomId: room._id, seconds })
+            : undefined
+        }
       />
     );
   }

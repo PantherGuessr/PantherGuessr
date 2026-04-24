@@ -69,16 +69,24 @@ type Props = {
   p2Guess: GuessDoc | null;
 };
 
+function isValidGuessCoord(lat: number, lng: number) {
+  return !(lat === 0 && lng === 0);
+}
+
 export default function SpectatorMap({ room, p1Guess, p2Guess }: Props) {
   const activePositions: LatLng[] = [];
 
   const p1Pos =
-    p1Guess?.currentLat !== undefined && p1Guess.currentLng !== undefined
+    p1Guess?.currentLat !== undefined &&
+    p1Guess.currentLng !== undefined &&
+    isValidGuessCoord(p1Guess.currentLat, p1Guess.currentLng)
       ? new LatLng(p1Guess.currentLat, p1Guess.currentLng)
       : null;
 
   const p2Pos =
-    p2Guess?.currentLat !== undefined && p2Guess.currentLng !== undefined
+    p2Guess?.currentLat !== undefined &&
+    p2Guess.currentLng !== undefined &&
+    isValidGuessCoord(p2Guess.currentLat, p2Guess.currentLng)
       ? new LatLng(p2Guess.currentLat, p2Guess.currentLng)
       : null;
 
@@ -92,11 +100,13 @@ export default function SpectatorMap({ room, p1Guess, p2Guess }: Props) {
       ? new LatLng(p2Guess.correctLat, p2Guess.correctLng)
       : null;
 
+  // Both players always guess the same location, so one correct pin covers both
+  const correctPos = p1Correct ?? p2Correct;
+
   if (p1Pos) activePositions.push(p1Pos);
   if (p2Pos) activePositions.push(p2Pos);
-  if (room.status === "round_summary") {
-    if (p1Correct) activePositions.push(p1Correct);
-    if (p2Correct) activePositions.push(p2Correct);
+  if (room.status === "round_summary" && correctPos) {
+    activePositions.push(correctPos);
   }
 
   return (
@@ -129,18 +139,19 @@ export default function SpectatorMap({ room, p1Guess, p2Guess }: Props) {
         </>
       )}
 
+      {/* Correct location pin — shown once as soon as any player's result is available,
+          regardless of whether individual guess pins are valid (e.g. auto-submitted at 0,0) */}
+      {correctPos && (
+        <Marker position={correctPos} icon={CORRECT_ICON} zIndexOffset={1000} />
+      )}
+
+      {/* Polylines only drawn when the player's guess pin itself is valid */}
       {p1Guess?.hasSubmitted && p1Pos && p1Correct && (
-        <>
-          <Marker position={p1Correct} icon={CORRECT_ICON} zIndexOffset={1000} />
-          <Polyline positions={[p1Pos, p1Correct]} color="#3b82f6" />
-        </>
+        <Polyline positions={[p1Pos, p1Correct]} color="#3b82f6" />
       )}
 
       {p2Guess?.hasSubmitted && p2Pos && p2Correct && (
-        <>
-          {!p1Guess?.hasSubmitted && <Marker position={p2Correct} icon={CORRECT_ICON} zIndexOffset={1000} />}
-          <Polyline positions={[p2Pos, p2Correct]} color="#f97316" />
-        </>
+        <Polyline positions={[p2Pos, p2Correct]} color="#f97316" />
       )}
     </MapContainer>
   );
