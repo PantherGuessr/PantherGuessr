@@ -146,6 +146,7 @@ export const startTournamentGame = mutation({
       player1TotalScore: 0,
       player2TotalScore: 0,
       countdownStartedAt: Date.now(),
+      firstGuessAt: undefined,
     });
 
     return gameId;
@@ -267,15 +268,14 @@ export const submitTournamentGuess = mutation({
     }
 
     const isPlayer1 = room.player1ClerkId === clerkId;
-    if (isPlayer1) {
-      await ctx.db.patch(args.roomId, {
-        player1TotalScore: room.player1TotalScore + score,
-      });
-    } else {
-      await ctx.db.patch(args.roomId, {
-        player2TotalScore: room.player2TotalScore + score,
-      });
-    }
+    const scoreUpdate = isPlayer1
+      ? { player1TotalScore: room.player1TotalScore + score }
+      : { player2TotalScore: room.player2TotalScore + score };
+
+    await ctx.db.patch(args.roomId, {
+      ...scoreUpdate,
+      firstGuessAt: room.firstGuessAt ?? Date.now(),
+    });
 
     return { score, distanceFeet: distanceAway, correctLat, correctLng };
   },
@@ -301,6 +301,7 @@ export const advanceToNextRound = mutation({
         currentRound: room.currentRound + 1,
         status: "round_active",
         countdownStartedAt: Date.now(),
+        firstGuessAt: undefined,
       });
     }
   },
