@@ -11,13 +11,13 @@ import { Doc } from "@/convex/_generated/dataModel";
 
 // Update these iconUrl values to use different SVGs once custom pins are provided
 const PLAYER_1_ICON = new L.Icon({
-  iconUrl: "/PantherGuessrPin.svg",
+  iconUrl: "/tournament/Player1Pin.svg",
   iconSize: [48, 48],
   iconAnchor: [24, 48],
 });
 
 const PLAYER_2_ICON = new L.Icon({
-  iconUrl: "/PantherGuessrPin.svg",
+  iconUrl: "/tournament/Player2Pin.svg",
   iconSize: [48, 48],
   iconAnchor: [24, 48],
 });
