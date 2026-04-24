@@ -411,6 +411,10 @@ const InGameSidebar = () => {
                   {currentRound >= levels.length ? "FINISH GAME" : "NEXT ROUND"}
                 </Button>
               )
+            ) : tournament?.hasSubmittedThisRound ? (
+              <div className="w-full rounded-md bg-secondary p-3 text-center text-sm text-secondary-foreground">
+                Waiting for organizer...
+              </div>
             ) : (
               <Button disabled={!markerHasBeenPlaced} className="w-full" onClick={handleSubmittingGuess}>
                 SUBMIT

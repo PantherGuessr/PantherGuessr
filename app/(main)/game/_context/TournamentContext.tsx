@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 export type TournamentContextValue = {
   roomId: Id<"tournamentRooms">;
@@ -15,6 +16,7 @@ export type TournamentContextValue = {
   onMarkerPlace: (lat: number, lng: number) => void;
   onGuessSubmit: (lat: number, lng: number) => Promise<void>;
   suppressRoundAdvance: true;
+  hasSubmittedThisRound: boolean;
 };
 
 const TournamentContext = createContext<TournamentContextValue | null>(null);
@@ -29,11 +31,21 @@ export const TournamentProvider = ({
   roomCode: string;
 }) => {
   const room = useQuery(api.tournament.getTournamentRoomById, { roomId });
+  const { data: currentUser } = useCurrentUser();
+
+  const currentRound = room?.currentRound ?? 1;
+
+  const guesses = useQuery(
+    api.tournament.getTournamentGuessesForRound,
+    room ? { roomId, round: currentRound } : "skip"
+  );
+
+  const clerkId = currentUser?.user.clerkId;
+  const myGuess = guesses?.find((g) => g.playerClerkId === clerkId);
+  const hasSubmittedThisRound = !!myGuess?.hasSubmitted;
 
   const updateLiveMarker = useMutation(api.tournament.updateLiveMarker);
   const submitTournamentGuess = useMutation(api.tournament.submitTournamentGuess);
-
-  const currentRound = room?.currentRound ?? 1;
 
   const onMarkerPlace = (lat: number, lng: number) => {
     updateLiveMarker({ roomId, round: currentRound, lat, lng }).catch(console.error);
@@ -54,6 +66,7 @@ export const TournamentProvider = ({
         onMarkerPlace,
         onGuessSubmit,
         suppressRoundAdvance: true,
+        hasSubmittedThisRound,
       }}
     >
       {children}
