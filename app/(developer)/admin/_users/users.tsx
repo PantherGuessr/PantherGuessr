@@ -10,10 +10,10 @@ const Users = () => {
     <div className="space-y-6 text-start">
       <Card className="m-0 p-0 md:m-2 md:p-2 [&_td]:px-2 [&_td]:py-2 md:[&_td]:px-4 md:[&_td]:py-4 [&_th]:px-2 md:[&_th]:px-4">
         <CardHeader className="px-3 md:px-6">
-          <CardTitle>All Users</CardTitle>
+          <CardTitle>User Reports</CardTitle>
         </CardHeader>
         <CardContent className="px-2 md:px-6">
-          <UserList />
+          <UserReports />
         </CardContent>
       </Card>
 
@@ -28,10 +28,10 @@ const Users = () => {
 
       <Card className="m-0 p-0 md:m-2 md:p-2 [&_td]:px-2 [&_td]:py-2 md:[&_td]:px-4 md:[&_td]:py-4 [&_th]:px-2 md:[&_th]:px-4">
         <CardHeader className="px-3 md:px-6">
-          <CardTitle>User Reports</CardTitle>
+          <CardTitle>All Users</CardTitle>
         </CardHeader>
         <CardContent className="px-2 md:px-6">
-          <UserReports />
+          <UserList />
         </CardContent>
       </Card>
     </div>

@@ -1,39 +1,27 @@
 import { v } from "convex/values";
 
-import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { internalMutation, mutation, query } from "./_generated/server";
 
 /**
- * Creates a new save game entry in the ongoingGames table.
- * This allows users to continue their game progress later.
- *
- * @param gameId - ID of the game being saved
- * @param userClerkId - Clerk ID of the user saving the game
- * @param currentRound - The current round number (1-5) the user is on
- * @param timeLeftInRound - Optional time remaining in current round in seconds
- * @param totalTimeTaken - Total time taken across all rounds in seconds
- * @param isWeekly - Boolean indicating if the game is a weekly challenge
- *
- * @returns ID of the newly created save game entry
+ * Deletes all ongoing games for a user except the one with the matching ID.
  */
-export const createNewSaveGame = mutation({
+export const deleteStaleGames = internalMutation({
   args: {
-    gameId: v.id("games"),
     userClerkId: v.string(),
-    currentRound: v.int64(),
-    timeLeftInRound: v.optional(v.int64()),
-    totalTimeTaken: v.int64(),
     gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
+    matchingId: v.id("ongoingGames"),
   },
   handler: async (ctx, args) => {
-    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, gameType } = args;
-    await ctx.db.insert("ongoingGames", {
-      game: gameId,
-      userClerkId,
-      currentRound,
-      timeLeftInRound,
-      totalTimeTaken,
-      gameType,
-    });
+    const staleGames = await ctx.db
+      .query("ongoingGames")
+      .withIndex("byUserClerkId", (q) => q.eq("userClerkId", args.userClerkId))
+      .collect();
+    for (const stale of staleGames) {
+      if (stale.gameType === args.gameType && stale._id !== args.matchingId) {
+        await ctx.db.delete(stale._id);
+      }
+    }
   },
 });
 
@@ -82,7 +70,6 @@ export const updateOngoingGame = mutation({
 export const updateOngoingGameOrCreate = mutation({
   args: {
     gameId: v.id("games"),
-    userClerkId: v.string(),
     currentRound: v.int64(),
     timeLeftInRound: v.optional(v.int64()),
     totalTimeTaken: v.int64(),
@@ -91,12 +78,22 @@ export const updateOngoingGameOrCreate = mutation({
     gameType: v.union(v.literal("weekly"), v.literal("singleplayer"), v.literal("multiplayer")),
   },
   handler: async (ctx, args) => {
-    const { gameId, userClerkId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances, gameType } = args;
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const { gameId, currentRound, timeLeftInRound, totalTimeTaken, scores, distances, gameType } = args;
+    const userClerkId = identity.subject;
+
     const existingGame = await ctx.db
       .query("ongoingGames")
-      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId))
+      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", userClerkId).eq("game", gameId))
       .first();
     if (existingGame) {
+      await ctx.scheduler.runAfter(0, internal.continuegame.deleteStaleGames, {
+        userClerkId,
+        gameType,
+        matchingId: existingGame._id,
+      });
       await ctx.db.patch(existingGame._id, {
         game: gameId,
         userClerkId,
@@ -108,7 +105,7 @@ export const updateOngoingGameOrCreate = mutation({
         gameType,
       });
     } else {
-      await ctx.db.insert("ongoingGames", {
+      const newId = await ctx.db.insert("ongoingGames", {
         game: gameId,
         userClerkId,
         currentRound,
@@ -117,6 +114,11 @@ export const updateOngoingGameOrCreate = mutation({
         scores,
         distances,
         gameType,
+      });
+      await ctx.scheduler.runAfter(0, internal.continuegame.deleteStaleGames, {
+        userClerkId,
+        gameType,
+        matchingId: newId,
       });
     }
   },
@@ -191,25 +193,3 @@ export const getOngoingGameById = query({
   },
 });
 
-/**
- * Deletes all ongoing games for a user.
- * Used when a user starts a new game to delete any old ongoing games.
- *
- * @param userClerkId - The Clerk ID of the user to delete ongoing games for
- */
-export const deleteOldOngoingGames = mutation({
-  args: {
-    userClerkId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const { userClerkId } = args;
-    const ongoingGames = await ctx.db
-      .query("ongoingGames")
-      .withIndex("byUserClerkId")
-      .filter((q) => q.eq(q.field("userClerkId"), userClerkId))
-      .collect();
-    for (const game of ongoingGames) {
-      await ctx.db.delete(game._id);
-    }
-  },
-});

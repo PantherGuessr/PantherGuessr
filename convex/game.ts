@@ -183,6 +183,19 @@ export const clearUnplayedGames = internalMutation({
 export const createNewGame = mutation({
   args: { timeAllowedPerRound: v.int64() },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity) {
+      const staleOngoingGames = await ctx.db
+        .query("ongoingGames")
+        .withIndex("byUserClerkId", (q) => q.eq("userClerkId", identity.subject))
+        .collect();
+      for (const staleGame of staleOngoingGames) {
+        if (staleGame.gameType === "singleplayer") {
+          await ctx.db.delete(staleGame._id);
+        }
+      }
+    }
+
     const levels = await ctx.db.query("levels").collect();
     const randomLevels = [];
     const randomIndices: number[] = [];
@@ -592,13 +605,17 @@ export const checkGuess = mutation({
     const newDistances = [...(existingOngoingGame?.distances ?? []), BigInt(distanceAway)];
 
     if (existingOngoingGame) {
+      await ctx.scheduler.runAfter(0, internal.continuegame.deleteStaleGames, {
+        userClerkId: identity.subject,
+        gameType: game.gameType,
+        matchingId: existingOngoingGame._id,
+      });
       await ctx.db.patch(existingOngoingGame._id, {
         scores: newScores,
         distances: newDistances,
       });
     } else {
-      // no ongoingGame yet
-      await ctx.db.insert("ongoingGames", {
+      const newId = await ctx.db.insert("ongoingGames", {
         game: args.gameId,
         userClerkId: identity.subject,
         currentRound: BigInt(roundIndex + 2),
@@ -606,6 +623,11 @@ export const checkGuess = mutation({
         scores: newScores,
         distances: newDistances,
         gameType: game.gameType,
+      });
+      await ctx.scheduler.runAfter(0, internal.continuegame.deleteStaleGames, {
+        userClerkId: identity.subject,
+        gameType: game.gameType,
+        matchingId: newId,
       });
     }
 
