@@ -107,10 +107,10 @@ export function GuessCountdown() {
         className="absolute inset-y-0 left-0 transition-[width] duration-200 bg-destructive rounded-t-sm"
         style={{ width: `${fraction * 100}%` }}
       />
-      <div className="relative flex h-full items-center justify-center gap-1.5 text-xs font-medium text-card-foreground">
+      <div className="relative flex h-full items-center justify-center gap-1.5 text-sm font-medium text-card-foreground">
         <Timer className="h-3.5 w-3.5 shrink-0" />
         <span className={cn(isUrgent && "font-semibold")}>
-          Opponent has submitted — {timeLeft}s to lock in your guess
+          Opponent has submitted! {timeLeft}s to lock in your guess
         </span>
       </div>
     </div>

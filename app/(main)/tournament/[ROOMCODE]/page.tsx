@@ -17,6 +17,7 @@ import { SpectatorGameOver } from "./_components/game-over-screen";
 import { OrganizerControls } from "./_components/organizer-controls";
 import { ScoreBars } from "./_components/score-bars";
 import { SpectatorHeader } from "./_components/spectator-header";
+import { SpectatorGuessCountdown } from "./_components/spectator-guess-countdown";
 import { SpectatorWaitingLobby } from "./_components/waiting-lobby";
 
 const SpectatorMap = dynamic(() => import("./_components/spectator-map"), {
@@ -157,6 +158,12 @@ export default function SpectatorPage({ params }: Props) {
         p2Submitted={!!p2Guess?.hasSubmitted}
       />
       <SpectatorHeader room={room} users={users} p1Status={playerStatus(p1Guess)} p2Status={playerStatus(p2Guess)} />
+      <SpectatorGuessCountdown
+        firstGuessAt={room.firstGuessAt}
+        guessCountdownSeconds={room.guessCountdownSeconds ?? 15}
+        bothSubmitted={bothSubmitted}
+        guessesLoaded={guesses !== undefined}
+      />
       <div className="flex flex-1 overflow-hidden">
         <div className="relative flex-1">
           <SpectatorMap room={room} p1Guess={p1Guess ?? null} p2Guess={p2Guess ?? null} />
