@@ -138,7 +138,6 @@ export function RemainingTable({ users, type, description, currentUser, userRank
           })}
         </TableBody>
       </Table>
-
     </div>
   );
 }
