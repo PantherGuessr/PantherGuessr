@@ -13,7 +13,7 @@ import { useTournament } from "../_context/TournamentContext";
 import "./interactable-map.css";
 
 const InteractableMap = () => {
-    const { markerHasBeenPlaced, setMarkerHasBeenPlaced, isSubmittingGuess, setMarkerPosition, correctLocation } =
+  const { markerHasBeenPlaced, setMarkerHasBeenPlaced, isSubmittingGuess, setMarkerPosition, correctLocation } =
     useGame()!;
   const tournament = useTournament();
   const [localMarkerPosition, setLocalMarkerPosition] = useState<LatLng | null>(null);

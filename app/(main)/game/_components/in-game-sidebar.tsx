@@ -1,9 +1,9 @@
 "use client";
 
-import { Calendar, Hash, Loader2, LogOut, Medal, User } from "lucide-react";
+import { ElementRef, useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ElementRef, useCallback, useEffect, useRef, useState } from "react";
+import { Calendar, Hash, Loader2, LogOut, Medal, User } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 
 import {

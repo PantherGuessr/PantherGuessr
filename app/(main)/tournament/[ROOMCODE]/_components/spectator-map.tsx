@@ -149,13 +149,9 @@ export default function SpectatorMap({ room, p1Guess, p2Guess }: Props) {
       )}
 
       {/* Polylines only drawn when the player's guess pin itself is valid */}
-      {p1Guess?.hasSubmitted && p1Pos && p1Correct && (
-        <Polyline positions={[p1Pos, p1Correct]} color="#3b82f6" />
-      )}
+      {p1Guess?.hasSubmitted && p1Pos && p1Correct && <Polyline positions={[p1Pos, p1Correct]} color="#3b82f6" />}
 
-      {p2Guess?.hasSubmitted && p2Pos && p2Correct && (
-        <Polyline positions={[p2Pos, p2Correct]} color="#f97316" />
-      )}
+      {p2Guess?.hasSubmitted && p2Pos && p2Correct && <Polyline positions={[p2Pos, p2Correct]} color="#f97316" />}
     </MapContainer>
   );
 }

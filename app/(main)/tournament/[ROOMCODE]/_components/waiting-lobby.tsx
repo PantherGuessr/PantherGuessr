@@ -53,9 +53,7 @@ export function SpectatorWaitingLobby({
       <div className="text-center">
         <p className="text-sm text-muted-foreground">Room Code</p>
         <div className="flex items-center justify-center gap-2">
-          <p className="text-5xl font-bold tracking-widest">
-            {codeVisible ? room.roomCode : "••••••"}
-          </p>
+          <p className="text-5xl font-bold tracking-widest">{codeVisible ? room.roomCode : "••••••"}</p>
           <Button
             variant="ghost"
             size="icon"
@@ -75,8 +73,7 @@ export function SpectatorWaitingLobby({
       {isOrganizer && onUpdateCountdown && (
         <div className="flex flex-col items-center gap-2">
           <p className="text-sm text-muted-foreground">
-            Auto-submit countdown:{" "}
-            <span className="font-semibold text-foreground">{localSeconds}s</span>
+            Auto-submit countdown: <span className="font-semibold text-foreground">{localSeconds}s</span>
           </p>
           <input
             type="range"

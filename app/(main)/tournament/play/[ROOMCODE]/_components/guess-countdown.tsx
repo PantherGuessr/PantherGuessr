@@ -15,10 +15,7 @@ export function GuessCountdown() {
   const game = useGame();
   const { data: currentUser } = useCurrentUser();
 
-  const room = useQuery(
-    api.tournament.getTournamentRoomById,
-    tournament ? { roomId: tournament.roomId } : "skip"
-  );
+  const room = useQuery(api.tournament.getTournamentRoomById, tournament ? { roomId: tournament.roomId } : "skip");
 
   const guesses = useQuery(
     api.tournament.getTournamentGuessesForRound,
@@ -32,40 +29,44 @@ export function GuessCountdown() {
   const firstGuessAt = room?.firstGuessAt;
   const guessCountdownSeconds = room?.guessCountdownSeconds ?? 15;
 
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  // Stores the last-sampled timestamp so timeLeft can be computed without
+  // calling Date.now() during render (which the linter flags as impure).
+  const [now, setNow] = useState<number | null>(null);
 
-  // Keep fresh values accessible inside the timeout callback without re-scheduling it
+  // Refs for the auto-submit callback. Updated in an effect (not during render)
+  // so the timeout always reads the freshest values without needing to reschedule.
   const markerPositionRef = useRef(game?.markerPosition ?? null);
-  markerPositionRef.current = game?.markerPosition ?? null;
   const submitGuessRef = useRef(game?.submitGuess);
-  submitGuessRef.current = game?.submitGuess;
   const tournamentRef = useRef(tournament);
-  tournamentRef.current = tournament;
   const hasSubmittedRef = useRef(hasSubmitted);
-  hasSubmittedRef.current = hasSubmitted;
   const hasAutoSubmittedRef = useRef(false);
 
-  // reset auto-submit when new countdown starts
+  // No dep array — runs after every render so refs are always current.
+  useEffect(() => {
+    markerPositionRef.current = game?.markerPosition ?? null;
+    submitGuessRef.current = game?.submitGuess;
+    tournamentRef.current = tournament;
+    hasSubmittedRef.current = hasSubmitted;
+  });
+
+  // Reset the auto-submit guard whenever a new countdown starts
   useEffect(() => {
     hasAutoSubmittedRef.current = false;
   }, [firstGuessAt]);
 
-  // visible countdown display lgoic
+  // Drive the visible countdown ticks — setNow is called via tick(), not directly
   useEffect(() => {
-    if (!firstGuessAt || hasSubmitted) {
-      setTimeLeft(null);
-      return;
-    }
-
-    const deadline = firstGuessAt + guessCountdownSeconds * 1000;
-
-    const tick = () => setTimeLeft(Math.max(0, Math.ceil((deadline - Date.now()) / 1000)));
+    if (!firstGuessAt || hasSubmitted) return;
+    const tick = () => setNow(Date.now());
     tick();
     const interval = setInterval(tick, 200);
-    return () => clearInterval(interval);
-  }, [firstGuessAt, hasSubmitted, guessCountdownSeconds]);
+    return () => {
+      clearInterval(interval);
+      setNow(null);
+    };
+  }, [firstGuessAt, hasSubmitted]);
 
-  // schedule to fire auto-submit when the countdown expires if the player hasn't submitted by then
+  // Schedule the auto-submit to fire at the deadline
   useEffect(() => {
     if (!firstGuessAt) return;
 
@@ -73,7 +74,6 @@ export function GuessCountdown() {
     const remaining = deadline - Date.now();
 
     const doAutoSubmit = () => {
-      // Server-side submitTournamentGuess is idempotent, safe to call even if the player already submitted manually just before the timer fired.
       if (hasAutoSubmittedRef.current || hasSubmittedRef.current) return;
       hasAutoSubmittedRef.current = true;
 
@@ -93,7 +93,10 @@ export function GuessCountdown() {
     return () => clearTimeout(timer);
   }, [firstGuessAt, guessCountdownSeconds]);
 
-  // hide when countdown not started / player already submitted / result already showing
+  // Derive timeLeft from the stored timestamp — no Date.now() in render
+  const deadline = firstGuessAt ? firstGuessAt + guessCountdownSeconds * 1000 : null;
+  const timeLeft = now !== null && deadline !== null ? Math.max(0, Math.ceil((deadline - now) / 1000)) : null;
+
   if (!firstGuessAt || hasSubmitted || game?.correctLocation || timeLeft === null) {
     return null;
   }
@@ -102,9 +105,9 @@ export function GuessCountdown() {
   const isUrgent = timeLeft <= 5;
 
   return (
-    <div className="absolute inset-x-0 top-0 z-10 h-8 overflow-hidden border-b bg-background mr-4 mt-4">
+    <div className="absolute inset-x-0 top-0 z-10 mr-4 mt-4 h-8 overflow-hidden border-b bg-background">
       <div
-        className="absolute inset-y-0 left-0 transition-[width] duration-200 bg-destructive rounded-t-sm"
+        className="absolute inset-y-0 left-0 rounded-t-sm bg-destructive transition-[width] duration-200"
         style={{ width: `${fraction * 100}%` }}
       />
       <div className="relative flex h-full items-center justify-center gap-1.5 text-sm font-medium text-card-foreground">

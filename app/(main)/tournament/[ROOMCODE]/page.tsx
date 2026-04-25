@@ -16,8 +16,8 @@ import { SpectatorSounds } from "../_components/spectator-sounds";
 import { SpectatorGameOver } from "./_components/game-over-screen";
 import { OrganizerControls } from "./_components/organizer-controls";
 import { ScoreBars } from "./_components/score-bars";
-import { SpectatorHeader } from "./_components/spectator-header";
 import { SpectatorGuessCountdown } from "./_components/spectator-guess-countdown";
+import { SpectatorHeader } from "./_components/spectator-header";
 import { SpectatorWaitingLobby } from "./_components/waiting-lobby";
 
 const SpectatorMap = dynamic(() => import("./_components/spectator-map"), {
@@ -124,11 +124,7 @@ export default function SpectatorPage({ params }: Props) {
         users={users}
         isOrganizer={isOrganizer}
         onStartGame={() => startGame({ roomId: room._id })}
-        onUpdateCountdown={
-          isOrganizer
-            ? (seconds) => setGuessCountdown({ roomId: room._id, seconds })
-            : undefined
-        }
+        onUpdateCountdown={isOrganizer ? (seconds) => setGuessCountdown({ roomId: room._id, seconds }) : undefined}
       />
     );
   }

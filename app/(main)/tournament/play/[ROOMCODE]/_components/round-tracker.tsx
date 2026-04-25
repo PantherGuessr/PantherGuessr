@@ -19,7 +19,10 @@ export function RoundTracker({
   const prevRoundRef = useRef<number | null>(null);
   // Always point at the latest callback without re-scheduling the effect
   const onRoundAdvanceRef = useRef(onRoundAdvance);
-  onRoundAdvanceRef.current = onRoundAdvance;
+
+  useEffect(() => {
+    onRoundAdvanceRef.current = onRoundAdvance;
+  }, [onRoundAdvance]);
 
   useEffect(() => {
     if (!room) return;
