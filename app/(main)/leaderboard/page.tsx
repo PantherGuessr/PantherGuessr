@@ -18,17 +18,17 @@ const LEADERBOARD_TYPES: {
   {
     key: "streak",
     label: "Longest Streak",
-    description: "Users with the longest current daily streaks",
+    description: "The top 25 players with the longest current daily streaks",
   },
   {
     key: "level",
     label: "Level & XP",
-    description: "Users with the highest levels and experience points",
+    description: "The top 25 players with the highest levels and experience points",
   },
   {
     key: "totalPoints",
     label: "Total Points",
-    description: "Users with the most total points earned across all games",
+    description: "The top 25 players with the most total points earned across all games",
   },
 ];
 
