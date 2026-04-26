@@ -280,13 +280,7 @@ export const submitTournamentGuess = mutation({
       });
     }
 
-    const isPlayer1 = room.player1ClerkId === clerkId;
-    const scoreUpdate = isPlayer1
-      ? { player1TotalScore: room.player1TotalScore + score }
-      : { player2TotalScore: room.player2TotalScore + score };
-
     await ctx.db.patch(args.roomId, {
-      ...scoreUpdate,
       firstGuessAt: room.firstGuessAt ?? Date.now(),
     });
 
@@ -330,7 +324,20 @@ export const showRoundSummary = mutation({
     if (!room) throw new Error("Room not found");
     if (room.organizerClerkId !== identity.subject) throw new Error("Not the organizer");
 
-    await ctx.db.patch(args.roomId, { status: "round_summary", firstGuessAt: undefined });
+    const roundGuesses = await ctx.db
+      .query("tournamentGuesses")
+      .withIndex("byRoomAndRound", (q) => q.eq("roomId", args.roomId).eq("round", room.currentRound))
+      .collect();
+
+    const p1Score = roundGuesses.find((g) => g.playerClerkId === room.player1ClerkId)?.score ?? 0;
+    const p2Score = roundGuesses.find((g) => g.playerClerkId === room.player2ClerkId)?.score ?? 0;
+
+    await ctx.db.patch(args.roomId, {
+      status: "round_summary",
+      firstGuessAt: undefined,
+      player1TotalScore: room.player1TotalScore + p1Score,
+      player2TotalScore: room.player2TotalScore + p2Score,
+    });
   },
 });
 
