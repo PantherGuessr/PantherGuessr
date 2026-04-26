@@ -34,7 +34,7 @@ type Props = { params: Promise<{ ROOMCODE: string }> };
 export default function SpectatorPage({ params }: Props) {
   const { ROOMCODE } = use(params);
   const router = useRouter();
-  const { data: currentUser } = useCurrentUser();
+  const { data: currentUser, isLoading: userLoading } = useCurrentUser();
 
   const room = useQuery(api.tournament.getTournamentRoomByCode, { roomCode: ROOMCODE });
   const guesses = useQuery(
@@ -109,7 +109,15 @@ export default function SpectatorPage({ params }: Props) {
     );
   }
 
-  if (!isOrganizer && currentUser !== undefined) {
+  if (userLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isOrganizer) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-lg font-semibold text-destructive">Access Denied</p>

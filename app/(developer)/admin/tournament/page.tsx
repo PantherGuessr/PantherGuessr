@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useCurrentUser } from "@/hooks/use-current-user";
 
 const STATUS_LABELS: Record<string, string> = {
   waiting: "Waiting",
@@ -19,9 +18,6 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default function TournamentAdminPage() {
-  const { data: currentUser } = useCurrentUser();
-  const clerkId = currentUser?.user.clerkId ?? "";
-
   const [roomName, setRoomName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [createdCode, setCreatedCode] = useState<string | null>(null);
@@ -31,7 +27,7 @@ export default function TournamentAdminPage() {
 
   const createRoom = useMutation(api.tournament.createTournamentRoom);
   const deleteRoom = useMutation(api.tournament.deleteTournamentRoom);
-  const myRooms = useQuery(api.tournament.getRoomsByOrganizer, clerkId ? { organizerClerkId: clerkId } : "skip");
+  const myRooms = useQuery(api.tournament.getRoomsByOrganizer, {});
 
   const handleDelete = async (roomId: Id<"tournamentRooms">) => {
     setIsDeletingId(roomId);
@@ -79,7 +75,7 @@ export default function TournamentAdminPage() {
             className="flex-1"
           />
           <Button onClick={handleCreate} disabled={isCreating}>
-            {isCreating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+            {isCreating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="mr-1 h-4 w-4" />}
             Create
           </Button>
         </div>
@@ -90,12 +86,12 @@ export default function TournamentAdminPage() {
             <div className="flex items-center gap-3">
               <span className="text-3xl font-bold tracking-widest">{createdCode}</span>
               <Button variant="ghost" size="sm" onClick={() => copyCode(createdCode)}>
-                <Copy className="h-4 w-4" />
+                <Copy className="mr-1 h-4 w-4" />
                 {copied ? "Copied!" : "Copy"}
               </Button>
               <Link href={`/tournament/${createdCode}`} target="_blank">
                 <Button variant="ghost" size="sm">
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink className="mr-1 h-4 w-4" />
                   Spectator
                 </Button>
               </Link>
@@ -126,7 +122,7 @@ export default function TournamentAdminPage() {
                 <div className="flex items-center gap-2">
                   <Link href={`/tournament/${room.roomCode}`} target="_blank">
                     <Button variant="outline" size="sm">
-                      <ExternalLink className="h-3 w-3" />
+                      <ExternalLink className="mr-1 h-3 w-3" />
                       Open
                     </Button>
                   </Link>

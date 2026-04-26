@@ -165,6 +165,14 @@ export const updateLiveMarker = mutation({
     if (!identity) throw new Error("Not authenticated");
     const clerkId = identity.subject;
 
+    const room = await ctx.db.get(args.roomId);
+    if (!room) throw new Error("Room not found");
+    if (room.status !== "round_active") throw new Error("Round not active");
+    if (room.player1ClerkId !== clerkId && room.player2ClerkId !== clerkId) {
+      throw new Error("Not a player in this room");
+    }
+    if (args.round !== room.currentRound) throw new Error("Round mismatch");
+
     const existing = await ctx.db
       .query("tournamentGuesses")
       .withIndex("byRoomRoundPlayer", (q) =>
@@ -204,6 +212,11 @@ export const submitTournamentGuess = mutation({
     const room = await ctx.db.get(args.roomId);
     if (!room) throw new Error("Room not found");
     if (!room.currentGameId) throw new Error("Game not started");
+    if (room.status !== "round_active") throw new Error("Round not active");
+    if (room.player1ClerkId !== clerkId && room.player2ClerkId !== clerkId) {
+      throw new Error("Not a player in this room");
+    }
+    if (args.round !== room.currentRound) throw new Error("Round mismatch");
 
     const game = await ctx.db.get(room.currentGameId);
     if (!game) throw new Error("Game not found");
@@ -459,10 +472,17 @@ export const getTournamentRoomById = query({
 export const getTournamentGuessesForRound = query({
   args: { roomId: v.id("tournamentRooms"), round: v.number() },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const room = await ctx.db.get(args.roomId);
+    const showCorrect = room?.status === "round_summary" || room?.status === "finished";
+
+    const guesses = await ctx.db
       .query("tournamentGuesses")
       .withIndex("byRoomAndRound", (q) => q.eq("roomId", args.roomId).eq("round", args.round))
       .collect();
+
+    if (showCorrect) return guesses;
+
+    return guesses.map((g) => ({ ...g, correctLat: undefined, correctLng: undefined }));
   },
 });
 
@@ -518,11 +538,14 @@ export const deleteTournamentRoom = mutation({
 });
 
 export const getRoomsByOrganizer = query({
-  args: { organizerClerkId: v.string() },
-  handler: async (ctx, args) => {
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return [];
+
     return await ctx.db
       .query("tournamentRooms")
-      .withIndex("byOrganizerClerkId", (q) => q.eq("organizerClerkId", args.organizerClerkId))
+      .withIndex("byOrganizerClerkId", (q) => q.eq("organizerClerkId", identity.subject))
       .collect();
   },
 });
