@@ -123,7 +123,7 @@ export const GameProvider = ({
     }
 
     initializedRef.current = true;
-  }, [ids, gameData]);
+  }, [ids, gameData, startingRoundProp]);
 
   useEffect(() => {
     if (currentLevelId) {

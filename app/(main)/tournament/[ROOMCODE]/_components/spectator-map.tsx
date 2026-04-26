@@ -139,19 +139,21 @@ export default function SpectatorMap({ room, p1Guess, p2Guess }: Props) {
         </>
       )}
 
-      {/* Correct location pin — shown once as soon as any player's result is available,
-          regardless of whether individual guess pins are valid (e.g. auto-submitted at 0,0) */}
-      {correctPos && (
+      {/* Correct location pin and polylines — only shown during round_summary */}
+      {room.status === "round_summary" && correctPos && (
         <>
           <Marker position={correctPos} icon={CORRECT_ICON} zIndexOffset={1000} />
           <CircleMarker center={correctPos} pathOptions={{ color: "#a50034" }} radius={3} />
         </>
       )}
 
-      {/* Polylines only drawn when the player's guess pin itself is valid */}
-      {p1Guess?.hasSubmitted && p1Pos && p1Correct && <Polyline positions={[p1Pos, p1Correct]} color="#3b82f6" />}
+      {room.status === "round_summary" && p1Guess?.hasSubmitted && p1Pos && p1Correct && (
+        <Polyline positions={[p1Pos, p1Correct]} color="#3b82f6" />
+      )}
 
-      {p2Guess?.hasSubmitted && p2Pos && p2Correct && <Polyline positions={[p2Pos, p2Correct]} color="#f97316" />}
+      {room.status === "round_summary" && p2Guess?.hasSubmitted && p2Pos && p2Correct && (
+        <Polyline positions={[p2Pos, p2Correct]} color="#f97316" />
+      )}
     </MapContainer>
   );
 }
