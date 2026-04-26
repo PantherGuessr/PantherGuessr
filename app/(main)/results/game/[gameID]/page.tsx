@@ -143,34 +143,44 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
             {(displayEntries ?? []).map((entry, idx) => {
               const rank = leaderboardEntries ? leaderboardEntries.findIndex((e) => e._id === entry._id) + 1 : idx + 1;
               const isCurrentUser = userEntry && entry._id === userEntry._id;
+              const isAppendedBeyondTop = isCurrentUser && rank > idx + 1;
               return (
-                <TableRow key={entry._id} className={isCurrentUser ? "bg-red-600/10 dark:bg-red-600/30" : ""}>
-                  <TableCell className="p-2 text-center">{rank}</TableCell>
-                  <TableCell className="p-2 text-start align-middle">
-                    <ProfileHoverCard userID={entry.userId} />
-                  </TableCell>
-                  <TableCell className="p-2 text-start">
-                    <p className="font-bold">{entry.round_1} pts</p>
-                    <p>{entry.round_1_distance} ft</p>
-                  </TableCell>
-                  <TableCell className="p-2 text-start">
-                    <p className="font-bold">{entry.round_2} pts</p>
-                    <p>{entry.round_2_distance} ft</p>
-                  </TableCell>
-                  <TableCell className="p-2 text-start">
-                    <p className="font-bold">{entry.round_3} pts</p>
-                    <p>{entry.round_3_distance} ft</p>
-                  </TableCell>
-                  <TableCell className="p-2 text-start">
-                    <p className="font-bold">{entry.round_4} pts</p>
-                    <p>{entry.round_4_distance} ft</p>
-                  </TableCell>
-                  <TableCell className="p-2 text-start">
-                    <p className="font-bold">{entry.round_5} pts</p>
-                    <p>{entry.round_5_distance} ft</p>
-                  </TableCell>
-                  <TableCell className="p-2 text-start font-bold">{getTotalScore(entry)}</TableCell>
-                </TableRow>
+                <>
+                  {isAppendedBeyondTop && (
+                    <TableRow key="separator">
+                      <TableCell colSpan={8} className="py-1 text-center text-muted-foreground">
+                        &middot;&middot;&middot;
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  <TableRow key={entry._id} className={isCurrentUser ? "bg-red-600/10 dark:bg-red-600/30" : ""}>
+                    <TableCell className="p-2 text-center">{rank}</TableCell>
+                    <TableCell className="p-2 text-start align-middle">
+                      <ProfileHoverCard userID={entry.userId} />
+                    </TableCell>
+                    <TableCell className="p-2 text-start">
+                      <p className="font-bold">{entry.round_1} pts</p>
+                      <p>{entry.round_1_distance} ft</p>
+                    </TableCell>
+                    <TableCell className="p-2 text-start">
+                      <p className="font-bold">{entry.round_2} pts</p>
+                      <p>{entry.round_2_distance} ft</p>
+                    </TableCell>
+                    <TableCell className="p-2 text-start">
+                      <p className="font-bold">{entry.round_3} pts</p>
+                      <p>{entry.round_3_distance} ft</p>
+                    </TableCell>
+                    <TableCell className="p-2 text-start">
+                      <p className="font-bold">{entry.round_4} pts</p>
+                      <p>{entry.round_4_distance} ft</p>
+                    </TableCell>
+                    <TableCell className="p-2 text-start">
+                      <p className="font-bold">{entry.round_5} pts</p>
+                      <p>{entry.round_5_distance} ft</p>
+                    </TableCell>
+                    <TableCell className="p-2 text-start font-bold">{getTotalScore(entry)}</TableCell>
+                  </TableRow>
+                </>
               );
             })}
           </TableBody>

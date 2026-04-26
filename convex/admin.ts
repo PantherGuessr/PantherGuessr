@@ -92,19 +92,25 @@ export const getAdminSummary = query({
     const newUsersLast7Days = allUsers.filter((u) => u._creationTime >= sevenDaysAgo).length;
     const newUsersLast30Days = allUsers.filter((u) => u._creationTime >= thirtyDaysAgo).length;
 
-    // New users per day for the last 7 days (oldest → newest for charting)
+    // New users per day for the last 7 days (oldest → newest for charting), bucketed by PST day
     const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const nowDate = new Date();
+    const PST_OFFSET_MS = 8 * 60 * 60 * 1000; // PST = UTC-8
+    const nowMs = Date.now();
+    // Find midnight PST today (expressed as UTC epoch ms)
+    const nowShiftedToPST = new Date(nowMs - PST_OFFSET_MS);
+    nowShiftedToPST.setUTCHours(0, 0, 0, 0);
+    const todayPSTMidnightUTC = nowShiftedToPST.getTime() + PST_OFFSET_MS;
+
     const newUsersPerDay: { day: string; count: number }[] = [];
     for (let i = 6; i >= 0; i--) {
-      const d = new Date(nowDate);
-      d.setDate(d.getDate() - i);
-      const startOfDay = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+      const startOfDay = todayPSTMidnightUTC - i * 24 * 60 * 60 * 1000;
       const endOfDay = startOfDay + 24 * 60 * 60 * 1000;
       const count = allUsers.filter(
         (u) => u._creationTime >= startOfDay && u._creationTime < endOfDay,
       ).length;
-      newUsersPerDay.push({ day: i === 0 ? "Today" : dayLabels[d.getDay()], count });
+      // Subtract offset to recover the PST calendar date, then read UTC day-of-week
+      const dayDatePST = new Date(startOfDay - PST_OFFSET_MS);
+      newUsersPerDay.push({ day: i === 0 ? "Today" : dayLabels[dayDatePST.getUTCDay()], count });
     }
 
     // --- Level stats ---
