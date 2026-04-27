@@ -30,7 +30,8 @@ import "./sidebar-cursor.css";
 const SIDEBAR_MIN_WIDTH = 270;
 const SIDEBAR_WIDTH_KEY = "panther_sidebar_width";
 const SIDEBAR_MAX_WIDTH_RATIO = 0.5; // Max width as a ratio of window width
-const getSidebarMaxWidth = () => Math.floor(window.innerWidth * SIDEBAR_MAX_WIDTH_RATIO);
+const getSidebarMaxWidth = () =>
+  typeof window !== "undefined" ? Math.floor(window.innerWidth * SIDEBAR_MAX_WIDTH_RATIO) : 600;
 
 const InGameSidebar = () => {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -95,8 +96,10 @@ const InGameSidebar = () => {
       const max = getSidebarMaxWidth();
       if (current > max) {
         sidebarRef.current.style.width = `${max}px`;
+        localStorage.setItem(SIDEBAR_WIDTH_KEY, String(max));
       } else if (current < SIDEBAR_MIN_WIDTH) {
         sidebarRef.current.style.width = `${SIDEBAR_MIN_WIDTH}px`;
+        localStorage.setItem(SIDEBAR_WIDTH_KEY, String(SIDEBAR_MIN_WIDTH));
       }
     };
     window.addEventListener("resize", handleResize);
