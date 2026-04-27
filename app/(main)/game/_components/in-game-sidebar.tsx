@@ -27,8 +27,13 @@ import ReportButton from "./report-button";
 import "../game.css";
 import "./sidebar-cursor.css";
 
+const SIDEBAR_MIN_WIDTH = 270;
+const SIDEBAR_WIDTH_KEY = "panther_sidebar_width";
+const SIDEBAR_MAX_WIDTH_RATIO = 0.5; // Max width as a ratio of window width
+const getSidebarMaxWidth = () => Math.floor(window.innerWidth * (SIDEBAR_MAX_WIDTH_RATIO));
+
 const InGameSidebar = () => {
-  const isMobile = useMediaQuery("(max-width: 600px");
+  const isMobile = useMediaQuery("(max-width: 600px)");
   const router = useRouter();
 
   const magnifierRef = useRef<HTMLDivElement>(null);
@@ -66,6 +71,37 @@ const InGameSidebar = () => {
     if (isMobile && sidebarRef.current) {
       sidebarRef.current.style.width = "";
     }
+  }, [isMobile]);
+
+  // Restore saved width from localStorage on mount
+  useEffect(() => {
+    if (isMobile || !sidebarRef.current) return;
+    const saved = localStorage.getItem(SIDEBAR_WIDTH_KEY);
+    if (saved) {
+      const parsed = parseInt(saved, 10);
+      if (!isNaN(parsed)) {
+        const clamped = Math.min(Math.max(parsed, SIDEBAR_MIN_WIDTH), getSidebarMaxWidth());
+        sidebarRef.current.style.width = `${clamped}px`;
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMobile]);
+
+  // Clamp sidebar width on window resize
+  useEffect(() => {
+    if (isMobile) return;
+    const handleResize = () => {
+      if (!sidebarRef.current) return;
+      const current = sidebarRef.current.offsetWidth;
+      const max = getSidebarMaxWidth();
+      if (current > max) {
+        sidebarRef.current.style.width = `${max}px`;
+      } else if (current < SIDEBAR_MIN_WIDTH) {
+        sidebarRef.current.style.width = `${SIDEBAR_MIN_WIDTH}px`;
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [isMobile]);
 
   useEffect(() => {
@@ -179,12 +215,9 @@ const InGameSidebar = () => {
   const handleMouseMove = (event: MouseEvent) => {
     if (!isResizingRef.current || isMobile) return;
     let newWidth = event.clientX;
-
-    // Clamps so that the width of the sidebar
-    // can't get too big or too small.
-    if (newWidth < 270) newWidth = 270;
-    if (newWidth > 600) newWidth = 600;
-
+    const maxWidth = getSidebarMaxWidth();
+    if (newWidth < SIDEBAR_MIN_WIDTH) newWidth = SIDEBAR_MIN_WIDTH;
+    if (newWidth > maxWidth) newWidth = maxWidth;
     if (sidebarRef.current) {
       sidebarRef.current.style.width = `${newWidth}px`;
     }
@@ -200,6 +233,10 @@ const InGameSidebar = () => {
     document.body.style.setProperty("cursor", "unset");
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
+    if (sidebarRef.current) {
+      const width = sidebarRef.current.offsetWidth;
+      localStorage.setItem(SIDEBAR_WIDTH_KEY, String(width));
+    }
   };
 
   /**
