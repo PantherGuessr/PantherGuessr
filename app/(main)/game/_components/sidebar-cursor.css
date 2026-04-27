@@ -1,3 +1,19 @@
 .inheritCursorOverride * {
   cursor: inherit !important;
 }
+
+@keyframes resize-dots-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 1;
+  }
+}
+
+.resize-hint-dots {
+  animation: resize-dots-pulse 0.9s ease-in-out 2;
+}

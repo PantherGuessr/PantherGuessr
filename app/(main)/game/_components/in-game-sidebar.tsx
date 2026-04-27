@@ -37,6 +37,7 @@ const InGameSidebar = () => {
   const [isResetting] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [loadedImageUrl, setLoadedImageUrl] = useState("");
+  const [showResizeHint, setShowResizeHint] = useState(true);
 
   // Retrieve Game Context
   const {
@@ -65,6 +66,12 @@ const InGameSidebar = () => {
     if (isMobile && sidebarRef.current) {
       sidebarRef.current.style.width = "";
     }
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const timer = setTimeout(() => setShowResizeHint(false), 2000);
+    return () => clearTimeout(timer);
   }, [isMobile]);
 
   /**
@@ -435,25 +442,26 @@ const InGameSidebar = () => {
             <div
               className={cn(
                 "flex flex-col gap-1 transition-all duration-200",
-                isResizing ? "scale-110" : "group-hover:scale-110"
+                isResizing ? "scale-110" : "group-hover:scale-110",
+                showResizeHint && "resize-hint-dots"
               )}
             >
               <div
                 className={cn(
                   "h-1 w-1 rounded-full transition-colors duration-200",
-                  isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+                  isResizing ? "bg-primary/80" : "bg-muted-foreground/60 group-hover:bg-primary/80"
                 )}
               />
               <div
                 className={cn(
                   "h-1 w-1 rounded-full transition-colors duration-200",
-                  isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+                  isResizing ? "bg-primary/80" : "bg-muted-foreground/60 group-hover:bg-primary/80"
                 )}
               />
               <div
                 className={cn(
                   "h-1 w-1 rounded-full transition-colors duration-200",
-                  isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+                  isResizing ? "bg-primary/80" : "bg-muted-foreground/60 group-hover:bg-primary/80"
                 )}
               />
             </div>
