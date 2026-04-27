@@ -28,12 +28,14 @@ import "../game.css";
 import "./sidebar-cursor.css";
 
 const SIDEBAR_MIN_WIDTH = 270;
+const SIDEBAR_MAX_WIDTH_CAP = 1100;
 const SIDEBAR_WIDTH_KEY = "panther_sidebar_width";
 const SIDEBAR_MAX_WIDTH_RATIO = 0.5;
 const getSidebarMaxWidth = () =>
-  typeof window !== "undefined" ? Math.floor(window.innerWidth * SIDEBAR_MAX_WIDTH_RATIO) : 600;
+  typeof window !== "undefined"
+    ? Math.min(Math.floor(window.innerWidth * SIDEBAR_MAX_WIDTH_RATIO), SIDEBAR_MAX_WIDTH_CAP)
+    : 600;
 
-// try catch getter if no localstorage
 const getSidebarWidth = (): string | null => {
   try {
     return localStorage.getItem(SIDEBAR_WIDTH_KEY);
@@ -42,7 +44,6 @@ const getSidebarWidth = (): string | null => {
   }
 };
 
-// try catch setter if no local storage
 const setSidebarWidth = (value: string): void => {
   try {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, value);
