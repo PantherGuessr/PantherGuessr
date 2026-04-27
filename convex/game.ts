@@ -350,6 +350,9 @@ export const addLeaderboardEntryToGame = mutation({
 
     await ctx.db.delete(ongoingGame._id);
 
+    await ctx.runMutation(internal.gamestats.incrementDailyGameStats);
+    await ctx.runMutation(internal.gamestats.incrementMonthlyGameStats);
+
     // Update streak
     await ctx.runMutation(internal.users.updateStreak, { userId: callerUser._id });
 
