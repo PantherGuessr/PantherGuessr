@@ -334,7 +334,7 @@ const InGameSidebar = () => {
               <Image
                 src={currentImageSrcUrl}
                 fill
-                sizes={isMobile ? "250px" : "296px"}
+                sizes={isMobile ? "250px" : "600px"}
                 alt=""
                 onLoad={() => setLoadedImageUrl(currentImageSrcUrl)}
                 onMouseEnter={handleMouseEnter}
