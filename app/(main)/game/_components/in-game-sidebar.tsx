@@ -30,7 +30,7 @@ import "./sidebar-cursor.css";
 const SIDEBAR_MIN_WIDTH = 270;
 const SIDEBAR_WIDTH_KEY = "panther_sidebar_width";
 const SIDEBAR_MAX_WIDTH_RATIO = 0.5; // Max width as a ratio of window width
-const getSidebarMaxWidth = () => Math.floor(window.innerWidth * (SIDEBAR_MAX_WIDTH_RATIO));
+const getSidebarMaxWidth = () => Math.floor(window.innerWidth * SIDEBAR_MAX_WIDTH_RATIO);
 
 const InGameSidebar = () => {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -84,7 +84,6 @@ const InGameSidebar = () => {
         sidebarRef.current.style.width = `${clamped}px`;
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMobile]);
 
   // Clamp sidebar width on window resize
