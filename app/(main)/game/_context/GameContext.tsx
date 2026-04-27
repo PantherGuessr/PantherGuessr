@@ -25,7 +25,7 @@ interface GameContextType {
   setMarkerHasBeenPlaced: (marker: boolean) => void;
   isSubmittingGuess: boolean;
   setIsSubmittingGuess: (button: boolean) => void;
-  submitGuess: (lat: number, lng: number) => Promise<void>;
+  submitGuess: (lat: number, lng: number) => Promise<boolean>;
   markerPosition: LatLng | null;
   setMarkerPosition: (position: LatLng | null) => void;
   correctLocation: LatLng | null;
@@ -40,14 +40,22 @@ interface GameContextType {
 
 const GameContext = createContext<GameContextType | null>(null);
 
-export const GameProvider = ({ children, gameId }: { children: React.ReactNode; gameId?: Id<"games"> }) => {
+export const GameProvider = ({
+  children,
+  gameId,
+  startingRound: startingRoundProp,
+}: {
+  children: React.ReactNode;
+  gameId?: Id<"games">;
+  startingRound?: number;
+}) => {
   const router = useRouter();
   const { data: currentUser } = useCurrentUser();
   const clerkId = currentUser?.user.clerkId;
 
   // states for the game
   const [levels, setLevels] = useState<Id<"levels">[]>([]);
-  const [currentRound, setCurrentRound] = useState(1);
+  const [currentRound, setCurrentRound] = useState(startingRoundProp ?? 1);
   const [score, setScore] = useState(0);
   const [currentLevelId, setCurrentLevel] = useState<Id<"levels"> | null>(null);
   const [currentImageSrcUrl, setCurrentSrcUrl] = useState("");
@@ -109,11 +117,13 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
       setScore(gameData.startingScores.reduce((acc, score) => acc + score, 0));
       setCurrentLevel(ids[gameData.startingRound - 1]);
     } else {
-      setCurrentLevel(ids[0]);
+      const initRound = startingRoundProp ?? 1;
+      setCurrentRound(initRound);
+      setCurrentLevel(ids[initRound - 1]);
     }
 
     initializedRef.current = true;
-  }, [ids, gameData]);
+  }, [ids, gameData, startingRoundProp]);
 
   useEffect(() => {
     if (currentLevelId) {
@@ -122,13 +132,13 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
   }, [currentLevelId, imageSrc]);
 
   useEffect(() => {
-    if (gameData?.gameContent?._id) {
+    if (!gameId && gameData?.gameContent?._id) {
       router.replace(`/game/${gameData.gameContent._id}`);
     }
-  }, [gameData?.gameContent?._id, router]);
+  }, [gameId, gameData?.gameContent?._id, router]);
 
-  const submitGuess = async (lat: number, lng: number) => {
-    if (!currentLevelId) return;
+  const submitGuess = async (lat: number, lng: number): Promise<boolean> => {
+    if (!currentLevelId) return false;
 
     setIsSubmittingGuess(true);
 
@@ -149,8 +159,10 @@ export const GameProvider = ({ children, gameId }: { children: React.ReactNode; 
       setAllDistances((prevDistances) => [...prevDistances, result.distanceAway]);
       setAllScores((prevScores) => [...prevScores, result.score]);
       setScore(allScores.reduce((acc, score) => acc + score, 0) + result.score);
+      return true;
     } catch (error) {
       console.error("Error submitting guess:", error);
+      return false;
     } finally {
       setIsSubmittingGuess(false);
     }

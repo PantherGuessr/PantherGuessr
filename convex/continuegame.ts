@@ -165,7 +165,9 @@ export const getOngoingGameFromUser = query({
     const ongoingGame = await ctx.db
       .query("ongoingGames")
       .withIndex("byUserClerkId")
-      .filter((q) => q.eq(q.field("userClerkId"), userClerkId))
+      .filter((q) =>
+        q.and(q.eq(q.field("userClerkId"), userClerkId), q.neq(q.field("gameType"), "multiplayer"))
+      )
       .first();
     return ongoingGame;
   },

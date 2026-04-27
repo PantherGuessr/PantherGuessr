@@ -49,7 +49,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
     return (
       <div className="flex h-full w-full flex-grow flex-col items-center justify-center">
         <div className="flex w-full items-center justify-center gap-x-4">
-          <Logo badge={false} logoDimensions={160} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
+          <Logo logoDimensions={160} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
         </div>
         <div className="mt-10 flex flex-row items-stretch justify-center px-20 pt-4 sm:gap-x-5 sm:pt-8 lg:gap-x-10">
           <div
@@ -178,7 +178,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
     return (
       <div className="flex h-full w-full flex-grow flex-col items-center justify-center">
         <div className="flex w-full items-center justify-center gap-x-4">
-          <Logo badge={false} logoDimensions={160} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
+          <Logo logoDimensions={160} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
         </div>
         <div className="mt-10 flex w-full flex-row justify-center gap-x-6 px-12 pt-4">
           <div

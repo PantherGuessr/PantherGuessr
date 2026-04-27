@@ -13,12 +13,12 @@ const font = Poppins({
 interface LogoProps {
   href?: string;
   as_png?: boolean;
-  badge?: boolean;
+  badge?: string;
   logoDimensions?: number;
   textOptions?: string;
 }
 
-export const Logo = ({ href, as_png, badge = false, logoDimensions = 40, textOptions }: LogoProps) => {
+export const Logo = ({ href, as_png, badge, logoDimensions = 40, textOptions }: LogoProps) => {
   const logoContent = (
     <div className="flex items-center gap-x-2">
       <Image
@@ -29,15 +29,15 @@ export const Logo = ({ href, as_png, badge = false, logoDimensions = 40, textOpt
         alt="Logo"
         className="select-none"
       />
-      <p className={cn("select-none pl-2 font-semibold", font.className, textOptions)}>PantherGuessr</p>
+      <p className={cn("select-none pl-2 pr-2 font-semibold", font.className, textOptions)}>PantherGuessr</p>
       {badge && (
         <Badge
           className={cn(
             href == undefined ? "cursor-default hover:bg-red-800" : "cursor-pointer hover:bg-red-900",
-            "h-6 select-none bg-red-800 text-white"
+            "h-6 select-none bg-red-800 pt-1 text-white"
           )}
         >
-          Beta
+          {badge}
         </Badge>
       )}
     </div>

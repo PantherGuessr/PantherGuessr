@@ -1,5 +1,5 @@
 .magnifier {
-  position: absolute;
+  position: fixed;
   border: 3px solid #000;
   border-radius: 50%;
   cursor: none;

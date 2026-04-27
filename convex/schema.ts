@@ -135,4 +135,40 @@ export default defineSchema({
   })
     .index("byLevelId", ["levelId"])
     .index("byStatus", ["status"]),
+
+  tournamentRooms: defineTable({
+    roomCode: v.string(),
+    organizerClerkId: v.string(),
+    name: v.optional(v.string()),
+    status: v.union(
+      v.literal("waiting"),
+      v.literal("round_active"),
+      v.literal("round_summary"),
+      v.literal("finished")
+    ),
+    player1ClerkId: v.optional(v.string()),
+    player2ClerkId: v.optional(v.string()),
+    currentGameId: v.optional(v.id("games")),
+    currentRound: v.number(),
+    player1TotalScore: v.number(),
+    player2TotalScore: v.number(),
+    countdownStartedAt: v.optional(v.number()),
+    guessCountdownSeconds: v.optional(v.number()),
+    firstGuessAt: v.optional(v.number()),
+  }).index("byRoomCode", ["roomCode"])
+    .index("byOrganizerClerkId", ["organizerClerkId"]),
+
+  tournamentGuesses: defineTable({
+    roomId: v.id("tournamentRooms"),
+    playerClerkId: v.string(),
+    round: v.number(),
+    currentLat: v.optional(v.number()),
+    currentLng: v.optional(v.number()),
+    hasSubmitted: v.boolean(),
+    score: v.optional(v.number()),
+    distanceFeet: v.optional(v.number()),
+    correctLat: v.optional(v.number()),
+    correctLng: v.optional(v.number()),
+  }).index("byRoomAndRound", ["roomId", "round"])
+    .index("byRoomRoundPlayer", ["roomId", "round", "playerClerkId"]),
 });

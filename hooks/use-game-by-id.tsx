@@ -58,7 +58,7 @@ const useGameById = (gameId?: Id<"games">, clerkId?: string) => {
 
     const data: GameData = { gameContent };
 
-    if (ongoingGame && ongoingGame.game === gameContent._id) {
+    if (ongoingGame && ongoingGame.game === gameContent._id && ongoingGame.gameType !== "multiplayer") {
       data.startingRound = Number(ongoingGame.currentRound);
       data.startingScores = ongoingGame.scores?.map((score) => Number(score));
       data.startingDistances = ongoingGame.distances?.map((distance) => Number(distance));

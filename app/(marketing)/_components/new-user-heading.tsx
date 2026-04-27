@@ -16,9 +16,9 @@ export const NewUserHeading = () => {
     <>
       <div className="flex w-full items-center justify-center gap-x-4">
         {isLarge ? (
-          <Logo badge={false} logoDimensions={160} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
+          <Logo logoDimensions={160} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
         ) : (
-          <Logo badge={false} logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
+          <Logo logoDimensions={80} textOptions="text-2xl sm:text-5xl md:text-7xl font-semibold" />
         )}
       </div>
       <div className="flex flex-grow flex-col items-center justify-center px-4 pt-4 sm:px-10 sm:pt-8 md:flex-row xl:px-20">
