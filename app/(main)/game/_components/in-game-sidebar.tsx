@@ -29,9 +29,27 @@ import "./sidebar-cursor.css";
 
 const SIDEBAR_MIN_WIDTH = 270;
 const SIDEBAR_WIDTH_KEY = "panther_sidebar_width";
-const SIDEBAR_MAX_WIDTH_RATIO = 0.5; // Max width as a ratio of window width
+const SIDEBAR_MAX_WIDTH_RATIO = 0.5;
 const getSidebarMaxWidth = () =>
   typeof window !== "undefined" ? Math.floor(window.innerWidth * SIDEBAR_MAX_WIDTH_RATIO) : 600;
+
+// try catch getter if no localstorage
+const getSidebarWidth = (): string | null => {
+  try {
+    return localStorage.getItem(SIDEBAR_WIDTH_KEY);
+  } catch {
+    return null;
+  }
+};
+
+// try catch setter if no local storage
+const setSidebarWidth = (value: string): void => {
+  try {
+    localStorage.setItem(SIDEBAR_WIDTH_KEY, value);
+  } catch {
+    // if no localStorage available then do nothing
+  }
+};
 
 const InGameSidebar = () => {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -40,6 +58,7 @@ const InGameSidebar = () => {
   const magnifierRef = useRef<HTMLDivElement>(null);
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
+  const isMobileRef = useRef(isMobile);
   const [isResetting] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [loadedImageUrl, setLoadedImageUrl] = useState("");
@@ -67,6 +86,11 @@ const InGameSidebar = () => {
 
   const imageLoaded = !!currentImageSrcUrl && loadedImageUrl === currentImageSrcUrl;
 
+  // keep isMobile ref in sync with state
+  useEffect(() => {
+    isMobileRef.current = isMobile;
+  }, [isMobile]);
+
   // Reset sidebar width when switching to mobile
   useEffect(() => {
     if (isMobile && sidebarRef.current) {
@@ -74,10 +98,10 @@ const InGameSidebar = () => {
     }
   }, [isMobile]);
 
-  // Restore saved width from localStorage on mount
+  // restore sidebar width from local storage on mount only for desktop
   useEffect(() => {
     if (isMobile || !sidebarRef.current) return;
-    const saved = localStorage.getItem(SIDEBAR_WIDTH_KEY);
+    const saved = getSidebarWidth();
     if (saved) {
       const parsed = parseInt(saved, 10);
       if (!isNaN(parsed)) {
@@ -96,10 +120,10 @@ const InGameSidebar = () => {
       const max = getSidebarMaxWidth();
       if (current > max) {
         sidebarRef.current.style.width = `${max}px`;
-        localStorage.setItem(SIDEBAR_WIDTH_KEY, String(max));
+        setSidebarWidth(String(max));
       } else if (current < SIDEBAR_MIN_WIDTH) {
         sidebarRef.current.style.width = `${SIDEBAR_MIN_WIDTH}px`;
-        localStorage.setItem(SIDEBAR_WIDTH_KEY, String(SIDEBAR_MIN_WIDTH));
+        setSidebarWidth(String(SIDEBAR_MIN_WIDTH));
       }
     };
     window.addEventListener("resize", handleResize);
@@ -215,7 +239,7 @@ const InGameSidebar = () => {
    * Only works on desktop
    */
   const handleMouseMove = (event: MouseEvent) => {
-    if (!isResizingRef.current || isMobile) return;
+    if (!isResizingRef.current || isMobileRef.current) return;
     let newWidth = event.clientX;
     const maxWidth = getSidebarMaxWidth();
     if (newWidth < SIDEBAR_MIN_WIDTH) newWidth = SIDEBAR_MIN_WIDTH;
@@ -235,9 +259,9 @@ const InGameSidebar = () => {
     document.body.style.setProperty("cursor", "unset");
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
-    if (sidebarRef.current) {
+    if (sidebarRef.current && !isMobileRef.current) {
       const width = sidebarRef.current.offsetWidth;
-      localStorage.setItem(SIDEBAR_WIDTH_KEY, String(width));
+      setSidebarWidth(String(width));
     }
   };
 
