@@ -99,43 +99,45 @@ export function RemainingTable({ users, type, description, currentUser, userRank
           {users.map((user, index) => {
             const rank = index + 1;
             const isCurrentUser = currentUser && user._id === currentUser._id;
+            const isAppendedBeyondTop = isCurrentUser && userRank && userRank > index + 1;
+            const displayRank = isAppendedBeyondTop ? userRank : rank;
 
             return (
-              <TableRow key={user._id} className={isCurrentUser ? "bg-red-600/10 dark:bg-red-600/30" : ""}>
-                <TableCell className="p-2 text-center font-semibold">
-                  {rank <= 3 ? (
-                    <span className="text-lg">
-                      {rank === 1 && "🥇"}
-                      {rank === 2 && "🥈"}
-                      {rank === 3 && "🥉"}
-                    </span>
-                  ) : (
-                    rank
-                  )}
-                </TableCell>
-                <TableCell className="p-2 text-start">
-                  <ProfileHoverCard userID={user._id} />
-                </TableCell>
-                <TableCell className={`p-2 font-semibold ${getAlignmentClass(type)[0]}`}>
-                  {getStatValue(user, type)}
-                </TableCell>
-                <TableCell className={`p-2 text-muted-foreground ${getAlignmentClass(type)[1]}`}>
-                  {getSecondaryStatValue(user, type)}
-                </TableCell>
-              </TableRow>
+              <>
+                {isAppendedBeyondTop && (
+                  <TableRow key="separator">
+                    <TableCell colSpan={4} className="py-1 text-center text-muted-foreground">
+                      &middot;&middot;&middot;
+                    </TableCell>
+                  </TableRow>
+                )}
+                <TableRow key={user._id} className={isCurrentUser ? "bg-red-600/10 dark:bg-red-600/30" : ""}>
+                  <TableCell className="p-2 text-center font-semibold">
+                    {displayRank <= 3 ? (
+                      <span className="text-lg">
+                        {displayRank === 1 && "🥇"}
+                        {displayRank === 2 && "🥈"}
+                        {displayRank === 3 && "🥉"}
+                      </span>
+                    ) : (
+                      displayRank
+                    )}
+                  </TableCell>
+                  <TableCell className="p-2 text-start">
+                    <ProfileHoverCard userID={user._id} />
+                  </TableCell>
+                  <TableCell className={`p-2 font-semibold ${getAlignmentClass(type)[0]}`}>
+                    {getStatValue(user, type)}
+                  </TableCell>
+                  <TableCell className={`p-2 text-muted-foreground ${getAlignmentClass(type)[1]}`}>
+                    {getSecondaryStatValue(user, type)}
+                  </TableCell>
+                </TableRow>
+              </>
             );
           })}
         </TableBody>
       </Table>
-
-      {/* Show user rank if they're not in the displayed list */}
-      {currentUser && userRank && userRank > users.length && (
-        <div className="mt-4 rounded-lg bg-muted p-3 text-center">
-          <p className="text-sm text-muted-foreground">
-            Your rank: <span className="font-semibold">{userRank}</span>
-          </p>
-        </div>
-      )}
     </div>
   );
 }
