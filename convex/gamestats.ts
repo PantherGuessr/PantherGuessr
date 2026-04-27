@@ -2,7 +2,7 @@
 
 import { v } from "convex/values";
 
-import { mutation, query } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 
 /**
  * Retrieves the daily game statistics from the database.
@@ -62,7 +62,7 @@ export const getPastNDaysOfStats = query({
  * @param ctx - The context object containing the database instance.
  * @returns A promise that resolves to a BigInt value of 0.
  */
-export const createDailyGameStats = mutation({
+export const createDailyGameStats = internalMutation({
   handler: async (ctx) => {
     const date = new Date();
     await ctx.db.insert("gameStats", {
@@ -88,7 +88,7 @@ export const createDailyGameStats = mutation({
  * @param {Object} ctx - The context object containing the database connection.
  * @returns {Promise<bigint>} - The updated count of daily game statistics.
  */
-export const incrementDailyGameStats = mutation({
+export const incrementDailyGameStats = internalMutation({
   handler: async (ctx) => {
     const date = new Date();
     const today = date.toISOString().split("T")[0];
@@ -149,7 +149,7 @@ export const getMonthlyGameStats = query({
   },
 });
 
-export const createMonthlyGameStats = mutation({
+export const createMonthlyGameStats = internalMutation({
   handler: async (ctx) => {
     const date = new Date();
     await ctx.db.insert("gameStats", {
@@ -164,7 +164,7 @@ export const createMonthlyGameStats = mutation({
   },
 });
 
-export const incrementMonthlyGameStats = mutation({
+export const incrementMonthlyGameStats = internalMutation({
   handler: async (ctx) => {
     const date = new Date();
     const isoYearMonth = date.toISOString().split("-")[0] + "-" + date.toISOString().split("-")[1];
