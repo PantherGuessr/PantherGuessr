@@ -60,8 +60,7 @@ const multiSelectVariants = cva(
  * Props for MultiSelect component
  */
 interface MultiSelectProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof multiSelectVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof multiSelectVariants> {
   options: {
     /** The text to display for the option. */
     label: string;
