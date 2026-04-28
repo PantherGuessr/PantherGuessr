@@ -12,7 +12,7 @@ interface GameData {
 }
 
 const useGameById = (gameId?: Id<"games">, clerkId?: string) => {
-  const { isAuthenticated } = useConvexAuth();
+  const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth();
 
   const [createdGameId, setCreatedGameId] = useState<Id<"games"> | null>(null);
   const isCreatingGame = useRef(false);
@@ -52,8 +52,10 @@ const useGameById = (gameId?: Id<"games">, clerkId?: string) => {
   const gameData = useMemo<GameData | null>(() => {
     if (!gameContent) return null;
 
-    // Wait until clerkId is loaded and ongoingGame has settled before returning data.
-    // gameData returns before we know a resume state without this fix, causes a flash of round 1 data
+    // wait for auth to fully load before returning any data
+    if (isAuthLoading) return null;
+
+    // wait for clerkId and ongoing game to load
     if (isAuthenticated && (!clerkId || ongoingGame === undefined)) return null;
 
     const data: GameData = { gameContent };
@@ -65,7 +67,7 @@ const useGameById = (gameId?: Id<"games">, clerkId?: string) => {
     }
 
     return data;
-  }, [gameContent, ongoingGame, isAuthenticated, clerkId]);
+  }, [gameContent, ongoingGame, isAuthenticated, isAuthLoading, clerkId]);
 
   return gameData;
 };
