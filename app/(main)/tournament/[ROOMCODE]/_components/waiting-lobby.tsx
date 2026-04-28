@@ -47,7 +47,7 @@ export function SpectatorWaitingLobby({
         </Button>
       </Link>
       <div className="flex flex-row items-center gap-2">
-        <Logo logoDimensions={100} textOptions="text-3xl" badge="Tournament" />
+        <Logo logoDimensions={100} textOptions="text-2xl" badge="Tournament" stackOnMobile={true} />
       </div>
 
       <div className="text-center">
