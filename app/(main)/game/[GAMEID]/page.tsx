@@ -62,7 +62,13 @@ const GameIdPage = ({ params }: Props) => {
 
   const gameExists = useQuery(api.game.gameExists, gameIdAsId ? { gameId: gameIdAsId } : "skip");
 
-  const { data: currentUser } = useCurrentUser();
+  const { data: currentUser, isLoading: isUserLoading, isAuthenticated } = useCurrentUser();
+
+  useEffect(() => {
+    if (!isUserLoading && !isAuthenticated) {
+      router.push("/");
+    }
+  }, [isUserLoading, isAuthenticated, router]);
 
   useEffect(() => {
     if (currentUser?.isBanned) {

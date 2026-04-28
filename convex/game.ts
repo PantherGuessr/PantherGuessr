@@ -350,6 +350,9 @@ export const addLeaderboardEntryToGame = mutation({
 
     await ctx.db.delete(ongoingGame._id);
 
+    await ctx.runMutation(internal.gamestats.incrementDailyGameStats);
+    await ctx.runMutation(internal.gamestats.incrementMonthlyGameStats);
+
     // Update streak
     await ctx.runMutation(internal.users.updateStreak, { userId: callerUser._id });
 
@@ -467,6 +470,9 @@ export const getLeaderboardEntryByGameAndUser = query({
 export const getImageSrc = query({
   args: { id: v.id("levels") },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
     if (!args.id) {
       throw new Error("Missing entryId parameter.");
     }

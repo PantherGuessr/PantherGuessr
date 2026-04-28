@@ -98,8 +98,6 @@ export const GameProvider = ({
   const imageSrc = useQuery(api.game.getImageSrc, currentLevelId ? { id: currentLevelId } : "skip");
   const checkGuess = useMutation(api.game.checkGuess);
 
-  const incrementDailyGameStats = useMutation(api.gamestats.incrementDailyGameStats);
-  const incrementMonthlyGameStats = useMutation(api.gamestats.incrementMonthlyGameStats);
   const addLeaderboardEntryToGame = useMutation(api.game.addLeaderboardEntryToGame);
   const updateFirstPlayedBy = useMutation(api.game.updateFirstPlayedByClerkId);
   const updateOngoingGameOrCreate = useMutation(api.continuegame.updateOngoingGameOrCreate);
@@ -174,9 +172,6 @@ export const GameProvider = ({
     if (nextRoundNumber > levels.length) {
       setIsLoading(true);
       setIsModalVisible(true);
-
-      incrementDailyGameStats();
-      incrementMonthlyGameStats();
 
       updateFirstPlayedBy({ clerkId: clerkId!, gameId: gameData!.gameContent!._id });
 

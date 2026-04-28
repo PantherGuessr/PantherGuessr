@@ -27,16 +27,43 @@ import ReportButton from "./report-button";
 import "../game.css";
 import "./sidebar-cursor.css";
 
+const SIDEBAR_MIN_WIDTH = 270;
+const SIDEBAR_MAX_WIDTH_CAP = 1100;
+const SIDEBAR_WIDTH_KEY = "panther_sidebar_width";
+const SIDEBAR_MAX_WIDTH_RATIO = 0.5;
+const getSidebarMaxWidth = () =>
+  typeof window !== "undefined"
+    ? Math.min(Math.floor(window.innerWidth * SIDEBAR_MAX_WIDTH_RATIO), SIDEBAR_MAX_WIDTH_CAP)
+    : 600;
+
+const getSidebarWidth = (): string | null => {
+  try {
+    return localStorage.getItem(SIDEBAR_WIDTH_KEY);
+  } catch {
+    return null;
+  }
+};
+
+const setSidebarWidth = (value: string): void => {
+  try {
+    localStorage.setItem(SIDEBAR_WIDTH_KEY, value);
+  } catch {
+    // if no localStorage available then do nothing
+  }
+};
+
 const InGameSidebar = () => {
-  const isMobile = useMediaQuery("(max-width: 600px");
+  const isMobile = useMediaQuery("(max-width: 600px)");
   const router = useRouter();
 
   const magnifierRef = useRef<HTMLDivElement>(null);
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
+  const isMobileRef = useRef(isMobile);
   const [isResetting] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [loadedImageUrl, setLoadedImageUrl] = useState("");
+  const [showResizeHint, setShowResizeHint] = useState(true);
 
   // Retrieve Game Context
   const {
@@ -60,11 +87,54 @@ const InGameSidebar = () => {
 
   const imageLoaded = !!currentImageSrcUrl && loadedImageUrl === currentImageSrcUrl;
 
+  // keep isMobile ref in sync with state
+  useEffect(() => {
+    isMobileRef.current = isMobile;
+  }, [isMobile]);
+
   // Reset sidebar width when switching to mobile
   useEffect(() => {
     if (isMobile && sidebarRef.current) {
       sidebarRef.current.style.width = "";
     }
+  }, [isMobile]);
+
+  // restore sidebar width from local storage on mount only for desktop
+  useEffect(() => {
+    if (isMobile || !sidebarRef.current) return;
+    const saved = getSidebarWidth();
+    if (saved) {
+      const parsed = parseInt(saved, 10);
+      if (!isNaN(parsed)) {
+        const clamped = Math.min(Math.max(parsed, SIDEBAR_MIN_WIDTH), getSidebarMaxWidth());
+        sidebarRef.current.style.width = `${clamped}px`;
+      }
+    }
+  }, [isMobile]);
+
+  // Clamp sidebar width on window resize
+  useEffect(() => {
+    if (isMobile) return;
+    const handleResize = () => {
+      if (!sidebarRef.current) return;
+      const current = sidebarRef.current.offsetWidth;
+      const max = getSidebarMaxWidth();
+      if (current > max) {
+        sidebarRef.current.style.width = `${max}px`;
+        setSidebarWidth(String(max));
+      } else if (current < SIDEBAR_MIN_WIDTH) {
+        sidebarRef.current.style.width = `${SIDEBAR_MIN_WIDTH}px`;
+        setSidebarWidth(String(SIDEBAR_MIN_WIDTH));
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const timer = setTimeout(() => setShowResizeHint(false), 2000);
+    return () => clearTimeout(timer);
   }, [isMobile]);
 
   /**
@@ -170,14 +240,11 @@ const InGameSidebar = () => {
    * Only works on desktop
    */
   const handleMouseMove = (event: MouseEvent) => {
-    if (!isResizingRef.current || isMobile) return;
+    if (!isResizingRef.current || isMobileRef.current) return;
     let newWidth = event.clientX;
-
-    // Clamps so that the width of the sidebar
-    // can't get too big or too small.
-    if (newWidth < 270) newWidth = 270;
-    if (newWidth > 600) newWidth = 600;
-
+    const maxWidth = getSidebarMaxWidth();
+    if (newWidth < SIDEBAR_MIN_WIDTH) newWidth = SIDEBAR_MIN_WIDTH;
+    if (newWidth > maxWidth) newWidth = maxWidth;
     if (sidebarRef.current) {
       sidebarRef.current.style.width = `${newWidth}px`;
     }
@@ -193,6 +260,10 @@ const InGameSidebar = () => {
     document.body.style.setProperty("cursor", "unset");
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
+    if (sidebarRef.current && !isMobileRef.current) {
+      const width = sidebarRef.current.offsetWidth;
+      setSidebarWidth(String(width));
+    }
   };
 
   /**
@@ -334,7 +405,7 @@ const InGameSidebar = () => {
               <Image
                 src={currentImageSrcUrl}
                 fill
-                sizes={isMobile ? "250px" : "296px"}
+                sizes={isMobile ? "250px" : "600px"}
                 alt=""
                 onLoad={() => setLoadedImageUrl(currentImageSrcUrl)}
                 onMouseEnter={handleMouseEnter}
@@ -435,25 +506,26 @@ const InGameSidebar = () => {
             <div
               className={cn(
                 "flex flex-col gap-1 transition-all duration-200",
-                isResizing ? "scale-110" : "group-hover:scale-110"
+                isResizing ? "scale-110" : "group-hover:scale-110",
+                showResizeHint && "resize-hint-dots"
               )}
             >
               <div
                 className={cn(
                   "h-1 w-1 rounded-full transition-colors duration-200",
-                  isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+                  isResizing ? "bg-primary/80" : "bg-muted-foreground/60 group-hover:bg-primary/80"
                 )}
               />
               <div
                 className={cn(
                   "h-1 w-1 rounded-full transition-colors duration-200",
-                  isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+                  isResizing ? "bg-primary/80" : "bg-muted-foreground/60 group-hover:bg-primary/80"
                 )}
               />
               <div
                 className={cn(
                   "h-1 w-1 rounded-full transition-colors duration-200",
-                  isResizing ? "bg-primary/80" : "bg-muted-foreground/40 group-hover:bg-primary/80"
+                  isResizing ? "bg-primary/80" : "bg-muted-foreground/60 group-hover:bg-primary/80"
                 )}
               />
             </div>
