@@ -38,7 +38,7 @@ export function PlayerGameOver({
       <Navbar />
       <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 pt-24 text-center">
         <div className="flex flex-row items-center gap-2 pb-4">
-          <Logo logoDimensions={100} textOptions="text-3xl" badge="Tournament" />
+          <Logo logoDimensions={100} textOptions="text-2xl" badge="Tournament" stackOnMobile={true} />
         </div>
         <div className="flex items-center gap-12">
           <div className="flex flex-col items-center gap-3">
