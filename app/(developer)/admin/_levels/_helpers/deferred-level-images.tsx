@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
-import { FileImage, LoaderCircle, Upload } from "lucide-react";
+import { Eye, EyeOff, FileImage, LoaderCircle, Upload } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +26,7 @@ const MAX_DEFERRED_UPLOADS = 20;
 const DeferredLevelImages = () => {
   const { data: currentUser } = useCurrentUser();
   const fileInput = useRef<HTMLInputElement>(null);
+  const [showDrafts, setShowDrafts] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -109,72 +110,83 @@ const DeferredLevelImages = () => {
           <h3 className="text-lg font-semibold">Deferred Images</h3>
           <p className="text-sm text-muted-foreground">
             {drafts
-              ? `${drafts.length} image${drafts.length === 1 ? "" : "s"} waiting for level details.`
+              ? `${drafts.length} image${drafts.length === 1 ? "" : "s"} to review. Reveal with the button above.`
               : "Loading deferred images..."}
           </p>
         </div>
-        <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" disabled={!canUseDeferredUploads}>
-              <Upload className="mr-2 h-4 w-4" /> Upload Draft Images
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Upload Draft Images</DialogTitle>
-              <DialogDescription>
-                Stage up to {MAX_DEFERRED_UPLOADS} images now, then add descriptions, tags, and pins later.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="deferred-level-images">Images</Label>
-                <Input
-                  id="deferred-level-images"
-                  ref={fileInput}
-                  type="file"
-                  multiple
-                  accept="image/png, image/jpeg, image/heic, image/heif, .png, .jpg, .jpeg, .heic, .heif"
-                  onChange={(event) => handleFileSelection(event.target.files)}
-                />
-              </div>
-              {selectedImages.length > 0 && (
-                <div className="max-h-40 overflow-auto rounded-md border bg-background p-2 text-sm">
-                  {selectedImages.map((image) => (
-                    <div key={`${image.name}-${image.size}`} className="flex items-center gap-2 py-1">
-                      <FileImage className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      <span className="truncate">{image.name}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <Button onClick={handleDeferredUpload} disabled={isUploading || selectedImages.length === 0}>
-                {isUploading ? (
-                  <>
-                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading {uploadProgress}/{selectedImages.length}
-                  </>
-                ) : (
-                  <>
-                    <Upload className="mr-2 h-4 w-4" /> Save Draft Images
-                  </>
-                )}
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <Button
+            onClick={() => setShowDrafts((current) => !current)}
+            disabled={!drafts || drafts.length === 0}
+          >
+            {showDrafts ? <EyeOff className="mr-2 h-4 w-4" /> : <Eye className="mr-2 h-4 w-4" />}
+            {showDrafts ? "Hide Images" : "Reveal Images"}
+          </Button>
+          <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" disabled={!canUseDeferredUploads}>
+                <Upload className="mr-2 h-4 w-4" /> Upload Draft Images
               </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Upload Draft Images</DialogTitle>
+                <DialogDescription>
+                  Stage up to {MAX_DEFERRED_UPLOADS} images now, then add descriptions, tags, and pins later.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <div className="grid w-full items-center gap-1.5">
+                  <Label htmlFor="deferred-level-images">Images</Label>
+                  <Input
+                    id="deferred-level-images"
+                    ref={fileInput}
+                    type="file"
+                    multiple
+                    accept="image/png, image/jpeg, image/heic, image/heif, .png, .jpg, .jpeg, .heic, .heif"
+                    onChange={(event) => handleFileSelection(event.target.files)}
+                  />
+                </div>
+                {selectedImages.length > 0 && (
+                  <div className="max-h-40 overflow-auto rounded-md border bg-background p-2 text-sm">
+                    {selectedImages.map((image) => (
+                      <div key={`${image.name}-${image.size}`} className="flex items-center gap-2 py-1">
+                        <FileImage className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <span className="truncate">{image.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <Button onClick={handleDeferredUpload} disabled={isUploading || selectedImages.length === 0}>
+                  {isUploading ? (
+                    <>
+                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                      Uploading {uploadProgress}/{selectedImages.length}
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="mr-2 h-4 w-4" /> Save Draft Images
+                    </>
+                  )}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
-      {drafts && drafts.length > 0 ? (
+      {showDrafts && drafts && drafts.length > 0 ? (
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {drafts.map((draft) => (
             <DeferredLevelImageCard key={draft._id} draft={draft} />
           ))}
         </div>
       ) : (
-        <div className="mt-4 rounded-md border border-dashed bg-background px-4 py-6 text-center text-sm text-muted-foreground">
-          No deferred images are waiting.
-        </div>
+        showDrafts && (
+          <div className="mt-4 rounded-md border border-dashed bg-background px-4 py-6 text-center text-sm text-muted-foreground">
+            No deferred images are waiting.
+          </div>
+        )
       )}
     </div>
   );

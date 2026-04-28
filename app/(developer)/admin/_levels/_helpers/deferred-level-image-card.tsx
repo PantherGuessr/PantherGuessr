@@ -44,6 +44,12 @@ const DeferredLevelImageCard = ({ draft }: { draft: DeferredLevelImageDraft }) =
   const completeDraft = useMutation(api.levelcreator.completeDeferredLevelImageDraft);
   const deleteDraft = useMutation(api.levelcreator.deleteDeferredLevelImageDraft);
   const normalizedDescription = description.replace(/\s*\r?\n\s*/g, " ").trim();
+  const uploadedAt = new Date(draft._creationTime).toLocaleString(undefined, {
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 
   function resetCompletionForm() {
     setDescription("");
@@ -101,8 +107,8 @@ const DeferredLevelImageCard = ({ draft }: { draft: DeferredLevelImageDraft }) =
         )}
       </div>
       <div className="space-y-2 p-2.5">
-        <div className="line-clamp-2 text-xs text-muted-foreground">
-          Uploaded {new Date(draft._creationTime).toLocaleString()}
+        <div className="line-clamp-1 text-xs text-muted-foreground">
+          Uploaded {uploadedAt}
           {draft.uploadedByUsername ? ` by ${draft.uploadedByUsername}` : ""}
         </div>
         <div className="flex gap-2">
