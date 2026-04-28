@@ -22,26 +22,28 @@ interface LogoProps {
 export const Logo = ({ href, as_png, badge, logoDimensions = 40, textOptions, stackOnMobile = false }: LogoProps) => {
   const logoContent = (
     <div className="flex items-center gap-x-2">
-        <Image
-          draggable={false}
-          src={as_png ? "/pantherguessr_logo.png" : "/pantherguessr_logo.svg"}
-          height={logoDimensions}
-          width={logoDimensions}
-          alt="Logo"
-          className="select-none"
-        />
-      <div className={cn("flex items-center justify-center gap-x-2", stackOnMobile ? "flex-col gap-y-1 sm:flex-row" : "")}>
+      <Image
+        draggable={false}
+        src={as_png ? "/pantherguessr_logo.png" : "/pantherguessr_logo.svg"}
+        height={logoDimensions}
+        width={logoDimensions}
+        alt="Logo"
+        className="select-none"
+      />
+      <div
+        className={cn("flex items-center justify-center gap-x-2", stackOnMobile ? "flex-col gap-y-1 sm:flex-row" : "")}
+      >
         <p className={cn("select-none pl-2 pr-2 font-semibold", font.className, textOptions)}>PantherGuessr</p>
-      {badge && (
-        <Badge
-          className={cn(
-            href == undefined ? "cursor-default hover:bg-red-800" : "cursor-pointer hover:bg-red-900",
-            "h-6 select-none bg-red-800 pt-1 text-white"
-          )}
-        >
-          {badge}
-        </Badge>
-      )}
+        {badge && (
+          <Badge
+            className={cn(
+              href == undefined ? "cursor-default hover:bg-red-800" : "cursor-pointer hover:bg-red-900",
+              "h-6 select-none bg-red-800 pt-1 text-white"
+            )}
+          >
+            {badge}
+          </Badge>
+        )}
       </div>
     </div>
   );
