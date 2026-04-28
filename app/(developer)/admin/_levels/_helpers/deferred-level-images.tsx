@@ -115,10 +115,7 @@ const DeferredLevelImages = () => {
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Button
-            onClick={() => setShowDrafts((current) => !current)}
-            disabled={!drafts || drafts.length === 0}
-          >
+          <Button onClick={() => setShowDrafts((current) => !current)} disabled={!drafts || drafts.length === 0}>
             {showDrafts ? <EyeOff className="mr-2 h-4 w-4" /> : <Eye className="mr-2 h-4 w-4" />}
             {showDrafts ? "Hide Images" : "Reveal Images"}
           </Button>
