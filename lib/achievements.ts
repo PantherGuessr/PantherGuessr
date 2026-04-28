@@ -42,6 +42,12 @@ export const ACHIEVEMENTS: Achievement[] = [
     description: "Submitted a level that was approved and published.",
     imageSrc: "/achievements/photo_scout_achievement.svg",
   },
+  {
+    id: "spring_26_tournament_finalist",
+    name: "S26 Tournament Finalist",
+    description: "Placed top 3 in the Spring 2026 PantherGuessr Tournament.",
+    imageSrc: "/achievements/spring_26_tournament_finalist_achievement.svg",
+  },
 ];
 
 export const ACHIEVEMENTS_MAP: Record<string, Achievement> = Object.fromEntries(ACHIEVEMENTS.map((a) => [a.id, a]));
