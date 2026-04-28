@@ -112,27 +112,23 @@ export const clearOldGames = internalMutation({
       // get the connected leaderboard IDs, if applicable
       const leaderboardIds = game.leaderboard ?? [];
       for (const leaderboardId of leaderboardIds) {
-        await ctx.db.delete(leaderboardId);
+        if (await ctx.db.get(leaderboardId)) {
+          await ctx.db.delete(leaderboardId);
+        }
       }
 
-      // get any connected ongoing games, if applicable
-      await ctx.db
+      const ongoingGames = await ctx.db
         .query("ongoingGames")
         .filter((q) => q.eq(q.field("game"), game._id))
-        .collect()
-        .then(
-          // delete the ongoing games
-          async (ongoingGames) => {
-            for (const ongoingGame of ongoingGames) {
-              await ctx.db.delete(ongoingGame._id);
-            }
-          }
-        );
-      // delete game
-      await ctx.db.delete(game._id);
+        .collect();
+      for (const ongoingGame of ongoingGames) {
+        await ctx.db.delete(ongoingGame._id);
+      }
 
-      return `Deleted ${games.length} games`;
+      await ctx.db.delete(game._id);
     }
+
+    return `Deleted ${games.length} games`;
   },
 });
 
