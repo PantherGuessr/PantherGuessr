@@ -470,6 +470,9 @@ export const getLeaderboardEntryByGameAndUser = query({
 export const getImageSrc = query({
   args: { id: v.id("levels") },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
     if (!args.id) {
       throw new Error("Missing entryId parameter.");
     }
