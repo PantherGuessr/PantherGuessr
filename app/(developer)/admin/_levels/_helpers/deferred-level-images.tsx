@@ -16,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import DeferredLevelImageCard from "./deferred-level-image-card";
 import { prepareImageForUpload } from "./image-processing";
@@ -69,8 +68,6 @@ const DeferredLevelImages = () => {
     setUploadProgress(0);
 
     try {
-      const storageIds: Id<"_storage">[] = [];
-
       for (const [index, selectedImage] of selectedImages.entries()) {
         const compressedFile = await prepareImageForUpload(selectedImage);
         const postUrl = await generateUploadUrl();
@@ -85,11 +82,10 @@ const DeferredLevelImages = () => {
         }
 
         const { storageId } = await result.json();
-        storageIds.push(storageId);
+        await createDrafts({ storageIds: [storageId] });
         setUploadProgress(index + 1);
       }
 
-      await createDrafts({ storageIds });
       setSelectedImages([]);
       if (fileInput.current) {
         fileInput.current.value = "";
@@ -97,6 +93,10 @@ const DeferredLevelImages = () => {
       setUploadDialogOpen(false);
     } catch (error) {
       console.error("Failed to upload deferred level images:", error);
+      setSelectedImages([]);
+      if (fileInput.current) {
+        fileInput.current.value = "";
+      }
       alert("An error occurred while uploading these images. Please try again.");
     } finally {
       setIsUploading(false);
