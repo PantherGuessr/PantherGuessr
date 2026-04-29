@@ -43,9 +43,9 @@ function fallbackImage(origin: string) {
 }
 
 function scoreColor(score: number): string {
-  if (score >= 240) return "#ca8a04"; // gold
+  if (score === 250) return "#ffc30f"; // gold
   if (score >= 200) return "#16a34a"; // green
-  if (score >= 150) return "#d97706"; // amber
+  if (score >= 150) return "#e07604"; // amber
   return "#dc2626"; // red
 }
 
@@ -223,7 +223,7 @@ export async function GET(request: NextRequest) {
               flexDirection: "row",
               alignItems: "center",
               gap: 6,
-              fontSize: 26,
+              fontSize: 30,
               color: "#71717a",
               marginBottom: 28,
             }}
@@ -269,7 +269,7 @@ export async function GET(request: NextRequest) {
             <span style={{ display: "flex", fontSize: 76, fontWeight: 700, color: "#18181b", lineHeight: 1 }}>
               {finalScore}
             </span>
-            <span style={{ display: "flex", fontSize: 28, color: "#52525b" }}>/1250</span>
+            <span style={{ display: "flex", fontSize: 32, fontWeight: 700, color: "#52525b" }}>/1250</span>
           </div>
 
           {/* Divider */}
@@ -328,8 +328,8 @@ export async function GET(request: NextRequest) {
                     flexDirection: "column",
                     width: CARD_W,
                     height: CARD_H,
-                    background: isSpotOn ? "#f0fdf4" : "#fafafa",
-                    border: isSpotOn ? "1px solid #bbf7d0" : "1px solid #e4e4e7",
+                    background: isSpotOn ? "#fffbeb" : "#fafafa",
+                    border: isSpotOn ? "1px solid #ffc30f" : "1px solid #e4e4e7",
                     borderRadius: 10,
                     paddingTop: 18,
                     paddingBottom: 18,
@@ -343,7 +343,7 @@ export async function GET(request: NextRequest) {
                   <div
                     style={{
                       display: "flex",
-                      fontSize: 30,
+                      fontSize: 36,
                       fontWeight: 700,
                       color: "#52525b",
                       textTransform: "uppercase",
@@ -358,19 +358,18 @@ export async function GET(request: NextRequest) {
                     <div style={{ display: "flex", fontSize: 64, fontWeight: 700, color: col, lineHeight: 1 }}>
                       {score}
                     </div>
-                    <div style={{ display: "flex", fontSize: 18, color: "#52525b" }}>pts</div>
+                    <div style={{ display: "flex", fontSize: 24, color: "#52525b", fontWeight: "bold" }}>pts</div>
                   </div>
 
                   {/* Distance + spot-on (badge always rendered to keep score vertically stable) */}
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 7 }}>
-                    <div style={{ display: "flex", fontSize: 22, color: "#71717a" }}>{distance} ft</div>
                     <div
                       style={{
                         display: "flex",
                         fontSize: 14,
                         fontWeight: 700,
-                        color: "#ffffff",
-                        background: "#16a34a",
+                        color: "#78350f",
+                        background: "#ffc30f",
                         borderRadius: 5,
                         paddingTop: 4,
                         paddingBottom: 4,
