@@ -46,7 +46,7 @@ function scoreColor(score: number): string {
   if (score >= 240) return "#ca8a04"; // gold
   if (score >= 200) return "#16a34a"; // green
   if (score >= 150) return "#d97706"; // amber
-  return "#dc2626";                   // red
+  return "#dc2626"; // red
 }
 
 const BANNER_H = 190;
@@ -58,7 +58,7 @@ const RIGHT_X = DIVIDER_X + 1 + 28;
 const RIGHT_W = 1200 - RIGHT_X - PAD_X;
 const CARD_GAP = 12;
 const CARD_W = Math.floor((RIGHT_W - CARD_GAP * 4) / 5);
-const CARD_H = 290;
+const CARD_H = 318;
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -207,6 +207,10 @@ export async function GET(request: NextRequest) {
               color: "#18181b",
               lineHeight: 1.05,
               marginBottom: 8,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: LEFT_W,
             }}
           >
             @{username}
@@ -219,9 +223,9 @@ export async function GET(request: NextRequest) {
               flexDirection: "row",
               alignItems: "center",
               gap: 6,
-              fontSize: 20,
+              fontSize: 26,
               color: "#71717a",
-              marginBottom: 32,
+              marginBottom: 28,
             }}
           >
             <span style={{ display: "flex", color: "#18181b", fontWeight: 700 }}>Level</span>
@@ -229,7 +233,14 @@ export async function GET(request: NextRequest) {
               <>
                 <span style={{ display: "flex", color: "#a1a1aa", fontWeight: 700 }}>{oldLevel}</span>
                 <svg width="22" height="22" viewBox="0 0 24 24" style={{ display: "flex", alignSelf: "center" }}>
-                  <path d="M5 12h14M13 6l6 6-6 6" stroke="#a1a1aa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  <path
+                    d="M5 12h14M13 6l6 6-6 6"
+                    stroke="#a1a1aa"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  />
                 </svg>
                 <span style={{ display: "flex", color: "#18181b", fontWeight: 700 }}>{newLevel}</span>
               </>
@@ -245,7 +256,7 @@ export async function GET(request: NextRequest) {
           <div
             style={{
               display: "flex",
-              fontSize: 12,
+              fontSize: 18,
               color: "#991b1b",
               letterSpacing: 2,
               marginBottom: 6,
@@ -258,7 +269,7 @@ export async function GET(request: NextRequest) {
             <span style={{ display: "flex", fontSize: 76, fontWeight: 700, color: "#18181b", lineHeight: 1 }}>
               {finalScore}
             </span>
-            <span style={{ display: "flex", fontSize: 22, color: "#52525b" }}>/1250</span>
+            <span style={{ display: "flex", fontSize: 28, color: "#52525b" }}>/1250</span>
           </div>
 
           {/* Divider */}
@@ -268,7 +279,7 @@ export async function GET(request: NextRequest) {
           <div
             style={{
               display: "flex",
-              fontSize: 12,
+              fontSize: 18,
               color: "#52525b",
               letterSpacing: 2,
               marginBottom: 6,
@@ -277,7 +288,7 @@ export async function GET(request: NextRequest) {
           >
             XP Earned
           </div>
-          <div style={{ display: "flex", fontSize: 36, fontWeight: 700, color: "#991b1b" }}>+{xpGained} XP</div>
+          <div style={{ display: "flex", fontSize: 44, fontWeight: 700, color: "#991b1b" }}>+{xpGained} XP</div>
         </div>
 
         {/* Vertical divider */}
@@ -304,18 +315,6 @@ export async function GET(request: NextRequest) {
             flexDirection: "column",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              fontSize: 15,
-              color: "#52525b",
-              letterSpacing: 2,
-              marginBottom: 14,
-              textTransform: "uppercase",
-            }}
-          >
-            Round Breakdown
-          </div>
           <div style={{ display: "flex", flexDirection: "row", gap: CARD_GAP }}>
             {scores.map((score, i) => {
               const distance = distances[i];
@@ -344,30 +343,31 @@ export async function GET(request: NextRequest) {
                   <div
                     style={{
                       display: "flex",
-                      fontSize: 15,
+                      fontSize: 30,
+                      fontWeight: 700,
                       color: "#52525b",
                       textTransform: "uppercase",
                       letterSpacing: 1,
                     }}
                   >
-                    Round {i + 1}
+                    #{i + 1}
                   </div>
 
                   {/* Score */}
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                    <div style={{ display: "flex", fontSize: 58, fontWeight: 700, color: col, lineHeight: 1 }}>
+                    <div style={{ display: "flex", fontSize: 64, fontWeight: 700, color: col, lineHeight: 1 }}>
                       {score}
                     </div>
-                    <div style={{ display: "flex", fontSize: 15, color: "#52525b" }}>pts</div>
+                    <div style={{ display: "flex", fontSize: 18, color: "#52525b" }}>pts</div>
                   </div>
 
                   {/* Distance + spot-on (badge always rendered to keep score vertically stable) */}
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 7 }}>
-                    <div style={{ display: "flex", fontSize: 18, color: "#71717a" }}>{distance} ft</div>
+                    <div style={{ display: "flex", fontSize: 22, color: "#71717a" }}>{distance} ft</div>
                     <div
                       style={{
                         display: "flex",
-                        fontSize: 12,
+                        fontSize: 14,
                         color: "#16a34a",
                         background: "#dcfce7",
                         border: "1px solid #bbf7d0",
@@ -380,9 +380,9 @@ export async function GET(request: NextRequest) {
                         textTransform: "uppercase",
                         opacity: isSpotOn ? 1 : 0,
                       }}
-                      >
-                        Spot-On
-                      </div>
+                    >
+                      Spot-On
+                    </div>
                   </div>
                 </div>
               );
