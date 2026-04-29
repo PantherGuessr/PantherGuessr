@@ -361,7 +361,6 @@ export async function GET(request: NextRequest) {
                     <div style={{ display: "flex", fontSize: 24, color: "#52525b", fontWeight: "bold" }}>pts</div>
                   </div>
 
-                  {/* Distance + spot-on (badge always rendered to keep score vertically stable) */}
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 7 }}>
                     <div
                       style={{
