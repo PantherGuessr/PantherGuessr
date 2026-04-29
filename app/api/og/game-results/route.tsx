@@ -227,8 +227,10 @@ export async function GET(request: NextRequest) {
             <span style={{ display: "flex", color: "#18181b", fontWeight: 700 }}>Level</span>
             {oldLevel !== newLevel ? (
               <>
-                <span style={{ display: "flex", color: "#a1a1aa" }}>{oldLevel}</span>
-                <span style={{ display: "flex", color: "#d4d4d8", fontSize: 16 }}>→</span>
+                <span style={{ display: "flex", color: "#a1a1aa", fontWeight: 700 }}>{oldLevel}</span>
+                <svg width="22" height="22" viewBox="0 0 24 24" style={{ display: "flex", alignSelf: "center" }}>
+                  <path d="M5 12h14M13 6l6 6-6 6" stroke="#a1a1aa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                </svg>
                 <span style={{ display: "flex", color: "#18181b", fontWeight: 700 }}>{newLevel}</span>
               </>
             ) : (
