@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useMutation } from "convex/react";
-import { CarFront, House, LoaderCircle, Plus, Store, University } from "lucide-react";
+import { LoaderCircle, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,14 +19,9 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { api } from "@/convex/_generated/api";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import DynamicUploadMap from "./dynamic-upload-map";
+import { prepareImageForUpload } from "./image-processing";
+import { tagsList } from "./level-tags";
 import { useMarker } from "./MarkerContext";
-
-const tagsList = [
-  { value: "Standard", label: "Standard", icon: University },
-  { value: "Off Campus", label: "Off Campus", icon: CarFront },
-  { value: "Orange Circle", label: "Orange Circle", icon: Store },
-  { value: "Residence Areas", label: "Residence Areas", icon: House },
-];
 
 const LevelUpload = () => {
   const { data: currentUser } = useCurrentUser();
@@ -52,17 +47,8 @@ const LevelUpload = () => {
   }, [selectedImage, description, localMarkerPosition]);
 
   async function handleImageSubmission() {
-    // Dynamically import browser-only libraries to avoid SSR window/document references
-    const [{ default: imageCompression }, { default: heic2any }] = await Promise.all([
-      import("browser-image-compression"),
-      import("heic2any"),
-    ]);
-    const descriptionInput = (
-      typeof document !== "undefined" ? (document.getElementById("description") as HTMLInputElement) : { value: "" }
-    ) as HTMLInputElement;
-
     // check if form has all required fields
-    if (!selectedImage || !descriptionInput.value || !localMarkerPosition) {
+    if (!selectedImage || !description || !localMarkerPosition) {
       alert("Please fill out all required fields.");
       return;
     }
@@ -73,60 +59,7 @@ const LevelUpload = () => {
     try {
       // get authenticated user's username
       const username = currentUser?.user.username || "developer";
-      let fileToProcess = selectedImage;
-      const fileName = selectedImage.name.toLowerCase();
-
-      // Check for HEIC/HEIF by both MIME type and file extension for reliability
-      const isHeicOrHeif =
-        selectedImage.type === "image/heic" ||
-        selectedImage.type === "image/heif" ||
-        fileName.endsWith(".heic") ||
-        fileName.endsWith(".heif");
-
-      if (isHeicOrHeif) {
-        let convertedBlob!: Blob;
-
-        try {
-          const result = await heic2any({ blob: selectedImage, toType: "image/jpeg", quality: 0.9 });
-          convertedBlob = Array.isArray(result) ? result[0] : result;
-        } catch {
-          // heic2any fails on some HEIC variants, tries to use native browser decoding
-          try {
-            const bitmap = await createImageBitmap(selectedImage);
-            const canvas = document.createElement("canvas");
-            canvas.width = bitmap.width;
-            canvas.height = bitmap.height;
-            const ctx = canvas.getContext("2d");
-            if (!ctx) throw new Error("Could not get canvas context");
-            ctx.drawImage(bitmap, 0, 0);
-            convertedBlob = await new Promise<Blob>((resolve, reject) => {
-              canvas.toBlob(
-                (blob) => (blob ? resolve(blob) : reject(new Error("Canvas toBlob failed"))),
-                "image/jpeg",
-                0.9
-              );
-            });
-          } catch {
-            throw new Error(
-              "This HEIC/HEIF image could not be converted automatically. Please convert it to JPEG or PNG first and re-upload, or try another browser."
-            );
-          }
-        }
-
-        fileToProcess = new File([convertedBlob], selectedImage.name.replace(/\.[^/.]+$/, ".jpg"), {
-          type: "image/jpeg",
-        });
-      }
-
-      // image compression options
-      const imageCompressionOptions = {
-        maxSizeMB: 1.0,
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-      };
-
-      // gets compressed file
-      const compressedFile = await imageCompression(fileToProcess, imageCompressionOptions);
+      const compressedFile = await prepareImageForUpload(selectedImage);
 
       // uploads the image to convex and then creates a new level with the image
       const postUrl = await generateUploadUrl();
@@ -139,7 +72,7 @@ const LevelUpload = () => {
 
       await createLevelWithImageStorageId({
         storageId,
-        description: descriptionInput.value,
+        description,
         latitude: localMarkerPosition.lat,
         longitude: localMarkerPosition.lng,
         authorUsername: username,

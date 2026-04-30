@@ -7,19 +7,19 @@ const crons = cronJobs();
 
 crons.daily(
   "Reset inactive streaks",
-  { hourUTC: 8, minuteUTC: 0 }, // 12:00am PST
+  { hourUTC: 8, minuteUTC: 0 }, // 12:00am PST and 1:00am PDT
   internal.users.resetInactiveStreaks
 );
 
 crons.daily(
   "Clear old games",
-  { hourUTC: 8, minuteUTC: 0 }, // 12:00am PST
+  { hourUTC: 8, minuteUTC: 0 }, // 12:00am PST and 1:00am PDT
   internal.game.clearOldGames
 );
 
 crons.daily(
   "Clear unplayed games",
-  { hourUTC: 8, minuteUTC: 0 }, // 12:00am PST
+  { hourUTC: 8, minuteUTC: 0 }, // 12:00am PST and 1:00am PDT
   internal.game.clearUnplayedGames
 );
 

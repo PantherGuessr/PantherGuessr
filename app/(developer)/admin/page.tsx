@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Analytics from "./_analytics/analytics";
 import { useAdmin } from "./_components/adminprovider";
+import DeferredLevelImages from "./_levels/_helpers/deferred-level-images";
 import LevelReports from "./_levels/_helpers/levelreports";
 import LevelUpload from "./_levels/_helpers/levelupload";
 import { MarkerProvider } from "./_levels/_helpers/MarkerContext";
@@ -71,6 +72,7 @@ const AdminPage = () => {
                     <LevelUpload />
                   </CardHeader>
                   <CardContent className="px-2 md:px-6">
+                    <DeferredLevelImages />
                     <Levels />
                   </CardContent>
                 </Card>

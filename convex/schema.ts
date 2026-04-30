@@ -36,6 +36,12 @@ export default defineSchema({
     tags: v.optional(v.array(v.string())),
   }),
 
+  deferredLevelImages: defineTable({
+    imageId: v.id("_storage"),
+    uploadedByClerkId: v.string(),
+    uploadedByUsername: v.optional(v.string()),
+  }).index("byUploadedByClerkId", ["uploadedByClerkId"]),
+
   gameStats: defineTable({
     type: v.union(v.literal("daily"), v.literal("weekly"), v.literal("monthly")),
     isoTime: v.string(),
