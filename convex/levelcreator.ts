@@ -20,7 +20,7 @@ function hasLevelCreationPermission(callerUser: { roles?: string[] } | null) {
 
 function hasDeferredImagePermission(callerUser: { roles?: string[] } | null) {
   // currently the same as level creation, but separate function in case this needs to be changed in the future
-  return !!callerUser?.roles?.includes("developer") || callerUser?.roles?.includes("moderator");
+  return !!(callerUser?.roles?.includes("developer") || callerUser?.roles?.includes("moderator"));
 }
 
 async function requireLevelCreationPermission(ctx: QueryCtx | MutationCtx) {
