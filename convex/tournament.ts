@@ -412,7 +412,7 @@ export const createNewLobbyFromExisting = mutation({
     await ctx.db.delete(args.roomId);
 
     // Generate new unique room code
-    let roomCode: string;
+    let roomCode = generateRoomCode();
     let attempts = 0;
     while (
       await ctx.db
@@ -421,10 +421,7 @@ export const createNewLobbyFromExisting = mutation({
         .unique()
     ) {
       if (++attempts > 20) throw new Error("Failed to generate unique room code");
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let suffix = "";
-      for (let i = 0; i < 4; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
-      roomCode = `PG-${suffix}`;
+      roomCode = generateRoomCode();
     }
 
     const newRoomId = await ctx.db.insert("tournamentRooms", {
