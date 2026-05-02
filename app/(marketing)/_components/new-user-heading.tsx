@@ -34,7 +34,7 @@ export const NewUserHeading = () => {
               onMouseOver={() => setSignOnButtonHovered(true)}
               onMouseLeave={() => setSignOnButtonHovered(false)}
             >
-              <div className="waitlist-button glow flex h-16 flex-row items-center justify-center bg-primary text-primary-foreground shadow-md">
+              <div className="waitlist-button glow bg-primary text-primary-foreground flex h-16 flex-row items-center justify-center shadow-md">
                 <p className="pr-1 text-lg">Sign up to play</p>
                 <ArrowRight className={cn("transition-transform", signOnButtonHovered && "translate-x-1")} />
               </div>

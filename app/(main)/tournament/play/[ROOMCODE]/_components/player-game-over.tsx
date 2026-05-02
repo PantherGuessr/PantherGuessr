@@ -48,7 +48,7 @@ export function PlayerGameOver({
               Winner!
             </span>
           </div>
-          <span className="self-center text-xl text-muted-foreground">vs</span>
+          <span className="text-muted-foreground self-center text-xl">vs</span>
           <div className="flex flex-col items-center gap-3">
             <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} size="large" color="p2color" />
             <p className="text-4xl font-bold">{room.player2TotalScore}</p>
@@ -65,7 +65,7 @@ export function PlayerGameOver({
             Back to Home
           </Button>
         </div>
-        <p className="text-sm text-muted-foreground">The organizer can restart this lobby for a rematch.</p>
+        <p className="text-muted-foreground text-sm">The organizer can restart this lobby for a rematch.</p>
       </div>
       <Footer />
     </div>

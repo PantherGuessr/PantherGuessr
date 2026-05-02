@@ -34,7 +34,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
 
   if (!user) {
     return (
-      <span className="mx-0.5 select-none rounded-lg bg-background px-1 py-[0.2rem] font-bold outline outline-[#3E0000] transition-colors duration-200 dark:outline-white">
+      <span className="bg-background mx-0.5 rounded-lg px-1 py-[0.2rem] font-bold outline outline-[#3E0000] transition-colors duration-200 select-none dark:outline-white">
         {"USER NOT FOUND"}
       </span>
     );
@@ -42,7 +42,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
 
   if (!showHoverCard) {
     return (
-      <span className="mx-0.5 select-none rounded-lg bg-background px-1 py-[0.2rem] font-bold outline outline-[#3E0000] transition-colors duration-200 dark:outline-white">
+      <span className="bg-background mx-0.5 rounded-lg px-1 py-[0.2rem] font-bold outline outline-[#3E0000] transition-colors duration-200 select-none dark:outline-white">
         @{user?.username}
       </span>
     );
@@ -54,7 +54,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
         <Link href={"/profile/" + user?.username}>
           <span
             className={cn(
-              "mx-0.5 select-none rounded-lg bg-background px-1 py-[0.2rem] font-bold outline outline-[#3E0000] transition-colors duration-200 dark:outline-white",
+              "bg-background mx-0.5 rounded-lg px-1 py-[0.2rem] font-bold outline outline-[#3E0000] transition-colors duration-200 select-none dark:outline-white",
               isOpen ? "bg-[#eaeaea] dark:bg-[#330707]" : "hover:bg-[#eaeaea] dark:hover:bg-[#330707]"
             )}
           >
@@ -77,7 +77,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.roles.isDeveloper && (
                       <Image
                         draggable={false}
-                        className="transform-gpu select-none drop-shadow"
+                        className="transform-gpu drop-shadow select-none"
                         src="/badges/developer_badge.svg"
                         width="15"
                         height="15"
@@ -87,7 +87,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.roles.isModerator && (
                       <Image
                         draggable={false}
-                        className="transform-gpu select-none drop-shadow"
+                        className="transform-gpu drop-shadow select-none"
                         src="/badges/moderator_badge.svg"
                         width="15"
                         height="15"
@@ -97,7 +97,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.roles.isContributor && (
                       <Image
                         draggable={false}
-                        className="transform-gpu select-none drop-shadow"
+                        className="transform-gpu drop-shadow select-none"
                         src="/badges/contributor_badge.svg"
                         width="15"
                         height="15"
@@ -107,7 +107,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.roles.isTopPlayer && (
                       <Image
                         draggable={false}
-                        className="transform-gpu select-none drop-shadow"
+                        className="transform-gpu drop-shadow select-none"
                         src="/badges/top_player_badge.svg"
                         width="15"
                         height="15"
@@ -117,7 +117,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.roles.isFriend && (
                       <Image
                         draggable={false}
-                        className="transform-gpu select-none drop-shadow"
+                        className="transform-gpu drop-shadow select-none"
                         src="/badges/friend_badge.svg"
                         alt="Friend Badge"
                         width="15"
@@ -127,7 +127,7 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                     {profile?.hasChapmanEmail && (
                       <Image
                         draggable={false}
-                        className="transform-gpu select-none drop-shadow"
+                        className="transform-gpu drop-shadow select-none"
                         src="/badges/chapman_badge.svg"
                         alt="Chapman Student Badge"
                         width="15"
@@ -137,12 +137,12 @@ const ProfileHoverCard = ({ userID, username, showHoverCard = true }: IProfileHo
                   </div>
                 </div>
               </div>
-              <p className="select-none text-sm font-bold italic text-muted-foreground">
+              <p className="text-muted-foreground text-sm font-bold italic select-none">
                 {profile?.selectedTagline?.tagline}
               </p>
               <div className="flex items-center pt-2">
                 <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-                <span className="select-none text-xs font-bold text-muted-foreground">
+                <span className="text-muted-foreground text-xs font-bold select-none">
                   Joined{" "}
                   {new Date(user?._creationTime ?? "").toLocaleDateString("en-US", {
                     year: "numeric",

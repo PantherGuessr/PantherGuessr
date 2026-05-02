@@ -39,7 +39,7 @@ const ProfileBackground = ({
 }: ProfileBackgroundProps) => {
   return (
     <div className={cn("flex h-72 w-full md:h-80 lg:h-96", backgroundCSSValue ?? "bg-gradient-red-purple")}>
-      <div className="flex h-full w-full items-center justify-center bg-gradient-to-b from-background to-transparent p-6 md:items-end md:justify-end">
+      <div className="from-background flex h-full w-full items-center justify-center bg-gradient-to-b to-transparent p-6 md:items-end md:justify-end">
         {isCurrentUser &&
           (isEditingBackground ? (
             <>

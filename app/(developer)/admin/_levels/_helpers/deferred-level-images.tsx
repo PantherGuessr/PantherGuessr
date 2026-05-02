@@ -104,11 +104,11 @@ const DeferredLevelImages = () => {
   }
 
   return (
-    <div className="mb-8 rounded-md border bg-muted/20 p-4 text-left">
+    <div className="bg-muted/20 mb-8 rounded-md border p-4 text-left">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold">Deferred Images</h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {drafts
               ? `${drafts.length} image${drafts.length === 1 ? "" : "s"} to review. Reveal with the button above.`
               : "Loading deferred images..."}
@@ -145,10 +145,10 @@ const DeferredLevelImages = () => {
                   />
                 </div>
                 {selectedImages.length > 0 && (
-                  <div className="max-h-40 overflow-auto rounded-md border bg-background p-2 text-sm">
+                  <div className="bg-background max-h-40 overflow-auto rounded-md border p-2 text-sm">
                     {selectedImages.map((image) => (
                       <div key={`${image.name}-${image.size}`} className="flex items-center gap-2 py-1">
-                        <FileImage className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <FileImage className="text-muted-foreground h-4 w-4 shrink-0" />
                         <span className="truncate">{image.name}</span>
                       </div>
                     ))}
@@ -180,7 +180,7 @@ const DeferredLevelImages = () => {
         </div>
       ) : (
         showDrafts && (
-          <div className="mt-4 rounded-md border border-dashed bg-background px-4 py-6 text-center text-sm text-muted-foreground">
+          <div className="bg-background text-muted-foreground mt-4 rounded-md border border-dashed px-4 py-6 text-center text-sm">
             No deferred images are waiting.
           </div>
         )

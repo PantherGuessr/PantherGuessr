@@ -51,7 +51,7 @@ const GamePage = () => {
         )}
       >
         <InGameSidebar />
-        <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pl-0 pr-4")}>
+        <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pr-4 pl-0")}>
           <DynamicInteractableMap />
         </div>
       </div>

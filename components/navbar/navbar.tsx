@@ -61,7 +61,7 @@ export const Navbar = () => {
                   </Button>
                 </SignUpButton>
               </div>
-              <div className="block text-muted-foreground sm:hidden">
+              <div className="text-muted-foreground block sm:hidden">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="icon">
@@ -83,9 +83,9 @@ export const Navbar = () => {
           {isAuthenticated && !isLoading && user && (
             <>
               <div className="ml-2 flex items-center justify-end justify-items-end gap-x-0">
-                <Menubar className="flex-1 cursor-pointer bg-transparent p-0 outline-none hover:bg-accent focus:bg-accent">
+                <Menubar className="hover:bg-accent focus:bg-accent flex-1 cursor-pointer bg-transparent p-0 outline-none">
                   <MenubarMenu>
-                    <MenubarTrigger className="cursor-pointer bg-transparent outline-none hover:bg-accent focus:bg-accent">
+                    <MenubarTrigger className="hover:bg-accent focus:bg-accent cursor-pointer bg-transparent outline-none">
                       <div className="flex items-center justify-end justify-items-end">
                         <StreakBadge
                           streak={Number(user.currentStreak)}
@@ -183,7 +183,7 @@ export const Navbar = () => {
                                 </div>
                               </div>
                             </div>
-                            <p className="text-sm font-semibold italic text-muted-foreground">
+                            <p className="text-muted-foreground text-sm font-semibold italic">
                               {currentUser.selectedTagline?.tagline}
                             </p>
                           </div>

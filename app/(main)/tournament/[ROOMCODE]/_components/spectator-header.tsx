@@ -27,7 +27,7 @@ export function SpectatorHeader({
         <div className="flex flex-row items-center gap-2">
           <Logo logoDimensions={100} textOptions="text-2xl" badge="Tournament" stackOnMobile={true} />
         </div>
-        <span className="text-sm text-muted-foreground">Round {room.currentRound}/5</span>
+        <span className="text-muted-foreground text-sm">Round {room.currentRound}/5</span>
       </div>
       <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} status={p2Status} color="p2color" />
     </div>

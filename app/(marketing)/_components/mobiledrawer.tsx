@@ -27,7 +27,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
           {hasOngoingGame ? (
             <>
               <Link href="/game/continue">
-                <Card className="cursor-pointer bg-primary text-primary-foreground">
+                <Card className="bg-primary text-primary-foreground cursor-pointer">
                   <CardContent className="p-4">
                     <div className="align-center flex flex-col justify-center gap-x-2 text-center">
                       <h1 className="text-xl font-bold">Continue Game</h1>
@@ -37,7 +37,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
                 </Card>
               </Link>
               <Link href="/game">
-                <Card className="cursor-pointer bg-primary text-primary-foreground">
+                <Card className="bg-primary text-primary-foreground cursor-pointer">
                   <CardContent className="p-4">
                     <div className="align-center flex flex-col justify-center gap-x-2 text-center">
                       <h1 className="text-xl font-bold">New Game</h1>
@@ -49,7 +49,7 @@ const MobileDrawer = ({ hasOngoingGame }: MobileDrawerProps) => {
             </>
           ) : (
             <Link href="/game">
-              <Card className="cursor-pointer bg-primary text-primary-foreground">
+              <Card className="bg-primary text-primary-foreground cursor-pointer">
                 <CardContent className="p-4">
                   <div className="align-center flex flex-col justify-center gap-x-2 text-center">
                     <h1 className="text-xl font-bold">Singleplayer</h1>

@@ -26,7 +26,7 @@ const ProfileAchievements = ({ unlockedAchievements }: ProfileAchievementsProps)
           ))}
         </div>
       ) : (
-        <p className="font-bold italic text-muted-foreground/60">None</p>
+        <p className="text-muted-foreground/60 font-bold italic">None</p>
       )}
     </div>
   );

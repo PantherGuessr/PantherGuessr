@@ -54,7 +54,7 @@ export default function TournamentJoinPage() {
             className="text-center font-mono text-lg tracking-widest"
             maxLength={7}
           />
-          {error && <p className="text-center text-sm text-destructive">{error}</p>}
+          {error && <p className="text-destructive text-center text-sm">{error}</p>}
           <Button onClick={handleJoin} disabled={isJoining || !code.trim()} className="w-full">
             {isJoining ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Join Room
@@ -62,7 +62,7 @@ export default function TournamentJoinPage() {
         </div>
         {isDeveloper && (
           <div className="mt-6 flex flex-col items-center gap-2">
-            <p className="text-xs text-muted-foreground">Organizer access</p>
+            <p className="text-muted-foreground text-xs">Organizer access</p>
             <Link href="/admin/tournament">
               <Button variant="outline" size="sm" className="gap-2">
                 <Shield className="h-4 w-4" />

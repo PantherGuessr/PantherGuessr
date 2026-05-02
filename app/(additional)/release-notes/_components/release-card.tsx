@@ -65,21 +65,21 @@ const ReleaseCard = ({ owner, repo, releaseNumber, name, body, publishDate, url 
           <div className="mr-2 flex items-center space-x-2">
             <CardTitle className="text-left">{name ?? "Version Not Found"}</CardTitle>
             {releaseNumber === 0 ? (
-              <Badge className="flex h-6 select-none items-center bg-green-800 text-white hover:bg-green-800">
+              <Badge className="flex h-6 items-center bg-green-800 text-white select-none hover:bg-green-800">
                 Latest
-                <BadgeCheck className="m-4 ml-1 mr-0 w-4" />
+                <BadgeCheck className="m-4 mr-0 ml-1 w-4" />
               </Badge>
             ) : null}
             {name?.includes("alpha") ? (
-              <Badge className="flex h-6 select-none items-center bg-orange-500 text-white hover:bg-orange-500">
+              <Badge className="flex h-6 items-center bg-orange-500 text-white select-none hover:bg-orange-500">
                 Alpha
-                <Construction className="m-4 ml-1 mr-0 w-4" />
+                <Construction className="m-4 mr-0 ml-1 w-4" />
               </Badge>
             ) : null}
             {name?.includes("beta") ? (
-              <Badge className="flex h-6 select-none items-center bg-blue-600 text-white hover:bg-blue-600">
+              <Badge className="flex h-6 items-center bg-blue-600 text-white select-none hover:bg-blue-600">
                 Beta
-                <FlaskConical className="m-4 ml-1 mr-0 w-4" />
+                <FlaskConical className="m-4 mr-0 ml-1 w-4" />
               </Badge>
             ) : null}
           </div>
@@ -98,8 +98,8 @@ const ReleaseCard = ({ owner, repo, releaseNumber, name, body, publishDate, url 
         <Separator />
         <div className="mt-2 flex flex-col items-start space-y-1 pt-2">
           <div className="flex items-center">
-            <CalendarDays className="mr-1 h-5 w-5 text-foreground/60" />
-            <p className="font-bold text-foreground/60">{publishDate ? formatDate(publishDate) : "No date"}</p>
+            <CalendarDays className="text-foreground/60 mr-1 h-5 w-5" />
+            <p className="text-foreground/60 font-bold">{publishDate ? formatDate(publishDate) : "No date"}</p>
           </div>
         </div>
       </CardHeader>

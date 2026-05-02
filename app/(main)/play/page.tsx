@@ -38,7 +38,7 @@ const PlayPage = () => {
 
   return (
     <div className="flex min-h-full flex-col">
-      <div className="absolute left-4 top-4 mt-20">
+      <div className="absolute top-4 left-4 mt-20">
         <Link href="/">
           <Button variant="outline" className="m-2 rounded-full" title="Back to main menu">
             <ArrowLeft className="mx-[-5px] h-6 w-4" />
@@ -47,19 +47,19 @@ const PlayPage = () => {
       </div>
       <div className="flex flex-1 flex-col items-center justify-center gap-y-8 px-6 pb-10 text-center">
         <Link href="/weekly">
-          <div className="gamemode-card glow flex flex-col items-center bg-primary text-primary-foreground shadow-md">
+          <div className="gamemode-card glow bg-primary text-primary-foreground flex flex-col items-center shadow-md">
             <CalendarClock className="mb-2" />
             <h1>Weekly Challenge</h1>
           </div>
         </Link>
         <Link href="/game">
-          <div className="gamemode-card flex flex-col items-center bg-primary text-primary-foreground shadow-md">
+          <div className="gamemode-card bg-primary text-primary-foreground flex flex-col items-center shadow-md">
             <User className="mb-2" />
             <h1>Singleplayer</h1>
           </div>
         </Link>
         <Link href="/tournament/join">
-          <div className="gamemode-card flex flex-col items-center bg-primary text-primary-foreground shadow-md">
+          <div className="gamemode-card bg-primary text-primary-foreground flex flex-col items-center shadow-md">
             <Swords className="mb-2" />
             <h1>Tournament</h1>
           </div>

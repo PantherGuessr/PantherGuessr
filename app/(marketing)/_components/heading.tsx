@@ -75,7 +75,7 @@ export const Heading = () => {
                 />
                 <h1
                   className={
-                    "animate-fly-in-from-top-delay-500ms mb-3 mt-6 px-2 text-2xl font-bold drop-shadow-lg transition-all sm:text-3xl md:text-3xl"
+                    "animate-fly-in-from-top-delay-500ms mt-6 mb-3 px-2 text-2xl font-bold drop-shadow-lg transition-all sm:text-3xl md:text-3xl"
                   }
                 >
                   Welcome back, <ProfileHoverCard username={currentUser.user.username} showHoverCard={false} />.{" "}
