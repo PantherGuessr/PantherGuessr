@@ -21,6 +21,9 @@ export default [
   ...nextVitals,
   eslintConfigPrettier,
   {
+    settings: {
+      react: { version: "19" },
+    },
     plugins: {
       prettier: prettierPlugin,
     },
@@ -68,6 +71,6 @@ export default [
     },
   },
   {
-    ignores: ["node_modules", ".next", "out", "build", "next-env.d.ts"],
+    ignores: ["node_modules", ".next", "out", "build", "next-env.d.ts", "convex/_generated"],
   },
 ];
