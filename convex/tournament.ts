@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 
 import { Id } from "./_generated/dataModel";
-import { mutation, query, MutationCtx } from "./_generated/server";
+import { mutation, MutationCtx, query } from "./_generated/server";
 import { haversineDistanceInFeet } from "./game";
 
 async function cleanupOngoingGamesForRoom(
@@ -231,9 +231,7 @@ export const submitTournamentGuess = mutation({
 
     const correctLat = level.latitude;
     const correctLng = level.longitude;
-    const distanceAway = parseInt(
-      haversineDistanceInFeet(correctLat, correctLng, args.lat, args.lng).toFixed(0)
-    );
+    const distanceAway = parseInt(haversineDistanceInFeet(correctLat, correctLng, args.lat, args.lng).toFixed(0));
     let lenientDistance = distanceAway - 20;
     if (lenientDistance < 0) lenientDistance = 0;
     let score = 250 - lenientDistance;
