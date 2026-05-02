@@ -619,6 +619,14 @@ export const getListOfProfiles = query({
   },
 });
 
+export const getUsersByRole = query({
+  args: { role: v.string() },
+  async handler(ctx, args) {
+    const users = await ctx.db.query("users").collect();
+    return users.filter((u) => u.roles?.includes(args.role)).map(sanitizePublicUser);
+  },
+});
+
 /**
  * Retrieves the last N played games for a user based on their Clerk ID.
  *
