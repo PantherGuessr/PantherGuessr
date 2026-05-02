@@ -45,18 +45,17 @@ export const createTournamentRoom = mutation({
       throw new Error("Insufficient permissions");
     }
 
-    let roomCode: string;
+    let roomCode = generateRoomCode();
     let attempts = 0;
-    do {
-      roomCode = generateRoomCode();
-      const existing = await ctx.db
+    while (
+      await ctx.db
         .query("tournamentRooms")
         .withIndex("byRoomCode", (q) => q.eq("roomCode", roomCode))
-        .unique();
-      if (!existing) break;
-      attempts++;
-      if (attempts > 20) throw new Error("Failed to generate unique room code");
-    } while (true);
+        .unique()
+    ) {
+      if (++attempts > 20) throw new Error("Failed to generate unique room code");
+      roomCode = generateRoomCode();
+    }
 
     const roomId = await ctx.db.insert("tournamentRooms", {
       roomCode,
@@ -415,18 +414,18 @@ export const createNewLobbyFromExisting = mutation({
     // Generate new unique room code
     let roomCode: string;
     let attempts = 0;
-    do {
+    while (
+      await ctx.db
+        .query("tournamentRooms")
+        .withIndex("byRoomCode", (q) => q.eq("roomCode", roomCode))
+        .unique()
+    ) {
+      if (++attempts > 20) throw new Error("Failed to generate unique room code");
       const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
       let suffix = "";
       for (let i = 0; i < 4; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
       roomCode = `PG-${suffix}`;
-      const existing = await ctx.db
-        .query("tournamentRooms")
-        .withIndex("byRoomCode", (q) => q.eq("roomCode", roomCode))
-        .unique();
-      if (!existing) break;
-      if (++attempts > 20) throw new Error("Failed to generate unique room code");
-    } while (true);
+    }
 
     const newRoomId = await ctx.db.insert("tournamentRooms", {
       roomCode,
