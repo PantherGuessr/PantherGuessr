@@ -50,7 +50,7 @@ const CreditsPage = () => {
 
         <h2 className="justify-self-center text-xl md:text-3xl">Contributors</h2>
         <ContributorsList />
-        <p className="max-w-2xl text-muted-foreground">
+        <p className="text-muted-foreground max-w-2xl">
           A huge thank you to our contributors! We appreciate those who have added features, fixed bugs, reported
           issues, suggested ideas that made it into the game, or responsibly disclosed security vulnerabilities. Without
           you, the game would not be possible. {"<3"}
