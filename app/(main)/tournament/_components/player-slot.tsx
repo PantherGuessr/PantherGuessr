@@ -57,10 +57,10 @@ export function PlayerSlot({
   if (!clerkId) {
     return (
       <div className="flex h-full flex-1 flex-col items-center justify-center gap-1">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="bg-secondary flex h-12 w-12 items-center justify-center rounded-full">
+          <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
         </div>
-        <span className="text-xs text-muted-foreground">Waiting for {label}...</span>
+        <span className="text-muted-foreground text-xs">Waiting for {label}...</span>
       </div>
     );
   }
@@ -82,7 +82,7 @@ export function PlayerSlot({
       {status !== undefined ? (
         <PlayerStatusBadge status={status} />
       ) : user.level !== undefined ? (
-        <span className="text-sm text-muted-foreground">Lvl. {Number(user.level)}</span>
+        <span className="text-muted-foreground text-sm">Lvl. {Number(user.level)}</span>
       ) : null}
     </div>
   );

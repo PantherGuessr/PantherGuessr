@@ -35,19 +35,19 @@ const StreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime }) => 
 
   return (
     <div
-      className={cn("relative mr-1 hidden items-center xs:flex xs:justify-center", badgeStyle)}
+      className={cn("xs:flex xs:justify-center relative mr-1 hidden items-center", badgeStyle)}
       style={{ width: streakBadgeWidth }}
     >
       <Image
         draggable={false}
-        className="transform-gpu cursor-default select-none drop-shadow"
+        className="transform-gpu cursor-default drop-shadow select-none"
         src="/badges/streak_badge.svg"
         alt={`Daily Streak Badge of ${streak} Days`}
         width="25"
         height="25"
       />
       <p
-        className="absolute left-1/2 top-1/2 -translate-x-[51%] -translate-y-[45%] transform rounded-full text-sm font-bold text-white drop-shadow-md"
+        className="absolute top-1/2 left-1/2 -translate-x-[51%] -translate-y-[45%] transform rounded-full text-sm font-bold text-white drop-shadow-md"
         style={{ textShadow: "1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000" }}
       >
         {streak}

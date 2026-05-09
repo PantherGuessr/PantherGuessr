@@ -33,7 +33,7 @@ export function SpectatorGameOver({
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center gap-8 px-4 text-center">
-      <Link href="/" className="absolute left-4 top-4">
+      <Link href="/" className="absolute top-4 left-4">
         <Button variant="outline" size="sm" className="gap-2">
           <Home className="h-4 w-4" />
           Home
@@ -50,7 +50,7 @@ export function SpectatorGameOver({
             Winner!
           </span>
         </div>
-        <span className="self-center text-2xl font-bold text-muted-foreground">vs</span>
+        <span className="text-muted-foreground self-center text-2xl font-bold">vs</span>
         <div className="flex flex-col items-center gap-3">
           <PlayerSlot clerkId={room.player2ClerkId} label="Player 2" users={users} size="large" color="p2color" />
           <p className="text-4xl font-bold">{room.player2TotalScore}</p>

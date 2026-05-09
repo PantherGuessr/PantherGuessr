@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+
 import { query } from "./_generated/server";
 import { sanitizePublicUser } from "./users";
 
@@ -112,7 +113,7 @@ export const getUserRank = query({
       .collect();
 
     let sortedUsers;
-    
+
     if (type === "streak") {
       // Sort by current streak, then by level, then by currentXP as tiebreakers
       sortedUsers = users.sort((a, b) => {
@@ -150,7 +151,7 @@ export const getUserRank = query({
       });
     }
 
-    const userIndex = sortedUsers.findIndex(user => user.clerkId === clerkId);
+    const userIndex = sortedUsers.findIndex((user) => user.clerkId === clerkId);
     return userIndex >= 0 ? userIndex + 1 : -1;
   },
 });

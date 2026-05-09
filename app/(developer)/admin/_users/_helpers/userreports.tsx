@@ -111,7 +111,7 @@ const UserReports = () => {
   return (
     <>
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {unresolvedCount > 0
             ? `${unresolvedCount} open report${unresolvedCount !== 1 ? "s" : ""} awaiting review`
             : reports !== undefined
@@ -150,13 +150,13 @@ const UserReports = () => {
           <TableBody>
             {reports === undefined ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={7} className="text-muted-foreground h-24 text-center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : visible.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={7} className="text-muted-foreground h-24 text-center">
                   No user reports.
                 </TableCell>
               </TableRow>
@@ -180,7 +180,7 @@ const UserReports = () => {
                     <p className="truncate text-sm">{report.reportReason}</p>
                   </TableCell>
                   <TableCell className="max-w-[200px]">
-                    <p className="truncate text-sm text-muted-foreground">{report.reporterMessage ?? "—"}</p>
+                    <p className="text-muted-foreground truncate text-sm">{report.reporterMessage ?? "—"}</p>
                   </TableCell>
                   <TableCell>
                     {report.hasBeenResolved ? (
@@ -189,7 +189,7 @@ const UserReports = () => {
                       <Badge className="bg-yellow-500 text-black hover:bg-yellow-500">Open</Badge>
                     )}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
+                  <TableCell className="text-muted-foreground text-sm">
                     {new Date(report._creationTime).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
@@ -226,12 +226,12 @@ const UserReports = () => {
           {selectedReport && (
             <div className="space-y-4 py-2">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Report Reason</p>
+                <p className="text-muted-foreground text-sm font-medium">Report Reason</p>
                 <p className="mt-1 text-sm">{selectedReport.reportReason}</p>
               </div>
               {selectedReport.reporterMessage && (
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Reporter Message</p>
+                  <p className="text-muted-foreground text-sm font-medium">Reporter Message</p>
                   <p className="mt-1 text-sm">{selectedReport.reporterMessage}</p>
                 </div>
               )}
@@ -249,7 +249,7 @@ const UserReports = () => {
               <Separator />
               <div className="space-y-2">
                 <Label htmlFor="report-ban-reason">
-                  Ban Reason <span className="font-normal text-muted-foreground">— only used if banning</span>
+                  Ban Reason <span className="text-muted-foreground font-normal">— only used if banning</span>
                 </Label>
                 <Input
                   id="report-ban-reason"
@@ -259,7 +259,7 @@ const UserReports = () => {
                   disabled={isSubmitting}
                 />
               </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
+              {error && <p className="text-destructive text-sm">{error}</p>}
             </div>
           )}
           <DialogFooter className="flex-col gap-2 sm:flex-row">

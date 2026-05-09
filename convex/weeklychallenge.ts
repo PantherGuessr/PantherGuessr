@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import { getNextWeeklyResetTimestamp } from "../lib/weeklytimes";
 import { api } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
-import { internalMutation, MutationCtx, mutation, query } from "./_generated/server";
+import { internalMutation, mutation, MutationCtx, query } from "./_generated/server";
 import { getCurrentUser } from "./users";
 
 /**
@@ -155,29 +155,29 @@ export const createWeeklyChallenge = internalMutation({
   handler: async (ctx) => {
     const now = new Date();
     const today = now.getTime();
-    
+
     // Step 1: Activate any upcoming challenges whose start date has passed
     const challengesToActivate = await ctx.db
       .query("weeklyChallenges")
       .withIndex("byIsActive", (q) => q.eq("isActive", false))
       .filter((q) => q.lte(q.field("startDate"), BigInt(today)))
       .collect();
-    
+
     for (const challenge of challengesToActivate) {
       await ctx.db.patch(challenge._id, { isActive: true });
     }
-    
+
     // Step 2: Check if there's already an upcoming challenge
     const existingUpcoming = await ctx.db
       .query("weeklyChallenges")
       .withIndex("byIsActive", (q) => q.eq("isActive", false))
       .filter((q) => q.gt(q.field("startDate"), BigInt(today)))
       .first();
-    
+
     if (existingUpcoming) {
       return; // Already have an upcoming challenge
     }
-    
+
     // Step 3: Create a new upcoming challenge for next week
     const nextResetDate = getNextWeeklyResetTimestamp(now);
     const weekAfterNextResetDate = getNextWeeklyResetTimestamp(new Date(nextResetDate));
@@ -194,7 +194,7 @@ export const createWeeklyChallenge = internalMutation({
       timeAllowedPerRound: BigInt(60),
       gameType: "weekly",
     });
-    
+
     // Create the upcoming weekly challenge (inactive until its start date)
     await ctx.db.insert("weeklyChallenges", {
       startDate: BigInt(nextResetDate),
@@ -215,14 +215,14 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
   handler: async (ctx) => {
     const now = new Date();
     const today = now.getTime();
-    
+
     // Check if there's an active weekly challenge
     const existingActive = await ctx.db
       .query("weeklyChallenges")
       .withIndex("byIsActive", (q) => q.eq("isActive", true))
       .filter((q) => q.gte(q.field("endDate"), BigInt(today)))
       .first();
-    
+
     // Create active challenge if it doesn't exist
     if (!existingActive) {
       const endDate = getNextWeeklyResetTimestamp(now);
@@ -237,7 +237,7 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
         timeAllowedPerRound: BigInt(60),
         gameType: "weekly",
       });
-      
+
       await ctx.db.insert("weeklyChallenges", {
         startDate: BigInt(today),
         endDate: BigInt(endDate),
@@ -245,14 +245,14 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
         isActive: true,
       });
     }
-    
+
     // Check if there's an upcoming weekly challenge
     const existingUpcoming = await ctx.db
       .query("weeklyChallenges")
       .withIndex("byIsActive", (q) => q.eq("isActive", false))
       .filter((q) => q.gt(q.field("startDate"), BigInt(today)))
       .first();
-    
+
     // Create upcoming challenge if it doesn't exist
     if (!existingUpcoming) {
       const nextResetDate = getNextWeeklyResetTimestamp(now);
@@ -268,7 +268,7 @@ export const makeWeeklyChallengeIfNonexistent = mutation({
         timeAllowedPerRound: BigInt(60),
         gameType: "weekly",
       });
-      
+
       await ctx.db.insert("weeklyChallenges", {
         startDate: BigInt(nextResetDate),
         endDate: BigInt(weekAfterNextResetDate),

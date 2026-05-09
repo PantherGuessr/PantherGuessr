@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/error-boundaries */
 import fs from "fs";
 import path from "path";
 import { ImageResponse } from "next/og";

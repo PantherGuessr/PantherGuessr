@@ -105,12 +105,12 @@ export function GuessCountdown() {
   const isUrgent = timeLeft <= 5;
 
   return (
-    <div className="absolute inset-x-0 top-0 z-10 mr-4 mt-4 h-8 overflow-hidden border-b bg-background">
+    <div className="bg-background absolute inset-x-0 top-0 z-10 mt-4 mr-4 h-8 overflow-hidden border-b">
       <div
-        className="absolute inset-y-0 left-0 rounded-t-sm bg-destructive transition-[width] duration-200"
+        className="bg-destructive absolute inset-y-0 left-0 rounded-t-sm transition-[width] duration-200"
         style={{ width: `${fraction * 100}%` }}
       />
-      <div className="relative flex h-full items-center justify-center gap-1.5 text-sm font-medium text-card-foreground">
+      <div className="text-card-foreground relative flex h-full items-center justify-center gap-1.5 text-sm font-medium">
         <Timer className="h-3.5 w-3.5 shrink-0" />
         <span className={cn(isUrgent && "font-semibold")}>
           Opponent has submitted! {timeLeft}s to lock in your guess

@@ -58,7 +58,7 @@ const GameHistory = ({ recentGames, isCurrentUser }: GameHistoryProps) => {
     <>
       <Card className="mt-4 w-full md:mt-2">
         <CardHeader>
-          <CardTitle className="text-start text-xl font-bold text-primary">Game History</CardTitle>
+          <CardTitle className="text-primary text-start text-xl font-bold">Game History</CardTitle>
         </CardHeader>
         <CardContent>
           {recentGames && recentGames.length > 0 ? (
@@ -103,7 +103,7 @@ const GameHistory = ({ recentGames, isCurrentUser }: GameHistoryProps) => {
                 <>
                   <p className="text-center">You don&apos;t have any recent games...</p>
                   <Link href="/">
-                    <Button className="mb-2 mt-4 px-8">
+                    <Button className="mt-4 mb-2 px-8">
                       Let&apos;s change that! <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>

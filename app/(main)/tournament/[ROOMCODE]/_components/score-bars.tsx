@@ -11,10 +11,10 @@ type ScoreBarsRoom = {
 
 function ScoreBar({ name, score, pct, fillClass }: { name: string; score: number; pct: number; fillClass: string }) {
   return (
-    <div className="relative flex w-full items-center overflow-hidden rounded bg-secondary px-3 py-2">
+    <div className="bg-secondary relative flex w-full items-center overflow-hidden rounded px-3 py-2">
       {/* Fill bar */}
       <div
-        className={`absolute left-0 top-0 h-full rounded transition-[width] duration-700 ease-out ${fillClass}`}
+        className={`absolute top-0 left-0 h-full rounded transition-[width] duration-700 ease-out ${fillClass}`}
         style={{ width: `${pct}%` }}
       />
       {/* Base text layer — uses foreground color, visible in the unfilled area */}

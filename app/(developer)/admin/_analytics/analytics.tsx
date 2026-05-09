@@ -23,9 +23,9 @@ function formatTime(secs: number): string {
 
 const StatCard = ({ label, value, sub }: { label: string; value: string | number; sub?: string }) => (
   <Card className="p-2 md:p-4">
-    <p className="text-xs text-muted-foreground">{label}</p>
+    <p className="text-muted-foreground text-xs">{label}</p>
     <p className="mt-1 text-xl font-bold md:text-2xl">{value}</p>
-    {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
+    {sub && <p className="text-muted-foreground text-xs">{sub}</p>}
   </Card>
 );
 
@@ -35,7 +35,7 @@ const AlertCard = ({ label, value }: { label: string; value: string | number }) 
     <Card className={`p-2 md:p-4 ${isWarning ? "border-amber-500/50 bg-amber-500/5" : ""}`}>
       <div className="flex items-center gap-1">
         {isWarning && <AlertCircle className="h-3 w-3 shrink-0 text-amber-500" />}
-        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="text-muted-foreground text-xs">{label}</p>
       </div>
       <p className={`mt-1 text-xl font-bold md:text-2xl ${isWarning ? "text-amber-500" : ""}`}>{value}</p>
     </Card>
@@ -112,7 +112,7 @@ const Analytics = () => {
     <div className="space-y-6 text-start">
       {/* ── Users ── */}
       <section className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Users</p>
+        <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">Users</p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <StatCard
             label="Total Users"
@@ -132,7 +132,7 @@ const Analytics = () => {
 
       {/* ── Gameplay ── */}
       <section className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Gameplay</p>
+        <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">Gameplay</p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <StatCard label="Total Games Played" value={summary?.totalGames ?? loading} />
           <StatCard
@@ -268,17 +268,17 @@ const Analytics = () => {
               {summary ? (
                 summary.topLevels.map((level, i) => (
                   <TableRow key={level._id}>
-                    <TableCell className="font-medium text-muted-foreground">{i + 1}</TableCell>
+                    <TableCell className="text-muted-foreground font-medium">{i + 1}</TableCell>
                     <TableCell>{level.title}</TableCell>
                     <TableCell className="text-right">{Number(level.timesPlayed).toLocaleString()}</TableCell>
-                    <TableCell className="text-right text-muted-foreground">
+                    <TableCell className="text-muted-foreground text-right">
                       {totalGames > 0 ? `${((Number(level.timesPlayed) / totalGames) * 100).toFixed(1)}%` : "—"}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="h-16 text-center text-muted-foreground">
+                  <TableCell colSpan={4} className="text-muted-foreground h-16 text-center">
                     Loading…
                   </TableCell>
                 </TableRow>

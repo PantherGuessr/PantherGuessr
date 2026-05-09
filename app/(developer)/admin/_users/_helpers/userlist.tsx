@@ -49,7 +49,7 @@ const UserList = () => {
           onChange={(e) => handleSearchChange(e.target.value)}
           className="max-w-sm"
         />
-        <p className="text-sm text-muted-foreground">{users?.length ?? 0} total users</p>
+        <p className="text-muted-foreground text-sm">{users?.length ?? 0} total users</p>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -64,13 +64,13 @@ const UserList = () => {
           <TableBody>
             {users === undefined ? (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={4} className="text-muted-foreground h-24 text-center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={4} className="text-muted-foreground h-24 text-center">
                   No users found.
                 </TableCell>
               </TableRow>
@@ -119,7 +119,7 @@ const UserList = () => {
         </Table>
       </div>
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {filtered.length > 0 ? `${start}–${end} of ${filtered.length} users` : ""}
         </p>
         <div className="flex gap-2">

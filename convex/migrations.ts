@@ -1,6 +1,6 @@
+import { DEFAULT_BACKGROUND_ID, PROFILE_BACKGROUNDS } from "../lib/backgrounds";
+import { DEFAULT_TAGLINE_ID, PROFILE_TAGLINES } from "../lib/taglines";
 import { internalMutation } from "./_generated/server";
-import { PROFILE_BACKGROUNDS, DEFAULT_BACKGROUND_ID } from "../lib/backgrounds";
-import { PROFILE_TAGLINES, DEFAULT_TAGLINE_ID } from "../lib/taglines";
 
 /**
  * One-time migration: converts users' profileTagline and profileBackground fields

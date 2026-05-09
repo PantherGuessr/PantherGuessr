@@ -219,7 +219,7 @@ const ResultPage = ({ params }: Props) => {
               <Separator />
               <div className="flex flex-col space-y-4">
                 <div className="p-2">
-                  <div className="flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md bg-secondary p-2 text-lg">
+                  <div className="bg-secondary flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md p-2 text-lg">
                     {gameType === "weekly" ? (
                       <Calendar className="h-5 w-5" />
                     ) : gameType === "singleplayer" ? (
@@ -247,7 +247,7 @@ const ResultPage = ({ params }: Props) => {
                       <p>{oldLevel}</p>
                     ) : (
                       <p className="flex flex-row items-center justify-center">
-                        <span className="flex items-center text-muted-foreground">
+                        <span className="text-muted-foreground flex items-center">
                           {oldLevel} <ArrowRight className="mx-1 flex h-4 w-4" />
                         </span>
                         {newLevel}
@@ -275,7 +275,7 @@ const ResultPage = ({ params }: Props) => {
               <div className="p-2">
                 <div className="flex flex-row justify-between font-bold">
                   <h2 className="font-bold">Final Score</h2>
-                  <p className="bg-primary px-2 text-primary-foreground">{finalScore}</p>
+                  <p className="bg-primary text-primary-foreground px-2">{finalScore}</p>
                 </div>
               </div>
               <Separator />
@@ -321,7 +321,7 @@ const ResultPage = ({ params }: Props) => {
                     )}
                     <div className="flex flex-row justify-between pt-1 text-base font-bold">
                       <p>Total XP Awarded</p>
-                      <p className="bg-primary px-2 text-primary-foreground">{xpBreakdown.totalXP} XP</p>
+                      <p className="bg-primary text-primary-foreground px-2">{xpBreakdown.totalXP} XP</p>
                     </div>
                   </div>
                 )}

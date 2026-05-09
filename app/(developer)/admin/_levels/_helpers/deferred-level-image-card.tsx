@@ -98,8 +98,8 @@ const DeferredLevelImageCard = ({ draft }: { draft: DeferredLevelImageDraft }) =
   }
 
   return (
-    <div className="overflow-hidden rounded-md border bg-background">
-      <div className="relative h-32 bg-muted">
+    <div className="bg-background overflow-hidden rounded-md border">
+      <div className="bg-muted relative h-32">
         {imageSrc ? (
           <Image src={imageSrc} alt="Deferred level image" fill className="object-cover" />
         ) : (
@@ -107,7 +107,7 @@ const DeferredLevelImageCard = ({ draft }: { draft: DeferredLevelImageDraft }) =
         )}
       </div>
       <div className="space-y-2 p-2.5">
-        <div className="line-clamp-1 text-xs text-muted-foreground">
+        <div className="text-muted-foreground line-clamp-1 text-xs">
           Uploaded {uploadedAt}
           {draft.uploadedByUsername ? ` by ${draft.uploadedByUsername}` : ""}
         </div>
@@ -132,7 +132,7 @@ const DeferredLevelImageCard = ({ draft }: { draft: DeferredLevelImageDraft }) =
               <div className="grid gap-4">
                 <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(18rem,0.8fr)] md:items-start">
                   {imageSrc ? (
-                    <div className="relative aspect-4/3 max-h-64 overflow-hidden rounded-md bg-muted">
+                    <div className="bg-muted relative aspect-4/3 max-h-64 overflow-hidden rounded-md">
                       <Image src={imageSrc} alt="Deferred level image" fill className="object-contain" />
                     </div>
                   ) : (

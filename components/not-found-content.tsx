@@ -33,7 +33,7 @@ export function NotFoundContent({
       />
       <h1 className="text-8xl">404</h1>
       <h2 className="text-2xl font-bold">{title}</h2>
-      <p className="max-w-md text-lg text-muted-foreground">{description}</p>
+      <p className="text-muted-foreground max-w-md text-lg">{description}</p>
       <div className="mt-4 flex gap-4">
         {showBackButton && (
           <Button variant="outline" onClick={() => router.back()}>

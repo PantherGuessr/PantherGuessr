@@ -187,7 +187,7 @@ const Levels = () => {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className={column.getIsSorted() ? "font-bold text-primary" : ""}
+            className={column.getIsSorted() ? "text-primary font-bold" : ""}
           >
             Title
             {column.getIsSorted() === "asc" ? (
@@ -206,7 +206,7 @@ const Levels = () => {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className={column.getIsSorted() ? "font-bold text-primary" : ""}
+            className={column.getIsSorted() ? "text-primary font-bold" : ""}
           >
             Tags
             {column.getIsSorted() === "asc" ? (
@@ -228,7 +228,7 @@ const Levels = () => {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className={column.getIsSorted() ? "font-bold text-primary" : ""}
+            className={column.getIsSorted() ? "text-primary font-bold" : ""}
           >
             Created
             {column.getIsSorted() === "asc" ? (

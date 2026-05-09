@@ -417,7 +417,7 @@ const WeeklyChallengeConfig = () => {
                 className="font-mono text-sm"
                 autoFocus
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Tip: Use &quot;Copy Level ID&quot; from another level&apos;s menu
               </p>
             </div>

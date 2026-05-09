@@ -19,18 +19,18 @@ const OpenSourceToolsList = () => {
         >
           {OPEN_SOURCE_TOOLS.map(({ category, packages }) => (
             <div key={category}>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{category}</p>
-              <div className="divide-y divide-border rounded-lg border">
+              <p className="text-muted-foreground mb-2 text-xs font-semibold tracking-widest uppercase">{category}</p>
+              <div className="divide-border divide-y rounded-lg border">
                 {packages.map(({ name, href, license }) => (
                   <Link
                     key={name}
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-accent"
+                    className="hover:bg-accent flex items-center justify-between px-4 py-3 transition-colors"
                   >
                     <span className="text-sm font-medium">{name}</span>
-                    <span className="text-xs text-muted-foreground">{license}</span>
+                    <span className="text-muted-foreground text-xs">{license}</span>
                   </Link>
                 ))}
               </div>
@@ -39,7 +39,7 @@ const OpenSourceToolsList = () => {
         </div>
 
         {!expanded && (
-          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+          <div className="from-background pointer-events-none absolute right-0 bottom-0 left-0 h-32 bg-gradient-to-t to-transparent" />
         )}
       </div>
 

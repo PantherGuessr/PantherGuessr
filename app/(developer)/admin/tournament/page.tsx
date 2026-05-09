@@ -64,7 +64,7 @@ export default function TournamentAdminPage() {
     <div className="mx-auto max-w-2xl px-6 py-8">
       <h1 className="mb-6 text-2xl font-bold">Tournament Rooms</h1>
 
-      <div className="mb-8 rounded-lg border bg-card p-6">
+      <div className="bg-card mb-8 rounded-lg border p-6">
         <h2 className="mb-4 text-lg font-semibold">Create New Room</h2>
         <div className="flex gap-3">
           <Input
@@ -81,8 +81,8 @@ export default function TournamentAdminPage() {
         </div>
 
         {createdCode && (
-          <div className="mt-4 rounded-md bg-secondary p-4">
-            <p className="mb-1 text-sm text-muted-foreground">Room created! Share this code:</p>
+          <div className="bg-secondary mt-4 rounded-md p-4">
+            <p className="text-muted-foreground mb-1 text-sm">Room created! Share this code:</p>
             <div className="flex items-center gap-3">
               <span className="text-3xl font-bold tracking-widest">{createdCode}</span>
               <Button variant="ghost" size="sm" onClick={() => copyCode(createdCode)}>
@@ -111,13 +111,13 @@ export default function TournamentAdminPage() {
         ) : (
           <div className="flex flex-col gap-2">
             {myRooms.map((room) => (
-              <div key={room._id} className="flex items-center justify-between rounded-md border bg-card p-4">
+              <div key={room._id} className="bg-card flex items-center justify-between rounded-md border p-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-bold">{room.roomCode}</span>
                     {room.name && <span className="text-muted-foreground">— {room.name}</span>}
                   </div>
-                  <span className="text-sm text-muted-foreground">{STATUS_LABELS[room.status] ?? room.status}</span>
+                  <span className="text-muted-foreground text-sm">{STATUS_LABELS[room.status] ?? room.status}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Link href={`/tournament/${room.roomCode}`} target="_blank">

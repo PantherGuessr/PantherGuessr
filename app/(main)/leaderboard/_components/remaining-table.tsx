@@ -84,7 +84,7 @@ export function RemainingTable({ users, type, description, currentUser, userRank
   return (
     <div className="mx-auto w-full max-w-4xl">
       <h3 className="mb-2 hidden text-xl font-semibold md:block">Full Rankings</h3>
-      <p className="mb-4 text-muted-foreground">{description}</p>
+      <p className="text-muted-foreground mb-4">{description}</p>
 
       <Table className="w-full border-collapse">
         <TableHeader>
@@ -106,7 +106,7 @@ export function RemainingTable({ users, type, description, currentUser, userRank
               <>
                 {isAppendedBeyondTop && (
                   <TableRow key="separator">
-                    <TableCell colSpan={4} className="py-1 text-center text-muted-foreground">
+                    <TableCell colSpan={4} className="text-muted-foreground py-1 text-center">
                       &middot;&middot;&middot;
                     </TableCell>
                   </TableRow>
@@ -129,7 +129,7 @@ export function RemainingTable({ users, type, description, currentUser, userRank
                   <TableCell className={`p-2 font-semibold ${getAlignmentClass(type)[0]}`}>
                     {getStatValue(user, type)}
                   </TableCell>
-                  <TableCell className={`p-2 text-muted-foreground ${getAlignmentClass(type)[1]}`}>
+                  <TableCell className={`text-muted-foreground p-2 ${getAlignmentClass(type)[1]}`}>
                     {getSecondaryStatValue(user, type)}
                   </TableCell>
                 </TableRow>

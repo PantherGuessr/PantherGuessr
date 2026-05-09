@@ -66,7 +66,7 @@ const CreditsPage = () => {
 
         <div className="space-y-1 text-center">
           <p>Made with ❤️ at Chapman University</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             PantherGuessr is not affiliated with or endorsed by Chapman University.
           </p>
         </div>

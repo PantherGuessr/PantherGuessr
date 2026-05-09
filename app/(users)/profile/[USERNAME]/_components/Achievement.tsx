@@ -17,7 +17,7 @@ const Achievement = ({ name, description, imageSrc, unlockedAt }: IAchievement) 
   return (
     <HoverCard key={name} openDelay={100} closeDelay={50}>
       <HoverCardTrigger asChild>
-        <span className="inline-block cursor-default select-none drop-shadow-md">
+        <span className="inline-block cursor-default drop-shadow-md select-none">
           <Image
             src={imageSrc}
             width={80}
@@ -35,13 +35,13 @@ const Achievement = ({ name, description, imageSrc, unlockedAt }: IAchievement) 
             width={80}
             height={80}
             alt={name + " Achievement"}
-            className="cursor-default select-none justify-center align-middle"
+            className="cursor-default justify-center align-middle select-none"
             draggable={false}
           />
           <div className="flex flex-col justify-center">
             <p className="text-left font-bold">{name}</p>
             <p className="text-left font-normal">{description}</p>
-            {unlockedDate && <p className="mt-1 text-left text-xs text-muted-foreground">Unlocked {unlockedDate}</p>}
+            {unlockedDate && <p className="text-muted-foreground mt-1 text-left text-xs">Unlocked {unlockedDate}</p>}
           </div>
         </div>
       </HoverCardContent>

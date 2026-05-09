@@ -84,7 +84,7 @@ const BanAppeals = () => {
   return (
     <>
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {unresolvedCount > 0
             ? `${unresolvedCount} open appeal${unresolvedCount !== 1 ? "s" : ""} awaiting review`
             : appeals !== undefined
@@ -123,13 +123,13 @@ const BanAppeals = () => {
           <TableBody>
             {appeals === undefined ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={7} className="text-muted-foreground h-24 text-center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : visible.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={7} className="text-muted-foreground h-24 text-center">
                   No ban appeals.
                 </TableCell>
               </TableRow>
@@ -149,7 +149,7 @@ const BanAppeals = () => {
                     {appeal.isBanned ? <Badge variant="destructive">Yes</Badge> : <Badge variant="secondary">No</Badge>}
                   </TableCell>
                   <TableCell className="max-w-[150px]">
-                    <p className="truncate text-sm text-muted-foreground">{appeal.banReason ?? "None"}</p>
+                    <p className="text-muted-foreground truncate text-sm">{appeal.banReason ?? "None"}</p>
                   </TableCell>
                   <TableCell className="max-w-[200px]">
                     <p className="truncate text-sm">{appeal.appealMessage}</p>
@@ -161,7 +161,7 @@ const BanAppeals = () => {
                       <Badge className="bg-yellow-500 text-black hover:bg-yellow-500">Open</Badge>
                     )}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
+                  <TableCell className="text-muted-foreground text-sm">
                     {new Date(appeal._creationTime).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
@@ -195,11 +195,11 @@ const BanAppeals = () => {
           {selectedAppeal && (
             <div className="space-y-4 py-2">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Ban Reason</p>
+                <p className="text-muted-foreground text-sm font-medium">Ban Reason</p>
                 <p className="mt-1 text-sm">{selectedAppeal.banReason ?? "None provided"}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Appeal Message</p>
+                <p className="text-muted-foreground text-sm font-medium">Appeal Message</p>
                 <p className="mt-1 text-sm">{selectedAppeal.appealMessage}</p>
               </div>
               <div className="space-y-2">
@@ -213,7 +213,7 @@ const BanAppeals = () => {
                   rows={3}
                 />
               </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
+              {error && <p className="text-destructive text-sm">{error}</p>}
             </div>
           )}
           <DialogFooter className="flex-col gap-2 sm:flex-row">

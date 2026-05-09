@@ -213,7 +213,7 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
                     onChange={(e) => handleFileSelect(e.target.files?.[0] ?? null)}
                   />
                 </div>
-                <div className="relative aspect-4/3 w-full overflow-hidden rounded-md border bg-secondary">
+                <div className="bg-secondary relative aspect-4/3 w-full overflow-hidden rounded-md border">
                   {displayImageSrc ? (
                     <Image src={displayImageSrc} alt={report.levelTitle} fill className="object-cover" />
                   ) : (
@@ -221,7 +221,7 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
                   )}
                 </div>
                 {imageChanged && newImageFile && (
-                  <p className="truncate text-xs text-muted-foreground">New image: {newImageFile.name}</p>
+                  <p className="text-muted-foreground truncate text-xs">New image: {newImageFile.name}</p>
                 )}
               </div>
 
@@ -236,7 +236,7 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
                     </Badge>
                   )}
                 </Label>
-                <p className="text-xs text-muted-foreground">Click on the map to move the pin.</p>
+                <p className="text-muted-foreground text-xs">Click on the map to move the pin.</p>
                 <div className="aspect-4/3 w-full">
                   <DynamicReviewMap
                     initialLat={report.latitude}
@@ -248,7 +248,7 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
                   />
                 </div>
                 {pinChanged && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     New: {editedLat.toFixed(6)}, {editedLng.toFixed(6)}
                   </p>
                 )}
@@ -258,12 +258,12 @@ const LevelReportReviewDialog = ({ report, open, onClose }: LevelReportReviewDia
             <Separator />
 
             {hasChanges && (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 You have unsaved changes. They will be saved automatically when you resolve or dismiss.
               </p>
             )}
 
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            {error && <p className="text-destructive text-sm">{error}</p>}
           </div>
         )}
 

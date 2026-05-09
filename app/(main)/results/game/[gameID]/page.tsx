@@ -148,7 +148,7 @@ export default function GameLeaderboardPage({ params }: GameLeaderboardProps) {
                 <>
                   {isAppendedBeyondTop && (
                     <TableRow key="separator">
-                      <TableCell colSpan={8} className="py-1 text-center text-muted-foreground">
+                      <TableCell colSpan={8} className="text-muted-foreground py-1 text-center">
                         &middot;&middot;&middot;
                       </TableCell>
                     </TableRow>
