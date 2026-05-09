@@ -1,6 +1,6 @@
 {
   "name": "pantherguessr",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "private": false,
   "scripts": {
     "dev": "next dev",
@@ -12,7 +12,7 @@
     "format:check": "prettier . --check"
   },
   "dependencies": {
-    "@clerk/nextjs": "^7.3.0",
+    "@clerk/nextjs": "^7.3.3",
     "@octokit/rest": "^22.0.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-avatar": "^1.1.1",
@@ -38,13 +38,13 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "convex": "^1.37.0",
+    "convex": "^1.38.0",
     "date-fns": "^4.1.0",
     "heic2any": "^0.0.4",
     "html2canvas-pro": "^1.5.8",
     "leaflet": "^2.0.0-alpha.1",
     "lucide-react": "^0.447.0",
-    "next": "^16.2.4",
+    "next": "^16.2.6",
     "next-themes": "^0.4.6",
     "octokit": "^5.0.5",
     "react": "^19",
