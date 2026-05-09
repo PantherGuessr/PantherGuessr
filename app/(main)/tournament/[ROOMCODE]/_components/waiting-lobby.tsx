@@ -40,7 +40,7 @@ export function SpectatorWaitingLobby({
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center gap-8 px-4">
-      <Link href="/" className="absolute left-4 top-4">
+      <Link href="/" className="absolute top-4 left-4">
         <Button variant="outline" size="sm" className="gap-2">
           <Home className="h-4 w-4" />
           Home
@@ -51,7 +51,7 @@ export function SpectatorWaitingLobby({
       </div>
 
       <div className="text-center">
-        <p className="text-sm text-muted-foreground">Room Code</p>
+        <p className="text-muted-foreground text-sm">Room Code</p>
         <div className="flex items-center justify-center gap-2">
           <p className="text-5xl font-bold tracking-widest">{codeVisible ? room.roomCode : "••••••"}</p>
           <Button
@@ -72,8 +72,8 @@ export function SpectatorWaitingLobby({
 
       {isOrganizer && onUpdateCountdown && (
         <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-muted-foreground">
-            Auto-submit countdown: <span className="font-semibold text-foreground">{localSeconds}s</span>
+          <p className="text-muted-foreground text-sm">
+            Auto-submit countdown: <span className="text-foreground font-semibold">{localSeconds}s</span>
           </p>
           <input
             type="range"
@@ -83,9 +83,9 @@ export function SpectatorWaitingLobby({
             value={localSeconds}
             onChange={(e) => setLocalSeconds(Number(e.target.value))}
             onPointerUp={(e) => onUpdateCountdown(Number((e.target as HTMLInputElement).value))}
-            className="w-48 accent-primary"
+            className="accent-primary w-48"
           />
-          <div className="flex w-48 justify-between text-xs text-muted-foreground">
+          <div className="text-muted-foreground flex w-48 justify-between text-xs">
             <span>5s</span>
             <span>60s</span>
           </div>

@@ -23,7 +23,7 @@ import { SpectatorWaitingLobby } from "./_components/waiting-lobby";
 const SpectatorMap = dynamic(() => import("./_components/spectator-map"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center rounded-md bg-secondary">
+    <div className="bg-secondary flex h-full w-full items-center justify-center rounded-md">
       <Loader2 className="h-10 w-10 animate-spin" />
     </div>
   ),
@@ -120,7 +120,7 @@ export default function SpectatorPage({ params }: Props) {
   if (!isOrganizer) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-lg font-semibold text-destructive">Access Denied</p>
+        <p className="text-destructive text-lg font-semibold">Access Denied</p>
       </div>
     );
   }
@@ -153,7 +153,7 @@ export default function SpectatorPage({ params }: Props) {
   }
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background">
+    <div className="bg-background flex h-screen flex-col overflow-hidden">
       {/* key forces fresh mount on each new countdown so useState initializer always runs */}
       <CountdownOverlay key={room.countdownStartedAt} countdownStartedAt={room.countdownStartedAt} />
       <SpectatorSounds
@@ -173,7 +173,7 @@ export default function SpectatorPage({ params }: Props) {
           <SpectatorMap room={room} p1Guess={p1Guess ?? null} p2Guess={p2Guess ?? null} />
         </div>
         <div className="flex w-[600px] max-w-[50%] flex-col gap-4 border-l p-4">
-          <div className="relative aspect-4/3 w-full overflow-hidden rounded-md bg-secondary">
+          <div className="bg-secondary relative aspect-4/3 w-full overflow-hidden rounded-md">
             {imageSrc ? (
               <Image src={imageSrc} alt="" fill className="aspect-4/3 object-cover" />
             ) : (

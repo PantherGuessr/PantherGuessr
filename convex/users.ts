@@ -278,9 +278,8 @@ export const isUserBanned = query({
     return {
       result: user.isBanned,
       banReason: includeSensitiveData ? user.banReason : undefined,
-      appealSubmitted: includeSensitiveData && user.banAppeal
-        ? ((await ctx.db.get(user.banAppeal))?.hasBeenResolved === false)
-        : false,
+      appealSubmitted:
+        includeSensitiveData && user.banAppeal ? (await ctx.db.get(user.banAppeal))?.hasBeenResolved === false : false,
     };
   },
 });
@@ -348,8 +347,8 @@ export const awardUserXP = internalMutation({
 
     // Update the user's level, current XP, and total points earned in the database
     const currentTotalPoints = user.totalPointsEarned || 0n;
-    await ctx.db.patch(user._id, { 
-      level, 
+    await ctx.db.patch(user._id, {
+      level,
       currentXP,
       totalPointsEarned: currentTotalPoints + BigInt(args.totalPointsEarned || 0n),
     });
@@ -459,9 +458,7 @@ export const getUnlockedTaglines = query({
       return null;
     }
 
-    return user.unlockedProfileTaglines
-      .map((id) => PROFILE_TAGLINES_MAP[id] ?? null)
-      .filter(Boolean);
+    return user.unlockedProfileTaglines.map((id) => PROFILE_TAGLINES_MAP[id] ?? null).filter(Boolean);
   },
 });
 
@@ -534,9 +531,7 @@ export const getUnlockedBackgrounds = query({
       return null;
     }
 
-    return user.unlockedProfileBackgrounds
-      .map((id) => PROFILE_BACKGROUNDS_MAP[id] ?? null)
-      .filter(Boolean);
+    return user.unlockedProfileBackgrounds.map((id) => PROFILE_BACKGROUNDS_MAP[id] ?? null).filter(Boolean);
   },
 });
 
@@ -616,6 +611,14 @@ export const getListOfProfiles = query({
   async handler(ctx) {
     const users = await ctx.db.query("users").collect();
     return users.map(sanitizePublicUser);
+  },
+});
+
+export const getUsersByRole = query({
+  args: { role: v.string() },
+  async handler(ctx, args) {
+    const users = await ctx.db.query("users").collect();
+    return users.filter((u) => u.roles?.includes(args.role)).map(sanitizePublicUser);
   },
 });
 
@@ -1044,7 +1047,7 @@ export const modifyRolesAdministrativeAction = mutation({
 async function buildUserProfile(
   ctx: QueryCtx,
   user: NonNullable<Awaited<ReturnType<typeof userByClerkId>>>,
-  includeSensitiveData: boolean,
+  includeSensitiveData: boolean
 ) {
   // Derive roles from the user.roles array
   const roles = user.roles ?? [];
@@ -1061,9 +1064,7 @@ async function buildUserProfile(
 
   // Ban appeal status — only fetched when the caller is allowed to see it
   const appealSubmitted =
-    includeSensitiveData && user.banAppeal
-      ? ((await ctx.db.get(user.banAppeal))?.hasBeenResolved === false)
-      : false;
+    includeSensitiveData && user.banAppeal ? (await ctx.db.get(user.banAppeal))?.hasBeenResolved === false : false;
 
   // Selected tagline and background
   const selectedTagline = PROFILE_TAGLINES_MAP[user.profileTagline] ?? null;
@@ -1132,4 +1133,3 @@ export const getCurrentUserProfile = query({
     return await buildUserProfile(ctx, user, true);
   },
 });
-

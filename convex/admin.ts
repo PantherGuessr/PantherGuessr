@@ -79,8 +79,14 @@ export const getAdminSummary = query({
 
     const [allUsers, openReports, openAppeals, levels, entries] = await Promise.all([
       ctx.db.query("users").collect(),
-      ctx.db.query("userReports").filter((q) => q.eq(q.field("hasBeenResolved"), false)).collect(),
-      ctx.db.query("banAppeals").filter((q) => q.eq(q.field("hasBeenResolved"), false)).collect(),
+      ctx.db
+        .query("userReports")
+        .filter((q) => q.eq(q.field("hasBeenResolved"), false))
+        .collect(),
+      ctx.db
+        .query("banAppeals")
+        .filter((q) => q.eq(q.field("hasBeenResolved"), false))
+        .collect(),
       ctx.db.query("levels").collect(),
       ctx.db.query("leaderboardEntries").collect(),
     ]);
@@ -105,9 +111,7 @@ export const getAdminSummary = query({
     for (let i = 6; i >= 0; i--) {
       const startOfDay = todayPSTMidnightUTC - i * 24 * 60 * 60 * 1000;
       const endOfDay = startOfDay + 24 * 60 * 60 * 1000;
-      const count = allUsers.filter(
-        (u) => u._creationTime >= startOfDay && u._creationTime < endOfDay,
-      ).length;
+      const count = allUsers.filter((u) => u._creationTime >= startOfDay && u._creationTime < endOfDay).length;
       // Subtract offset to recover the PST calendar date, then read UTC day-of-week
       const dayDatePST = new Date(startOfDay - PST_OFFSET_MS);
       newUsersPerDay.push({ day: i === 0 ? "Today" : dayLabels[dayDatePST.getUTCDay()], count });
@@ -133,19 +137,15 @@ export const getAdminSummary = query({
     if (entries.length > 0) {
       const totalScore = entries.reduce(
         (acc, e) => acc + Number(e.round_1 + e.round_2 + e.round_3 + e.round_4 + e.round_5),
-        0,
+        0
       );
       const totalDistance = entries.reduce(
         (acc, e) =>
           acc +
           Number(
-            e.round_1_distance +
-              e.round_2_distance +
-              e.round_3_distance +
-              e.round_4_distance +
-              e.round_5_distance,
+            e.round_1_distance + e.round_2_distance + e.round_3_distance + e.round_4_distance + e.round_5_distance
           ),
-        0,
+        0
       );
       const totalTime = entries.reduce((acc, e) => acc + Number(e.totalTimeTaken), 0);
 

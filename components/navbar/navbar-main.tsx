@@ -20,7 +20,7 @@ const NavbarMain = () => {
             <ul className="grid w-[350px] grid-flow-col grid-rows-6 gap-2 p-2">
               <li className="row-span-4">
                 <Link href="/play">
-                  <div className="flex h-full items-center justify-center rounded-md bg-primary px-10 py-10 text-center text-primary-foreground transition-all hover:scale-95">
+                  <div className="bg-primary text-primary-foreground flex h-full items-center justify-center rounded-md px-10 py-10 text-center transition-all hover:scale-95">
                     Weekly
                     <br />
                     Challenge
@@ -29,21 +29,21 @@ const NavbarMain = () => {
               </li>
               <li className="col-span-2 row-span-2 w-full">
                 <Link href="/play">
-                  <div className="flex items-center justify-center rounded-md bg-secondary px-8 py-5 text-center transition-all hover:scale-95">
+                  <div className="bg-secondary flex items-center justify-center rounded-md px-8 py-5 text-center transition-all hover:scale-95">
                     All Gamemodes
                   </div>
                 </Link>
               </li>
               <li className="row-span-2">
                 <Link href="/game">
-                  <div className="flex items-center justify-center rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-95">
+                  <div className="bg-primary text-primary-foreground flex items-center justify-center rounded-md px-8 py-5 text-center transition-all hover:scale-95">
                     Singleplayer
                   </div>
                 </Link>
               </li>
               <li className="row-span-2">
                 <Link href="/play">
-                  <div className="flex items-center justify-center rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-95">
+                  <div className="bg-primary text-primary-foreground flex items-center justify-center rounded-md px-8 py-5 text-center transition-all hover:scale-95">
                     Multiplayer
                   </div>
                 </Link>
@@ -59,21 +59,21 @@ const NavbarMain = () => {
             <ul className="grid w-[350px] grid-flow-col grid-rows-6 gap-2 p-2">
               <li className="col-span-2 row-span-2">
                 <Link href="/play">
-                  <div className="flex w-full items-center justify-center rounded-md bg-secondary py-5 text-center text-secondary-foreground transition-all hover:scale-95">
+                  <div className="bg-secondary text-secondary-foreground flex w-full items-center justify-center rounded-md py-5 text-center transition-all hover:scale-95">
                     Leaderboards
                   </div>
                 </Link>
               </li>
               <li className="col-span-2 row-span-2 w-full">
                 <Link href="/play">
-                  <div className="flex w-full items-center justify-center rounded-md bg-secondary py-5 text-center text-secondary-foreground transition-all hover:scale-95">
+                  <div className="bg-secondary text-secondary-foreground flex w-full items-center justify-center rounded-md py-5 text-center transition-all hover:scale-95">
                     Weekly Challenge Results
                   </div>
                 </Link>
               </li>
               <li className="col-span-2 row-span-2 w-full">
                 <Link href="/play">
-                  <div className="flex w-full items-center justify-center rounded-md bg-secondary py-5 text-center text-secondary-foreground transition-all hover:scale-95">
+                  <div className="bg-secondary text-secondary-foreground flex w-full items-center justify-center rounded-md py-5 text-center transition-all hover:scale-95">
                     Your Profile
                   </div>
                 </Link>

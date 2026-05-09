@@ -55,7 +55,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
           <div
             className={cn(
               "flex h-full basis-1/3 flex-col items-center justify-between drop-shadow-lg transition-all",
-              hoveredLeftMain ? "translate-x-0 skew-y-0 scale-100" : "-translate-x-4 -skew-y-3 scale-90"
+              hoveredLeftMain ? "translate-x-0 scale-100 skew-y-0" : "-translate-x-4 scale-90 -skew-y-3"
             )}
             onMouseEnter={() => setHoveredLeftMain(true)}
             onMouseLeave={() => setHoveredLeftMain(false)}
@@ -63,11 +63,11 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
             <div className="flex flex-col items-center justify-center">
               <div
                 className={cn(
-                  "align-center mb-6 flex aspect-video w-full cursor-default flex-col items-center justify-center rounded-lg border-4 border-primary drop-shadow-lg transition-all hover:scale-105",
+                  "align-center border-primary mb-6 flex aspect-video w-full cursor-default flex-col items-center justify-center rounded-lg border-4 drop-shadow-lg transition-all hover:scale-105",
                   background
                 )}
               >
-                <Avatar className="my-10 h-28 w-28 cursor-pointer rounded-full border-4 border-primary bg-primary drop-shadow-md transition-all hover:scale-105">
+                <Avatar className="border-primary bg-primary my-10 h-28 w-28 cursor-pointer rounded-full border-4 drop-shadow-md transition-all hover:scale-105">
                   <AvatarImage
                     src={picture}
                     className="object-cover"
@@ -99,14 +99,14 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                 <>
                   <li className="col-span-1 row-span-2">
                     <Link href="/game/continue">
-                      <div className="flex h-full w-full items-center justify-center rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                      <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                         Continue
                       </div>
                     </Link>
                   </li>
                   <li className="col-span-1 row-span-2">
                     <Link href="/game">
-                      <div className="flex h-full w-full items-center justify-center rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                      <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                         New Game
                       </div>
                     </Link>
@@ -115,7 +115,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               ) : (
                 <li className="col-span-2 row-span-2">
                   <Link href="/game">
-                    <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                    <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center gap-x-2 rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                       <User className="h-5 w-5" />
                       Singleplayer
                     </div>
@@ -124,7 +124,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               )}
               <li className="col-span-2 row-span-2">
                 <Link href="/weekly">
-                  <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                  <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center gap-x-2 rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                     <Calendar className="h-5 w-5" />
                     Weekly Challenge
                   </div>
@@ -132,7 +132,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               </li>
               <li className="col-span-2 row-span-2">
                 <Link href="/leaderboard">
-                  <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                  <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center gap-x-2 rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                     <Trophy className="h-5 w-5" />
                     Leaderboard
                   </div>
@@ -140,7 +140,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               </li>
               <li className="col-span-2 row-span-2">
                 <Link href="/play">
-                  <div className="flex h-full w-full items-center justify-center rounded-md bg-secondary px-8 py-5 text-center transition-all hover:scale-105">
+                  <div className="bg-secondary flex h-full w-full items-center justify-center rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                     All Gamemodes
                   </div>
                 </Link>
@@ -156,7 +156,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
           <div
             className={cn(
               "flex h-full flex-grow basis-1/3 flex-col items-center justify-between transition-all",
-              hoveredRightMain ? "translate-x-0 skew-y-0 scale-100" : "translate-x-4 skew-y-3 scale-90"
+              hoveredRightMain ? "translate-x-0 scale-100 skew-y-0" : "translate-x-4 scale-90 skew-y-3"
             )}
             onMouseEnter={() => setHoveredRightMain(true)}
             onMouseLeave={() => setHoveredRightMain(false)}
@@ -184,7 +184,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
           <div
             className={cn(
               "flex h-full basis-1/2 flex-col items-center justify-between drop-shadow-lg transition-all",
-              hoveredLeftMain ? "translate-x-0 skew-y-0 scale-100" : "-translate-x-4 -skew-y-3 scale-90"
+              hoveredLeftMain ? "translate-x-0 scale-100 skew-y-0" : "-translate-x-4 scale-90 -skew-y-3"
             )}
             onMouseEnter={() => setHoveredLeftMain(true)}
             onMouseLeave={() => setHoveredLeftMain(false)}
@@ -192,11 +192,11 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
             <div className="flex flex-col items-center justify-center">
               <div
                 className={cn(
-                  "align-center h-75 mb-6 flex w-full cursor-default flex-col items-center justify-center rounded-lg border-4 border-primary drop-shadow-lg transition-all hover:scale-105",
+                  "align-center border-primary mb-6 flex h-75 w-full cursor-default flex-col items-center justify-center rounded-lg border-4 drop-shadow-lg transition-all hover:scale-105",
                   background
                 )}
               >
-                <Avatar className="my-10 h-28 w-28 cursor-pointer rounded-full border-4 border-primary bg-primary drop-shadow-md transition-all hover:scale-105">
+                <Avatar className="border-primary bg-primary my-10 h-28 w-28 cursor-pointer rounded-full border-4 drop-shadow-md transition-all hover:scale-105">
                   <AvatarImage
                     src={picture}
                     className="object-cover"
@@ -214,7 +214,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
           <div
             className={cn(
               "flex h-full basis-1/2 flex-col items-center justify-between transition-all",
-              hoveredRightMain ? "translate-x-0 skew-y-0 scale-100" : "translate-x-4 skew-y-3 scale-90"
+              hoveredRightMain ? "translate-x-0 scale-100 skew-y-0" : "translate-x-4 scale-90 skew-y-3"
             )}
             onMouseEnter={() => setHoveredRightMain(true)}
             onMouseLeave={() => setHoveredRightMain(false)}
@@ -228,14 +228,14 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
                 <>
                   <li className="col-span-1 row-span-2">
                     <Link href="/game/continue">
-                      <div className="flex h-full w-full items-center justify-center rounded-md bg-primary px-5 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                      <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center rounded-md px-5 py-5 text-center transition-all hover:scale-105">
                         Continue
                       </div>
                     </Link>
                   </li>
                   <li className="col-span-1 row-span-2">
                     <Link href="/game">
-                      <div className="flex h-full w-full items-center justify-center rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                      <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                         New
                       </div>
                     </Link>
@@ -244,7 +244,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               ) : (
                 <li className="col-span-2 row-span-2">
                   <Link href="/game">
-                    <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                    <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center gap-x-2 rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                       <User className="h-5 w-5" />
                       Singleplayer
                     </div>
@@ -253,7 +253,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               )}
               <li className="col-span-2 row-span-2">
                 <Link href="/weekly">
-                  <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                  <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center gap-x-2 rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                     <Calendar className="h-5 w-5" />
                     Weekly Challenge
                   </div>
@@ -261,7 +261,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               </li>
               <li className="col-span-2 row-span-2">
                 <Link href="/leaderboard">
-                  <div className="flex h-full w-full items-center justify-center gap-x-2 rounded-md bg-primary px-8 py-5 text-center text-primary-foreground transition-all hover:scale-105">
+                  <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center gap-x-2 rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                     <Trophy className="h-5 w-5" />
                     Leaderboard
                   </div>
@@ -269,7 +269,7 @@ const DesktopHeading: React.FC<DesktopHeadingProps> = ({
               </li>
               <li className="col-span-2 row-span-2">
                 <Link href="/play">
-                  <div className="flex h-full w-full items-center justify-center rounded-md bg-secondary px-8 py-5 text-center transition-all hover:scale-105">
+                  <div className="bg-secondary flex h-full w-full items-center justify-center rounded-md px-8 py-5 text-center transition-all hover:scale-105">
                     All Gamemodes
                   </div>
                 </Link>

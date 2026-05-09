@@ -30,8 +30,8 @@ const GameContent = ({ isMobile }: { isMobile: boolean }) => {
   return (
     <>
       {isModalVisible && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
-          <div className="flex flex-col items-center rounded-md bg-card p-6 text-card-foreground">
+        <div className="bg-opacity-50 fixed inset-0 z-[9999] flex items-center justify-center bg-black">
+          <div className="bg-card text-card-foreground flex flex-col items-center rounded-md p-6">
             <Loader2 className="mr-2 h-6 w-6 animate-spin" />
             <p>Loading results...</p>
           </div>
@@ -44,7 +44,7 @@ const GameContent = ({ isMobile }: { isMobile: boolean }) => {
         )}
       >
         <InGameSidebar />
-        <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pl-0 pr-4")}>
+        <div className={cn("flex grow rounded-sm", isMobile ? "p-3" : "py-4 pr-4 pl-0")}>
           <DynamicInteractableMap />
         </div>
       </div>

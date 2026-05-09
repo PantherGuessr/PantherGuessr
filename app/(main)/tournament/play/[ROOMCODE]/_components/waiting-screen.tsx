@@ -23,7 +23,7 @@ function PlayerSlotMini({
 }) {
   if (!clerkId) {
     return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex items-center gap-2 text-sm">
         <Loader2 className="h-4 w-4 animate-spin" />
         <span>Waiting for {label}...</span>
       </div>
@@ -65,15 +65,15 @@ export function WaitingScreen({
       <h1 className="text-2xl font-bold">Room {roomCode}</h1>
       <div className="flex gap-12">
         <div className="flex flex-col items-center gap-2">
-          <span className="text-xs text-muted-foreground">Player 1</span>
+          <span className="text-muted-foreground text-xs">Player 1</span>
           <PlayerSlotMini clerkId={room.player1ClerkId} label="Player 1" users={users} />
         </div>
         <div className="flex flex-col items-center gap-2">
-          <span className="text-xs text-muted-foreground">Player 2</span>
+          <span className="text-muted-foreground text-xs">Player 2</span>
           <PlayerSlotMini clerkId={room.player2ClerkId} label="Player 2" users={users} />
         </div>
       </div>
-      <div className="flex items-center gap-2 text-muted-foreground">
+      <div className="text-muted-foreground flex items-center gap-2">
         <Loader2 className="h-5 w-5 animate-spin" />
         <span>Waiting for the organizer to start...</span>
       </div>

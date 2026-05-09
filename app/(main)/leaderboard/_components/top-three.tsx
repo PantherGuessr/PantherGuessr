@@ -54,7 +54,7 @@ export function TopThree({ users, type }: TopThreeProps) {
       <div className="mt-24 hidden items-end justify-center gap-4 md:flex md:flex-row">
         {/* Second Place */}
         {topThree[1] && (
-          <Card className="flex h-48 w-full flex-col items-center justify-start bg-slate-100 p-6 dark:bg-slate-800 md:w-64">
+          <Card className="flex h-48 w-full flex-col items-center justify-start bg-slate-100 p-6 md:w-64 dark:bg-slate-800">
             <div className="flex -translate-y-20 flex-col items-center">
               <Avatar className="mb-4 h-20 w-20 ring-4 ring-slate-300 dark:ring-slate-600">
                 <AvatarImage className="object-cover" src={topThree[1].picture} alt={topThree[1].username} />
@@ -62,7 +62,7 @@ export function TopThree({ users, type }: TopThreeProps) {
               </Avatar>
               <Badge
                 variant="secondary"
-                className="mb-2 select-none bg-slate-300 hover:bg-slate-300 dark:bg-slate-600 hover:dark:bg-slate-600"
+                className="mb-2 bg-slate-300 select-none hover:bg-slate-300 dark:bg-slate-600 hover:dark:bg-slate-600"
               >
                 2nd Place
               </Badge>
@@ -73,7 +73,7 @@ export function TopThree({ users, type }: TopThreeProps) {
         )}
 
         {/* First Place */}
-        <Card className="flex h-56 w-full flex-col items-center justify-start bg-yellow-100 p-6 dark:bg-yellow-900 md:w-64">
+        <Card className="flex h-56 w-full flex-col items-center justify-start bg-yellow-100 p-6 md:w-64 dark:bg-yellow-900">
           <div className="flex -translate-y-20 flex-col items-center">
             <Avatar className="mb-4 h-24 w-24 ring-4 ring-yellow-400">
               <AvatarImage className="object-cover" src={topThree[0].picture} alt={topThree[0].username} />
@@ -81,7 +81,7 @@ export function TopThree({ users, type }: TopThreeProps) {
             </Avatar>
             <Badge
               variant="default"
-              className="mb-2 select-none bg-yellow-500 text-yellow-900 hover:bg-yellow-500 dark:bg-yellow-400 dark:text-yellow-900 hover:dark:bg-yellow-400"
+              className="mb-2 bg-yellow-500 text-yellow-900 select-none hover:bg-yellow-500 dark:bg-yellow-400 dark:text-yellow-900 hover:dark:bg-yellow-400"
             >
               🏆 1st Place
             </Badge>
@@ -92,7 +92,7 @@ export function TopThree({ users, type }: TopThreeProps) {
 
         {/* Third Place */}
         {topThree[2] && (
-          <Card className="flex h-44 w-full flex-col items-center justify-start bg-orange-100 p-6 dark:bg-orange-900 md:w-64">
+          <Card className="flex h-44 w-full flex-col items-center justify-start bg-orange-100 p-6 md:w-64 dark:bg-orange-900">
             <div className="flex -translate-y-20 flex-col items-center">
               <Avatar className="mb-4 h-20 w-20 ring-4 ring-orange-400 dark:ring-orange-700">
                 <AvatarImage className="object-cover" src={topThree[2].picture} alt={topThree[2].username} />
@@ -100,7 +100,7 @@ export function TopThree({ users, type }: TopThreeProps) {
               </Avatar>
               <Badge
                 variant="default"
-                className="mb-2 select-none bg-orange-300 text-orange-700 hover:bg-orange-300 dark:bg-orange-700 dark:text-orange-200 hover:dark:bg-orange-700"
+                className="mb-2 bg-orange-300 text-orange-700 select-none hover:bg-orange-300 dark:bg-orange-700 dark:text-orange-200 hover:dark:bg-orange-700"
               >
                 3rd Place
               </Badge>

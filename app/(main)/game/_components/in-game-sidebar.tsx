@@ -318,12 +318,12 @@ const InGameSidebar = () => {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar relative z-[999] flex h-full flex-col overflow-y-auto bg-background",
+          "group/sidebar bg-background relative z-[999] flex h-full flex-col overflow-y-auto",
           isResetting && "transition-all duration-300 ease-in-out",
           isMobile ? "h-auto w-full" : "w-80 px-1"
         )}
       >
-        <div className="flex justify-center px-3 pb-1 pt-4">
+        <div className="flex justify-center px-3 pt-4 pb-1">
           <div className="flex flex-row pr-2">
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -353,7 +353,7 @@ const InGameSidebar = () => {
           </div>
           <div
             className={cn(
-              "flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md bg-secondary p-4 text-xl text-secondary-foreground",
+              "bg-secondary text-secondary-foreground flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md p-4 text-xl",
               isMobile && "basis-1/5"
             )}
           >
@@ -380,13 +380,13 @@ const InGameSidebar = () => {
           </div>
           {isMobile && (
             <>
-              <div className="mx-2 flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md bg-secondary text-xl text-secondary-foreground">
+              <div className="bg-secondary text-secondary-foreground mx-2 flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md text-xl">
                 <Hash />
                 <p className="pr-1">
                   {currentRound <= 5 ? currentRound : levels.length}/{levels.length}
                 </p>
               </div>
-              <div className="flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md bg-secondary text-xl text-secondary-foreground">
+              <div className="bg-secondary text-secondary-foreground flex w-full flex-row items-center justify-center justify-items-center gap-x-2 rounded-md text-xl">
                 <Medal />
                 <p>{score}</p>
               </div>
@@ -405,7 +405,7 @@ const InGameSidebar = () => {
               <Image
                 src={currentImageSrcUrl}
                 fill
-                sizes={isMobile ? "250px" : "600px"}
+                sizes={isMobile ? "250px" : `${SIDEBAR_MAX_WIDTH_CAP}px`}
                 alt=""
                 onLoad={() => setLoadedImageUrl(currentImageSrcUrl)}
                 onMouseEnter={handleMouseEnter}
@@ -413,7 +413,7 @@ const InGameSidebar = () => {
                 onMouseLeave={handleMouseLeave}
                 draggable={false}
                 className={cn(
-                  "select-none rounded-md object-cover transition-opacity duration-300",
+                  "rounded-md object-cover transition-opacity duration-300 select-none",
                   imageLoaded ? "opacity-100" : "opacity-0"
                 )}
               />
@@ -456,7 +456,7 @@ const InGameSidebar = () => {
         )}
         <div className={cn("mt-auto w-full px-3", isMobile ? "py-2" : "py-4")}>
           {scoreAwarded !== null && distanceFromTarget !== null && (
-            <div className="mb-3 flex w-full flex-col items-center justify-center justify-items-center gap-x-2 rounded-md bg-secondary p-4 text-center text-lg text-secondary-foreground">
+            <div className="bg-secondary text-secondary-foreground mb-3 flex w-full flex-col items-center justify-center justify-items-center gap-x-2 rounded-md p-4 text-center text-lg">
               {distanceFromTarget <= 20 ? (
                 <p>Spot on! You scored {scoreAwarded} points.</p>
               ) : (
@@ -474,7 +474,7 @@ const InGameSidebar = () => {
               </Button>
             ) : correctLocation ? (
               tournament?.suppressRoundAdvance ? (
-                <div className="w-full rounded-md bg-secondary p-3 text-center text-sm text-secondary-foreground">
+                <div className="bg-secondary text-secondary-foreground w-full rounded-md p-3 text-center text-sm">
                   Waiting for organizer...
                 </div>
               ) : (
@@ -483,7 +483,7 @@ const InGameSidebar = () => {
                 </Button>
               )
             ) : tournament?.hasSubmittedThisRound ? (
-              <div className="w-full rounded-md bg-secondary p-3 text-center text-sm text-secondary-foreground">
+              <div className="bg-secondary text-secondary-foreground w-full rounded-md p-3 text-center text-sm">
                 Waiting for organizer...
               </div>
             ) : (
@@ -497,7 +497,7 @@ const InGameSidebar = () => {
           <div
             onMouseDown={handleMouseDown}
             className={cn(
-              "group absolute right-0 top-0 z-10 flex h-full w-3 cursor-ew-resize items-center justify-center",
+              "group absolute top-0 right-0 z-10 flex h-full w-3 cursor-ew-resize items-center justify-center",
               "transition-all duration-200",
               isResizing ? "bg-primary/10" : "hover:bg-primary/10"
             )}

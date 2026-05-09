@@ -47,7 +47,7 @@ export function CountdownOverlay({ countdownStartedAt }: { countdownStartedAt: n
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60">
       <span
         key={step}
-        className={`countdown-number select-none font-black text-white drop-shadow-2xl ${
+        className={`countdown-number font-black text-white drop-shadow-2xl select-none ${
           isGo ? "text-6xl" : "text-[12rem] leading-none"
         }`}
       >

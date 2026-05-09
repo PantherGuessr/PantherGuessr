@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 
 import { Id } from "./_generated/dataModel";
-import { mutation, query, MutationCtx } from "./_generated/server";
+import { mutation, MutationCtx, query } from "./_generated/server";
 import { haversineDistanceInFeet } from "./game";
 
 async function cleanupOngoingGamesForRoom(
@@ -45,18 +45,17 @@ export const createTournamentRoom = mutation({
       throw new Error("Insufficient permissions");
     }
 
-    let roomCode: string;
+    let roomCode = generateRoomCode();
     let attempts = 0;
-    do {
-      roomCode = generateRoomCode();
-      const existing = await ctx.db
+    while (
+      await ctx.db
         .query("tournamentRooms")
         .withIndex("byRoomCode", (q) => q.eq("roomCode", roomCode))
-        .unique();
-      if (!existing) break;
-      attempts++;
-      if (attempts > 20) throw new Error("Failed to generate unique room code");
-    } while (true);
+        .unique()
+    ) {
+      if (++attempts > 20) throw new Error("Failed to generate unique room code");
+      roomCode = generateRoomCode();
+    }
 
     const roomId = await ctx.db.insert("tournamentRooms", {
       roomCode,
@@ -231,9 +230,7 @@ export const submitTournamentGuess = mutation({
 
     const correctLat = level.latitude;
     const correctLng = level.longitude;
-    const distanceAway = parseInt(
-      haversineDistanceInFeet(correctLat, correctLng, args.lat, args.lng).toFixed(0)
-    );
+    const distanceAway = parseInt(haversineDistanceInFeet(correctLat, correctLng, args.lat, args.lng).toFixed(0));
     let lenientDistance = distanceAway - 20;
     if (lenientDistance < 0) lenientDistance = 0;
     let score = 250 - lenientDistance;
@@ -415,20 +412,17 @@ export const createNewLobbyFromExisting = mutation({
     await ctx.db.delete(args.roomId);
 
     // Generate new unique room code
-    let roomCode: string;
+    let roomCode = generateRoomCode();
     let attempts = 0;
-    do {
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let suffix = "";
-      for (let i = 0; i < 4; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
-      roomCode = `PG-${suffix}`;
-      const existing = await ctx.db
+    while (
+      await ctx.db
         .query("tournamentRooms")
         .withIndex("byRoomCode", (q) => q.eq("roomCode", roomCode))
-        .unique();
-      if (!existing) break;
+        .unique()
+    ) {
       if (++attempts > 20) throw new Error("Failed to generate unique room code");
-    } while (true);
+      roomCode = generateRoomCode();
+    }
 
     const newRoomId = await ctx.db.insert("tournamentRooms", {
       roomCode,

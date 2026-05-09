@@ -213,11 +213,11 @@ const ProfilePage = ({ params }: Props) => {
               backgroundIdForUpdate={backgroundIdForUpdate}
               updateSelectedBackground={updateSelectedBackground}
             />
-            <div className="flex flex-1 flex-col items-center justify-center gap-y-2 bg-background px-6 pb-4 text-center">
+            <div className="bg-background flex flex-1 flex-col items-center justify-center gap-y-2 px-6 pb-4 text-center">
               <div className="flex w-full flex-col items-center justify-between px-4 lg:flex-row lg:items-start lg:px-10 xl:px-20">
                 <div className="flex w-full flex-col lg:mr-8">
                   <div className="flex flex-col items-center lg:mb-[-4em] lg:flex-row lg:items-start lg:pt-4">
-                    <Avatar className="mb-[-5em] h-[200px] w-[200px] translate-y-[-5em] flex-col overflow-hidden border-8 border-background bg-background lg:mb-0">
+                    <Avatar className="border-background bg-background mb-[-5em] h-[200px] w-[200px] translate-y-[-5em] flex-col overflow-hidden border-8 lg:mb-0">
                       <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
                       <AvatarImage
                         src={user.picture}
@@ -235,7 +235,7 @@ const ProfilePage = ({ params }: Props) => {
                                   type="text"
                                   value={usernameForUpdate}
                                   onChange={(e) => setUsernameForUpdate(e.target.value.slice(0, 32))}
-                                  className="mt-2 text-4xl font-bold transition-all duration-200 ease-in-out md:ml-4 md:mt-0"
+                                  className="mt-2 text-4xl font-bold transition-all duration-200 ease-in-out md:mt-0 md:ml-4"
                                   style={{ width: userNameInputWidth }}
                                   onKeyDown={(e) => {
                                     if (e.key === "Escape") {
@@ -244,13 +244,13 @@ const ProfilePage = ({ params }: Props) => {
                                   }}
                                 />
                                 <X
-                                  className="ml-1 mt-1 h-7 w-7 cursor-pointer"
+                                  className="mt-1 ml-1 h-7 w-7 cursor-pointer"
                                   onClick={() => {
                                     setIsEditingUsername(false);
                                   }}
                                 />
                                 <Save
-                                  className="ml-1 mt-1 h-7 w-7 cursor-pointer"
+                                  className="mt-1 ml-1 h-7 w-7 cursor-pointer"
                                   onClick={() => {
                                     setIsEditingUsername(false);
                                   }}
@@ -271,14 +271,14 @@ const ProfilePage = ({ params }: Props) => {
                             <h1 className="text-4xl font-bold md:pl-4">@{user.username}</h1>
                           )}
                         </div>
-                        <div className="flex flex-row items-center gap-x-2 pl-0 pt-2 sm:md:pt-2 sm:md:pl-3 lg:items-start">
+                        <div className="flex flex-row items-center gap-x-2 pt-2 pl-0 sm:md:pt-2 sm:md:pl-3 lg:items-start">
                           {isDeveloperRole && (
                             <TooltipProvider delayDuration={0} skipDelayDuration={0}>
                               <Tooltip>
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="transform-gpu cursor-default select-none drop-shadow"
+                                    className="transform-gpu cursor-default drop-shadow select-none"
                                     src="/badges/developer_badge.svg"
                                     width="25"
                                     height="25"
@@ -297,7 +297,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="transform-gpu cursor-default select-none drop-shadow"
+                                    className="transform-gpu cursor-default drop-shadow select-none"
                                     src="/badges/moderator_badge.svg"
                                     width="25"
                                     height="25"
@@ -316,7 +316,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="transform-gpu cursor-default select-none drop-shadow"
+                                    className="transform-gpu cursor-default drop-shadow select-none"
                                     src="/badges/contributor_badge.svg"
                                     width="25"
                                     height="25"
@@ -335,7 +335,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="transform-gpu cursor-default select-none drop-shadow"
+                                    className="transform-gpu cursor-default drop-shadow select-none"
                                     src="/badges/top_player_badge.svg"
                                     width="25"
                                     height="25"
@@ -354,7 +354,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="transform-gpu cursor-default select-none drop-shadow"
+                                    className="transform-gpu cursor-default drop-shadow select-none"
                                     src="/badges/friend_badge.svg"
                                     alt="Friend Badge"
                                     width="25"
@@ -373,7 +373,7 @@ const ProfilePage = ({ params }: Props) => {
                                 <TooltipTrigger>
                                   <Image
                                     draggable={false}
-                                    className="transform-gpu cursor-default select-none drop-shadow"
+                                    className="transform-gpu cursor-default drop-shadow select-none"
                                     src="/badges/chapman_badge.svg"
                                     alt="Chapman Student Badge"
                                     width="25"
@@ -446,13 +446,13 @@ const ProfilePage = ({ params }: Props) => {
                                 </PopoverContent>
                               </Popover>
                               <X
-                                className="ml-1 mt-1 h-5 w-5 cursor-pointer"
+                                className="mt-1 ml-1 h-5 w-5 cursor-pointer"
                                 onClick={() => {
                                   setIsEditingTagline(false);
                                 }}
                               />
                               <Save
-                                className="ml-1 mt-1 h-5 w-5 cursor-pointer"
+                                className="mt-1 ml-1 h-5 w-5 cursor-pointer"
                                 onClick={() => {
                                   if (taglineIdForUpdate !== profileTagline?.id) {
                                     updateSelectedTagline({
@@ -472,7 +472,7 @@ const ProfilePage = ({ params }: Props) => {
                             </>
                           ) : (
                             <>
-                              <p className="text-md cursor-default font-bold italic text-muted-foreground lg:pl-4">
+                              <p className="text-md text-muted-foreground cursor-default font-bold italic lg:pl-4">
                                 {profileTagline?.tagline}
                               </p>
                               <SquarePen
@@ -485,12 +485,12 @@ const ProfilePage = ({ params }: Props) => {
                             </>
                           )
                         ) : (
-                          <p className="text-md font-bold italic text-muted-foreground lg:pl-4">
+                          <p className="text-md text-muted-foreground font-bold italic lg:pl-4">
                             {profileTagline?.tagline}
                           </p>
                         )}
                       </div>
-                      <p className="text-md font-bold italic text-muted-foreground/60 lg:pl-4">
+                      <p className="text-md text-muted-foreground/60 font-bold italic lg:pl-4">
                         Guessr since{" "}
                         {new Date(user._creationTime).toLocaleDateString("en-US", {
                           year: "numeric",
@@ -509,7 +509,7 @@ const ProfilePage = ({ params }: Props) => {
                   <div className="flex w-full flex-col">
                     <div className="flex w-full flex-row justify-between">
                       <p className="text-md mr-4 font-bold">Level {Number(user.level)}</p>
-                      <p className="text-md font-bold text-muted-foreground">
+                      <p className="text-md text-muted-foreground font-bold">
                         {Number(user.currentXP)}/{xpForNextLevel || 0} XP
                       </p>
                     </div>

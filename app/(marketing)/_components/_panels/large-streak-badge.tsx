@@ -43,14 +43,14 @@ const LargeStreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime, 
       <div className={cn("relative flex items-center justify-center transition-transform hover:scale-105", badgeStyle)}>
         <Image
           draggable={false}
-          className="select-none drop-shadow-lg"
+          className="drop-shadow-lg select-none"
           src="/badges/streak_badge.svg"
           alt={`Daily Streak Badge of ${streak} Days`}
           width="125"
           height="125"
         />
         <p
-          className="absolute left-1/2 top-1/2 -translate-x-[51%] -translate-y-[35%] transform select-none rounded-full text-5xl font-bold text-white drop-shadow-md"
+          className="absolute top-1/2 left-1/2 -translate-x-[51%] -translate-y-[35%] transform rounded-full text-5xl font-bold text-white drop-shadow-md select-none"
           style={{ textShadow: "1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000" }}
         >
           {streak !== 0 ? streak : ""}
@@ -58,7 +58,7 @@ const LargeStreakBadge: React.FC<StreakBadgeProps> = ({ streak, lastPlayedTime, 
       </div>
       {message && (
         <div className="flex items-center justify-center pt-4">
-          <p className="text-xl text-card-foreground">{calculateStreakMessage()}</p>
+          <p className="text-card-foreground text-xl">{calculateStreakMessage()}</p>
         </div>
       )}
     </>

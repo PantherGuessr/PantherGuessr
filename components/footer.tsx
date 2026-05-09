@@ -18,8 +18,8 @@ import {
 export const Footer = () => {
   return (
     <div className="z-5 flex w-full items-center bg-transparent p-6">
-      <div className="hidden w-full items-center justify-end gap-x-2 text-muted-foreground md:ml-auto md:flex">
-        <p className="ml-2 mr-auto text-sm">© 2026 • PantherGuessr</p>
+      <div className="text-muted-foreground hidden w-full items-center justify-end gap-x-2 md:ml-auto md:flex">
+        <p className="mr-auto ml-2 text-sm">© 2026 • PantherGuessr</p>
         <Link href="/credits">
           <Button variant="ghost" size="sm">
             <Heart className="mr-2 h-4 w-4" />
@@ -45,7 +45,7 @@ export const Footer = () => {
         </Link>
         <ModeToggle />
       </div>
-      <div className="ml-auto flex w-full items-center justify-between text-muted-foreground md:hidden">
+      <div className="text-muted-foreground ml-auto flex w-full items-center justify-between md:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon">

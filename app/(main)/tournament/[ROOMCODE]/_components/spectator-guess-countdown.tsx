@@ -39,14 +39,14 @@ export function SpectatorGuessCountdown({
     <div
       className={cn(
         "relative w-full shrink-0 overflow-hidden transition-[height] duration-300",
-        isVisible ? "h-8 border-b bg-background" : "h-0"
+        isVisible ? "bg-background h-8 border-b" : "h-0"
       )}
     >
       <div
-        className="absolute inset-y-0 left-0 bg-destructive transition-[width] duration-200"
+        className="bg-destructive absolute inset-y-0 left-0 transition-[width] duration-200"
         style={{ width: `${fraction * 100}%` }}
       />
-      <div className="relative flex h-full items-center justify-center gap-1.5 text-xs font-medium text-card-foreground">
+      <div className="text-card-foreground relative flex h-full items-center justify-center gap-1.5 text-xs font-medium">
         <Timer className="h-3.5 w-3.5 shrink-0" />
         <span className={cn(isUrgent && "animate-pulse font-semibold")}>{timeLeft}s remaining!</span>
       </div>

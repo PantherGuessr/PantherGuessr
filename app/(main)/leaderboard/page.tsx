@@ -63,7 +63,7 @@ export default function LeaderboardPage() {
                 {isLoading ? (
                   <div className="flex flex-col items-center justify-center py-12">
                     <Spinner />
-                    <p className="mt-4 text-muted-foreground">Loading leaderboard...</p>
+                    <p className="text-muted-foreground mt-4">Loading leaderboard...</p>
                   </div>
                 ) : (
                   <>
@@ -82,8 +82,8 @@ export default function LeaderboardPage() {
                     {/* User's Current Rank Display */}
                     {userRank !== null && userRank > 0 && (
                       <div className="mt-6 text-center">
-                        <div className="inline-block rounded-lg bg-muted p-4">
-                          <p className="mb-1 text-sm text-muted-foreground">Your Current Rank</p>
+                        <div className="bg-muted inline-block rounded-lg p-4">
+                          <p className="text-muted-foreground mb-1 text-sm">Your Current Rank</p>
                           <p className="text-2xl font-bold">#{userRank}</p>
                         </div>
                       </div>
@@ -92,8 +92,8 @@ export default function LeaderboardPage() {
                     {/* No rank message */}
                     {userRank === -1 && (
                       <div className="mt-6 text-center">
-                        <div className="inline-block rounded-lg bg-muted p-4">
-                          <p className="text-sm text-muted-foreground">
+                        <div className="bg-muted inline-block rounded-lg p-4">
+                          <p className="text-muted-foreground text-sm">
                             You're not ranked on this leaderboard yet. Play some games to get started!
                           </p>
                         </div>

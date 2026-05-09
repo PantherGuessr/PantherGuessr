@@ -101,7 +101,7 @@ const ProfileSearchPage = () => {
 
   return (
     <div className="flex min-h-full flex-col pt-10">
-      <div className="flex flex-1 flex-col items-center justify-start gap-y-8 px-6 pb-10 pt-40 text-center">
+      <div className="flex flex-1 flex-col items-center justify-start gap-y-8 px-6 pt-40 pb-10 text-center">
         <h1 className="text-3xl font-bold sm:text-5xl">Find Profile</h1>
         <div className="flex w-full max-w-sm items-center space-x-2">
           <div className="card flex w-full flex-col rounded-lg border p-2">
@@ -137,7 +137,7 @@ const ProfileSearchPage = () => {
                       }}
                       className={cn(
                         "cursor-pointer py-1 pl-2 text-left text-sm",
-                        index === selectedIndex ? "rounded-md bg-secondary font-bold text-secondary-foreground" : ""
+                        index === selectedIndex ? "bg-secondary text-secondary-foreground rounded-md font-bold" : ""
                       )}
                     >
                       {user.username}
@@ -161,7 +161,7 @@ const ProfileSearchPage = () => {
                         }}
                         className={cn(
                           "cursor-pointer py-1 pl-2 text-left text-sm",
-                          index === selectedIndex ? "rounded-md bg-secondary font-bold text-secondary-foreground" : ""
+                          index === selectedIndex ? "bg-secondary text-secondary-foreground rounded-md font-bold" : ""
                         )}
                       >
                         {user.username}

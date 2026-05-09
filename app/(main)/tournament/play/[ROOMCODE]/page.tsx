@@ -64,9 +64,9 @@ export default function TournamentPlayPage({ params }: Props) {
     return (
       <div className="flex min-h-screen flex-col">
         <Navbar />
-        <main className="flex flex-1 flex-col items-center justify-center gap-y-4 px-6 pb-10 pt-40 text-center">
+        <main className="flex flex-1 flex-col items-center justify-center gap-y-4 px-6 pt-40 pb-10 text-center">
           <h1 className="text-4xl font-bold">Room Not Found</h1>
-          <p className="max-w-md text-lg text-muted-foreground">
+          <p className="text-muted-foreground max-w-md text-lg">
             This tournament room doesn&apos;t exist or has already been closed.
           </p>
           <div className="mt-4 flex gap-4">
@@ -118,7 +118,7 @@ export default function TournamentPlayPage({ params }: Props) {
             )}
           >
             <InGameSidebar />
-            <div className={cn("relative flex grow rounded-sm", isMobile ? "p-3" : "py-4 pl-0 pr-4")}>
+            <div className={cn("relative flex grow rounded-sm", isMobile ? "p-3" : "py-4 pr-4 pl-0")}>
               <GuessCountdown />
               <DynamicInteractableMap />
             </div>

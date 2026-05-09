@@ -271,9 +271,7 @@ export const addLeaderboardEntryToGame = mutation({
 
     const ongoingGame = await ctx.db
       .query("ongoingGames")
-      .withIndex("byUserClerkIdGame", (q) =>
-        q.eq("userClerkId", identity.subject).eq("game", args.gameId)
-      )
+      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", identity.subject).eq("game", args.gameId))
       .first();
 
     if (!ongoingGame?.scores || ongoingGame.scores.length !== 5) {
@@ -566,9 +564,7 @@ export const checkGuess = mutation({
     // check if this round has already been answered
     const existingOngoingGame = await ctx.db
       .query("ongoingGames")
-      .withIndex("byUserClerkIdGame", (q) =>
-        q.eq("userClerkId", identity.subject).eq("game", args.gameId)
-      )
+      .withIndex("byUserClerkIdGame", (q) => q.eq("userClerkId", identity.subject).eq("game", args.gameId))
       .first();
 
     if ((existingOngoingGame?.scores?.length ?? 0) > roundIndex) {

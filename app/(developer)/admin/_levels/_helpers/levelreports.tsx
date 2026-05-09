@@ -24,7 +24,7 @@ const LevelReports = () => {
   return (
     <>
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {pendingCount > 0
             ? `${pendingCount} open report${pendingCount !== 1 ? "s" : ""} awaiting review`
             : reports !== undefined
@@ -61,19 +61,19 @@ const LevelReports = () => {
           <TableBody>
             {reports === undefined ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-muted-foreground h-24 text-center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : reports === null ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-muted-foreground h-24 text-center">
                   Unauthorized.
                 </TableCell>
               </TableRow>
             ) : visible.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-muted-foreground h-24 text-center">
                   No level reports.
                 </TableCell>
               </TableRow>
@@ -93,7 +93,7 @@ const LevelReports = () => {
                       <Badge variant="secondary">Dismissed</Badge>
                     )}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
+                  <TableCell className="text-muted-foreground text-sm">
                     {new Date(report._creationTime).toLocaleDateString()}
                   </TableCell>
                   <TableCell>

@@ -33,12 +33,12 @@ export const Logo = ({ href, as_png, badge, logoDimensions = 40, textOptions, st
       <div
         className={cn("flex items-center justify-center gap-x-2", stackOnMobile ? "flex-col gap-y-1 sm:flex-row" : "")}
       >
-        <p className={cn("select-none pl-2 pr-2 font-semibold", font.className, textOptions)}>PantherGuessr</p>
+        <p className={cn("pr-2 pl-2 font-semibold select-none", font.className, textOptions)}>PantherGuessr</p>
         {badge && (
           <Badge
             className={cn(
               href == undefined ? "cursor-default hover:bg-red-800" : "cursor-pointer hover:bg-red-900",
-              "h-6 select-none bg-red-800 pt-1 text-white"
+              "h-6 bg-red-800 pt-1 text-white select-none"
             )}
           >
             {badge}

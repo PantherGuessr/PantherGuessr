@@ -59,7 +59,7 @@ const ReleaseNotes = () => {
             {releases !== undefined && (
               <>
                 <Separator />
-                <p className="pt-2 font-bold italic text-foreground/60">That&#39;s all folks!</p>
+                <p className="text-foreground/60 pt-2 font-bold italic">That&#39;s all folks!</p>
               </>
             )}
           </div>

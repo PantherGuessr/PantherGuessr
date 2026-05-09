@@ -1,4 +1,5 @@
 import { Footer } from "@/components/footer";
+import ContributorsList from "./_components/contributors-list";
 import MaintainerCard from "./_components/maintainer-card";
 import OpenSourceToolsList from "./_components/open-source-tools-list";
 
@@ -47,6 +48,14 @@ const CreditsPage = () => {
         <h2 className="justify-self-center text-xl md:text-3xl">Open Source Tools</h2>
         <OpenSourceToolsList />
 
+        <h2 className="justify-self-center text-xl md:text-3xl">Contributors</h2>
+        <ContributorsList />
+        <p className="text-muted-foreground max-w-2xl">
+          A huge thank you to our contributors! We appreciate those who have added features, fixed bugs, reported
+          issues, suggested ideas that made it into the game, or responsibly disclosed security vulnerabilities. Without
+          you, the game would not be possible. {"<3"}
+        </p>
+
         <h2 className="justify-self-center text-xl md:text-3xl">Special Thanks</h2>
         <div className="mx-auto w-full max-w-6xl flex-row gap-6">
           <p>
@@ -57,7 +66,7 @@ const CreditsPage = () => {
 
         <div className="space-y-1 text-center">
           <p>Made with ❤️ at Chapman University</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             PantherGuessr is not affiliated with or endorsed by Chapman University.
           </p>
         </div>

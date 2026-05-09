@@ -208,8 +208,8 @@ const ProfileAdministrativeActions = ({
         {((isProfileDeveloper && isViewerModerator && !isViewerDeveloper) ||
           (isProfileModerator && isViewerModerator && !isViewerDeveloper)) && (
           <div className="flex flex-col items-center">
-            <ShieldX className="mb-2 h-6 w-6 text-muted-foreground/60" />
-            <p className="font-bold italic text-muted-foreground/60">
+            <ShieldX className="text-muted-foreground/60 mb-2 h-6 w-6" />
+            <p className="text-muted-foreground/60 font-bold italic">
               You have invalid permissions to modify this user.
             </p>
           </div>
@@ -464,7 +464,7 @@ const ProfileAdministrativeActions = ({
                             />
                             <div className="flex min-w-0 flex-1 flex-col">
                               <p className="text-sm font-semibold">{achievement.name}</p>
-                              <p className="text-xs text-muted-foreground">{achievement.description}</p>
+                              <p className="text-muted-foreground text-xs">{achievement.description}</p>
                             </div>
                             <Button
                               size="sm"
