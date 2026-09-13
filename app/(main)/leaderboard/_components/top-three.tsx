@@ -41,11 +41,7 @@ export function TopThree({ users, type }: TopThreeProps) {
   // const statLabel = getStatLabel(type);
 
   if (topThree.length === 0) {
-    return (
-      <div className="py-8 text-center">
-        <p className="text-muted-foreground">No users found for this leaderboard.</p>
-      </div>
-    );
+    return null;
   }
 
   return (
