@@ -80,22 +80,19 @@ export default function SpectatorPage({ params }: Props) {
     if (!room || !canForceCountdown || room.status !== "round_active") return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.key.toLowerCase() !== "s" ||
-        event.repeat ||
-        event.ctrlKey ||
-        event.metaKey ||
-        event.altKey ||
-        event.shiftKey ||
-        event.isComposing ||
-        (event.target instanceof HTMLElement &&
-          (event.target.isContentEditable || event.target.closest("input, textarea, select"))) ||
-        room.firstGuessAt !== undefined ||
-        room.forcedGuessAt !== undefined ||
-        (room.countdownStartedAt !== undefined && Date.now() < room.countdownStartedAt + 4000)
-      ) {
-        return;
-      }
+      const isPlainS =
+        event.key.toLowerCase() === "s" &&
+        !(event.repeat || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || event.isComposing);
+
+      const isEditing =
+        event.target instanceof HTMLElement &&
+        (event.target.isContentEditable || !!event.target.closest("input, textarea, select"));
+
+      const hasCountdown = room.firstGuessAt !== undefined || room.forcedGuessAt !== undefined;
+
+      const isOpeningCountdown = room.countdownStartedAt !== undefined && Date.now() < room.countdownStartedAt + 4000;
+
+      if (!isPlainS || isEditing || hasCountdown || isOpeningCountdown) return;
 
       event.preventDefault();
       forceGuessCountdown({ roomId: room._id, round: room.currentRound }).catch(console.error);
