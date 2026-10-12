@@ -45,8 +45,14 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "spring_26_tournament_finalist",
     name: "S26 Tournament Finalist",
-    description: "Placed top 3 in the Spring 2026 PantherGuessr Tournament.",
+    description: "Placed top 3 in the CS Club Spring 2026 PantherGuessr Tournament.",
     imageSrc: "/achievements/spring_26_tournament_finalist_achievement.svg",
+  },
+  {
+    id: "fall_26_tournament_finalist",
+    name: "F26 Tournament Finalist",
+    description: "Placed top 3 in the CS Club Fall 2026 PantherGuessr Tournament.",
+    imageSrc: "/achievements/fall_26_tournament_finalist_achievement.svg",
   },
 ];
 
