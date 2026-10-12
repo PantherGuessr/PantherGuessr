@@ -12,7 +12,7 @@
     "format:check": "prettier . --check"
   },
   "dependencies": {
-    "@clerk/nextjs": "^7.3.3",
+    "@clerk/nextjs": "^7.9.14",
     "@octokit/rest": "^22.0.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-avatar": "^1.1.1",
@@ -38,7 +38,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "convex": "^1.42.1",
+    "convex": "^1.46.0",
     "date-fns": "^4.1.0",
     "heic2any": "^0.0.4",
     "html2canvas-pro": "^1.5.8",
