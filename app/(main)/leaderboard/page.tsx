@@ -38,6 +38,10 @@ export default function LeaderboardPage() {
 
   const selectedTypeInfo = LEADERBOARD_TYPES.find((t) => t.key === selectedType);
 
+  const filteredTopUsers = selectedType === "streak" ? topUsers.filter((u) => u.currentStreak > 0n) : topUsers;
+  const filteredDisplayEntries =
+    selectedType === "streak" ? displayEntries.filter((u) => u.currentStreak > 0n) : displayEntries;
+
   return (
     <div className="flex h-full min-h-screen w-screen flex-col justify-between">
       <div className="mx-auto w-full max-w-6xl px-4 py-8">
@@ -68,11 +72,11 @@ export default function LeaderboardPage() {
                 ) : (
                   <>
                     {/* Top 3 Users Display */}
-                    <TopThree users={topUsers} type={selectedType} />
+                    <TopThree users={filteredTopUsers} type={selectedType} />
 
                     {/* Full Rankings Table */}
                     <RemainingTable
-                      users={displayEntries}
+                      users={filteredDisplayEntries}
                       description={selectedTypeInfo?.description || ""}
                       type={selectedType}
                       currentUser={currentUser}
@@ -80,14 +84,19 @@ export default function LeaderboardPage() {
                     />
 
                     {/* User's Current Rank Display */}
-                    {userRank !== null && userRank > 0 && (
-                      <div className="mt-6 text-center">
-                        <div className="bg-muted inline-block rounded-lg p-4">
-                          <p className="text-muted-foreground mb-1 text-sm">Your Current Rank</p>
-                          <p className="text-2xl font-bold">#{userRank}</p>
+                    {userRank !== null &&
+                      userRank > 0 &&
+                      !(
+                        selectedType === "streak" &&
+                        (!currentUser?.currentStreak || currentUser.currentStreak === 0n)
+                      ) && (
+                        <div className="mt-6 text-center">
+                          <div className="bg-muted inline-block rounded-lg p-4">
+                            <p className="text-muted-foreground mb-1 text-sm">Your Current Rank</p>
+                            <p className="text-2xl font-bold">#{userRank}</p>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
                     {/* No rank message */}
                     {userRank === -1 && (

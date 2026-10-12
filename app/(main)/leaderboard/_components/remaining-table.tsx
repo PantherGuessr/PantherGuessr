@@ -86,58 +86,64 @@ export function RemainingTable({ users, type, description, currentUser, userRank
       <h3 className="mb-2 hidden text-xl font-semibold md:block">Full Rankings</h3>
       <p className="text-muted-foreground mb-4">{description}</p>
 
-      <Table className="w-full border-collapse">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="p-2 text-center">Rank</TableHead>
-            <TableHead className="p-2">User</TableHead>
-            <TableHead className={`p-2 ${getAlignmentClass(type)[0]}`}>{statHeader}</TableHead>
-            <TableHead className={`p-2 ${getAlignmentClass(type)[1]}`}>{secondaryStatHeader}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((user, index) => {
-            const rank = index + 1;
-            const isCurrentUser = currentUser && user._id === currentUser._id;
-            const isAppendedBeyondTop = isCurrentUser && userRank && userRank > index + 1;
-            const displayRank = isAppendedBeyondTop ? userRank : rank;
+      {users.length === 0 ? (
+        <div className="py-12 text-center">
+          <p className="text-muted-foreground">No one has an active streak right now. Be the first!</p>
+        </div>
+      ) : (
+        <Table className="w-full border-collapse">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="p-2 text-center">Rank</TableHead>
+              <TableHead className="p-2">User</TableHead>
+              <TableHead className={`p-2 ${getAlignmentClass(type)[0]}`}>{statHeader}</TableHead>
+              <TableHead className={`p-2 ${getAlignmentClass(type)[1]}`}>{secondaryStatHeader}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {users.map((user, index) => {
+              const rank = index + 1;
+              const isCurrentUser = currentUser && user._id === currentUser._id;
+              const isAppendedBeyondTop = isCurrentUser && userRank && userRank > index + 1;
+              const displayRank = isAppendedBeyondTop ? userRank : rank;
 
-            return (
-              <>
-                {isAppendedBeyondTop && (
-                  <TableRow key="separator">
-                    <TableCell colSpan={4} className="text-muted-foreground py-1 text-center">
-                      &middot;&middot;&middot;
+              return (
+                <>
+                  {isAppendedBeyondTop && (
+                    <TableRow key="separator">
+                      <TableCell colSpan={4} className="text-muted-foreground py-1 text-center">
+                        &middot;&middot;&middot;
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  <TableRow key={user._id} className={isCurrentUser ? "bg-red-600/10 dark:bg-red-600/30" : ""}>
+                    <TableCell className="p-2 text-center font-semibold">
+                      {displayRank <= 3 ? (
+                        <span className="text-lg">
+                          {displayRank === 1 && "🥇"}
+                          {displayRank === 2 && "🥈"}
+                          {displayRank === 3 && "🥉"}
+                        </span>
+                      ) : (
+                        displayRank
+                      )}
+                    </TableCell>
+                    <TableCell className="p-2 text-start">
+                      <ProfileHoverCard userID={user._id} />
+                    </TableCell>
+                    <TableCell className={`p-2 font-semibold ${getAlignmentClass(type)[0]}`}>
+                      {getStatValue(user, type)}
+                    </TableCell>
+                    <TableCell className={`text-muted-foreground p-2 ${getAlignmentClass(type)[1]}`}>
+                      {getSecondaryStatValue(user, type)}
                     </TableCell>
                   </TableRow>
-                )}
-                <TableRow key={user._id} className={isCurrentUser ? "bg-red-600/10 dark:bg-red-600/30" : ""}>
-                  <TableCell className="p-2 text-center font-semibold">
-                    {displayRank <= 3 ? (
-                      <span className="text-lg">
-                        {displayRank === 1 && "🥇"}
-                        {displayRank === 2 && "🥈"}
-                        {displayRank === 3 && "🥉"}
-                      </span>
-                    ) : (
-                      displayRank
-                    )}
-                  </TableCell>
-                  <TableCell className="p-2 text-start">
-                    <ProfileHoverCard userID={user._id} />
-                  </TableCell>
-                  <TableCell className={`p-2 font-semibold ${getAlignmentClass(type)[0]}`}>
-                    {getStatValue(user, type)}
-                  </TableCell>
-                  <TableCell className={`text-muted-foreground p-2 ${getAlignmentClass(type)[1]}`}>
-                    {getSecondaryStatValue(user, type)}
-                  </TableCell>
-                </TableRow>
-              </>
-            );
-          })}
-        </TableBody>
-      </Table>
+                </>
+              );
+            })}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 }

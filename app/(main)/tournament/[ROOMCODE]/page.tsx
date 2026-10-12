@@ -64,8 +64,43 @@ export default function SpectatorPage({ params }: Props) {
   const resetRoom = useMutation(api.tournament.resetTournamentRoom);
   const createNewLobby = useMutation(api.tournament.createNewLobbyFromExisting);
   const setGuessCountdown = useMutation(api.tournament.setGuessCountdown);
+  const forceGuessCountdown = useMutation(api.tournament.forceGuessCountdown);
 
   const isOrganizer = currentUser?.user.clerkId === room?.organizerClerkId;
+  const roles = currentUser?.user.roles ?? [];
+  const canForceCountdown = !!(
+    room &&
+    isOrganizer &&
+    (roles.includes("admin") || roles.includes("developer")) &&
+    currentUser?.user.clerkId !== room.player1ClerkId &&
+    currentUser?.user.clerkId !== room.player2ClerkId
+  );
+
+  useEffect(() => {
+    if (!room || !canForceCountdown || room.status !== "round_active") return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const isPlainS =
+        event.key.toLowerCase() === "s" &&
+        !(event.repeat || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || event.isComposing);
+
+      const isEditing =
+        event.target instanceof HTMLElement &&
+        (event.target.isContentEditable || !!event.target.closest("input, textarea, select"));
+
+      const hasCountdown = room.firstGuessAt !== undefined || room.forcedGuessAt !== undefined;
+
+      const isOpeningCountdown = room.countdownStartedAt !== undefined && Date.now() < room.countdownStartedAt + 4000;
+
+      if (!isPlainS || isEditing || hasCountdown || isOpeningCountdown) return;
+
+      event.preventDefault();
+      forceGuessCountdown({ roomId: room._id, round: room.currentRound }).catch(console.error);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [room, canForceCountdown, forceGuessCountdown]);
 
   // Win sound — only fires on the status transition to "finished"
   const prevStatusRef = useRef<string | null>(null);
@@ -163,8 +198,8 @@ export default function SpectatorPage({ params }: Props) {
       />
       <SpectatorHeader room={room} users={users} p1Status={playerStatus(p1Guess)} p2Status={playerStatus(p2Guess)} />
       <SpectatorGuessCountdown
-        firstGuessAt={room.firstGuessAt}
-        guessCountdownSeconds={room.guessCountdownSeconds ?? 15}
+        firstGuessAt={room.forcedGuessAt ?? room.firstGuessAt}
+        guessCountdownSeconds={room.forcedGuessAt !== undefined ? 15 : (room.guessCountdownSeconds ?? 15)}
         bothSubmitted={bothSubmitted}
         guessesLoaded={guesses !== undefined}
       />

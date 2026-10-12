@@ -157,6 +157,7 @@ export default defineSchema({
     countdownStartedAt: v.optional(v.number()),
     guessCountdownSeconds: v.optional(v.number()),
     firstGuessAt: v.optional(v.number()),
+    forcedGuessAt: v.optional(v.number()),
   })
     .index("byRoomCode", ["roomCode"])
     .index("byOrganizerClerkId", ["organizerClerkId"]),

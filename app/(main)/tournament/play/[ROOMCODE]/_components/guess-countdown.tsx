@@ -26,8 +26,8 @@ export function GuessCountdown() {
   const myGuess = guesses?.find((g) => g.playerClerkId === clerkId);
   const hasSubmitted = !!myGuess?.hasSubmitted;
 
-  const firstGuessAt = room?.firstGuessAt;
-  const guessCountdownSeconds = room?.guessCountdownSeconds ?? 15;
+  const countdownStartedAt = room?.forcedGuessAt ?? room?.firstGuessAt;
+  const guessCountdownSeconds = room?.forcedGuessAt !== undefined ? 15 : (room?.guessCountdownSeconds ?? 15);
 
   // Stores the last-sampled timestamp so timeLeft can be computed without
   // calling Date.now() during render (which the linter flags as impure).
@@ -52,11 +52,11 @@ export function GuessCountdown() {
   // Reset the auto-submit guard whenever a new countdown starts
   useEffect(() => {
     hasAutoSubmittedRef.current = false;
-  }, [firstGuessAt]);
+  }, [countdownStartedAt]);
 
   // Drive the visible countdown ticks — setNow is called via tick(), not directly
   useEffect(() => {
-    if (!firstGuessAt || hasSubmitted) return;
+    if (!countdownStartedAt || hasSubmitted) return;
     const tick = () => setNow(Date.now());
     tick();
     const interval = setInterval(tick, 200);
@@ -64,13 +64,13 @@ export function GuessCountdown() {
       clearInterval(interval);
       setNow(null);
     };
-  }, [firstGuessAt, hasSubmitted]);
+  }, [countdownStartedAt, hasSubmitted]);
 
   // Schedule the auto-submit to fire at the deadline
   useEffect(() => {
-    if (!firstGuessAt) return;
+    if (!countdownStartedAt) return;
 
-    const deadline = firstGuessAt + guessCountdownSeconds * 1000;
+    const deadline = countdownStartedAt + guessCountdownSeconds * 1000;
     const remaining = deadline - Date.now();
 
     const doAutoSubmit = () => {
@@ -91,13 +91,13 @@ export function GuessCountdown() {
 
     const timer = setTimeout(doAutoSubmit, remaining);
     return () => clearTimeout(timer);
-  }, [firstGuessAt, guessCountdownSeconds]);
+  }, [countdownStartedAt, guessCountdownSeconds]);
 
   // Derive timeLeft from the stored timestamp — no Date.now() in render
-  const deadline = firstGuessAt ? firstGuessAt + guessCountdownSeconds * 1000 : null;
+  const deadline = countdownStartedAt ? countdownStartedAt + guessCountdownSeconds * 1000 : null;
   const timeLeft = now !== null && deadline !== null ? Math.max(0, Math.ceil((deadline - now) / 1000)) : null;
 
-  if (!firstGuessAt || hasSubmitted || game?.correctLocation || timeLeft === null) {
+  if (!countdownStartedAt || hasSubmitted || game?.correctLocation || timeLeft === null) {
     return null;
   }
 
@@ -113,7 +113,8 @@ export function GuessCountdown() {
       <div className="text-card-foreground relative flex h-full items-center justify-center gap-1.5 text-sm font-medium">
         <Timer className="h-3.5 w-3.5 shrink-0" />
         <span className={cn(isUrgent && "font-semibold")}>
-          Opponent has submitted! {timeLeft}s to lock in your guess
+          {room?.forcedGuessAt !== undefined ? "Host started the countdown!" : "Opponent has submitted!"} {timeLeft}s to
+          lock in your guess
         </span>
       </div>
     </div>
