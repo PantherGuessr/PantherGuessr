@@ -146,6 +146,7 @@ export const startTournamentGame = mutation({
       player2TotalScore: 0,
       countdownStartedAt: Date.now(),
       firstGuessAt: undefined,
+      forcedGuessAt: undefined,
     });
 
     return gameId;
@@ -306,6 +307,7 @@ export const advanceToNextRound = mutation({
         status: "round_active",
         countdownStartedAt: Date.now(),
         firstGuessAt: undefined,
+        forcedGuessAt: undefined,
       });
     }
   },
@@ -332,6 +334,7 @@ export const showRoundSummary = mutation({
     await ctx.db.patch(args.roomId, {
       status: "round_summary",
       firstGuessAt: undefined,
+      forcedGuessAt: undefined,
       player1TotalScore: room.player1TotalScore + p1Score,
       player2TotalScore: room.player2TotalScore + p2Score,
     });
@@ -389,6 +392,7 @@ export const resetTournamentRoom = mutation({
       player2TotalScore: 0,
       countdownStartedAt: undefined,
       firstGuessAt: undefined,
+      forcedGuessAt: undefined,
     });
   },
 });
@@ -435,6 +439,43 @@ export const createNewLobbyFromExisting = mutation({
     });
 
     return { roomId: newRoomId, roomCode };
+  },
+});
+
+export const forceGuessCountdown = mutation({
+  args: { roomId: v.id("tournamentRooms"), round: v.number() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const room = await ctx.db.get(args.roomId);
+    if (!room) throw new Error("Room not found");
+    if (room.organizerClerkId !== identity.subject) throw new Error("Not the organizer");
+    if (room.player1ClerkId === identity.subject || room.player2ClerkId === identity.subject) {
+      throw new Error("Only spectators can force the countdown");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("byClerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    const roles = user?.roles ?? [];
+    if (!roles.includes("developer") && !roles.includes("admin")) {
+      throw new Error("Insufficient permissions");
+    }
+
+    const now = Date.now();
+    if (
+      room.status !== "round_active" ||
+      args.round !== room.currentRound ||
+      room.firstGuessAt !== undefined ||
+      room.forcedGuessAt !== undefined ||
+      (room.countdownStartedAt !== undefined && now < room.countdownStartedAt + 4000)
+    ) {
+      return;
+    }
+
+    await ctx.db.patch(args.roomId, { forcedGuessAt: now });
   },
 });
 
