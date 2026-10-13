@@ -107,8 +107,25 @@ export const clearOldGames = internalMutation({
       .filter((q) => q.lt(q.field("_creationTime"), oldtime))
       .collect();
 
-    // iterate through all games
+    const challenges = await ctx.db.query("weeklyChallenges").collect();
+    let deleted = 0;
     for (const game of games) {
+      // check if game is connected to any challenges
+      const relatedChallenges = challenges.filter((challenge) => challenge.gameId === game._id);
+
+      // (continue) protect games tied to current/upcoming challenges from deletion
+      if (relatedChallenges.some((challenge) => challenge.endDate > BigInt(time))) continue;
+
+      // delete old related challenges and data
+      for (const challenge of relatedChallenges) {
+        const entries = await ctx.db
+          .query("leaderboardEntries")
+          .filter((q) => q.eq(q.field("game"), challenge._id))
+          .collect();
+        for (const entry of entries) await ctx.db.delete(entry._id);
+        await ctx.db.delete(challenge._id);
+      }
+
       // get the connected leaderboard IDs, if applicable
       const leaderboardIds = game.leaderboard ?? [];
       for (const leaderboardId of leaderboardIds) {
@@ -126,9 +143,10 @@ export const clearOldGames = internalMutation({
       }
 
       await ctx.db.delete(game._id);
+      deleted++;
     }
 
-    return `Deleted ${games.length} games`;
+    return `Deleted ${deleted} games`;
   },
 });
 
@@ -144,8 +162,9 @@ export const clearUnplayedGames = internalMutation({
       .filter((q) => q.lt(q.field("_creationTime"), oldTime))
       .collect();
 
+    let deleted = 0;
     for (const game of games) {
-      if (!game.firstPlayedByClerkId) {
+      if (game.gameType !== "weekly" && !game.firstPlayedByClerkId) {
         // check if game has any ongoing games
         const ongoingGames = await ctx.db
           .query("ongoingGames")
@@ -157,10 +176,11 @@ export const clearUnplayedGames = internalMutation({
         }
         // delete game
         await ctx.db.delete(game._id);
+        deleted++;
       }
     }
 
-    return `Deleted ${games.length} unplayed games older than ${days} days`;
+    return `Deleted ${deleted} unplayed games older than ${days} days`;
   },
 });
 
