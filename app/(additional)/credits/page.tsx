@@ -35,7 +35,7 @@ const CreditsPage = () => {
             professionalEmailUsername="dan"
           />
           <MaintainerCard
-            profilePicture="/profile-pictures/jake.jpeg"
+            profilePicture="/profile-pictures/jake.webp"
             name="Jake Milam"
             role="Game Design"
             userId="jh708xtkavmwa7b9q6q9np9pwn7mnj5z"

@@ -8,7 +8,7 @@ We update this project consistently following the semantic versioning system out
 | ----------- | ------------------ |
 | 1.X.X       | :white_check_mark: |
 | 0.X.X-alpha | :x:                |
-| 0.X.X-beta  | :x                 |
+| 0.X.X-beta  | :x:                |
 
 - Note: To understand this table, focus on the parts of the version that don't contain the letter X as that represents a catch all for anything in that place.
 
