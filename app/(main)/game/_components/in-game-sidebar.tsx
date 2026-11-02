@@ -58,6 +58,8 @@ const InGameSidebar = () => {
 
   const magnifierRef = useRef<HTMLDivElement>(null);
   const isResizingRef = useRef(false);
+  const resizePointerIdRef = useRef<number | null>(null);
+  const resizePointerOffsetRef = useRef(0);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const isMobileRef = useRef(isMobile);
   const [isResetting] = useState(false);
@@ -236,12 +238,11 @@ const InGameSidebar = () => {
   };
 
   /**
-   * Handles resizing the sidebar when clicking and dragging on the right side of the sidebar
-   * Only works on desktop
+   * Handles resizing the sidebar when dragging its right edge in the split layout
    */
-  const handleMouseMove = (event: MouseEvent) => {
-    if (!isResizingRef.current || isMobileRef.current) return;
-    let newWidth = event.clientX;
+  const handlePointerMove = (event: PointerEvent) => {
+    if (!isResizingRef.current || isMobileRef.current || event.pointerId !== resizePointerIdRef.current) return;
+    let newWidth = event.clientX + resizePointerOffsetRef.current;
     const maxWidth = getSidebarMaxWidth();
     if (newWidth < SIDEBAR_MIN_WIDTH) newWidth = SIDEBAR_MIN_WIDTH;
     if (newWidth > maxWidth) newWidth = maxWidth;
@@ -251,15 +252,18 @@ const InGameSidebar = () => {
   };
 
   /**
-   * Handles stopping the resizing of the sidebar when releasing the mouse button
+   * Handles stopping the resizing of the sidebar when releasing or canceling the pointer
    */
-  const handleMouseUp = () => {
+  const handlePointerUp = (event: PointerEvent) => {
+    if (event.pointerId !== resizePointerIdRef.current) return;
     isResizingRef.current = false;
+    resizePointerIdRef.current = null;
     setIsResizing(false);
     document.body.classList.remove("inheritCursorOverride");
     document.body.style.setProperty("cursor", "unset");
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
+    document.removeEventListener("pointermove", handlePointerMove);
+    document.removeEventListener("pointerup", handlePointerUp);
+    document.removeEventListener("pointercancel", handlePointerUp);
     if (sidebarRef.current && !isMobileRef.current) {
       const width = sidebarRef.current.offsetWidth;
       setSidebarWidth(String(width));
@@ -267,21 +271,23 @@ const InGameSidebar = () => {
   };
 
   /**
-   * Handles starting the resizing of the sidebar when clicking on the right side of the sidebar
-   * Only works on desktop
+   * Handles starting the resizing of the sidebar from its right edge in the split layout
    */
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (isMobile) return; // Prevent resizing on mobile
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (isMobile || !event.isPrimary || event.button !== 0 || isResizingRef.current) return;
 
     event.preventDefault();
     event.stopPropagation();
 
     isResizingRef.current = true;
+    resizePointerIdRef.current = event.pointerId;
+    resizePointerOffsetRef.current = (sidebarRef.current?.offsetWidth ?? event.clientX) - event.clientX;
     setIsResizing(true);
     document.body.classList.add("inheritCursorOverride");
     document.body.style.setProperty("cursor", "ew-resize");
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("pointermove", handlePointerMove);
+    document.addEventListener("pointerup", handlePointerUp);
+    document.addEventListener("pointercancel", handlePointerUp);
   };
 
   useEffect(() => {
@@ -495,14 +501,15 @@ const InGameSidebar = () => {
         </div>
         {!isMobile && (
           <div
-            onMouseDown={handleMouseDown}
+            onPointerDown={handlePointerDown}
             className={cn(
-              "group absolute top-0 right-0 z-10 flex h-full w-3 cursor-ew-resize items-center justify-center",
+              "group absolute top-0 right-0 z-10 flex h-full w-3 cursor-ew-resize touch-none items-center justify-center",
               "transition-all duration-200",
               isResizing ? "bg-primary/10" : "hover:bg-primary/10"
             )}
             title="Drag to resize sidebar"
           >
+            <span aria-hidden="true" className="absolute inset-y-0 right-0 hidden w-11 pointer-coarse:block" />
             <div
               className={cn(
                 "flex flex-col gap-1 transition-all duration-200",
